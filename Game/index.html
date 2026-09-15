@@ -1,0 +1,2433 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>RogueBomb MVP - Roguevania com Bombas</title>
+  <style>
+    :root {
+      --bg-dark: #0f1115;
+      --panel-bg: rgba(22, 27, 34, 0.85);
+      --accent-blue: #29b6f6;
+      --accent-red: #ef5350;
+      --accent-cyan: #00e5ff;
+      --accent-yellow: #ffca28;
+      --accent-green: #2e7d32;
+      --accent-orange: #ff7043;
+      --text-main: #eceff1;
+      --text-dim: #90a4ae;
+      --border-color: rgba(255, 255, 255, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-touch-callout: none;
+      touch-action: none;
+    }
+
+    body, html {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: var(--bg-dark);
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #game-container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      max-width: 100%;
+      max-height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at center, #1b212c 0%, #0c0e12 100%);
+    }
+
+    /* Canvas com proporção 1:1 nítida */
+    #canvas-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8), 0 0 0 2px rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      overflow: hidden;
+      background: #000;
+    }
+
+    canvas {
+      display: block;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+    }
+
+    /* HUD Superior */
+    #hud-top {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      right: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      pointer-events: none;
+      z-index: 20;
+    }
+
+    .hud-badge {
+      background: var(--panel-bg);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    }
+
+    #room-status {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .status-alert {
+      color: var(--accent-red);
+      animation: pulse 1s infinite alternate;
+      font-weight: bold;
+    }
+
+    .status-ok {
+      color: #81c784;
+    }
+
+    /* Minimap HUD */
+    #minimap-container {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 6px;
+    }
+
+    #minimap-canvas {
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 6px;
+      background: rgba(10, 14, 20, 0.85);
+    }
+
+    /* Overlay de Lockdown */
+    #lockdown-banner {
+      position: absolute;
+      top: 60px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(211, 47, 47, 0.9);
+      color: white;
+      padding: 6px 20px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      box-shadow: 0 0 20px rgba(239, 83, 80, 0.6);
+      display: none;
+      animation: bounceAlert 0.8s ease-in-out infinite alternate;
+      pointer-events: none;
+      z-index: 25;
+    }
+
+    /* Controles Mobile */
+    #mobile-controls {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 30;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      padding: 16px;
+    }
+
+    /* D-Pad Virtual */
+    .dpad-container {
+      position: relative;
+      width: 150px;
+      height: 150px;
+      pointer-events: auto;
+      margin-bottom: 8px;
+      margin-left: 8px;
+    }
+
+    .dpad-btn {
+      position: absolute;
+      width: 48px;
+      height: 48px;
+      background: rgba(33, 40, 52, 0.75);
+      border: 2px solid rgba(255, 255, 255, 0.25);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 20px;
+      font-weight: bold;
+      transition: background 0.1s, transform 0.1s;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    }
+
+    .dpad-btn:active, .dpad-btn.active {
+      background: rgba(41, 182, 246, 0.6);
+      transform: scale(0.92);
+      border-color: var(--accent-blue);
+    }
+
+    .dpad-up { top: 0; left: 51px; }
+    .dpad-down { bottom: 0; left: 51px; }
+    .dpad-left { top: 51px; left: 0; }
+    .dpad-right { top: 51px; right: 0; }
+    .dpad-center {
+      position: absolute;
+      top: 51px;
+      left: 51px;
+      width: 48px;
+      height: 48px;
+      background: rgba(20, 25, 34, 0.6);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .dpad-center::after {
+      content: '';
+      width: 12px;
+      height: 12px;
+      background: rgba(255,255,255,0.3);
+      border-radius: 50%;
+    }
+
+    /* Painel de Ação e Bombas Mobile */
+    .actions-container {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 12px;
+      pointer-events: auto;
+      margin-bottom: 12px;
+      margin-right: 8px;
+    }
+
+    .bomb-selectors {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    .bomb-btn {
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      background: var(--panel-bg);
+      border: 2px solid var(--border-color);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 800;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+    }
+
+    .bomb-btn span.icon {
+      width: 14px;
+      height: 14px;
+      border-radius: 3px;
+      display: inline-block;
+    }
+
+    .bomb-btn[data-bomb="impact"] span.icon { background: var(--accent-red); }
+    .bomb-btn[data-bomb="propulsor"] span.icon { background: var(--accent-cyan); }
+    .bomb-btn[data-bomb="timed"] span.icon { background: var(--accent-yellow); }
+
+    .bomb-btn.selected {
+      transform: scale(1.12);
+      border-color: #fff;
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+    }
+    .bomb-btn[data-bomb="impact"].selected { border-color: var(--accent-red); box-shadow: 0 0 16px var(--accent-red); }
+    .bomb-btn[data-bomb="propulsor"].selected { border-color: var(--accent-cyan); box-shadow: 0 0 16px var(--accent-cyan); }
+    .bomb-btn[data-bomb="timed"].selected { border-color: var(--accent-yellow); box-shadow: 0 0 16px var(--accent-yellow); }
+
+    .action-btn {
+      width: 86px;
+      height: 86px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #ff7043, #d84315);
+      border: 3px solid rgba(255, 255, 255, 0.4);
+      color: white;
+      font-size: 14px;
+      font-weight: 900;
+      letter-spacing: 0.8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(216, 67, 21, 0.7);
+      transition: transform 0.08s, box-shadow 0.08s;
+    }
+
+    .action-btn:active, .action-btn.active {
+      transform: scale(0.92);
+      box-shadow: 0 2px 10px rgba(216, 67, 21, 0.9);
+      background: radial-gradient(circle at 30% 30%, #ff8a65, #e64a19);
+    }
+
+    /* Guia de Atalhos Desktop */
+    #desktop-guide {
+      position: absolute;
+      bottom: 12px;
+      background: var(--panel-bg);
+      border: 1px solid var(--border-color);
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 11px;
+      color: var(--text-dim);
+      display: flex;
+      gap: 16px;
+      pointer-events: none;
+      z-index: 20;
+    }
+
+    #desktop-guide kbd {
+      background: rgba(255,255,255,0.15);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #fff;
+      font-weight: bold;
+    }
+
+    /* Mensagem Central de Alerta / Efeito */
+    #center-toast {
+      position: absolute;
+      top: 45%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(0, 0, 0, 0.85);
+      border: 2px solid var(--accent-blue);
+      padding: 14px 28px;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-align: center;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      z-index: 50;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+    }
+
+    #center-toast.visible {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1.05);
+    }
+
+    @keyframes pulse {
+      0% { opacity: 0.7; }
+      100% { opacity: 1; transform: scale(1.02); }
+    }
+
+    @keyframes bounceAlert {
+      0% { transform: translateX(-50%) translateY(0); }
+      100% { transform: translateX(-50%) translateY(-4px); }
+    }
+
+    /* Ajustes para telas pequenas / mobile */
+    @media (max-width: 768px) {
+      #desktop-guide { display: none; }
+      .dpad-container { transform: scale(0.95); }
+      .actions-container { transform: scale(0.95); }
+    }
+  </style>
+</head>
+<body>
+  <div id="game-container">
+    <!-- HUD Superior -->
+    <div id="hud-top">
+      <div id="room-status" class="hud-badge">
+        <div id="room-coords">SALA [0, 0]</div>
+        <div id="enemy-counter" class="status-ok">INIMIGOS: 0</div>
+      </div>
+      
+      <div id="minimap-container">
+        <div class="hud-badge" style="padding: 4px 8px; font-size: 11px;">MAPA PROCEDURAL</div>
+        <canvas id="minimap-canvas" width="70" height="70"></canvas>
+      </div>
+    </div>
+
+    <!-- Alerta de Trancamento / Lockdown -->
+    <div id="lockdown-banner">LOCKDOWN! ELIMINE OS AUTÔMATOS</div>
+
+    <!-- Canvas Central do Jogo -->
+    <div id="canvas-wrapper">
+      <canvas id="game-canvas" width="600" height="600"></canvas>
+    </div>
+
+    <!-- Guia Teclado / Mouse Desktop -->
+    <div id="desktop-guide">
+      <span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> Mover</span>
+      <span>🖱️ <b>Clique e Arraste</b>: Mirar & Lançar Bomba</span>
+      <span><kbd>1</kbd> Imp | <kbd>2</kbd> Prop | <kbd>3</kbd> Temp</span>
+      <span><kbd>ESPAÇO</kbd> / Botão Direito: Lançar Rápido</span>
+    </div>
+
+    <!-- Controles Touch Mobile -->
+    <div id="mobile-controls">
+      <!-- D-Pad Virtual -->
+      <div class="dpad-container">
+        <div class="dpad-btn dpad-up" data-dir="up">▲</div>
+        <div class="dpad-btn dpad-left" data-dir="left">◀</div>
+        <div class="dpad-center"></div>
+        <div class="dpad-btn dpad-right" data-dir="right">▶</div>
+        <div class="dpad-btn dpad-down" data-dir="down">▼</div>
+      </div>
+
+      <!-- Seleção de Bombas e Botão de Ação -->
+      <div class="actions-container">
+        <div class="bomb-selectors">
+          <button class="bomb-btn selected" data-bomb="impact" title="1: Bomba de Impacto">
+            <span class="icon"></span>
+            <span>IMP</span>
+          </button>
+          <button class="bomb-btn" data-bomb="propulsor" title="2: Bomba de Propulsão">
+            <span class="icon"></span>
+            <span>PROP</span>
+          </button>
+          <button class="bomb-btn" data-bomb="timed" title="3: Bomba Temporizada">
+            <span class="icon"></span>
+            <span>TEMP</span>
+          </button>
+        </div>
+
+        <button class="action-btn" id="action-trigger" title="Plantar / Ativar Bomba">
+          <span style="font-size: 20px;">💣</span>
+          <span>AÇÃO</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Toast Central -->
+    <div id="center-toast">TEMPO REBOBINADO!</div>
+  </div>
+
+  <script>
+    /* ==========================================================================
+       ROGUEBOMB MVP - ARQUITETURA DE CÓDIGO
+       1. AudioSystem: Sintetizador Web Audio API para SFX sem arquivos externos
+       2. Constants & Config: Tamanho do grid (15x15), blocos, velocidades, cores
+       3. InputManager: Teclado + Touch Virtual simultâneos
+       4. MapManager: Geração procedural do mapa, conexões, portas, Goela e andar secreto
+       5. Entities: Charlotte (Player), Autômatos (Inimigos), Bombas, Buracos
+       6. ParticleSystem & VFX: Explosões, vapor de propulsão, faíscas, glitch de tempo
+       7. Game Loop & Renderer: requestAnimationFrame, câmera, lockdown, transições
+       ========================================================================== */
+
+    // --------------------------------------------------------------------------
+    // 1. SISTEMA DE ÁUDIO PROCEDURAL (Web Audio API)
+    // --------------------------------------------------------------------------
+    class SoundEngine {
+      constructor() {
+        this.ctx = null;
+        this.isMuted = false;
+      }
+
+      init() {
+        if (!this.ctx) {
+          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          if (AudioContextClass) {
+            this.ctx = new AudioContextClass();
+          }
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+
+      playImpactExplosion() {
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+
+        const bufferSize = this.ctx.sampleRate * 0.35;
+        const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+          data[i] = Math.random() * 2 - 1;
+        }
+
+        const noise = this.ctx.createBufferSource();
+        noise.buffer = buffer;
+
+        const filter = this.ctx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(600, now);
+        filter.frequency.exponentialRampToValueAtTime(80, now + 0.3);
+
+        const gain = this.ctx.createGain();
+        gain.gain.setValueAtTime(0.8, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+
+        noise.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.ctx.destination);
+        noise.start(now);
+      }
+
+      playPropulsorSteam() {
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+
+        const bufferSize = this.ctx.sampleRate * 0.4;
+        const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+          data[i] = Math.random() * 2 - 1;
+        }
+
+        const noise = this.ctx.createBufferSource();
+        noise.buffer = buffer;
+
+        const filter = this.ctx.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.frequency.setValueAtTime(1400, now);
+        filter.frequency.exponentialRampToValueAtTime(300, now + 0.38);
+        filter.Q.value = 3.0;
+
+        const gain = this.ctx.createGain();
+        gain.gain.setValueAtTime(0.9, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+
+        noise.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.ctx.destination);
+        noise.start(now);
+      }
+
+      playTimedBeep(pitchMult = 1.0) {
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(700 * pitchMult, now);
+        gain.gain.setValueAtTime(0.25, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.08);
+      }
+
+      playBigTimedExplosion() {
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+
+        const osc = this.ctx.createOscillator();
+        const oscGain = this.ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(140, now);
+        osc.frequency.exponentialRampToValueAtTime(30, now + 0.5);
+        oscGain.gain.setValueAtTime(0.8, now);
+        oscGain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+        osc.connect(oscGain);
+        oscGain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.5);
+
+        const bufferSize = this.ctx.sampleRate * 0.6;
+        const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+
+        const noise = this.ctx.createBufferSource();
+        noise.buffer = buffer;
+        const filter = this.ctx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(800, now);
+        filter.frequency.exponentialRampToValueAtTime(50, now + 0.55);
+
+        const noiseGain = this.ctx.createGain();
+        noiseGain.gain.setValueAtTime(0.7, now);
+        noiseGain.gain.exponentialRampToValueAtTime(0.01, now + 0.6);
+
+        noise.connect(filter);
+        filter.connect(noiseGain);
+        noiseGain.connect(this.ctx.destination);
+        noise.start(now);
+      }
+
+      playLockdownSound() {
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(220, now);
+        osc.frequency.setValueAtTime(180, now + 0.15);
+        gain.gain.setValueAtTime(0.4, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.4);
+      }
+
+      playUnlockSound() {
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        [523.25, 659.25, 783.99].forEach((freq, idx) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, now + idx * 0.08);
+          gain.gain.setValueAtTime(0.3, now + idx * 0.08);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.08 + 0.2);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now + idx * 0.08);
+          osc.stop(now + idx * 0.08 + 0.2);
+        });
+      }
+
+      playRewindGlitch() {
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(120, now);
+        osc.frequency.exponentialRampToValueAtTime(950, now + 0.35);
+        gain.gain.setValueAtTime(0.5, now);
+        gain.gain.linearRampToValueAtTime(0.05, now + 0.4);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.4);
+      }
+
+      playChuteDeposit() {
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(320, now);
+        osc.frequency.exponentialRampToValueAtTime(640, now + 0.18);
+        gain.gain.setValueAtTime(0.4, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.25);
+      }
+
+      playThrowWhoosh() {
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(340, now);
+        osc.frequency.exponentialRampToValueAtTime(140, now + 0.16);
+        gain.gain.setValueAtTime(0.35, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.16);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.16);
+      }
+    }
+
+    const sound = new SoundEngine();
+
+    // --------------------------------------------------------------------------
+    // 2. CONSTANTES E CONFIGURAÇÕES DO GRID
+    // --------------------------------------------------------------------------
+    const GRID_SIZE = 15;        // Grid 15x15 conforme especificação
+    const TILE_SIZE = 40;        // 15 * 40 = 600px de área de jogo
+    const WORLD_WIDTH = GRID_SIZE * TILE_SIZE;
+    const WORLD_HEIGHT = GRID_SIZE * TILE_SIZE;
+
+    // Tipos de Tile
+    const TILE = {
+      EMPTY: 0,
+      WALL: 1,            // Parede indestrutível (Cinza escuro)
+      BREAKABLE: 2,       // Bloco quebrável (Marrom)
+      LOCK_GATE: 3,       // Porta trancada temporária (Vermelho piscante)
+      HOLE: 4,            // Buraco preto para andar inferior
+      GOELA: 5,           // Duto de depósito (Verde escuro)
+      SECRET_LADDER: 6    // Escada/respiro para retornar da sala secreta
+    };
+
+    // Tipos de Bomba
+    const BOMB_TYPE = {
+      IMPACT: 'impact',
+      PROPULSOR: 'propulsor',
+      TIMED: 'timed'
+    };
+
+    // --------------------------------------------------------------------------
+    // 3. GERENCIADOR DE INPUT (Teclado + Touch Mobile + Mouse/Clique e Arraste)
+    // --------------------------------------------------------------------------
+    class InputManager {
+      constructor(canvas = null) {
+        this.canvas = canvas;
+        this.keys = {};
+        this.touchMove = { up: false, down: false, left: false, right: false };
+        this.selectedBomb = BOMB_TYPE.IMPACT;
+        this.actionTriggered = false;
+
+        // Estado do Mouse e Lançamento de Bombas (Clique e Arraste)
+        this.mousePos = { x: 300, y: 300, active: false };
+        this.isAiming = false;
+        this.aimStart = { x: 0, y: 0 };
+        this.aimCurrent = { x: 0, y: 0 };
+        this.throwTriggered = false;
+        this.throwTarget = null;
+
+        this.setupKeyboard();
+        this.setupTouch();
+        if (this.canvas) {
+          this.setupPointerDrag();
+        }
+      }
+
+      setCanvas(canvas) {
+        this.canvas = canvas;
+        this.setupPointerDrag();
+      }
+
+      setupKeyboard() {
+        window.addEventListener('keydown', (e) => {
+          this.keys[e.code] = true;
+          sound.init(); // Ativa áudio no primeiro input
+
+          // Seleção numérica de bombas
+          if (e.key === '1') this.selectBomb(BOMB_TYPE.IMPACT);
+          if (e.key === '2') this.selectBomb(BOMB_TYPE.PROPULSOR);
+          if (e.key === '3') this.selectBomb(BOMB_TYPE.TIMED);
+
+          // Disparo com Barra de Espaço
+          if (e.code === 'Space') {
+            e.preventDefault();
+            this.actionTriggered = true;
+          }
+        });
+
+        window.addEventListener('keyup', (e) => {
+          this.keys[e.code] = false;
+        });
+      }
+
+      setupTouch() {
+        // D-Pad Touch Listeners
+        const dpadButtons = document.querySelectorAll('.dpad-btn');
+        dpadButtons.forEach(btn => {
+          const dir = btn.getAttribute('data-dir');
+
+          const startPress = (e) => {
+            e.preventDefault();
+            sound.init();
+            btn.classList.add('active');
+            this.touchMove[dir] = true;
+          };
+
+          const endPress = (e) => {
+            e.preventDefault();
+            btn.classList.remove('active');
+            this.touchMove[dir] = false;
+          };
+
+          btn.addEventListener('touchstart', startPress, { passive: false });
+          btn.addEventListener('touchend', endPress, { passive: false });
+          btn.addEventListener('touchcancel', endPress, { passive: false });
+          btn.addEventListener('mousedown', startPress);
+          btn.addEventListener('mouseup', endPress);
+          btn.addEventListener('mouseleave', endPress);
+        });
+
+        // Botões de Seleção de Bombas
+        const bombButtons = document.querySelectorAll('.bomb-btn');
+        bombButtons.forEach(btn => {
+          const bombType = btn.getAttribute('data-bomb');
+          const triggerSelect = (e) => {
+            e.preventDefault();
+            sound.init();
+            this.selectBomb(bombType);
+          };
+          btn.addEventListener('touchstart', triggerSelect, { passive: false });
+          btn.addEventListener('click', triggerSelect);
+        });
+
+        // Botão de Ação Mobile
+        const actionBtn = document.getElementById('action-trigger');
+        const triggerAction = (e) => {
+          e.preventDefault();
+          sound.init();
+          actionBtn.classList.add('active');
+          this.actionTriggered = true;
+          setTimeout(() => actionBtn.classList.remove('active'), 120);
+        };
+        actionBtn.addEventListener('touchstart', triggerAction, { passive: false });
+        actionBtn.addEventListener('click', triggerAction);
+      }
+
+      setupPointerDrag() {
+        if (!this.canvas) return;
+
+        // Desativa menu de contexto padrão no jogo (permite usar botão direito)
+        window.addEventListener('contextmenu', (e) => {
+          e.preventDefault();
+        });
+
+        const getCanvasCoords = (e) => {
+          const rect = this.canvas.getBoundingClientRect();
+          const scaleX = 600 / rect.width;
+          const scaleY = 600 / rect.height;
+          return {
+            x: Math.max(0, Math.min(600, (e.clientX - rect.left) * scaleX)),
+            y: Math.max(0, Math.min(600, (e.clientY - rect.top) * scaleY))
+          };
+        };
+
+        // Pointer Down no Canvas: Inicia mira para jogar bomba
+        this.canvas.addEventListener('pointerdown', (e) => {
+          sound.init();
+
+          // Botão direito = Lançamento rápido direto no cursor!
+          if (e.button === 2) {
+            e.preventDefault();
+            const coords = getCanvasCoords(e);
+            this.throwTriggered = true;
+            this.throwTarget = { x: coords.x, y: coords.y };
+            return;
+          }
+
+          // Botão esquerdo ou toque = Inicia clique e arraste para mirar e jogar
+          if (e.button === 0) {
+            try { this.canvas.setPointerCapture(e.pointerId); } catch(err) {}
+            const coords = getCanvasCoords(e);
+            this.isAiming = true;
+            this.aimStart = { x: coords.x, y: coords.y };
+            this.aimCurrent = { x: coords.x, y: coords.y };
+            this.mousePos = { x: coords.x, y: coords.y, active: true };
+          }
+        });
+
+        // Pointer Move: Atualiza direção da mira
+        window.addEventListener('pointermove', (e) => {
+          const coords = getCanvasCoords(e);
+          this.mousePos = { x: coords.x, y: coords.y, active: true };
+
+          if (this.isAiming) {
+            this.aimCurrent = { x: coords.x, y: coords.y };
+          }
+        });
+
+        // Pointer Up / Cancel: SOLTA PARA LANÇAR A BOMBA!
+        const endAim = (e) => {
+          if (this.isAiming) {
+            this.isAiming = false;
+            this.throwTriggered = true;
+            this.throwTarget = { x: this.aimCurrent.x, y: this.aimCurrent.y };
+            try { this.canvas.releasePointerCapture(e.pointerId); } catch(err) {}
+          }
+        };
+
+        window.addEventListener('pointerup', endAim);
+        window.addEventListener('pointercancel', endAim);
+
+        // Scroll do mouse para alternar tipo de bomba
+        window.addEventListener('wheel', (e) => {
+          const order = [BOMB_TYPE.IMPACT, BOMB_TYPE.PROPULSOR, BOMB_TYPE.TIMED];
+          let currIdx = order.indexOf(this.selectedBomb);
+          if (e.deltaY > 0) {
+            currIdx = (currIdx + 1) % order.length;
+          } else if (e.deltaY < 0) {
+            currIdx = (currIdx - 1 + order.length) % order.length;
+          }
+          this.selectBomb(order[currIdx]);
+        }, { passive: true });
+      }
+
+      selectBomb(type) {
+        this.selectedBomb = type;
+        document.querySelectorAll('.bomb-btn').forEach(btn => {
+          if (btn.getAttribute('data-bomb') === type) {
+            btn.classList.add('selected');
+          } else {
+            btn.classList.remove('selected');
+          }
+        });
+      }
+
+      // O movimento se mantém ESTRITAMENTE em WASD / Setas ou D-Pad Mobile
+      getMovementVector() {
+        let dx = 0;
+        let dy = 0;
+
+        if (this.keys['KeyW'] || this.keys['ArrowUp'] || this.touchMove.up) dy -= 1;
+        if (this.keys['KeyS'] || this.keys['ArrowDown'] || this.touchMove.down) dy += 1;
+        if (this.keys['KeyA'] || this.keys['ArrowLeft'] || this.touchMove.left) dx -= 1;
+        if (this.keys['KeyD'] || this.keys['ArrowRight'] || this.touchMove.right) dx += 1;
+
+        if (dx !== 0 && dy !== 0) {
+          const invSqrt = 1 / Math.SQRT2;
+          dx *= invSqrt;
+          dy *= invSqrt;
+        }
+
+        return { dx, dy };
+      }
+
+      consumeAction() {
+        if (this.actionTriggered) {
+          this.actionTriggered = false;
+          return true;
+        }
+        return false;
+      }
+
+      consumeThrow() {
+        if (this.throwTriggered && this.throwTarget) {
+          this.throwTriggered = false;
+          const target = this.throwTarget;
+          this.throwTarget = null;
+          return { targetX: target.x, targetY: target.y, bombType: this.selectedBomb };
+        }
+        return null;
+      }
+
+      getClampedAimTarget(playerX, playerY) {
+        if (!this.isAiming) return null;
+        const maxRange = 190;
+        const dx = this.aimCurrent.x - playerX;
+        const dy = this.aimCurrent.y - playerY;
+        const dist = Math.hypot(dx, dy);
+
+        if (dist === 0) {
+          return { targetX: playerX, targetY: playerY, dist: 0, normDx: 0, normDy: 1 };
+        }
+
+        const clampedDist = Math.min(maxRange, dist);
+        const normDx = dx / dist;
+        const normDy = dy / dist;
+        return {
+          targetX: playerX + normDx * clampedDist,
+          targetY: playerY + normDy * clampedDist,
+          dist: clampedDist,
+          normDx,
+          normDy
+        };
+      }
+    }
+
+    // --------------------------------------------------------------------------
+    // 4. ESTRUTURA DE SALAS E MAPA PROCEDURAL (MapManager)
+    // --------------------------------------------------------------------------
+    class Room {
+      constructor(rx, ry, isStart = false, isSecret = false) {
+        this.rx = rx;
+        this.ry = ry;
+        this.isStart = isStart;
+        this.isSecret = isSecret;
+        this.doors = { north: false, south: false, east: false, west: false };
+        this.grid = Array(GRID_SIZE).fill(null).map(() => Array(GRID_SIZE).fill(TILE.EMPTY));
+        this.enemies = [];
+        this.visited = false;
+        this.cleared = isStart || isSecret;
+        this.isLockdown = false;
+        this.hasGoela = false;
+        this.blackHoles = [];
+      }
+
+      buildLayout() {
+        // Paredes indestrutíveis perimetrais
+        for (let x = 0; x < GRID_SIZE; x++) {
+          for (let y = 0; y < GRID_SIZE; y++) {
+            if (x === 0 || x === GRID_SIZE - 1 || y === 0 || y === GRID_SIZE - 1) {
+              this.grid[y][x] = TILE.WALL;
+            }
+          }
+        }
+
+        // Portas nas bordas centrais (posição 7 de 0..14)
+        const mid = Math.floor(GRID_SIZE / 2);
+        if (this.doors.north) this.grid[0][mid] = TILE.EMPTY;
+        if (this.doors.south) this.grid[GRID_SIZE - 1][mid] = TILE.EMPTY;
+        if (this.doors.west)  this.grid[mid][0] = TILE.EMPTY;
+        if (this.doors.east)  this.grid[mid][GRID_SIZE - 1] = TILE.EMPTY;
+
+        if (this.isSecret) {
+          this.buildSecretLayout();
+          return;
+        }
+
+        // Pilares internos e blocos quebráveis (marrom)
+        for (let y = 2; y < GRID_SIZE - 2; y++) {
+          for (let x = 2; x < GRID_SIZE - 2; x++) {
+            // Evita bloquear entradas imediatas
+            if ((x === mid && (y <= 2 || y >= GRID_SIZE - 3)) ||
+                (y === mid && (x <= 2 || x >= GRID_SIZE - 3))) {
+              continue;
+            }
+
+            // Pilares fixos geométricos
+            if (x % 2 === 0 && y % 2 === 0) {
+              if (Math.random() < 0.65) {
+                this.grid[y][x] = TILE.WALL;
+              }
+            } else if (Math.random() < 0.32) {
+              // Blocos quebráveis marrons
+              this.grid[y][x] = TILE.BREAKABLE;
+            }
+          }
+        }
+
+        // Adiciona "Goela" (duto verde de depósito)
+        if (this.hasGoela) {
+          const gx = mid;
+          const gy = mid;
+          this.grid[gy][gx] = TILE.GOELA;
+        }
+
+        // Instancia inimigos (2 a 4) em salas de combate
+        if (!this.isStart && !this.isSecret) {
+          const enemyCount = Math.floor(Math.random() * 3) + 2; // 2 a 4 autômatos
+          for (let i = 0; i < enemyCount; i++) {
+            const pos = this.findSpawnSpot();
+            if (pos) {
+              this.enemies.push(new Automaton(pos.x, pos.y));
+            }
+          }
+        }
+      }
+
+      buildSecretLayout() {
+        // Layout especial do andar inferior
+        const mid = Math.floor(GRID_SIZE / 2);
+        // Sala secreta possui escada central para voltar
+        this.grid[mid][mid] = TILE.SECRET_LADDER;
+
+        // Blocos quebráveis no andar inferior
+        for (let y = 3; y <= GRID_SIZE - 4; y++) {
+          for (let x = 3; x <= GRID_SIZE - 4; x++) {
+            if (x === mid && y === mid) continue;
+            if (Math.random() < 0.4) {
+              this.grid[y][x] = TILE.BREAKABLE;
+            }
+          }
+        }
+      }
+
+      findSpawnSpot() {
+        const mid = Math.floor(GRID_SIZE / 2);
+        for (let tries = 0; tries < 50; tries++) {
+          const x = Math.floor(Math.random() * (GRID_SIZE - 4)) + 2;
+          const y = Math.floor(Math.random() * (GRID_SIZE - 4)) + 2;
+          // Não spawna em cima de paredes, da porta central ou da Goela
+          if (this.grid[y][x] === TILE.EMPTY && (Math.abs(x - mid) > 1 || Math.abs(y - mid) > 1)) {
+            return { x: x * TILE_SIZE + TILE_SIZE / 2, y: y * TILE_SIZE + TILE_SIZE / 2 };
+          }
+        }
+        return null;
+      }
+
+      updateLockdownState() {
+        const mid = Math.floor(GRID_SIZE / 2);
+
+        // Se tem inimigos vivos e a sala ainda não foi liberada
+        if (!this.cleared && this.enemies.length > 0) {
+          if (!this.isLockdown) {
+            this.isLockdown = true;
+            sound.playLockdownSound();
+            showToast('LOCKDOWN ATIVADO!');
+          }
+          // Tranca as passagens de porta com blocos vermelhos piscantes
+          if (this.doors.north) this.grid[0][mid] = TILE.LOCK_GATE;
+          if (this.doors.south) this.grid[GRID_SIZE - 1][mid] = TILE.LOCK_GATE;
+          if (this.doors.west)  this.grid[mid][0] = TILE.LOCK_GATE;
+          if (this.doors.east)  this.grid[mid][GRID_SIZE - 1] = TILE.LOCK_GATE;
+        } else if (this.isLockdown && this.enemies.length === 0) {
+          // Destranca quando todos os inimigos somem
+          this.isLockdown = false;
+          this.cleared = true;
+          sound.playUnlockSound();
+          showToast('SALA LIBERADA!');
+
+          if (this.doors.north) this.grid[0][mid] = TILE.EMPTY;
+          if (this.doors.south) this.grid[GRID_SIZE - 1][mid] = TILE.EMPTY;
+          if (this.doors.west)  this.grid[mid][0] = TILE.EMPTY;
+          if (this.doors.east)  this.grid[mid][GRID_SIZE - 1] = TILE.EMPTY;
+        }
+      }
+    }
+
+    class MapManager {
+      constructor() {
+        this.mapSize = 5;
+        this.rooms = new Map(); // key: "x,y" => Room
+        this.currentRoom = null;
+        this.startRoomCoords = { x: 2, y: 2 };
+        this.secretRoom = null;
+        this.generateWorld();
+      }
+
+      generateWorld() {
+        const sx = this.startRoomCoords.x;
+        const sy = this.startRoomCoords.y;
+
+        const queue = [{ x: sx, y: sy }];
+        const visitedCoords = new Set([`${sx},${sy}`]);
+        let totalRooms = 10;
+        let created = 0;
+
+        // Cria matriz procedural ramificada
+        while (queue.length > 0 && created < totalRooms) {
+          const curr = queue.shift();
+          const isStart = (curr.x === sx && curr.y === sy);
+          const room = new Room(curr.x, curr.y, isStart);
+          this.rooms.set(`${curr.x},${curr.y}`, room);
+          created++;
+
+          const directions = [
+            { dir: 'north', dx: 0, dy: -1, opp: 'south' },
+            { dir: 'south', dx: 0, dy: 1, opp: 'north' },
+            { dir: 'east', dx: 1, dy: 0, opp: 'west' },
+            { dir: 'west', dx: -1, dy: 0, opp: 'east' }
+          ].sort(() => Math.random() - 0.5);
+
+          for (const d of directions) {
+            const nx = curr.x + d.dx;
+            const ny = curr.y + d.dy;
+            if (nx >= 0 && nx < this.mapSize && ny >= 0 && ny < this.mapSize) {
+              const nKey = `${nx},${ny}`;
+              if (!visitedCoords.has(nKey) && Math.random() < 0.75 && created + queue.length < totalRooms) {
+                visitedCoords.add(nKey);
+                queue.push({ x: nx, y: ny });
+              }
+            }
+          }
+        }
+
+        // Conecta as portas entre salas adjacentes existentes
+        let roomArray = Array.from(this.rooms.values());
+        roomArray.forEach(room => {
+          const checkNeighbor = (dx, dy, dir, opp) => {
+            const nKey = `${room.rx + dx},${room.ry + dy}`;
+            if (this.rooms.has(nKey)) {
+              room.doors[dir] = true;
+              this.rooms.get(nKey).doors[opp] = true;
+            }
+          };
+          checkNeighbor(0, -1, 'north', 'south');
+          checkNeighbor(0, 1, 'south', 'north');
+          checkNeighbor(1, 0, 'east', 'west');
+          checkNeighbor(-1, 0, 'west', 'east');
+        });
+
+        // Regra do PDF: Pelo menos uma a cada três salas geradas deve conter uma "Goela"
+        let goelaCount = 0;
+        const targetGoelas = Math.max(1, Math.ceil(roomArray.length / 3));
+        roomArray.sort(() => Math.random() - 0.5);
+        for (const r of roomArray) {
+          if (!r.isStart && goelaCount < targetGoelas) {
+            r.hasGoela = true;
+            goelaCount++;
+          }
+        }
+
+        // Constrói layouts internos e popula inimigos
+        roomArray.forEach(r => r.buildLayout());
+
+        // Cria a Sala Secreta do Andar Inferior
+        this.secretRoom = new Room(99, 99, false, true);
+        this.secretRoom.buildLayout();
+
+        // Sala Inicial
+        this.currentRoom = this.rooms.get(`${sx},${sy}`);
+        this.currentRoom.visited = true;
+      }
+
+      getRoom(rx, ry) {
+        return this.rooms.get(`${rx},${ry}`) || null;
+      }
+    }
+
+    // --------------------------------------------------------------------------
+    // 5. ENTIDADES: CHARLOTTE, AUTÔMATOS E BOMBAS
+    // --------------------------------------------------------------------------
+    class Charlotte {
+      constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.radius = 16;
+        this.speed = 175;
+        this.facing = { dx: 0, dy: 1 };
+        this.lastMoveDir = { dx: 0, dy: 1 };
+        this.isRecoiling = false;
+        this.recoilVelocity = { x: 0, y: 0 };
+        this.invulnerableTimer = 0;
+      }
+
+      update(dt, input, currentRoom) {
+        if (this.invulnerableTimer > 0) {
+          this.invulnerableTimer -= dt;
+        }
+
+        // Processa Recuo / Dash da Bomba de Propulsão
+        if (this.isRecoiling) {
+          const nextX = this.x + this.recoilVelocity.x * dt;
+          const nextY = this.y + this.recoilVelocity.y * dt;
+
+          this.moveWithCollision(nextX, nextY, currentRoom);
+
+          this.recoilVelocity.x *= 0.88;
+          this.recoilVelocity.y *= 0.88;
+
+          if (Math.hypot(this.recoilVelocity.x, this.recoilVelocity.y) < 20) {
+            this.isRecoiling = false;
+            this.recoilVelocity = { x: 0, y: 0 };
+          }
+          return;
+        }
+
+        // Movimento normal
+        const { dx, dy } = input.getMovementVector();
+        if (dx !== 0 || dy !== 0) {
+          this.lastMoveDir = { dx: Math.sign(dx) || this.lastMoveDir.dx, dy: Math.sign(dy) || this.lastMoveDir.dy };
+
+          const nextX = this.x + dx * this.speed * dt;
+          const nextY = this.y + dy * this.speed * dt;
+
+          this.moveWithCollision(nextX, nextY, currentRoom);
+        }
+
+        // Direcionamento / Mira (Facing)
+        const aim = input.getClampedAimTarget(this.x, this.y);
+        if (aim) {
+          // Olha diretamente para o local do arremesso enquanto mira
+          this.facing = { dx: aim.normDx, dy: aim.normDy };
+        } else if (input.mousePos && input.mousePos.active) {
+          // Vira para o cursor do mouse
+          const toMouseX = input.mousePos.x - this.x;
+          const toMouseY = input.mousePos.y - this.y;
+          const dist = Math.hypot(toMouseX, toMouseY);
+          if (dist > 6) {
+            this.facing = { dx: toMouseX / dist, dy: toMouseY / dist };
+          }
+        } else if (dx !== 0 || dy !== 0) {
+          const moveLen = Math.hypot(dx, dy);
+          if (moveLen > 0.001) {
+            this.facing = { dx: dx / moveLen, dy: dy / moveLen };
+          }
+        }
+      }
+
+      moveWithCollision(targetX, targetY, currentRoom) {
+        let newX = targetX;
+        let newY = this.y;
+
+        if (!this.checkTileCollision(newX, newY, currentRoom)) {
+          this.x = newX;
+        }
+
+        newX = this.x;
+        newY = targetY;
+        if (!this.checkTileCollision(newX, newY, currentRoom)) {
+          this.y = newY;
+        }
+      }
+
+      checkTileCollision(x, y, room) {
+        const left = Math.floor((x - this.radius + 2) / TILE_SIZE);
+        const right = Math.floor((x + this.radius - 2) / TILE_SIZE);
+        const top = Math.floor((y - this.radius + 2) / TILE_SIZE);
+        const bottom = Math.floor((y + this.radius - 2) / TILE_SIZE);
+
+        for (let ty = top; ty <= bottom; ty++) {
+          for (let tx = left; tx <= right; tx++) {
+            if (tx < 0 || tx >= GRID_SIZE || ty < 0 || ty >= GRID_SIZE) return true;
+            const tile = room.grid[ty][tx];
+            if (tile === TILE.WALL || tile === TILE.BREAKABLE || tile === TILE.LOCK_GATE) {
+              return true;
+            }
+          }
+        }
+        return false;
+      }
+
+      applyImpulse(dirX, dirY, distanceTiles) {
+        const speedMagnitude = (distanceTiles * TILE_SIZE) / 0.18;
+        this.isRecoiling = true;
+        this.recoilVelocity = {
+          x: dirX * speedMagnitude,
+          y: dirY * speedMagnitude
+        };
+      }
+    }
+
+    class Automaton {
+      constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.radius = 15;
+        this.speed = 95;
+        this.vx = 0;
+        this.vy = 0;
+        this.isRepelled = false;
+        this.repelVelocity = { x: 0, y: 0 };
+        this.pulseAngle = Math.random() * Math.PI * 2;
+      }
+
+      update(dt, player, room) {
+        this.pulseAngle += dt * 5;
+
+        // Se repelido pela Bomba de Propulsão
+        if (this.isRepelled) {
+          const nextX = this.x + this.repelVelocity.x * dt;
+          const nextY = this.y + this.repelVelocity.y * dt;
+
+          this.moveWithCollision(nextX, nextY, room);
+
+          this.repelVelocity.x *= 0.88;
+          this.repelVelocity.y *= 0.88;
+
+          if (Math.hypot(this.repelVelocity.x, this.repelVelocity.y) < 15) {
+            this.isRepelled = false;
+            this.repelVelocity = { x: 0, y: 0 };
+          }
+          return;
+        }
+
+        // Perseguição desviando de paredes
+        const dx = player.x - this.x;
+        const dy = player.y - this.y;
+        const dist = Math.hypot(dx, dy);
+
+        if (dist > 2) {
+          let desiredVx = (dx / dist) * this.speed;
+          let desiredVy = (dy / dist) * this.speed;
+
+          let nextX = this.x + desiredVx * dt;
+          let nextY = this.y + desiredVy * dt;
+
+          if (!this.checkTileCollision(nextX, nextY, room)) {
+            this.x = nextX;
+            this.y = nextY;
+          } else {
+            // Desvio inteligente
+            const altX = this.x + desiredVx * dt;
+            if (!this.checkTileCollision(altX, this.y, room)) {
+              this.x = altX;
+            } else {
+              const altY = this.y + desiredVy * dt;
+              if (!this.checkTileCollision(this.x, altY, room)) {
+                this.y = altY;
+              }
+            }
+          }
+        }
+      }
+
+      moveWithCollision(targetX, targetY, room) {
+        if (!this.checkTileCollision(targetX, this.y, room)) {
+          this.x = targetX;
+        }
+        if (!this.checkTileCollision(this.x, targetY, room)) {
+          this.y = targetY;
+        }
+      }
+
+      checkTileCollision(x, y, room) {
+        const left = Math.floor((x - this.radius) / TILE_SIZE);
+        const right = Math.floor((x + this.radius) / TILE_SIZE);
+        const top = Math.floor((y - this.radius) / TILE_SIZE);
+        const bottom = Math.floor((y + this.radius) / TILE_SIZE);
+
+        for (let ty = top; ty <= bottom; ty++) {
+          for (let tx = left; tx <= right; tx++) {
+            if (tx < 0 || tx >= GRID_SIZE || ty < 0 || ty >= GRID_SIZE) return true;
+            const tile = room.grid[ty][tx];
+            if (tile === TILE.WALL || tile === TILE.BREAKABLE || tile === TILE.LOCK_GATE) {
+              return true;
+            }
+          }
+        }
+        return false;
+      }
+
+      applyRepulsion(dirX, dirY, strength) {
+        this.isRepelled = true;
+        this.repelVelocity = {
+          x: dirX * strength,
+          y: dirY * strength
+        };
+      }
+    }
+
+    class TimedBomb {
+      constructor(gridX, gridY) {
+        this.gridX = gridX;
+        this.gridY = gridY;
+        this.x = gridX * TILE_SIZE + TILE_SIZE / 2;
+        this.y = gridY * TILE_SIZE + TILE_SIZE / 2;
+        this.timer = 3.0; // 3 segundos conforme especificação
+        this.blinkTimer = 0;
+        this.isBlinkingRed = false;
+        this.nextBeep = 1.0;
+      }
+
+      update(dt) {
+        this.timer -= dt;
+        this.blinkTimer += dt * (this.timer < 1.0 ? 12 : 6);
+        this.isBlinkingRed = Math.floor(this.blinkTimer) % 2 === 0;
+
+        if (this.timer <= this.nextBeep) {
+          sound.playTimedBeep(this.timer < 1.0 ? 1.4 : 1.0);
+          this.nextBeep -= (this.timer < 1.0 ? 0.25 : 0.6);
+        }
+
+        return this.timer <= 0;
+      }
+    }
+
+    class FlyingBomb {
+      constructor(startX, startY, targetX, targetY, type) {
+        this.startX = startX;
+        this.startY = startY;
+        this.targetX = Math.max(TILE_SIZE * 0.8, Math.min(WORLD_WIDTH - TILE_SIZE * 0.8, targetX));
+        this.targetY = Math.max(TILE_SIZE * 0.8, Math.min(WORLD_HEIGHT - TILE_SIZE * 0.8, targetY));
+        this.type = type;
+        this.flightDuration = 0.32;
+        this.elapsed = 0;
+        this.arcHeight = 45;
+        this.rotation = 0;
+      }
+
+      update(dt) {
+        this.elapsed += dt;
+        this.rotation += dt * 18;
+        return this.elapsed >= this.flightDuration;
+      }
+
+      getPositions() {
+        const p = Math.min(1.0, this.elapsed / this.flightDuration);
+        const groundX = this.startX + (this.targetX - this.startX) * p;
+        const groundY = this.startY + (this.targetY - this.startY) * p;
+        const heightZ = Math.sin(p * Math.PI) * this.arcHeight;
+        return { groundX, groundY, renderY: groundY - heightZ, heightZ, progress: p };
+      }
+
+      draw(ctx) {
+        const { groundX, groundY, renderY, heightZ } = this.getPositions();
+
+        // Sombra no chão projetada
+        ctx.save();
+        const shadowScale = Math.max(0.35, 1 - (heightZ / 70));
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
+        ctx.beginPath();
+        ctx.ellipse(groundX, groundY, 11 * shadowScale, 6 * shadowScale, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Bomba voando e girando no ar
+        ctx.translate(groundX, renderY);
+        ctx.rotate(this.rotation);
+
+        if (this.type === BOMB_TYPE.IMPACT) {
+          ctx.fillStyle = '#ff5252';
+          ctx.fillRect(-8, -8, 16, 16);
+          ctx.strokeStyle = '#ffffff';
+          ctx.lineWidth = 1.5;
+          ctx.strokeRect(-8, -8, 16, 16);
+        } else if (this.type === BOMB_TYPE.PROPULSOR) {
+          ctx.fillStyle = '#00e5ff';
+          ctx.fillRect(-9, -9, 18, 18);
+          ctx.strokeStyle = '#ffffff';
+          ctx.lineWidth = 1.5;
+          ctx.strokeRect(-9, -9, 18, 18);
+        } else {
+          ctx.fillStyle = '#ffca28';
+          ctx.fillRect(-9, -9, 18, 18);
+          ctx.strokeStyle = '#ffffff';
+          ctx.lineWidth = 1.5;
+          ctx.strokeRect(-9, -9, 18, 18);
+        }
+        ctx.restore();
+      }
+    }
+
+    // --------------------------------------------------------------------------
+    // 6. SISTEMA DE PARTÍCULAS E EFEITOS VISUAIS (VFX)
+    // --------------------------------------------------------------------------
+    class Particle {
+      constructor(x, y, vx, vy, color, size, life) {
+        this.x = x;
+        this.y = y;
+        this.vx = vx;
+        this.vy = vy;
+        this.color = color;
+        this.size = size;
+        this.maxLife = life;
+        this.life = life;
+      }
+
+      update(dt) {
+        this.x += this.vx * dt;
+        this.y += this.vy * dt;
+        this.vx *= 0.94;
+        this.vy *= 0.94;
+        this.life -= dt;
+      }
+
+      draw(ctx) {
+        const alpha = Math.max(0, this.life / this.maxLife);
+        ctx.save();
+        ctx.globalAlpha = alpha;
+        ctx.fillStyle = this.color;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size * alpha, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+
+    class ExplosionBlast {
+      constructor(x, y, radius, isCross = false) {
+        this.x = x;
+        this.y = y;
+        this.radius = radius;
+        this.isCross = isCross;
+        this.life = 0.28;
+        this.maxLife = 0.28;
+      }
+
+      update(dt) {
+        this.life -= dt;
+      }
+
+      draw(ctx) {
+        const progress = 1 - (this.life / this.maxLife);
+        ctx.save();
+        ctx.globalAlpha = (1 - progress) * 0.9;
+
+        if (this.isCross) {
+          ctx.fillStyle = '#ffca28';
+          const halfThick = TILE_SIZE * 0.45;
+          const extent = this.radius * progress;
+          ctx.fillRect(this.x - extent, this.y - halfThick, extent * 2, halfThick * 2);
+          ctx.fillRect(this.x - halfThick, this.y - extent, halfThick * 2, extent * 2);
+          ctx.fillStyle = '#ffffff';
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, 16 * (1 - progress), 0, Math.PI * 2);
+          ctx.fill();
+        } else {
+          ctx.strokeStyle = '#ff7043';
+          ctx.lineWidth = 6 * (1 - progress);
+          ctx.fillStyle = 'rgba(255, 87, 34, 0.45)';
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.radius * progress, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.stroke();
+
+          ctx.fillStyle = '#ffffff';
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, (this.radius * 0.4) * (1 - progress), 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.restore();
+      }
+    }
+
+    // --------------------------------------------------------------------------
+    // 7. MOTOR PRINCIPAL DO JOGO (Game Engine & Loop)
+    // --------------------------------------------------------------------------
+    class GameEngine {
+      constructor() {
+        this.canvas = document.getElementById('game-canvas');
+        this.ctx = this.canvas.getContext('2d');
+        this.minimapCanvas = document.getElementById('minimap-canvas');
+        this.miniCtx = this.minimapCanvas.getContext('2d');
+
+        this.input = new InputManager(this.canvas);
+        this.map = new MapManager();
+
+        const mid = Math.floor(GRID_SIZE / 2);
+        this.player = new Charlotte(
+          mid * TILE_SIZE + TILE_SIZE / 2,
+          mid * TILE_SIZE + TILE_SIZE / 2
+        );
+
+        this.timedBombs = [];
+        this.flyingBombs = [];
+        this.particles = [];
+        this.blasts = [];
+
+        this.fadeAlpha = 0;
+        this.fadeState = 'none';
+        this.pendingTransition = null;
+
+        this.rewindGlitchTimer = 0;
+
+        this.lastTime = performance.now();
+        this.resizeCanvas();
+        window.addEventListener('resize', () => this.resizeCanvas());
+
+        this.loop = this.loop.bind(this);
+        requestAnimationFrame(this.loop);
+      }
+
+      resizeCanvas() {
+        const availableHeight = window.innerHeight;
+        const availableWidth = window.innerWidth;
+        const isMobile = window.innerWidth <= 768;
+
+        let targetSize = Math.min(availableWidth - 32, availableHeight - (isMobile ? 180 : 80));
+        targetSize = Math.max(300, Math.min(targetSize, 600));
+
+        this.canvas.style.width = `${targetSize}px`;
+        this.canvas.style.height = `${targetSize}px`;
+      }
+
+      loop(now) {
+        const dt = Math.min((now - this.lastTime) / 1000, 0.05);
+        this.lastTime = now;
+
+        this.update(dt);
+        this.render();
+
+        requestAnimationFrame(this.loop);
+      }
+
+      update(dt) {
+        if (this.fadeState === 'out') {
+          this.fadeAlpha += dt * 4.0;
+          if (this.fadeAlpha >= 1) {
+            this.fadeAlpha = 1;
+            if (this.pendingTransition) {
+              this.pendingTransition();
+              this.pendingTransition = null;
+            }
+            this.fadeState = 'in';
+          }
+          return;
+        } else if (this.fadeState === 'in') {
+          this.fadeAlpha -= dt * 4.0;
+          if (this.fadeAlpha <= 0) {
+            this.fadeAlpha = 0;
+            this.fadeState = 'none';
+          }
+        }
+
+        const room = this.map.currentRoom;
+
+        // 1. Arremesso de Bomba por Clique e Arraste
+        const throwAction = this.input.consumeThrow();
+        if (throwAction) {
+          const aim = this.input.getClampedAimTarget(this.player.x, this.player.y) || {
+            targetX: throwAction.targetX,
+            targetY: throwAction.targetY
+          };
+          this.launchThrownBomb(aim.targetX, aim.targetY, throwAction.bombType);
+        }
+
+        // Lançamento rápido frontal (Barra de Espaço ou Botão de Ação)
+        if (this.input.consumeAction()) {
+          this.handleQuickThrowAction();
+        }
+
+        // 2. Movimentação de Charlotte (WASD / D-Pad)
+        this.player.update(dt, this.input, room);
+
+        // 3. Atualização das Bombas em Voo (Arremessadas)
+        for (let i = this.flyingBombs.length - 1; i >= 0; i--) {
+          const bomb = this.flyingBombs[i];
+          if (bomb.update(dt)) {
+            this.landThrownBomb(bomb);
+            this.flyingBombs.splice(i, 1);
+          }
+        }
+
+        // 4. Bombas Temporizadas no Chão
+        for (let i = this.timedBombs.length - 1; i >= 0; i--) {
+          const bomb = this.timedBombs[i];
+          if (bomb.update(dt)) {
+            this.detonateTimedBomb(bomb);
+            this.timedBombs.splice(i, 1);
+          }
+        }
+
+        // Inimigos
+        for (let i = room.enemies.length - 1; i >= 0; i--) {
+          const enemy = room.enemies[i];
+          enemy.update(dt, this.player, room);
+
+          // Contato com Charlotte = TEMPO REBOBINA
+          const distToPlayer = Math.hypot(enemy.x - this.player.x, enemy.y - this.player.y);
+          if (distToPlayer < enemy.radius + this.player.radius && this.player.invulnerableTimer <= 0) {
+            this.triggerTimeRewind();
+            break;
+          }
+        }
+
+        // Portas / Transições
+        this.checkRoomTransitions();
+
+        // Queda no Buraco Preto (Andar Inferior Secreto)
+        this.checkHoleFall();
+
+        // Escada da sala secreta
+        this.checkSecretLadder();
+
+        // Lockdown
+        room.updateLockdownState();
+
+        // Partículas e Blasts
+        for (let i = this.particles.length - 1; i >= 0; i--) {
+          this.particles[i].update(dt);
+          if (this.particles[i].life <= 0) this.particles.splice(i, 1);
+        }
+        for (let i = this.blasts.length - 1; i >= 0; i--) {
+          this.blasts[i].update(dt);
+          if (this.blasts[i].life <= 0) this.blasts.splice(i, 1);
+        }
+
+        if (this.rewindGlitchTimer > 0) {
+          this.rewindGlitchTimer -= dt;
+        }
+
+        this.updateHUD();
+      }
+
+      launchThrownBomb(targetX, targetY, bombType) {
+        sound.playThrowWhoosh();
+        const clampedX = Math.max(TILE_SIZE * 0.8, Math.min(WORLD_WIDTH - TILE_SIZE * 0.8, targetX));
+        const clampedY = Math.max(TILE_SIZE * 0.8, Math.min(WORLD_HEIGHT - TILE_SIZE * 0.8, targetY));
+        this.flyingBombs.push(new FlyingBomb(this.player.x, this.player.y, clampedX, clampedY, bombType));
+      }
+
+      handleQuickThrowAction() {
+        // Lançamento rápido para frente (ou pés) na direção que Charlotte olha
+        const throwDist = TILE_SIZE * 2.2;
+        const targetX = this.player.x + this.player.facing.dx * throwDist;
+        const targetY = this.player.y + this.player.facing.dy * throwDist;
+        this.launchThrownBomb(targetX, targetY, this.input.selectedBomb);
+      }
+
+      landThrownBomb(bomb) {
+        const gridX = Math.floor(bomb.targetX / TILE_SIZE);
+        const gridY = Math.floor(bomb.targetY / TILE_SIZE);
+
+        if (bomb.type === BOMB_TYPE.IMPACT) {
+          sound.playImpactExplosion();
+          this.detonateImpact(bomb.targetX, bomb.targetY, gridX, gridY);
+        } else if (bomb.type === BOMB_TYPE.PROPULSOR) {
+          sound.playPropulsorSteam();
+          this.detonatePropulsor(bomb.targetX, bomb.targetY);
+        } else if (bomb.type === BOMB_TYPE.TIMED) {
+          sound.playTimedBeep(1.0);
+          this.timedBombs.push(new TimedBomb(gridX, gridY));
+        }
+      }
+
+      detonateImpact(cx, cy, gridX, gridY) {
+        const room = this.map.currentRoom;
+        const blastRadius = TILE_SIZE * 1.5;
+        this.blasts.push(new ExplosionBlast(cx, cy, blastRadius, false));
+        this.spawnSparks(cx, cy, '#ff5252', 25);
+
+        // Destrói blocos quebráveis no raio 3x3
+        for (let dy = -1; dy <= 1; dy++) {
+          for (let dx = -1; dx <= 1; dx++) {
+            const tx = gridX + dx;
+            const ty = gridY + dy;
+            if (tx >= 0 && tx < GRID_SIZE && ty >= 0 && ty < GRID_SIZE) {
+              if (room.grid[ty][tx] === TILE.BREAKABLE) {
+                room.grid[ty][tx] = TILE.EMPTY;
+                this.spawnDebris(tx * TILE_SIZE + TILE_SIZE / 2, ty * TILE_SIZE + TILE_SIZE / 2);
+              }
+            }
+          }
+        }
+
+        // Destrói autômatos no raio de 1 bloco ao redor
+        for (let i = room.enemies.length - 1; i >= 0; i--) {
+          const enemy = room.enemies[i];
+          const dist = Math.hypot(enemy.x - cx, enemy.y - cy);
+          if (dist <= blastRadius + enemy.radius) {
+            this.spawnEnemyDeath(enemy.x, enemy.y);
+            room.enemies.splice(i, 1);
+          }
+        }
+      }
+
+      detonatePropulsor(cx, cy) {
+        const room = this.map.currentRoom;
+        this.blasts.push(new ExplosionBlast(cx, cy, TILE_SIZE * 2.2, false));
+        this.spawnSparks(cx, cy, '#00e5ff', 30);
+
+        // Se Charlotte estiver no raio da explosão, sofre recuo (dash) para longe
+        const pDist = Math.hypot(this.player.x - cx, this.player.y - cy);
+        if (pDist < TILE_SIZE * 2.8) {
+          let pushX = this.player.x - cx;
+          let pushY = this.player.y - cy;
+          if (Math.hypot(pushX, pushY) < 0.001) {
+            pushX = -this.player.facing.dx;
+            pushY = -this.player.facing.dy;
+          }
+          const norm = Math.hypot(pushX, pushY) || 1;
+          this.player.applyImpulse(pushX / norm, pushY / norm, 3.0);
+        }
+
+        // Empurra inimigos para longe (não causa dano, apenas repulsão)
+        const repelRadius = TILE_SIZE * 3.5;
+        room.enemies.forEach(enemy => {
+          const dx = enemy.x - cx;
+          const dy = enemy.y - cy;
+          const dist = Math.hypot(dx, dy);
+          if (dist < repelRadius) {
+            const nx = dist > 0.001 ? dx / dist : 1;
+            const ny = dist > 0.001 ? dy / dist : 0;
+            enemy.applyRepulsion(nx, ny, 380);
+          }
+        });
+      }
+
+      detonateTimedBomb(bomb) {
+        const room = this.map.currentRoom;
+        sound.playBigTimedExplosion();
+        const bx = bomb.x;
+        const by = bomb.y;
+        const crossRange = 2; // Cruz de 2 blocos
+
+        this.blasts.push(new ExplosionBlast(bx, by, TILE_SIZE * (crossRange + 0.5), true));
+        this.spawnSparks(bx, by, '#ffca28', 40);
+
+        const affectedTiles = [{ x: bomb.gridX, y: bomb.gridY }];
+        const dirs = [{ dx: 1, dy: 0 }, { dx: -1, dy: 0 }, { dx: 0, dy: 1 }, { dx: 0, dy: -1 }];
+
+        dirs.forEach(d => {
+          for (let step = 1; step <= crossRange; step++) {
+            const tx = bomb.gridX + d.dx * step;
+            const ty = bomb.gridY + d.dy * step;
+            if (tx >= 0 && tx < GRID_SIZE && ty >= 0 && ty < GRID_SIZE) {
+              affectedTiles.push({ x: tx, y: ty });
+              if (room.grid[ty][tx] === TILE.WALL) break;
+            }
+          }
+        });
+
+        // REGRA DE VERTICALIDADE:
+        // Se a Bomba Temporizada explodir sobre Chão Quebrável (marrom), abre um BURACO PRETO
+        affectedTiles.forEach(tile => {
+          const currentTile = room.grid[tile.y][tile.x];
+          if (currentTile === TILE.BREAKABLE) {
+            room.grid[tile.y][tile.x] = TILE.HOLE;
+            room.blackHoles.push({ x: tile.x, y: tile.y });
+            this.spawnDebris(tile.x * TILE_SIZE + TILE_SIZE / 2, tile.y * TILE_SIZE + TILE_SIZE / 2);
+          }
+        });
+
+        // Destrói Inimigos na cruz
+        for (let i = room.enemies.length - 1; i >= 0; i--) {
+          const enemy = room.enemies[i];
+          const ex = enemy.x;
+          const ey = enemy.y;
+
+          let hit = false;
+          for (const tile of affectedTiles) {
+            const tileCenterX = tile.x * TILE_SIZE + TILE_SIZE / 2;
+            const tileCenterY = tile.y * TILE_SIZE + TILE_SIZE / 2;
+            if (Math.hypot(ex - tileCenterX, ey - tileCenterY) < TILE_SIZE * 0.85) {
+              hit = true;
+              break;
+            }
+          }
+
+          if (hit) {
+            this.spawnEnemyDeath(enemy.x, enemy.y);
+            room.enemies.splice(i, 1);
+          }
+        }
+      }
+
+      checkRoomTransitions() {
+        if (this.fadeState !== 'none') return;
+        const room = this.map.currentRoom;
+        if (room.isLockdown) return;
+
+        const mid = Math.floor(GRID_SIZE / 2);
+        const px = this.player.x;
+        const py = this.player.y;
+
+        if (room.doors.north && py < TILE_SIZE * 0.5 && Math.abs(px - (mid * TILE_SIZE + TILE_SIZE / 2)) < TILE_SIZE) {
+          this.switchRoom(room.rx, room.ry - 1, 'north');
+        } else if (room.doors.south && py > WORLD_HEIGHT - TILE_SIZE * 0.5 && Math.abs(px - (mid * TILE_SIZE + TILE_SIZE / 2)) < TILE_SIZE) {
+          this.switchRoom(room.rx, room.ry + 1, 'south');
+        } else if (room.doors.west && px < TILE_SIZE * 0.5 && Math.abs(py - (mid * TILE_SIZE + TILE_SIZE / 2)) < TILE_SIZE) {
+          this.switchRoom(room.rx - 1, room.ry, 'west');
+        } else if (room.doors.east && px > WORLD_WIDTH - TILE_SIZE * 0.5 && Math.abs(py - (mid * TILE_SIZE + TILE_SIZE / 2)) < TILE_SIZE) {
+          this.switchRoom(room.rx + 1, room.ry, 'east');
+        }
+      }
+
+      switchRoom(targetRx, targetRy, exitDirection) {
+        const nextRoom = this.map.getRoom(targetRx, targetRy);
+        if (!nextRoom) return;
+
+        this.fadeState = 'out';
+        this.pendingTransition = () => {
+          this.map.currentRoom = nextRoom;
+          nextRoom.visited = true;
+
+          const mid = Math.floor(GRID_SIZE / 2);
+          const offset = TILE_SIZE * 1.5;
+
+          if (exitDirection === 'north') {
+            this.player.x = mid * TILE_SIZE + TILE_SIZE / 2;
+            this.player.y = WORLD_HEIGHT - offset;
+          } else if (exitDirection === 'south') {
+            this.player.x = mid * TILE_SIZE + TILE_SIZE / 2;
+            this.player.y = offset;
+          } else if (exitDirection === 'west') {
+            this.player.x = WORLD_WIDTH - offset;
+            this.player.y = mid * TILE_SIZE + TILE_SIZE / 2;
+          } else if (exitDirection === 'east') {
+            this.player.x = offset;
+            this.player.y = mid * TILE_SIZE + TILE_SIZE / 2;
+          }
+
+          this.timedBombs = [];
+        };
+      }
+
+      checkHoleFall() {
+        if (this.fadeState !== 'none') return;
+        const room = this.map.currentRoom;
+        if (room.isSecret) return;
+
+        const pGridX = Math.floor(this.player.x / TILE_SIZE);
+        const pGridY = Math.floor(this.player.y / TILE_SIZE);
+
+        if (room.grid[pGridY][pGridX] === TILE.HOLE) {
+          this.fadeState = 'out';
+          sound.playChuteDeposit();
+          showToast('QUEDA: ANDAR INFERIOR SECRETO!');
+
+          this.pendingTransition = () => {
+            this.map.secretRoom.returnRoom = room;
+            this.map.currentRoom = this.map.secretRoom;
+
+            this.player.x = Math.floor(GRID_SIZE / 2) * TILE_SIZE + TILE_SIZE / 2;
+            this.player.y = TILE_SIZE * 2;
+          };
+        }
+      }
+
+      checkSecretLadder() {
+        if (this.fadeState !== 'none') return;
+        const room = this.map.currentRoom;
+        if (!room.isSecret) return;
+
+        const pGridX = Math.floor(this.player.x / TILE_SIZE);
+        const pGridY = Math.floor(this.player.y / TILE_SIZE);
+
+        if (room.grid[pGridY][pGridX] === TILE.SECRET_LADDER) {
+          this.fadeState = 'out';
+          sound.playUnlockSound();
+          showToast('RETORNANDO À SUPERFÍCIE...');
+
+          this.pendingTransition = () => {
+            const returnRoom = room.returnRoom || this.map.rooms.get(`${this.map.startRoomCoords.x},${this.map.startRoomCoords.y}`);
+            this.map.currentRoom = returnRoom;
+            this.player.x = Math.floor(GRID_SIZE / 2) * TILE_SIZE + TILE_SIZE / 2;
+            this.player.y = Math.floor(GRID_SIZE / 2) * TILE_SIZE + TILE_SIZE / 2;
+          };
+        }
+      }
+
+      triggerTimeRewind() {
+        sound.playRewindGlitch();
+        this.rewindGlitchTimer = 0.45;
+        this.player.invulnerableTimer = 1.5;
+        showToast('TEMPO REBOBINADO!');
+
+        this.fadeState = 'out';
+        this.pendingTransition = () => {
+          const startRoom = this.map.rooms.get(`${this.map.startRoomCoords.x},${this.map.startRoomCoords.y}`);
+          this.map.currentRoom = startRoom;
+
+          const mid = Math.floor(GRID_SIZE / 2);
+          this.player.x = mid * TILE_SIZE + TILE_SIZE / 2;
+          this.player.y = mid * TILE_SIZE + TILE_SIZE / 2;
+          this.player.isRecoiling = false;
+        };
+      }
+
+      spawnSparks(x, y, color, count) {
+        for (let i = 0; i < count; i++) {
+          const angle = Math.random() * Math.PI * 2;
+          const speed = Math.random() * 180 + 40;
+          this.particles.push(new Particle(
+            x, y,
+            Math.cos(angle) * speed,
+            Math.sin(angle) * speed,
+            color,
+            Math.random() * 4 + 2,
+            Math.random() * 0.4 + 0.2
+          ));
+        }
+      }
+
+      spawnDebris(x, y) {
+        for (let i = 0; i < 14; i++) {
+          const angle = Math.random() * Math.PI * 2;
+          const speed = Math.random() * 120 + 30;
+          this.particles.push(new Particle(
+            x, y,
+            Math.cos(angle) * speed,
+            Math.sin(angle) * speed,
+            '#8d6e63',
+            Math.random() * 5 + 3,
+            Math.random() * 0.5 + 0.3
+          ));
+        }
+      }
+
+      spawnEnemyDeath(x, y) {
+        for (let i = 0; i < 20; i++) {
+          const angle = Math.random() * Math.PI * 2;
+          const speed = Math.random() * 160 + 50;
+          this.particles.push(new Particle(
+            x, y,
+            Math.cos(angle) * speed,
+            Math.sin(angle) * speed,
+            '#ef5350',
+            Math.random() * 4 + 2,
+            Math.random() * 0.4 + 0.2
+          ));
+        }
+      }
+
+      render() {
+        const ctx = this.ctx;
+        const room = this.map.currentRoom;
+
+        ctx.clearRect(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
+
+        // Chão base
+        ctx.fillStyle = room.isSecret ? '#141820' : '#1c212a';
+        ctx.fillRect(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
+
+        // Grade arquitetônica sutil
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.03)';
+        ctx.lineWidth = 1;
+        for (let i = 0; i <= GRID_SIZE; i++) {
+          ctx.beginPath();
+          ctx.moveTo(i * TILE_SIZE, 0);
+          ctx.lineTo(i * TILE_SIZE, WORLD_HEIGHT);
+          ctx.stroke();
+
+          ctx.beginPath();
+          ctx.moveTo(0, i * TILE_SIZE);
+          ctx.lineTo(WORLD_WIDTH, i * TILE_SIZE);
+          ctx.stroke();
+        }
+
+        const now = performance.now() / 1000;
+        for (let y = 0; y < GRID_SIZE; y++) {
+          for (let x = 0; x < GRID_SIZE; x++) {
+            const tile = room.grid[y][x];
+            const px = x * TILE_SIZE;
+            const py = y * TILE_SIZE;
+
+            if (tile === TILE.WALL) {
+              // Paredes Fixas (Indestrutíveis): Quadrados Cinza Escuro
+              ctx.fillStyle = '#262c36';
+              ctx.fillRect(px, py, TILE_SIZE, TILE_SIZE);
+              ctx.strokeStyle = '#394251';
+              ctx.lineWidth = 2;
+              ctx.strokeRect(px + 1, py + 1, TILE_SIZE - 2, TILE_SIZE - 2);
+            } else if (tile === TILE.BREAKABLE) {
+              // Chão/Blocos Quebráveis: Quadrados Marrons
+              ctx.fillStyle = '#795548';
+              ctx.fillRect(px, py, TILE_SIZE, TILE_SIZE);
+              ctx.strokeStyle = '#5d4037';
+              ctx.lineWidth = 2;
+              ctx.strokeRect(px + 2, py + 2, TILE_SIZE - 4, TILE_SIZE - 4);
+              ctx.beginPath();
+              ctx.moveTo(px + 8, py + 8);
+              ctx.lineTo(px + TILE_SIZE - 10, py + TILE_SIZE - 10);
+              ctx.stroke();
+            } else if (tile === TILE.LOCK_GATE) {
+              // Lockdown: Blocos Vermelhos Piscantes
+              const pulse = (Math.sin(now * 10) + 1) / 2;
+              ctx.fillStyle = `rgba(239, 83, 80, ${0.4 + pulse * 0.6})`;
+              ctx.fillRect(px, py, TILE_SIZE, TILE_SIZE);
+              ctx.strokeStyle = '#ff1744';
+              ctx.lineWidth = 2;
+              ctx.strokeRect(px + 2, py + 2, TILE_SIZE - 4, TILE_SIZE - 4);
+
+              ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+              ctx.beginPath();
+              ctx.moveTo(px + 6, py + TILE_SIZE - 6);
+              ctx.lineTo(px + TILE_SIZE - 6, py + 6);
+              ctx.stroke();
+            } else if (tile === TILE.HOLE) {
+              // Buraco Preto aberto no chão
+              ctx.fillStyle = '#08090c';
+              ctx.fillRect(px, py, TILE_SIZE, TILE_SIZE);
+              ctx.strokeStyle = 'rgba(0, 229, 255, 0.3)';
+              ctx.lineWidth = 2;
+              ctx.strokeRect(px + 2, py + 2, TILE_SIZE - 4, TILE_SIZE - 4);
+
+              ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+              ctx.beginPath();
+              ctx.arc(px + TILE_SIZE / 2, py + TILE_SIZE / 2, 10, 0, Math.PI * 2);
+              ctx.stroke();
+            } else if (tile === TILE.GOELA) {
+              // Goela (Depósito): Círculo Verde Escuro
+              ctx.fillStyle = '#1b5e20';
+              ctx.beginPath();
+              ctx.arc(px + TILE_SIZE / 2, py + TILE_SIZE / 2, TILE_SIZE * 0.42, 0, Math.PI * 2);
+              ctx.fill();
+              ctx.strokeStyle = '#4caf50';
+              ctx.lineWidth = 3;
+              ctx.stroke();
+
+              ctx.fillStyle = '#0d3311';
+              ctx.beginPath();
+              ctx.arc(px + TILE_SIZE / 2, py + TILE_SIZE / 2, 8, 0, Math.PI * 2);
+              ctx.fill();
+            } else if (tile === TILE.SECRET_LADDER) {
+              // Escada de retorno da sala secreta
+              ctx.fillStyle = '#37474f';
+              ctx.fillRect(px + 8, py, TILE_SIZE - 16, TILE_SIZE);
+              ctx.strokeStyle = '#90a4ae';
+              ctx.lineWidth = 3;
+              for (let ly = 6; ly < TILE_SIZE; ly += 8) {
+                ctx.beginPath();
+                ctx.moveTo(px + 10, py + ly);
+                ctx.lineTo(px + TILE_SIZE - 10, py + ly);
+                ctx.stroke();
+              }
+            }
+          }
+        }
+
+        // Bombas Temporizadas
+        this.timedBombs.forEach(bomb => {
+          ctx.save();
+          // Quadrado Amarelo
+          ctx.fillStyle = bomb.isBlinkingRed ? '#ef5350' : '#ffca28';
+          ctx.fillRect(bomb.x - 12, bomb.y - 12, 24, 24);
+          ctx.strokeStyle = '#ffffff';
+          ctx.lineWidth = 2;
+          ctx.strokeRect(bomb.x - 12, bomb.y - 12, 24, 24);
+
+          ctx.fillStyle = '#000000';
+          ctx.font = 'bold 12px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(Math.ceil(bomb.timer), bomb.x, bomb.y);
+          ctx.restore();
+        });
+
+        // Inimigos (Autômatos: Círculos Vermelhos)
+        room.enemies.forEach(enemy => {
+          ctx.save();
+          const pulse = (Math.sin(enemy.pulseAngle) + 1) / 2;
+          ctx.fillStyle = '#ef5350';
+          ctx.beginPath();
+          ctx.arc(enemy.x, enemy.y, enemy.radius, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.strokeStyle = '#b71c1c';
+          ctx.lineWidth = 2;
+          ctx.stroke();
+
+          ctx.fillStyle = `rgba(255, 205, 210, ${0.4 + pulse * 0.6})`;
+          ctx.beginPath();
+          ctx.arc(enemy.x, enemy.y, 5, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        });
+
+        // Jogador (Charlotte: Círculo Azul)
+        ctx.save();
+        if (this.player.invulnerableTimer > 0 && Math.floor(now * 15) % 2 === 0) {
+          ctx.globalAlpha = 0.4;
+        }
+        ctx.fillStyle = '#29b6f6';
+        ctx.beginPath();
+        ctx.arc(this.player.x, this.player.y, this.player.radius, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.strokeStyle = '#0288d1';
+        ctx.lineWidth = 2.5;
+        ctx.stroke();
+
+        const eyeX = this.player.x + this.player.facing.dx * 8;
+        const eyeY = this.player.y + this.player.facing.dy * 8;
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(eyeX, eyeY, 4, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+
+        // Renderiza Bombas em Voo (Arremessadas)
+        this.flyingBombs.forEach(b => b.draw(ctx));
+
+        // Partículas e Efeitos de Explosão
+        this.particles.forEach(p => p.draw(ctx));
+        this.blasts.forEach(b => b.draw(ctx));
+
+        // Feedback Visual de Mira e Trajetória ao Clicar e Arraste para Jogar Bomba
+        if (this.input.isAiming) {
+          const aim = this.input.getClampedAimTarget(this.player.x, this.player.y);
+          if (aim) {
+            ctx.save();
+            const sx = this.player.x;
+            const sy = this.player.y;
+            const tx = aim.targetX;
+            const ty = aim.targetY;
+            const bombType = this.input.selectedBomb;
+
+            let themeColor = '#ff5252';
+            if (bombType === BOMB_TYPE.PROPULSOR) themeColor = '#00e5ff';
+            if (bombType === BOMB_TYPE.TIMED) themeColor = '#ffca28';
+
+            // Arco parabólico de mira
+            const midX = (sx + tx) / 2;
+            const midY = (sy + ty) / 2 - 35;
+
+            ctx.strokeStyle = themeColor;
+            ctx.lineWidth = 2.5;
+            ctx.setLineDash([5, 5]);
+            ctx.beginPath();
+            ctx.moveTo(sx, sy);
+            ctx.quadraticCurveTo(midX, midY, tx, ty);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Pontos luminosos no arco
+            for (let t = 0.25; t <= 0.75; t += 0.25) {
+              const px = (1 - t) * (1 - t) * sx + 2 * (1 - t) * t * midX + t * t * tx;
+              const py = (1 - t) * (1 - t) * sy + 2 * (1 - t) * t * midY + t * t * ty;
+              ctx.fillStyle = '#ffffff';
+              ctx.beginPath();
+              ctx.arc(px, py, 3, 0, Math.PI * 2);
+              ctx.fill();
+            }
+
+            // Retículo no ponto de aterrissagem
+            ctx.fillStyle = themeColor;
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 2;
+
+            if (bombType === BOMB_TYPE.IMPACT) {
+              ctx.beginPath();
+              ctx.arc(tx, ty, TILE_SIZE * 0.9, 0, Math.PI * 2);
+              ctx.strokeStyle = themeColor;
+              ctx.stroke();
+
+              ctx.beginPath();
+              ctx.arc(tx, ty, 6, 0, Math.PI * 2);
+              ctx.fill();
+            } else if (bombType === BOMB_TYPE.PROPULSOR) {
+              ctx.beginPath();
+              ctx.arc(tx, ty, TILE_SIZE * 1.4, 0, Math.PI * 2);
+              ctx.strokeStyle = 'rgba(0, 229, 255, 0.6)';
+              ctx.stroke();
+
+              ctx.beginPath();
+              ctx.arc(tx, ty, 6, 0, Math.PI * 2);
+              ctx.fill();
+            } else {
+              const arm = TILE_SIZE * 1.2;
+              ctx.strokeStyle = themeColor;
+              ctx.lineWidth = 3;
+              ctx.beginPath();
+              ctx.moveTo(tx - arm, ty);
+              ctx.lineTo(tx + arm, ty);
+              ctx.moveTo(tx, ty - arm);
+              ctx.lineTo(tx, ty + arm);
+              ctx.stroke();
+
+              ctx.beginPath();
+              ctx.arc(tx, ty, 6, 0, Math.PI * 2);
+              ctx.fill();
+            }
+            ctx.restore();
+          }
+        } else if (this.input.mousePos && this.input.mousePos.active) {
+          // Mira sutil do cursor do mouse
+          ctx.save();
+          const mx = this.input.mousePos.x;
+          const my = this.input.mousePos.y;
+          ctx.strokeStyle = 'rgba(41, 182, 246, 0.35)';
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.arc(mx, my, 7, 0, Math.PI * 2);
+          ctx.stroke();
+
+          ctx.beginPath();
+          ctx.moveTo(mx - 10, my);
+          ctx.lineTo(mx + 10, my);
+          ctx.moveTo(mx, my - 10);
+          ctx.lineTo(mx, my + 10);
+          ctx.stroke();
+          ctx.restore();
+        }
+
+        // Efeito Glitch de Rebobinar o Tempo
+        if (this.rewindGlitchTimer > 0) {
+          ctx.save();
+          ctx.fillStyle = 'rgba(0, 229, 255, 0.25)';
+          ctx.fillRect(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
+          ctx.fillStyle = 'rgba(255, 23, 68, 0.25)';
+          ctx.fillRect(Math.random() * 8 - 4, Math.random() * 8 - 4, WORLD_WIDTH, WORLD_HEIGHT);
+          ctx.restore();
+        }
+
+        // Fade Out / In
+        if (this.fadeAlpha > 0) {
+          ctx.save();
+          ctx.fillStyle = `rgba(12, 14, 18, ${this.fadeAlpha})`;
+          ctx.fillRect(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
+          ctx.restore();
+        }
+
+        this.renderMinimap();
+      }
+
+      renderMinimap() {
+        const mctx = this.miniCtx;
+        mctx.clearRect(0, 0, 70, 70);
+
+        const current = this.map.currentRoom;
+        const cell = 12;
+        const margin = 5;
+
+        for (let y = 0; y < this.map.mapSize; y++) {
+          for (let x = 0; x < this.map.mapSize; x++) {
+            const room = this.map.rooms.get(`${x},${y}`);
+            if (room && room.visited) {
+              const mx = margin + x * cell;
+              const my = margin + y * cell;
+
+              if (room === current) {
+                mctx.fillStyle = '#29b6f6';
+              } else if (room.cleared) {
+                mctx.fillStyle = '#455a64';
+              } else {
+                mctx.fillStyle = '#c62828';
+              }
+
+              mctx.fillRect(mx, my, cell - 2, cell - 2);
+
+              if (room.hasGoela) {
+                mctx.fillStyle = '#4caf50';
+                mctx.fillRect(mx + cell / 2 - 2, my + cell / 2 - 2, 3, 3);
+              }
+            }
+          }
+        }
+      }
+
+      updateHUD() {
+        const room = this.map.currentRoom;
+        const coordsEl = document.getElementById('room-coords');
+        const enemyEl = document.getElementById('enemy-counter');
+        const lockdownBanner = document.getElementById('lockdown-banner');
+
+        if (room.isSecret) {
+          coordsEl.textContent = 'ANDAR INFERIOR SECRETO';
+        } else {
+          coordsEl.textContent = `SALA [${room.rx}, ${room.ry}]`;
+        }
+
+        enemyEl.textContent = `INIMIGOS: ${room.enemies.length}`;
+        if (room.enemies.length > 0) {
+          enemyEl.className = 'status-alert';
+        } else {
+          enemyEl.className = 'status-ok';
+        }
+
+        if (room.isLockdown) {
+          lockdownBanner.style.display = 'block';
+        } else {
+          lockdownBanner.style.display = 'none';
+        }
+      }
+    }
+
+    // --------------------------------------------------------------------------
+    // TOAST NOTIFIER HELPER
+    // --------------------------------------------------------------------------
+    let toastTimeout = null;
+    function showToast(msg) {
+      const el = document.getElementById('center-toast');
+      el.textContent = msg;
+      el.classList.add('visible');
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        el.classList.remove('visible');
+      }, 1600);
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      window.game = new GameEngine();
+    });
+  </script>
+</body>
+</html>
