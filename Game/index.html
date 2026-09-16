@@ -1217,15 +1217,24 @@
         this.isRecoiling = false;
         this.recoilVelocity = { x: 0, y: 0 };
         this.invulnerableTimer = 0;
+        this.animTimer = 0;
+        this.animState = 'idle';
+        this.throwAnimTimer = 0;
       }
 
       update(dt, input, currentRoom) {
+        this.animTimer += dt;
+        if (this.throwAnimTimer > 0) {
+          this.throwAnimTimer -= dt;
+        }
+
         if (this.invulnerableTimer > 0) {
           this.invulnerableTimer -= dt;
         }
 
         // Processa Recuo / Dash da Bomba de Propulsão
         if (this.isRecoiling) {
+          this.animState = 'dash';
           const nextX = this.x + this.recoilVelocity.x * dt;
           const nextY = this.y + this.recoilVelocity.y * dt;
 
@@ -1250,6 +1259,11 @@
           const nextY = this.y + dy * this.speed * dt;
 
           this.moveWithCollision(nextX, nextY, currentRoom);
+          this.animState = 'walk';
+        } else if (this.throwAnimTimer > 0 || input.isAiming) {
+          this.animState = 'throw';
+        } else {
+          this.animState = 'idle';
         }
 
         // Direcionamento / Mira (Facing)
@@ -1607,6 +1621,9 @@
           mid * TILE_SIZE + TILE_SIZE / 2
         );
 
+        this.charlloteSprite = new Image();
+        this.charlloteSprite.src = 'Img/charllote_spritesheet_64x64.png';
+
         this.timedBombs = [];
         this.flyingBombs = [];
         this.particles = [];
@@ -1750,6 +1767,7 @@
 
       launchThrownBomb(targetX, targetY, bombType) {
         sound.playThrowWhoosh();
+        this.player.throwAnimTimer = 0.35;
         const clampedX = Math.max(TILE_SIZE * 0.8, Math.min(WORLD_WIDTH - TILE_SIZE * 0.8, targetX));
         const clampedY = Math.max(TILE_SIZE * 0.8, Math.min(WORLD_HEIGHT - TILE_SIZE * 0.8, targetY));
         this.flyingBombs.push(new FlyingBomb(this.player.x, this.player.y, clampedX, clampedY, bombType));
@@ -2202,26 +2220,73 @@
           ctx.restore();
         });
 
-        // Jogador (Charlotte: Círculo Azul)
+        // Jogador (Charlotte: Sprite Animado 64x64 com fallback)
         ctx.save();
         if (this.player.invulnerableTimer > 0 && Math.floor(now * 15) % 2 === 0) {
           ctx.globalAlpha = 0.4;
         }
-        ctx.fillStyle = '#29b6f6';
+
+        // Sombra suave sob os pés
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.35)';
         ctx.beginPath();
-        ctx.arc(this.player.x, this.player.y, this.player.radius, 0, Math.PI * 2);
+        ctx.ellipse(this.player.x, this.player.y + 13, 14, 5, 0, 0, Math.PI * 2);
         ctx.fill();
 
-        ctx.strokeStyle = '#0288d1';
-        ctx.lineWidth = 2.5;
-        ctx.stroke();
+        if (this.charlloteSprite && this.charlloteSprite.complete && this.charlloteSprite.naturalWidth > 0) {
+          let row = 0; // 0: idle
+          let fps = 8;
+          let totalFrames = 10;
 
-        const eyeX = this.player.x + this.player.facing.dx * 8;
-        const eyeY = this.player.y + this.player.facing.dy * 8;
-        ctx.fillStyle = '#ffffff';
-        ctx.beginPath();
-        ctx.arc(eyeX, eyeY, 4, 0, Math.PI * 2);
-        ctx.fill();
+          if (this.player.animState === 'dash') {
+            row = 3; // Dash
+            fps = 14;
+          } else if (this.player.animState === 'throw') {
+            row = 4; // Throw
+            fps = 12;
+          } else if (this.player.animState === 'walk') {
+            row = 1; // Walk
+            fps = 10;
+          } else {
+            row = 0; // Idle
+            fps = 8;
+          }
+
+          let frameIdx = Math.floor(this.player.animTimer * fps) % totalFrames;
+          if (this.player.animState === 'throw' && this.input.isAiming) {
+            frameIdx = 3; // Mantém postura de mira com bomba em mãos
+          }
+
+          ctx.save();
+          ctx.translate(this.player.x, this.player.y);
+          // Espelha horizontalmente quando olha para a esquerda
+          if (this.player.facing.dx < -0.1) {
+            ctx.scale(-1, 1);
+          }
+          // Desenha frame 64x64 centrado nos pés (âncora Y=60 na célula -> offset -44)
+          ctx.drawImage(
+            this.charlloteSprite,
+            frameIdx * 64, row * 64, 64, 64,
+            -32, -44, 64, 64
+          );
+          ctx.restore();
+        } else {
+          // Fallback gracioso
+          ctx.fillStyle = '#29b6f6';
+          ctx.beginPath();
+          ctx.arc(this.player.x, this.player.y, this.player.radius, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.strokeStyle = '#0288d1';
+          ctx.lineWidth = 2.5;
+          ctx.stroke();
+
+          const eyeX = this.player.x + this.player.facing.dx * 8;
+          const eyeY = this.player.y + this.player.facing.dy * 8;
+          ctx.fillStyle = '#ffffff';
+          ctx.beginPath();
+          ctx.arc(eyeX, eyeY, 4, 0, Math.PI * 2);
+          ctx.fill();
+        }
         ctx.restore();
 
         // Renderiza Bombas em Voo (Arremessadas)
