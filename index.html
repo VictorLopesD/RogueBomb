@@ -486,17 +486,9 @@
       <!-- Seleção de Bombas e Botão de Ação -->
       <div class="actions-container">
         <div class="bomb-selectors">
-          <button class="bomb-btn selected" data-bomb="impact" title="1: Bomba de Impacto">
+          <button class="bomb-btn selected" data-bomb="timed" title="3: Bomba Temporizada">
             <span class="icon"></span>
-            <span>IMP</span>
-          </button>
-          <button class="bomb-btn" data-bomb="propulsor" title="2: Bomba de Propulsão">
-            <span class="icon"></span>
-            <span>PROP</span>
-          </button>
-          <button class="bomb-btn" data-bomb="timed" title="3: Bomba Temporizada">
-            <span class="icon"></span>
-            <span>TEMP</span>
+            <span>TEMP <br><span id="ammo-counter">(5)</span></span>
           </button>
         </div>
 
@@ -539,6 +531,18 @@
       constructor() {
         this.ctx = null;
         this.isMuted = false;
+
+        // Background Music
+        this.bgmExplore = new Audio('song/The_Weight_of_Brass.mp3');
+        this.bgmExplore.loop = true;
+        this.bgmExplore.volume = 0.35;
+        
+        this.bgmBattle = new Audio('song/Locked_Gears_and_Steam.mp3');
+        this.bgmBattle.loop = true;
+        this.bgmBattle.volume = 0.35;
+
+        this.currentBgm = null;
+        this.musicStarted = false;
       }
 
       init() {
@@ -550,6 +554,59 @@
         }
         if (this.ctx && this.ctx.state === 'suspended') {
           this.ctx.resume();
+        }
+
+        if (!this.musicStarted) {
+          this.musicStarted = true;
+          this.setMusicMode('explore');
+        }
+      }
+
+      crossfadeMusic(fromAudio, toAudio) {
+        if (!fromAudio && !toAudio) return;
+        if (this.fadeInterval) clearInterval(this.fadeInterval);
+        
+        const duration = 1200; // 1.2 segundos
+        const steps = 30;
+        const stepTime = duration / steps;
+        const maxVol = 0.35;
+        
+        let fromStartVol = fromAudio ? fromAudio.volume : 0;
+        if (toAudio) {
+          if (toAudio.paused) {
+            toAudio.volume = 0;
+            toAudio.play().catch(e => console.warn("Music play blocked:", e));
+          }
+        }
+        
+        let step = 0;
+        this.fadeInterval = setInterval(() => {
+          step++;
+          const progress = step / steps;
+          
+          if (fromAudio) fromAudio.volume = Math.max(0, fromStartVol * (1 - progress));
+          if (toAudio) toAudio.volume = Math.min(maxVol, maxVol * progress);
+          
+          if (step >= steps) {
+            clearInterval(this.fadeInterval);
+            this.fadeInterval = null;
+            if (fromAudio) fromAudio.pause();
+            if (toAudio) toAudio.volume = maxVol;
+          }
+        }, stepTime);
+      }
+
+      setMusicMode(mode) {
+        if (!this.musicStarted) return;
+        
+        if (mode === 'explore') {
+          if (this.currentBgm === this.bgmExplore) return;
+          this.crossfadeMusic(this.bgmBattle, this.bgmExplore);
+          this.currentBgm = this.bgmExplore;
+        } else if (mode === 'battle') {
+          if (this.currentBgm === this.bgmBattle) return;
+          this.crossfadeMusic(this.bgmExplore, this.bgmBattle);
+          this.currentBgm = this.bgmBattle;
         }
       }
 
@@ -852,7 +909,9 @@
       HOLE: 4,            // Buraco preto para andar inferior
       GOELA: 5,           // Duto de depósito (Verde escuro)
       SECRET_LADDER: 6,   // Escada/respiro para retornar da sala secreta
-      GAUNTLET_ITEM: 7    // Pedestal de Upgrade da Manopla Mecânica
+      GAUNTLET_ITEM: 7,   // Pedestal de Upgrade da Manopla Mecânica
+      INVENTOR_NPC: 8,    // NPC do inventor (Safe Room)
+      ARMORY: 9           // Arsenal/armário para modificar roupas/armas (Safe Room)
     };
 
     // Tipos de Bomba
@@ -881,7 +940,7 @@
       constructor(canvas = null) {
         this.canvas = canvas;
         this.keys = {};
-        this.selectedBomb = BOMB_TYPE.IMPACT;
+        this.selectedBomb = BOMB_TYPE.TIMED;
         this.actionTriggered = false;
 
         // Joystick Virtual Dinâmico por Arrasto (Controle Fluido 360°)
@@ -916,9 +975,7 @@
           sound.init(); // Ativa áudio no primeiro input
 
           // Seleção numérica de bombas
-          if (e.key === '1') this.selectBomb(BOMB_TYPE.IMPACT);
-          if (e.key === '2') this.selectBomb(BOMB_TYPE.PROPULSOR);
-          if (e.key === '3') this.selectBomb(BOMB_TYPE.TIMED);
+          if (e.key === '3' || e.key === '1') this.selectBomb(BOMB_TYPE.TIMED);
 
           // Disparo com Barra de Espaço
           if (e.code === 'Space') {
@@ -1121,7 +1178,7 @@
 
         // Scroll do mouse para alternar tipo de bomba
         window.addEventListener('wheel', (e) => {
-          const order = [BOMB_TYPE.IMPACT, BOMB_TYPE.PROPULSOR, BOMB_TYPE.TIMED];
+          const order = [BOMB_TYPE.TIMED];
           let currIdx = order.indexOf(this.selectedBomb);
           if (e.deltaY > 0) {
             currIdx = (currIdx + 1) % order.length;
@@ -1254,6 +1311,11 @@
           return;
         }
 
+        if (this.isStart) {
+          this.buildStartLayout();
+          return;
+        }
+
         // Pilares internos e blocos quebráveis (marrom)
         for (let y = 2; y < GRID_SIZE - 2; y++) {
           for (let x = 2; x < GRID_SIZE - 2; x++) {
@@ -1334,6 +1396,17 @@
         }
       }
 
+      buildStartLayout() {
+        const mid = Math.floor(GRID_SIZE / 2);
+        // Inventor NPC num canto superior esquerdo (exemplo: x=3, y=3)
+        this.grid[3][3] = TILE.INVENTOR_NPC;
+        
+        // Mesa/Armário para Charlotte modificar o arsenal no canto superior direito (ex: x=GRID_SIZE-4, y=3)
+        this.grid[3][GRID_SIZE - 4] = TILE.ARMORY;
+
+        // O resto da sala fica vazio (já é TILE.EMPTY por padrão nas áreas internas)
+      }
+
       findSpawnSpot() {
         const mid = Math.floor(GRID_SIZE / 2);
         for (let tries = 0; tries < 70; tries++) {
@@ -1360,6 +1433,7 @@
           if (!this.isLockdown) {
             this.isLockdown = true;
             sound.playLockdownSound();
+            sound.setMusicMode('battle');
             showToast('LOCKDOWN ATIVADO!');
           }
           // Tranca as passagens de porta com blocos vermelhos piscantes
@@ -1372,6 +1446,7 @@
           this.isLockdown = false;
           this.cleared = true;
           sound.playUnlockSound();
+          sound.setMusicMode('explore');
           showToast('SALA LIBERADA!');
 
           if (this.doors.north) this.grid[0][mid] = TILE.EMPTY;
@@ -1506,6 +1581,9 @@
         this.gauntletLevel = 1; // Nível da Manopla Mecânica (1: 140px, 2: 220px, 3: 300px)
         this.chronoCores = 0;   // Cristais de Chrono Core coletados das caixas
         this.depositedCores = 0; // Cristais depositados na Goela
+        this.maxTimerBombs = 5;
+        this.timerBombs = 5;
+        this.bombRechargeTimer = 0;
       }
 
       getThrowRange() {
@@ -1546,6 +1624,15 @@
 
         if (this.invulnerableTimer > 0) {
           this.invulnerableTimer -= dt;
+        }
+
+        if (this.timerBombs < this.maxTimerBombs) {
+          this.bombRechargeTimer += dt;
+          if (this.bombRechargeTimer >= 3.0) {
+            this.bombRechargeTimer = 0;
+            this.timerBombs++;
+            if (window.game) window.game.updateHUD();
+          }
         }
 
         // Processa Recuo / Dash da Bomba de Propulsão
@@ -2239,6 +2326,11 @@
               this.pendingTransition();
               this.pendingTransition = null;
             }
+            if (this.map.currentRoom && this.map.currentRoom.isLockdown) {
+              sound.setMusicMode('battle');
+            } else {
+              sound.setMusicMode('explore');
+            }
             this.fadeState = 'in';
           }
           return;
@@ -2377,6 +2469,15 @@
       }
 
       launchThrownBomb(targetX, targetY, bombType) {
+        if (bombType === BOMB_TYPE.TIMED) {
+          if (this.player.timerBombs <= 0) {
+            showToast('SEM BOMBAS! AGUARDE RECARGA...');
+            return;
+          }
+          this.player.timerBombs--;
+          this.updateHUD();
+        }
+        
         sound.playThrowWhoosh();
         this.player.throwAnimTimer = 0.35;
         const clampedX = Math.max(TILE_SIZE * 0.8, Math.min(WORLD_WIDTH - TILE_SIZE * 0.8, targetX));
@@ -3002,6 +3103,41 @@
               ctx.beginPath();
               ctx.arc(px + TILE_SIZE / 2, py + TILE_SIZE / 2, 4, 0, Math.PI * 2);
               ctx.fill();
+            } else if (tile === TILE.INVENTOR_NPC) {
+              // Inventor NPC (Representação simples)
+              ctx.fillStyle = '#9c27b0';
+              ctx.beginPath();
+              ctx.arc(px + TILE_SIZE / 2, py + TILE_SIZE / 2, 14, 0, Math.PI * 2);
+              ctx.fill();
+              // Óculos de solda / Visor
+              ctx.fillStyle = '#00e5ff';
+              ctx.fillRect(px + TILE_SIZE / 2 - 8, py + TILE_SIZE / 2 - 4, 16, 5);
+              // Texto indicador
+              ctx.fillStyle = 'rgba(255,255,255,0.8)';
+              ctx.font = '9px sans-serif';
+              ctx.textAlign = 'center';
+              ctx.fillText('INVENTOR', px + TILE_SIZE / 2, py - 2);
+
+            } else if (tile === TILE.ARMORY) {
+              // Mesa de Arsenal para modificações
+              ctx.fillStyle = '#4e342e'; // Mesa de madeira escura
+              ctx.fillRect(px + 2, py + 6, TILE_SIZE - 4, TILE_SIZE - 12);
+              ctx.strokeStyle = '#3e2723';
+              ctx.lineWidth = 2;
+              ctx.strokeRect(px + 2, py + 6, TILE_SIZE - 4, TILE_SIZE - 12);
+              // Detalhes em cima da mesa (ferramentas/peças)
+              ctx.fillStyle = '#90a4ae'; // Peça de metal
+              ctx.fillRect(px + 8, py + 12, 10, 6);
+              ctx.fillStyle = '#ffca28'; // Peça de ouro/bomba
+              ctx.beginPath();
+              ctx.arc(px + 26, py + 15, 4, 0, Math.PI * 2);
+              ctx.fill();
+              // Texto indicador
+              ctx.fillStyle = 'rgba(255,255,255,0.8)';
+              ctx.font = '9px sans-serif';
+              ctx.textAlign = 'center';
+              ctx.fillText('ARSENAL', px + TILE_SIZE / 2, py - 2);
+
             } else if (tile === TILE.LOCK_GATE) {
               // Lockdown: Blocos Vermelhos Piscantes
               const pulse = (Math.sin(now * 10) + 1) / 2;
@@ -3557,6 +3693,11 @@
         const ccEl = document.getElementById('cc-counter');
         if (ccEl) {
           ccEl.textContent = `${this.player.chronoCores || 0} CC`;
+        }
+
+        const ammoEl = document.getElementById('ammo-counter');
+        if (ammoEl) {
+          ammoEl.textContent = `(${this.player.timerBombs})`;
         }
       }
     }
