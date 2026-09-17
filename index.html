@@ -191,61 +191,83 @@
       padding: 16px;
     }
 
-    /* D-Pad Virtual */
-    .dpad-container {
+    /* Joystick Virtual Dinâmico por Arrasto */
+    .joystick-zone {
       position: relative;
-      width: 150px;
-      height: 150px;
+      width: 160px;
+      height: 160px;
       pointer-events: auto;
+      touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
       margin-bottom: 8px;
       margin-left: 8px;
-    }
-
-    .dpad-btn {
-      position: absolute;
-      width: 48px;
-      height: 48px;
-      background: rgba(33, 40, 52, 0.75);
-      border: 2px solid rgba(255, 255, 255, 0.25);
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #fff;
-      font-size: 20px;
-      font-weight: bold;
-      transition: background 0.1s, transform 0.1s;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-    }
-
-    .dpad-btn:active, .dpad-btn.active {
-      background: rgba(41, 182, 246, 0.6);
-      transform: scale(0.92);
-      border-color: var(--accent-blue);
-    }
-
-    .dpad-up { top: 0; left: 51px; }
-    .dpad-down { bottom: 0; left: 51px; }
-    .dpad-left { top: 51px; left: 0; }
-    .dpad-right { top: 51px; right: 0; }
-    .dpad-center {
-      position: absolute;
-      top: 51px;
-      left: 51px;
-      width: 48px;
-      height: 48px;
-      background: rgba(20, 25, 34, 0.6);
-      border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
     }
-    .dpad-center::after {
-      content: '';
-      width: 12px;
-      height: 12px;
-      background: rgba(255,255,255,0.3);
+
+    .joystick-base {
+      position: relative;
+      width: 140px;
+      height: 140px;
       border-radius: 50%;
+      background: radial-gradient(circle at center, rgba(33, 40, 52, 0.5) 0%, rgba(15, 18, 24, 0.88) 100%);
+      border: 2px solid rgba(41, 182, 246, 0.35);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6), inset 0 0 16px rgba(41, 182, 246, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .joystick-base.active {
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 20px rgba(0, 229, 255, 0.4), inset 0 0 20px rgba(0, 229, 255, 0.25);
+    }
+
+    .joystick-arrow {
+      position: absolute;
+      color: rgba(255, 255, 255, 0.3);
+      font-size: 11px;
+      font-weight: bold;
+      pointer-events: none;
+      transition: color 0.15s;
+    }
+    .arrow-up { top: 6px; }
+    .arrow-down { bottom: 6px; }
+    .arrow-left { left: 8px; }
+    .arrow-right { right: 8px; }
+
+    .joystick-knob {
+      position: absolute;
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #42a5f5, #1565c0);
+      border: 2.5px solid rgba(255, 255, 255, 0.85);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.7), 0 0 12px rgba(41, 182, 246, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transform: translate(0px, 0px);
+      pointer-events: none;
+      will-change: transform;
+      transition: transform 0.08s ease-out;
+    }
+
+    .joystick-knob.dragging {
+      transition: none;
+      background: radial-gradient(circle at 35% 35%, #00e5ff, #0288d1);
+      box-shadow: 0 0 18px rgba(0, 229, 255, 0.8);
+    }
+
+    .knob-center {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.4);
+      border: 1.5px solid rgba(255, 255, 255, 0.7);
     }
 
     /* Painel de Ação e Bombas Mobile */
@@ -393,7 +415,7 @@
     /* Ajustes para telas pequenas / mobile */
     @media (max-width: 768px) {
       #desktop-guide { display: none; }
-      .dpad-container { transform: scale(0.95); }
+      .joystick-zone { transform: scale(0.95); }
       .actions-container { transform: scale(0.95); }
     }
   </style>
@@ -448,13 +470,17 @@
 
     <!-- Controles Touch Mobile -->
     <div id="mobile-controls">
-      <!-- D-Pad Virtual -->
-      <div class="dpad-container">
-        <div class="dpad-btn dpad-up" data-dir="up">▲</div>
-        <div class="dpad-btn dpad-left" data-dir="left">◀</div>
-        <div class="dpad-center"></div>
-        <div class="dpad-btn dpad-right" data-dir="right">▶</div>
-        <div class="dpad-btn dpad-down" data-dir="down">▼</div>
+      <!-- Joystick Analógico Virtual Dinâmico por Arrasto -->
+      <div id="joystick-zone" class="joystick-zone">
+        <div id="joystick-base" class="joystick-base">
+          <div class="joystick-arrow arrow-up">▲</div>
+          <div class="joystick-arrow arrow-down">▼</div>
+          <div class="joystick-arrow arrow-left">◀</div>
+          <div class="joystick-arrow arrow-right">▶</div>
+          <div id="joystick-knob" class="joystick-knob">
+            <div class="knob-center"></div>
+          </div>
+        </div>
       </div>
 
       <!-- Seleção de Bombas e Botão de Ação -->
@@ -849,15 +875,20 @@
     ];
 
     // --------------------------------------------------------------------------
-    // 3. GERENCIADOR DE INPUT (Teclado + Touch Mobile + Mouse/Clique e Arraste)
+    // 3. GERENCIADOR DE INPUT (Teclado + Joystick Virtual Dinâmico + Mouse)
     // --------------------------------------------------------------------------
     class InputManager {
       constructor(canvas = null) {
         this.canvas = canvas;
         this.keys = {};
-        this.touchMove = { up: false, down: false, left: false, right: false };
         this.selectedBomb = BOMB_TYPE.IMPACT;
         this.actionTriggered = false;
+
+        // Joystick Virtual Dinâmico por Arrasto (Controle Fluido 360°)
+        this.joystickActive = false;
+        this.joystickVector = { dx: 0, dy: 0 };
+        this.joystickCenter = { x: 0, y: 0 };
+        this.joystickPointerId = null;
 
         // Estado do Mouse e Lançamento de Bombas (Clique e Arraste)
         this.mousePos = { x: 300, y: 300, active: false };
@@ -918,33 +949,9 @@
       }
 
       setupTouch() {
-        // D-Pad Touch Listeners
-        const dpadButtons = document.querySelectorAll('.dpad-btn');
-        dpadButtons.forEach(btn => {
-          const dir = btn.getAttribute('data-dir');
+        this.setupTouchJoystick();
 
-          const startPress = (e) => {
-            e.preventDefault();
-            sound.init();
-            btn.classList.add('active');
-            this.touchMove[dir] = true;
-          };
-
-          const endPress = (e) => {
-            e.preventDefault();
-            btn.classList.remove('active');
-            this.touchMove[dir] = false;
-          };
-
-          btn.addEventListener('touchstart', startPress, { passive: false });
-          btn.addEventListener('touchend', endPress, { passive: false });
-          btn.addEventListener('touchcancel', endPress, { passive: false });
-          btn.addEventListener('mousedown', startPress);
-          btn.addEventListener('mouseup', endPress);
-          btn.addEventListener('mouseleave', endPress);
-        });
-
-        // Botões de Seleção de Bombas
+        // Botões de Seleção de Bombas Mobile
         const bombButtons = document.querySelectorAll('.bomb-btn');
         bombButtons.forEach(btn => {
           const bombType = btn.getAttribute('data-bomb');
@@ -953,21 +960,98 @@
             sound.init();
             this.selectBomb(bombType);
           };
-          btn.addEventListener('touchstart', triggerSelect, { passive: false });
+          btn.addEventListener('pointerdown', triggerSelect);
           btn.addEventListener('click', triggerSelect);
         });
 
-        // Botão de Ação Mobile
+        // Botão de Ação Mobile (Plantar/Lançar rápido)
         const actionBtn = document.getElementById('action-trigger');
-        const triggerAction = (e) => {
+        if (actionBtn) {
+          const triggerAction = (e) => {
+            e.preventDefault();
+            sound.init();
+            actionBtn.classList.add('active');
+            this.actionTriggered = true;
+            setTimeout(() => actionBtn.classList.remove('active'), 120);
+          };
+          actionBtn.addEventListener('pointerdown', triggerAction);
+          actionBtn.addEventListener('click', triggerAction);
+        }
+      }
+
+      setupTouchJoystick() {
+        const zone = document.getElementById('joystick-zone');
+        const base = document.getElementById('joystick-base');
+        const knob = document.getElementById('joystick-knob');
+        if (!zone || !base || !knob) return;
+
+        const maxRadius = 46; // Raio máximo de arrasto do analógico
+
+        const handleStart = (e) => {
           e.preventDefault();
           sound.init();
-          actionBtn.classList.add('active');
-          this.actionTriggered = true;
-          setTimeout(() => actionBtn.classList.remove('active'), 120);
+          this.joystickPointerId = e.pointerId;
+          try { zone.setPointerCapture(e.pointerId); } catch(err) {}
+
+          const rect = base.getBoundingClientRect();
+          this.joystickCenter = {
+            x: rect.left + rect.width / 2,
+            y: rect.top + rect.height / 2
+          };
+
+          this.joystickActive = true;
+          base.classList.add('active');
+          knob.classList.add('dragging');
+          handleMove(e);
         };
-        actionBtn.addEventListener('touchstart', triggerAction, { passive: false });
-        actionBtn.addEventListener('click', triggerAction);
+
+        const handleMove = (e) => {
+          if (!this.joystickActive || e.pointerId !== this.joystickPointerId) return;
+          e.preventDefault();
+
+          const deltaX = e.clientX - this.joystickCenter.x;
+          const deltaY = e.clientY - this.joystickCenter.y;
+          const dist = Math.hypot(deltaX, deltaY);
+
+          if (dist < 4) {
+            knob.style.transform = 'translate(0px, 0px)';
+            this.joystickVector = { dx: 0, dy: 0 };
+            return;
+          }
+
+          const angle = Math.atan2(deltaY, deltaX);
+          const clampedDist = Math.min(dist, maxRadius);
+          const knobX = Math.cos(angle) * clampedDist;
+          const knobY = Math.sin(angle) * clampedDist;
+
+          knob.style.transform = `translate(${knobX}px, ${knobY}px)`;
+
+          // Vetor analógico contínuo (proporcional à intensidade e ângulo do arrasto)
+          const intensity = Math.min(1.0, dist / (maxRadius * 0.75));
+          this.joystickVector = {
+            dx: Math.cos(angle) * intensity,
+            dy: Math.sin(angle) * intensity
+          };
+        };
+
+        const handleEnd = (e) => {
+          if (e.pointerId !== this.joystickPointerId && this.joystickPointerId !== null) return;
+          e.preventDefault();
+          this.joystickActive = false;
+          this.joystickPointerId = null;
+          this.joystickVector = { dx: 0, dy: 0 };
+
+          base.classList.remove('active');
+          knob.classList.remove('dragging');
+          knob.style.transform = 'translate(0px, 0px)';
+
+          try { zone.releasePointerCapture(e.pointerId); } catch(err) {}
+        };
+
+        zone.addEventListener('pointerdown', handleStart);
+        zone.addEventListener('pointermove', handleMove);
+        zone.addEventListener('pointerup', handleEnd);
+        zone.addEventListener('pointercancel', handleEnd);
       }
 
       setupPointerDrag() {
@@ -1059,20 +1143,26 @@
         });
       }
 
-      // O movimento se mantém ESTRITAMENTE em WASD / Setas ou D-Pad Mobile
+      // Movimentação Fluida e Dinâmica (WASD + Joystick Virtual por Arrasto)
       getMovementVector() {
         let dx = 0;
         let dy = 0;
 
-        if (this.keys['KeyW'] || this.keys['ArrowUp'] || this.touchMove.up) dy -= 1;
-        if (this.keys['KeyS'] || this.keys['ArrowDown'] || this.touchMove.down) dy += 1;
-        if (this.keys['KeyA'] || this.keys['ArrowLeft'] || this.touchMove.left) dx -= 1;
-        if (this.keys['KeyD'] || this.keys['ArrowRight'] || this.touchMove.right) dx += 1;
+        // Teclado Desktop
+        if (this.keys['KeyW'] || this.keys['ArrowUp']) dy -= 1;
+        if (this.keys['KeyS'] || this.keys['ArrowDown']) dy += 1;
+        if (this.keys['KeyA'] || this.keys['ArrowLeft']) dx -= 1;
+        if (this.keys['KeyD'] || this.keys['ArrowRight']) dx += 1;
 
         if (dx !== 0 && dy !== 0) {
           const invSqrt = 1 / Math.SQRT2;
           dx *= invSqrt;
           dy *= invSqrt;
+        }
+
+        // Joystick Virtual Dinâmico por Arrasto
+        if (this.joystickActive && (this.joystickVector.dx !== 0 || this.joystickVector.dy !== 0)) {
+          return { dx: this.joystickVector.dx, dy: this.joystickVector.dy };
         }
 
         return { dx, dy };
