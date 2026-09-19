@@ -318,7 +318,10 @@ Sem necessidade de carregar arquivos WAV/MP3 externos para SFX, todo o design de
 - **Arremesso Rápido Direto:** Clicar com o botão direito do mouse arremessa instantaneamente no cursor.
 - **Arremesso Rápido Frontal:** Barra de <kbd>ESPAÇO</kbd>.
 - **Seleção de Ferramentas:** Teclas numéricas <kbd>1</kbd> (Impacto), <kbd>2</kbd> (Propulsor), <kbd>3</kbd> (Temporizada) ou <kbd>Scroll do Mouse</kbd>.
+- **Dash (Botas Propulsoras):** Tecla <kbd>Shift</kbd> (Custa 1 CC por uso, concede 0.5s de invulnerabilidade/i-frames, superaquece com resfriamento de 5.0s).
 - **Aprimorar Manopla:** Tecla <kbd>U</kbd> ou clique no HUD.
+- **Cheat de Tester:** <kbd>Ctrl</kbd> + <kbd>Y</kbd> (+10 CC e +10 Peças).
+- **Revelar Saída (Debug):** <kbd>Ctrl</kbd> + <kbd>U</kbd>.
 - **Rebobinar o Tempo (Debug):** Tecla <kbd>R</kbd>.
 
 ### 11.3 Mapeamento de Controles Mobile (Touch)
