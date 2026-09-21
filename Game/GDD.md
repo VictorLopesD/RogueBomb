@@ -318,7 +318,10 @@ Sem necessidade de carregar arquivos WAV/MP3 externos para SFX, todo o design de
 - **Arremesso Rápido Direto:** Clicar com o botão direito do mouse arremessa instantaneamente no cursor.
 - **Arremesso Rápido Frontal:** Barra de <kbd>ESPAÇO</kbd>.
 - **Seleção de Ferramentas:** Teclas numéricas <kbd>1</kbd> (Impacto), <kbd>2</kbd> (Propulsor), <kbd>3</kbd> (Temporizada) ou <kbd>Scroll do Mouse</kbd>.
+- **Dash (Botas Propulsoras):** Tecla <kbd>Shift</kbd> (Custa 1 CC por uso, concede 0.5s de invulnerabilidade/i-frames, superaquece com resfriamento de 5.0s).
 - **Aprimorar Manopla:** Tecla <kbd>U</kbd> ou clique no HUD.
+- **Cheat de Tester:** <kbd>Ctrl</kbd> + <kbd>Y</kbd> (+10 CC e +10 Peças).
+- **Revelar Saída (Debug):** <kbd>Ctrl</kbd> + <kbd>U</kbd>.
 - **Rebobinar o Tempo (Debug):** Tecla <kbd>R</kbd>.
 
 ### 11.3 Mapeamento de Controles Mobile (Touch)
@@ -328,6 +331,7 @@ Sem necessidade de carregar arquivos WAV/MP3 externos para SFX, todo o design de
   - Ajuste de velocidade proporcional à intensidade do arrasto.
 - **Painel de Ações (Lado Inferior Direito):**
   - **Botão Principal de Ação:** Botão circular proeminente laranja para disparo rápido frontal.
+  - **Botão de Dash (Botas Propulsoras):** Botão circular ciano dedicado (`#dash-trigger`) posicionado ergonomicamente ao lado do botão de ação, permitindo realizar o Dash no mobile. Possui indicador de custo (1 CC), overlay com contador regressivo em tempo real durante o resfriamento/superaquecimento (5.0s), e estado bloqueado com aviso caso o jogador ainda não tenha adquirido as botas na Mesa de Arsenal.
   - **Botões Seletores de Bombas:** Três botões circulares temáticos com ícones coloridos para alternância imediata de ferramentas e indicador de munição.
 
 ---
@@ -353,18 +357,22 @@ A tabela a seguir documenta a conformidade do projeto em relação ao documento 
 | **Comportamento dos Inimigos (Autômatos)** | ✅ **Expandido** | IA evoluída para Máquina de Estados (Dormant com carência de 1.2s na entrada, Idle com patrulha, Alert com retardo de reação e Chase com desvio de obstáculos). Criados 3 Tiers de inimigos (Comum 1 HP, Blindado 2 HP e Titã 3+ HP) |
 | **Rebobinar o Tempo (Time Rewind)** | ✅ **Completo** | Contato letal ativa SFX de glitch analógico, tela com aberração cromática, novo mapa procedural gerado, retorno à Safe Room e perda apenas dos recursos não depositados |
 | **Design de Som e Música** | 🌟 **Adicional Implementado** | BGM adaptativa dupla com crossfade de 1.2s (Exploração e Batalha) e 13 efeitos sonoros sintetizados em tempo real via Web Audio API |
-| **Manopla Mecânica com Upgrades** | 🌟 **Adicional Implementado** | Sistema de alcance balístico em 3 níveis (140px, 220px, 300px), arremesso em parábola visual e atalho de melhoria |
-| **Safe Room Temática** | 🌟 **Adicional Implementado** | Sala inicial com NPC Inventor e Mesa de Arsenal, com remoção de caixas para circulação livre |
+| **Manopla Mecânica com Upgrades** | ✨ **Adicional Implementado** | Sistema de alcance balístico em 3 níveis. Comprado na Mesa de Arsenal. |
+| **Safe Room Temática** | ✨ **Adicional Implementado** | Sala inicial (apenas Nível 1) com NPC Inventor, Mesa de Arsenal e Baú para ver saldo depositado. |
+| **Loja na Mesa de Arsenal** | ✨ **Adicional Implementado** | Upgrades comprados com CC e Peças depositadas. Melhorias de Manopla, Botas (Dash com Shift) e Bolsa (+2 Bombas e tipos novos). |
+| **Autômatos e Drop de Peças** | ✨ **Adicional Implementado** | Inimigos agora deixam cair "Peças" (engrenagens prateadas) além do CC das caixas. Quantidade de drop escala com a profundidade. |
+| **Human Boss (Mini-boss)** | ✨ **Adicional Implementado** | No nível 3+, chance de aparecer um humano (vestido de vermelho) que joga bombas de impacto e dá *dash* aleatório para desviar de suas bombas. |
+| **Porta e Chave do Boss** | ✨ **Adicional Implementado** | Uma porta bloqueada com uma caveira que requer a coleta da *Chave do Boss* em um pedestal no mesmo mapa. |
+| **Buracos/Armadilhas no Chão** | ✨ **Adicional Implementado** | Quadrados vazios no chão que não são transponíveis e causam dano/rebobinam o tempo se o jogador tentar andar sobre eles. |
+| **Dica de Saída (Ctrl+U)** | ✨ **Adicional Implementado** | Jogador pode segurar `Ctrl+U` para revelar no minimapa e no chão a posição exata da sala e do piso falso que leva para o próximo nível. |
 
 ---
 
 ## 13. Roteiro e Backlog para Próximas Atualizações (Pós-MVP)
 
-1. **Boss Fights (Chefes de Andar):**
-   - Criação de um autômato colossal no 5º nível de profundidade que exige o uso coordenado de bombas de propulsão para desviar de martelos a vapor e bombas temporizadas em seus pontos de ventilação.
-2. **Loja do NPC Inventor na Safe Room:**
-   - Possibilidade de gastar o Cristal Coal depositado permanentemente na Goela para adquirir melhorias definitivas (maior capacidade de bombas, velocidade de recarga e redução de dano).
-3. **Novos Tipos de Bombas / Alquimia:**
-   - Bomba de Óleo Escorregadio (lentidão de autômatos) e Bomba Criogênica a Gás (congelamento temporário de engrenagens).
-4. **Armário de Roupas / Arsenal:**
-   - Interação na mesa de arsenal da Safe Room para trocar paletas de roupas e manoplas cosméticas para Charlotte.
+1. **Expansão de Boss Fights:**
+   - Criação de um autômato colossal no 5º nível (sala sem saída).
+2. **Novos Tipos de Bombas / Alquimia:**
+   - Bomba de Óleo Escorregadio (lentidão) e Bomba Criogênica a Gás (congelamento temporário).
+3. **Mecânica de Movimentação de Blocos:**
+   - Permitir que a bomba de propulsão empurre/puxe estátuas ou blocos para resolver quebra-cabeças e formar pontes sobre os buracos.

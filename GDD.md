@@ -331,6 +331,7 @@ Sem necessidade de carregar arquivos WAV/MP3 externos para SFX, todo o design de
   - Ajuste de velocidade proporcional à intensidade do arrasto.
 - **Painel de Ações (Lado Inferior Direito):**
   - **Botão Principal de Ação:** Botão circular proeminente laranja para disparo rápido frontal.
+  - **Botão de Dash (Botas Propulsoras):** Botão circular ciano dedicado (`#dash-trigger`) posicionado ergonomicamente ao lado do botão de ação, permitindo realizar o Dash no mobile. Possui indicador de custo (1 CC), overlay com contador regressivo em tempo real durante o resfriamento/superaquecimento (5.0s), e estado bloqueado com aviso caso o jogador ainda não tenha adquirido as botas na Mesa de Arsenal.
   - **Botões Seletores de Bombas:** Três botões circulares temáticos com ícones coloridos para alternância imediata de ferramentas e indicador de munição.
 
 ---

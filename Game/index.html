@@ -352,6 +352,110 @@
       background: radial-gradient(circle at 30% 30%, #ff8a65, #e64a19);
     }
 
+    /* Agrupamento de Ação & Dash Mobile */
+    .action-buttons-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      justify-content: flex-end;
+    }
+
+    /* Botão de Dash Mobile */
+    .dash-btn {
+      position: relative;
+      width: 66px;
+      height: 66px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #00e5ff, #0277bd);
+      border: 3px solid rgba(0, 229, 255, 0.75);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(0, 229, 255, 0.4), inset 0 0 10px rgba(0, 229, 255, 0.3);
+      transition: transform 0.08s, box-shadow 0.08s, background 0.15s, border-color 0.15s, opacity 0.15s;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: none;
+      overflow: hidden;
+    }
+
+    .dash-btn:active, .dash-btn.active {
+      transform: scale(0.92);
+      box-shadow: 0 2px 10px rgba(0, 229, 255, 0.9), 0 0 18px #00e5ff;
+      background: radial-gradient(circle at 30% 30%, #80d8ff, #0091ea);
+    }
+
+    .dash-btn.locked {
+      background: radial-gradient(circle at 30% 30%, #37474f, #212121);
+      border-color: rgba(255, 255, 255, 0.25);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+      opacity: 0.75;
+    }
+
+    .dash-btn.locked .dash-icon {
+      opacity: 0.6;
+      filter: grayscale(0.8);
+    }
+
+    .dash-btn.locked .dash-label {
+      color: #90a4ae;
+    }
+
+    .dash-btn.cooldown {
+      border-color: rgba(255, 112, 67, 0.85);
+      box-shadow: 0 0 14px rgba(255, 87, 34, 0.55);
+      background: radial-gradient(circle at 30% 30%, #bf360c, #263238);
+    }
+
+    .dash-icon {
+      font-size: 18px;
+      line-height: 1;
+      pointer-events: none;
+      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+    }
+
+    .dash-label {
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      line-height: 1.1;
+      pointer-events: none;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+    }
+
+    .dash-cost {
+      font-size: 8px;
+      font-weight: 800;
+      color: #80d8ff;
+      line-height: 1;
+      margin-top: 1px;
+      pointer-events: none;
+    }
+
+    .dash-cooldown-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(10, 14, 20, 0.85);
+      border-radius: 50%;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 900;
+      color: #ff7043;
+      letter-spacing: 0.5px;
+      pointer-events: none;
+      backdrop-filter: blur(2px);
+      -webkit-backdrop-filter: blur(2px);
+    }
+
     /* Guia de Atalhos Desktop */
     #desktop-guide {
       position: absolute;
@@ -412,11 +516,72 @@
       100% { transform: translateX(-50%) translateY(-4px); }
     }
 
+    /* Modal do Arsenal */
+    #armory-modal {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 400px;
+      max-width: 90%;
+      background: rgba(13, 17, 23, 0.95);
+      border: 3px solid #ffca28;
+      border-radius: 12px;
+      padding: 20px;
+      display: none;
+      flex-direction: column;
+      gap: 15px;
+      z-index: 500;
+      box-shadow: 0 0 20px rgba(255, 202, 40, 0.3);
+    }
+    #armory-modal.visible {
+      display: flex;
+    }
+    #armory-modal h2 {
+      margin: 0; color: #ffca28; text-align: center;
+      font-size: 20px; letter-spacing: 2px;
+      text-transform: uppercase; border-bottom: 1px solid #30363d; padding-bottom: 10px;
+    }
+    .armory-item {
+      display: flex; justify-content: space-between; align-items: center;
+      background: rgba(255, 255, 255, 0.05); padding: 12px; border-radius: 8px;
+      border: 1px solid #30363d;
+    }
+    .armory-item:hover { border-color: #ffca28; background: rgba(255, 255, 255, 0.1); }
+    .armory-info { display: flex; flex-direction: column; gap: 4px; }
+    .armory-title { font-weight: bold; color: #fff; font-size: 14px; }
+    .armory-desc { font-size: 11px; color: #8b949e; }
+    .armory-cost { font-size: 11px; color: #ffca28; font-weight: bold; }
+    .btn-buy {
+      background: #238636; border: none; color: white; padding: 8px 16px;
+      border-radius: 6px; cursor: pointer; font-weight: bold; text-transform: uppercase;
+      font-size: 12px; transition: 0.2s;
+    }
+    .btn-buy:hover { background: #2ea043; }
+    .btn-buy:disabled { background: #30363d; color: #8b949e; cursor: not-allowed; }
+    .btn-close {
+      background: #da3633; border: none; color: white; padding: 10px;
+      border-radius: 6px; cursor: pointer; font-weight: bold; text-transform: uppercase;
+      font-size: 14px; margin-top: 10px; transition: 0.2s;
+    }
+    .btn-close:hover { background: #f85149; }
+
     /* Ajustes para telas pequenas / mobile */
     @media (max-width: 768px) {
       #desktop-guide { display: none; }
       .joystick-zone { transform: scale(0.95); }
       .actions-container { transform: scale(0.95); }
+    }
+
+    @media (max-width: 480px) {
+      .action-btn { width: 74px; height: 74px; font-size: 13px; }
+      .dash-btn { width: 56px; height: 56px; }
+      .dash-icon { font-size: 15px; }
+      .dash-label { font-size: 9px; }
+      .dash-cost { font-size: 7px; }
+      .dash-cooldown-overlay { font-size: 11px; }
+      .bomb-btn { width: 48px; height: 48px; font-size: 10px; }
+      .actions-container { gap: 8px; }
+      .action-buttons-group { gap: 8px; }
     }
   </style>
 </head>
@@ -444,6 +609,14 @@
           <div id="cc-counter" style="color: var(--accent-cyan); font-weight: 800; font-size: 11px;">0 CC</div>
         </div>
       </div>
+
+      <div id="part-badge" class="hud-badge" title="Peças coletadas de autômatos destruídos.">
+        <span style="font-size: 16px;">⚙️</span>
+        <div>
+          <div style="font-size: 10px; color: var(--text-dim); text-transform: uppercase;">Peças</div>
+          <div id="part-counter" style="color: #9e9e9e; font-weight: 800; font-size: 11px;">0 PEÇAS</div>
+        </div>
+      </div>
       
       <div id="minimap-container">
         <div class="hud-badge" style="padding: 4px 8px; font-size: 11px;">MAPA PROCEDURAL</div>
@@ -464,6 +637,7 @@
       <span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> Mover</span>
       <span>🖱️ <b>Clique e Arraste</b>: Mirar & Lançar</span>
       <span><kbd>1</kbd> Imp | <kbd>2</kbd> Prop | <kbd>3</kbd> Temp</span>
+      <span><kbd>SHIFT</kbd> Dash (1 CC)</span>
       <span><kbd>U</kbd> Manopla</span>
       <span><kbd>ESPAÇO</kbd> / Dir: Rápido</span>
     </div>
@@ -483,24 +657,78 @@
         </div>
       </div>
 
-      <!-- Seleção de Bombas e Botão de Ação -->
+      <!-- Seleção de Bombas e Botões de Ação Mobile -->
       <div class="actions-container">
         <div class="bomb-selectors">
+          <button class="bomb-btn" data-bomb="impact" style="display: none;" title="1: Bomba de Impacto">
+            <span class="icon"></span>
+            <span>IMP</span>
+          </button>
+          <button class="bomb-btn" data-bomb="propulsor" style="display: none;" title="2: Bomba Propulsora">
+            <span class="icon"></span>
+            <span>PROP</span>
+          </button>
           <button class="bomb-btn selected" data-bomb="timed" title="3: Bomba Temporizada">
             <span class="icon"></span>
             <span>TEMP <br><span id="ammo-counter">(5)</span></span>
           </button>
         </div>
 
-        <button class="action-btn" id="action-trigger" title="Plantar / Ativar Bomba">
-          <span style="font-size: 20px;">💣</span>
-          <span>AÇÃO</span>
-        </button>
+        <div class="action-buttons-group">
+          <!-- Botão de Dash Mobile -->
+          <button class="dash-btn locked" id="dash-trigger" title="Realizar Dash com Botas Propulsoras (Shift)">
+            <span class="dash-icon">💨</span>
+            <span class="dash-label">DASH</span>
+            <span class="dash-cost">1 CC</span>
+            <div class="dash-cooldown-overlay" id="dash-cooldown-overlay">5.0s</div>
+          </button>
+
+          <!-- Botão de Ação / Lançar Bomba -->
+          <button class="action-btn" id="action-trigger" title="Plantar / Ativar Bomba">
+            <span style="font-size: 20px;">💣</span>
+            <span>AÇÃO</span>
+          </button>
+        </div>
       </div>
     </div>
 
     <!-- Toast Central -->
     <div id="center-toast">TEMPO REBOBINADO!</div>
+
+    <!-- Modal do Arsenal -->
+    <div id="armory-modal">
+      <h2>Balcão de Arsenal</h2>
+      <div id="armory-coins" style="text-align: center; font-weight: bold; color: #fff; font-size: 14px;">Você tem: 0 CC | 0 PEÇAS</div>
+      
+      <div class="armory-item">
+        <div class="armory-info">
+          <span class="armory-title">Manopla Mecânica</span>
+          <span class="armory-desc">Aumenta o alcance de arremesso.</span>
+          <span class="armory-cost">Custo: 10 CC | 10 PEÇAS</span>
+        </div>
+        <button class="btn-buy" id="btn-buy-gauntlet" onclick="window.game.buyUpgrade('gauntlet')">Melhorar</button>
+      </div>
+
+      <div class="armory-item">
+        <div class="armory-info">
+          <span class="armory-title">Botas Propulsoras</span>
+          <span class="armory-desc">Permite dar Dash (Aperte SHIFT ou Botão Mobile). Custo: 1 CC. Superaquece por 5s.</span>
+          <span class="armory-cost">Custo: 15 CC | 15 PEÇAS</span>
+        </div>
+        <button class="btn-buy" id="btn-buy-boots" onclick="window.game.buyUpgrade('boots')">Comprar</button>
+      </div>
+
+      <div class="armory-item">
+        <div class="armory-info">
+          <span class="armory-title">Bolsa Expandida</span>
+          <span class="armory-desc">Carrega mais bombas e permite trocar de tipo.</span>
+          <span class="armory-cost">Custo: 20 CC | 20 PEÇAS</span>
+        </div>
+        <button class="btn-buy" id="btn-buy-bag" onclick="window.game.buyUpgrade('bag')">Melhorar</button>
+      </div>
+
+      <button class="btn-close" onclick="window.game.closeArmory()">Sair</button>
+    </div>
   </div>
 
   <script>
@@ -911,7 +1139,10 @@
       SECRET_LADDER: 6,   // Escada/respiro para retornar da sala secreta
       GAUNTLET_ITEM: 7,   // Pedestal de Upgrade da Manopla Mecânica
       INVENTOR_NPC: 8,    // NPC do inventor (Safe Room)
-      ARMORY: 9           // Arsenal/armário para modificar roupas/armas (Safe Room)
+      ARMORY: 9,          // Arsenal/armário para modificar roupas/armas (Safe Room)
+      BOSS_DOOR: 10,      // Porta trancada para a sala do boss
+      BOSS_KEY: 11,       // Chave/Cartão para abrir a porta do boss
+      CHEST: 12           // Baú da Safe Room para exibir CC e Peças guardadas
     };
 
     // Tipos de Bomba
@@ -942,6 +1173,7 @@
         this.keys = {};
         this.selectedBomb = BOMB_TYPE.TIMED;
         this.actionTriggered = false;
+        this.dashTriggered = false;
 
         // Joystick Virtual Dinâmico por Arrasto (Controle Fluido 360°)
         this.joystickActive = false;
@@ -975,7 +1207,10 @@
           sound.init(); // Ativa áudio no primeiro input
 
           // Seleção numérica de bombas
-          if (e.key === '3' || e.key === '1') this.selectBomb(BOMB_TYPE.TIMED);
+          const bagLvl = (window.game && window.game.player) ? window.game.player.bagLevel : 1;
+          if (e.key === '3') this.selectBomb(BOMB_TYPE.TIMED);
+          if (e.key === '1' && bagLvl >= 2) this.selectBomb(BOMB_TYPE.IMPACT);
+          if (e.key === '2' && bagLvl >= 3) this.selectBomb(BOMB_TYPE.PROPULSOR);
 
           // Disparo com Barra de Espaço
           if (e.code === 'Space') {
@@ -983,12 +1218,20 @@
             this.actionTriggered = true;
           }
 
-          // Tecla U: Aprimora a Manopla Mecânica
+          // Tecla U: Aprimora a Manopla Mecânica ou (Ctrl+U) revela a saída
           if (e.code === 'KeyU') {
-            if (window.game) {
-              window.game.player.upgradeGauntlet();
-              window.game.updateHUD();
-              window.game.spawnSparks(window.game.player.x, window.game.player.y, '#ffd700', 30);
+            if (e.ctrlKey) {
+               e.preventDefault();
+               if (window.game) {
+                  window.game.showExitHint = true;
+                  if (window.showToast) window.showToast('SAÍDA REVELADA!');
+               }
+            } else {
+               if (window.game) {
+                 window.game.player.upgradeGauntlet();
+                 window.game.updateHUD();
+                 window.game.spawnSparks(window.game.player.x, window.game.player.y, '#ffd700', 30);
+               }
             }
           }
 
@@ -996,6 +1239,26 @@
           if (e.code === 'KeyR') {
             if (window.game) {
               window.game.triggerTimeRewind();
+            }
+          }
+
+          // Cheat de Tester: Ctrl + Y dá 10 CC e 10 Peças
+          if ((e.code === 'KeyY' || e.key === 'y' || e.key === 'Y') && (e.ctrlKey || e.metaKey)) {
+            e.preventDefault();
+            if (window.game && window.game.player) {
+              const p = window.game.player;
+              p.chronoCores = (p.chronoCores || 0) + 10;
+              p.parts = (p.parts || 0) + 10;
+              if (window.sound && window.sound.playCCPickup) window.sound.playCCPickup();
+              if (window.showToast) window.showToast('CHEAT: +10 CC & +10 PEÇAS!');
+              if (window.game.spawnFloatingText) {
+                window.game.spawnFloatingText('+10 CC & PEÇAS', p.x, p.y - 20, '#00e5ff');
+              }
+              if (window.game.spawnSparks) {
+                window.game.spawnSparks(p.x, p.y, '#00e5ff', 30);
+              }
+              window.game.updateHUD();
+              window.game.updateArmoryUI();
             }
           }
         });
@@ -1033,6 +1296,21 @@
           };
           actionBtn.addEventListener('pointerdown', triggerAction);
           actionBtn.addEventListener('click', triggerAction);
+        }
+
+        // Botão de Dash Mobile
+        const dashBtn = document.getElementById('dash-trigger');
+        if (dashBtn) {
+          const triggerDash = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            sound.init();
+            dashBtn.classList.add('active');
+            this.dashTriggered = true;
+            setTimeout(() => dashBtn.classList.remove('active'), 120);
+          };
+          dashBtn.addEventListener('pointerdown', triggerDash);
+          dashBtn.addEventListener('click', triggerDash);
         }
       }
 
@@ -1178,8 +1456,14 @@
 
         // Scroll do mouse para alternar tipo de bomba
         window.addEventListener('wheel', (e) => {
-          const order = [BOMB_TYPE.TIMED];
+          const bagLvl = (window.game && window.game.player) ? window.game.player.bagLevel : 1;
+          const order = [];
+          if (bagLvl >= 2) order.push(BOMB_TYPE.IMPACT);
+          if (bagLvl >= 3) order.push(BOMB_TYPE.PROPULSOR);
+          order.push(BOMB_TYPE.TIMED);
+          
           let currIdx = order.indexOf(this.selectedBomb);
+          if (currIdx === -1) currIdx = 0;
           if (e.deltaY > 0) {
             currIdx = (currIdx + 1) % order.length;
           } else if (e.deltaY < 0) {
@@ -1228,6 +1512,14 @@
       consumeAction() {
         if (this.actionTriggered) {
           this.actionTriggered = false;
+          return true;
+        }
+        return false;
+      }
+
+      consumeDash() {
+        if (this.dashTriggered) {
+          this.dashTriggered = false;
           return true;
         }
         return false;
@@ -1284,6 +1576,8 @@
         this.cleared = isStart || isSecret;
         this.isLockdown = false;
         this.hasGoela = false;
+        this.isBossRoom = false;
+        this.hasBossKey = false;
         this.blackHoles = [];
         this.secretFloorNode = null; // Nodo integrado ao chão que dá acesso ao andar inferior (raro, 1 por nível)
       }
@@ -1324,15 +1618,24 @@
                 (y === mid && (x <= 2 || x >= GRID_SIZE - 3))) {
               continue;
             }
+            
+            // Sala do boss contém poucas ou nenhuma caixa (Item 6)
+            if (this.isBossRoom) {
+               if (Math.random() < 0.05) this.grid[y][x] = TILE.BREAKABLE;
+               continue;
+            }
 
             // Pilares fixos geométricos
             if (x % 2 === 0 && y % 2 === 0) {
-              if (Math.random() < 0.65) {
+              if (Math.random() < 0.25) { // Diminui quantidade de blocos cinzas
                 this.grid[y][x] = TILE.WALL;
               }
-            } else if (Math.random() < 0.32) {
+            } else if (Math.random() < 0.20) {
               // Blocos quebráveis marrons
               this.grid[y][x] = TILE.BREAKABLE;
+            } else if (Math.random() < 0.05) {
+              // Quadrados vazios para o jogador derrubar ou cair
+              this.grid[y][x] = TILE.HOLE;
             }
           }
         }
@@ -1344,15 +1647,27 @@
           this.grid[gy][gx] = TILE.GOELA;
         }
 
-        // Instancia autômatos com escala de dificuldade conforme a profundidade
-        if (!this.isStart && !this.isSecret) {
+        if (this.hasBossKey) {
+          const pos = this.findSpawnSpot();
+          if (pos) this.grid[Math.floor(pos.y/TILE_SIZE)][Math.floor(pos.x/TILE_SIZE)] = TILE.BOSS_KEY;
+        }
+
+        if (this.isBossRoom) {
+          const pos = this.findSpawnSpot();
+          if (pos) this.enemies.push(new HumanBoss(pos.x, pos.y, this.depth, true));
+        } else if (!this.isStart && !this.isSecret) {
           const baseCount = Math.floor(Math.random() * 2) + 1; // 1 a 2 base
           const depthBonus = Math.min(2, Math.floor((this.depth - 1) * 0.75));
           const enemyCount = baseCount + depthBonus; // Nível 1: 1-2 | Nível 2: 2-3 | Nível 3+: 2-4
           for (let i = 0; i < enemyCount; i++) {
             const pos = this.findSpawnSpot();
             if (pos) {
-              this.enemies.push(new Automaton(pos.x, pos.y, this.depth));
+               // Item 5: No 3º nível chance de aparecer mini-boss humano
+               if (this.depth === 3 && Math.random() < 0.20 && i === 0) {
+                 this.enemies.push(new HumanBoss(pos.x, pos.y, this.depth, false));
+               } else {
+                 this.enemies.push(new Automaton(pos.x, pos.y, this.depth));
+               }
             }
           }
         }
@@ -1398,13 +1713,26 @@
 
       buildStartLayout() {
         const mid = Math.floor(GRID_SIZE / 2);
-        // Inventor NPC num canto superior esquerdo (exemplo: x=3, y=3)
-        this.grid[3][3] = TILE.INVENTOR_NPC;
         
-        // Mesa/Armário para Charlotte modificar o arsenal no canto superior direito (ex: x=GRID_SIZE-4, y=3)
-        this.grid[3][GRID_SIZE - 4] = TILE.ARMORY;
+        if (this.depth === 1) {
+          // Inventor NPC num canto superior esquerdo (exemplo: x=3, y=3)
+          this.grid[3][3] = TILE.INVENTOR_NPC;
+          
+          // Mesa/Armário para Charlotte modificar o arsenal no canto superior direito (ex: x=GRID_SIZE-4, y=3)
+          this.grid[3][GRID_SIZE - 4] = TILE.ARMORY;
 
-        // O resto da sala fica vazio (já é TILE.EMPTY por padrão nas áreas internas)
+          // Baú de armazenamento de CC e Peças enviadas pela Goela (Safe Room) - canto inferior direito
+          this.grid[GRID_SIZE - 4][GRID_SIZE - 4] = TILE.CHEST;
+        } else {
+          // O resto da sala fica vazio, exceto a partir do nível 2 no centro
+          for (let y = 5; y < GRID_SIZE - 5; y++) {
+            for (let x = 5; x < GRID_SIZE - 5; x++) {
+              if (Math.random() < 0.4) {
+                this.grid[y][x] = TILE.BREAKABLE;
+              }
+            }
+          }
+        }
       }
 
       findSpawnSpot() {
@@ -1523,6 +1851,28 @@
           checkNeighbor(-1, 0, 'west', 'east');
         });
 
+        // Se depth >= 5, define Sala do Boss e Sala da Chave
+        if (this.currentDepth >= 5) {
+          let deadEnds = roomArray.filter(r => !r.isStart && (r.doors.north + r.doors.south + r.doors.east + r.doors.west === 1));
+          if (deadEnds.length === 0) deadEnds = roomArray.filter(r => !r.isStart);
+          const bossRoomTarget = deadEnds[0];
+          if (bossRoomTarget) {
+            bossRoomTarget.isBossRoom = true;
+            // Tranca a porta de entrada da sala do boss
+            const mid = Math.floor(GRID_SIZE / 2);
+            if (bossRoomTarget.doors.north) bossRoomTarget.grid[0][mid] = TILE.BOSS_DOOR;
+            if (bossRoomTarget.doors.south) bossRoomTarget.grid[GRID_SIZE - 1][mid] = TILE.BOSS_DOOR;
+            if (bossRoomTarget.doors.east) bossRoomTarget.grid[mid][GRID_SIZE - 1] = TILE.BOSS_DOOR;
+            if (bossRoomTarget.doors.west) bossRoomTarget.grid[mid][0] = TILE.BOSS_DOOR;
+            
+            // Sala da Chave
+            const keyCandidates = roomArray.filter(r => !r.isStart && r !== bossRoomTarget);
+            if (keyCandidates.length > 0) {
+               keyCandidates[Math.floor(Math.random() * keyCandidates.length)].hasBossKey = true;
+            }
+          }
+        }
+
         // Regra do PDF: Pelo menos uma a cada três salas geradas deve conter uma "Goela"
         let goelaCount = 0;
         const targetGoelas = Math.max(1, Math.ceil(roomArray.length / 3));
@@ -1579,11 +1929,18 @@
         this.animState = 'idle';
         this.throwAnimTimer = 0;
         this.gauntletLevel = 1; // Nível da Manopla Mecânica (1: 140px, 2: 220px, 3: 300px)
+        this.bootsLevel = 0;    // 1 para liberar Dash
+        this.bagLevel = 1;      // +2 bombas e tipos por nível
+        this.dashCooldown = 0;
+        this.isDashing = false;
+        this.dashTimer = 0;
+        this.maxDashTime = 0.28;
         this.chronoCores = 0;   // Cristais de Chrono Core coletados das caixas
         this.depositedCores = 0; // Cristais depositados na Goela
         this.maxTimerBombs = 5;
         this.timerBombs = 5;
         this.bombRechargeTimer = 0;
+        this.hasBossKey = false;
       }
 
       getThrowRange() {
@@ -1633,6 +1990,102 @@
             this.timerBombs++;
             if (window.game) window.game.updateHUD();
           }
+        }
+
+        if (this.dashCooldown > 0) {
+          this.dashCooldown -= dt;
+          if (this.dashCooldown <= 0) {
+            this.dashCooldown = 0;
+            if (this.bootsLevel > 0 && window.showToast) {
+              window.showToast('BOTAS RESFRIADAS! DASH DISPONÍVEL');
+            }
+          }
+        }
+
+        // Fumaça sutil nos pés indicando superaquecimento
+        if (this.bootsLevel > 0 && this.dashCooldown > 2.0 && Math.random() < 0.15) {
+          if (window.game) window.game.spawnSparks(this.x + (Math.random() - 0.5) * 8, this.y + 12, '#ff7043', 1);
+        }
+
+        const isDashRequested = (input.consumeDash() || input.keys['ShiftLeft'] || input.keys['ShiftRight']);
+        if (isDashRequested && !this.isDashing) {
+          if (this.bootsLevel <= 0) {
+            if (!this.dashWarnTimer || Date.now() - this.dashWarnTimer > 800) {
+              this.dashWarnTimer = Date.now();
+              if (window.showToast) window.showToast('BOTAS BLOQUEADAS! COMPRE NO ARSENAL');
+              if (window.game) window.game.spawnSparks(this.x, this.y + 12, '#90a4ae', 3);
+            }
+          } else if (this.dashCooldown > 0) {
+            // Em superaquecimento
+            if (!this.dashWarnTimer || Date.now() - this.dashWarnTimer > 800) {
+              this.dashWarnTimer = Date.now();
+              if (window.showToast) window.showToast(`BOTAS SUPERAQUECIDAS! RESFRIANDO (${this.dashCooldown.toFixed(1)}s)`);
+              if (window.game) window.game.spawnSparks(this.x, this.y + 12, '#ff5722', 4);
+            }
+          } else {
+            // Verifica se possui pelo menos 1 CC
+            const availableCC = (this.chronoCores || 0) + (this.depositedCores || 0);
+            if (availableCC < 1) {
+              if (!this.dashWarnTimer || Date.now() - this.dashWarnTimer > 800) {
+                this.dashWarnTimer = Date.now();
+                if (window.showToast) window.showToast('SEM CRISTAL COAL! DASH CUSTA 1 CC');
+                if (window.game) window.game.spawnSparks(this.x, this.y, '#ff1744', 6);
+              }
+            } else {
+              // Consome 1 CC por uso
+              if ((this.chronoCores || 0) >= 1) {
+                this.chronoCores -= 1;
+              } else {
+                this.depositedCores = Math.max(0, (this.depositedCores || 0) - 1);
+              }
+              if (window.game) {
+                window.game.spawnFloatingText('-1 CC', this.x, this.y - 18, '#ff5252');
+                window.game.updateHUD();
+                window.game.updateArmoryUI();
+              }
+
+              this.isDashing = true;
+              this.maxDashTime = 0.28;
+              this.dashTimer = this.maxDashTime;
+              this.dashCooldown = 5.0; // Superaquece e demora 5 segundos para resfriar!
+              this.invulnerableTimer = Math.max(this.invulnerableTimer, 0.5); // 0.5s de invulnerabilidade (i-frames)
+              const { dx, dy } = input.getMovementVector();
+              const ddx = (dx !== 0 || dy !== 0) ? dx : this.facing.dx;
+              const ddy = (dx !== 0 || dy !== 0) ? dy : this.facing.dy;
+              const len = Math.hypot(ddx, ddy) || 1;
+              this.dashDir = { dx: ddx / len, dy: ddy / len };
+              if (this.dashDir.dx < -0.01) {
+                this.facingSide = -1;
+              } else if (this.dashDir.dx > 0.01) {
+                this.facingSide = 1;
+              }
+              this.facing = { dx: this.dashDir.dx, dy: this.dashDir.dy };
+              this.animState = 'dash';
+              this.animTimer = 0;
+              if (window.sound && window.sound.playPropulsorSteam) {
+                window.sound.playPropulsorSteam();
+              } else if (window.sound) {
+                window.sound.playThrow();
+              }
+              if (window.game) window.game.spawnSparks(this.x, this.y, '#00e5ff', 25);
+            }
+          }
+        }
+
+        if (this.isDashing) {
+          this.animState = 'dash';
+          this.dashTimer -= dt;
+          const speed = 420;
+          const nextX = this.x + this.dashDir.dx * speed * dt;
+          const nextY = this.y + this.dashDir.dy * speed * dt;
+          this.moveWithCollision(nextX, nextY, currentRoom);
+          if (window.game && Math.random() < 0.45) {
+            window.game.spawnSparks(this.x, this.y + 8, '#00e5ff', 2);
+          }
+          if (this.dashTimer <= 0) {
+            this.isDashing = false;
+          }
+          return;
         }
 
         // Processa Recuo / Dash da Bomba de Propulsão
@@ -1720,7 +2173,17 @@
           for (let tx = left; tx <= right; tx++) {
             if (tx < 0 || tx >= GRID_SIZE || ty < 0 || ty >= GRID_SIZE) return true;
             const tile = room.grid[ty][tx];
-            if (tile === TILE.WALL || tile === TILE.BREAKABLE || tile === TILE.LOCK_GATE) {
+            if (tile === TILE.BOSS_DOOR && this.hasBossKey) {
+               room.grid[ty][tx] = TILE.EMPTY;
+               this.hasBossKey = false;
+               if (window.sound) window.sound.playUnlockSound();
+               if (window.game) window.game.spawnFloatingText('PORTA ABERTA', this.x, this.y - 15, '#fff');
+               return false;
+            }
+            if (tile === TILE.WALL || tile === TILE.BREAKABLE || tile === TILE.LOCK_GATE || tile === TILE.BOSS_DOOR || tile === TILE.ARMORY || tile === TILE.CHEST || tile === TILE.INVENTOR_NPC) {
+              if (tile === TILE.BOSS_DOOR && Math.random() < 0.02) {
+                 if (window.showToast) window.showToast('VOCÊ PRECISA DA CHAVE DO BOSS!');
+              }
               return true;
             }
           }
@@ -1731,10 +2194,19 @@
       applyImpulse(dirX, dirY, distanceTiles) {
         const speedMagnitude = (distanceTiles * TILE_SIZE) / 0.18;
         this.isRecoiling = true;
+        this.animState = 'dash';
+        this.animTimer = 0;
+        this.invulnerableTimer = Math.max(this.invulnerableTimer, 0.5);
         this.recoilVelocity = {
           x: dirX * speedMagnitude,
           y: dirY * speedMagnitude
         };
+        if (dirX < -0.01) {
+          this.facingSide = -1;
+        } else if (dirX > 0.01) {
+          this.facingSide = 1;
+        }
+        this.facing = { dx: dirX, dy: dirY };
       }
     }
 
@@ -1926,7 +2398,7 @@
           for (let tx = left; tx <= right; tx++) {
             if (tx < 0 || tx >= GRID_SIZE || ty < 0 || ty >= GRID_SIZE) return true;
             const tile = room.grid[ty][tx];
-            if (tile === TILE.WALL || tile === TILE.BREAKABLE || tile === TILE.LOCK_GATE) {
+            if (tile === TILE.WALL || tile === TILE.BREAKABLE || tile === TILE.LOCK_GATE || tile === TILE.BOSS_DOOR || tile === TILE.ARMORY || tile === TILE.CHEST || tile === TILE.INVENTOR_NPC) {
               return true;
             }
           }
@@ -1940,6 +2412,161 @@
           x: dirX * strength,
           y: dirY * strength
         };
+      }
+    }
+    class HumanBoss extends Automaton {
+      constructor(x, y, depth, isFinalBoss = false) {
+        super(x, y, depth);
+        this.isFinalBoss = isFinalBoss;
+        this.radius = 20;
+        this.speed = isFinalBoss ? 160 : 130;
+        this.hp = isFinalBoss ? 5 : 3;
+        this.color = isFinalBoss ? '#b71c1c' : '#d32f2f'; // vermelho escuro
+        this.lungeTimer = 0;
+        
+        this.bombCooldown = 3.0; // Atira bomba a cada 3 segundos
+        this.aimTimer = 0;
+        this.aimTarget = null;
+        this.bombType = BOMB_TYPE.IMPACT;
+        this.dodgeCooldown = 10.0;
+      }
+      
+      update(dt, player, room) {
+        if (this.state === 'dormant') {
+          this.activationGrace -= dt;
+          if (this.activationGrace <= 0) this.state = 'active';
+          return;
+        }
+        
+        if (this.repelVelocity.x !== 0 || this.repelVelocity.y !== 0) {
+          this.x += this.repelVelocity.x * dt;
+          this.y += this.repelVelocity.y * dt;
+          this.repelVelocity.x *= 0.85;
+          this.repelVelocity.y *= 0.85;
+          if (Math.abs(this.repelVelocity.x) < 5) this.repelVelocity.x = 0;
+          if (Math.abs(this.repelVelocity.y) < 5) this.repelVelocity.y = 0;
+        }
+
+        const dx = player.x - this.x;
+        const dy = player.y - this.y;
+        const dist = Math.hypot(dx, dy);
+
+        if (this.dodgeCooldown > 0) {
+           this.dodgeCooldown -= dt;
+        }
+
+        // Esquiva
+        if (this.state === 'active' && this.dodgeCooldown <= 0 && window.game) {
+           let bombNear = false;
+           for (const bomb of window.game.timedBombs) {
+              const bDist = Math.hypot(bomb.x - this.x, bomb.y - this.y);
+              if (bDist < TILE_SIZE * 3.5) { // Se bomba está perto
+                 bombNear = true;
+                 break;
+              }
+           }
+           if (bombNear) {
+              this.state = 'dodging';
+              this.dodgeCooldown = 10.0;
+              // Dash aleatório
+              const angle = Math.random() * Math.PI * 2;
+              this.repelVelocity = { x: Math.cos(angle) * 500, y: Math.sin(angle) * 500 };
+           }
+        }
+
+        if (this.state === 'active') {
+          // Lógica de bomba do Boss
+          if (this.aimTimer > 0) {
+             this.aimTimer -= dt;
+             if (this.aimTimer <= 0) {
+                // Lança a bomba
+                if (window.game) {
+                   window.game.flyingBombs.push(new FlyingBomb(this.x, this.y, this.aimTarget.x, this.aimTarget.y, this.bombType));
+                   if (window.sound) window.sound.playThrowWhoosh();
+                }
+                this.aimTarget = null;
+                this.bombCooldown = 3.0;
+                this.bombType = Math.random() < 0.5 ? BOMB_TYPE.IMPACT : BOMB_TYPE.PROPULSOR;
+             }
+             // Fica parado enquanto mira para dar chance ao jogador? Ou anda devagar?
+             // Vamos deixar ele se mover lentamente (30% da velocidade)
+             if (dist > 0.001) {
+                this.x += (dx / dist) * (this.speed * 0.3) * dt;
+                this.y += (dy / dist) * (this.speed * 0.3) * dt;
+             }
+          } else {
+             this.bombCooldown -= dt;
+             if (this.bombCooldown <= 0) {
+                this.aimTimer = 2.0; // Mostra mira por 2 segundos
+                this.aimTarget = { x: player.x, y: player.y };
+             }
+             
+             // Comportamento normal de lunge e seguir
+             this.lungeTimer -= dt;
+             if (this.lungeTimer <= 0 && dist < TILE_SIZE * 4) {
+               this.state = 'lunging';
+               this.lungeTimer = 0.5; // duração do lunge
+               const nx = dist > 0.001 ? dx/dist : 1;
+               const ny = dist > 0.001 ? dy/dist : 0;
+               this.repelVelocity = { x: nx * 300, y: ny * 300 };
+             } else {
+               // Segue o player rapidamente
+               if (dist > 0.001) {
+                  this.x += (dx / dist) * this.speed * dt;
+                  this.y += (dy / dist) * this.speed * dt;
+               }
+             }
+          }
+        } else if (this.state === 'lunging') {
+           this.lungeTimer -= dt;
+           if (this.lungeTimer <= 0) {
+             this.state = 'active';
+             this.lungeTimer = this.isFinalBoss ? 1.5 : 2.5; // Cooldown
+           }
+        } else if (this.state === 'dodging') {
+           if (this.repelVelocity.x === 0 && this.repelVelocity.y === 0) {
+              this.state = 'active';
+           }
+        }
+
+        this.x = Math.max(TILE_SIZE, Math.min(WORLD_WIDTH - TILE_SIZE, this.x));
+        this.y = Math.max(TILE_SIZE, Math.min(WORLD_HEIGHT - TILE_SIZE, this.y));
+      }
+      
+      render(ctx) {
+         ctx.save();
+         ctx.translate(this.x, this.y);
+         ctx.fillStyle = this.color;
+         ctx.beginPath();
+         ctx.arc(0, 0, this.radius, 0, Math.PI * 2);
+         ctx.fill();
+         // Desenha uma bandana/olho indicando o boss humano
+         ctx.fillStyle = '#fff';
+         ctx.fillRect(-10, -5, 20, 6);
+         ctx.fillStyle = '#000';
+         ctx.fillRect(-4, -4, 3, 4);
+         ctx.fillRect(4, -4, 3, 4);
+         ctx.restore();
+         
+         // Desenha a mira se estiver prestes a lançar a bomba
+         if (this.aimTimer > 0 && this.aimTarget) {
+            ctx.save();
+            const pulse = 0.5 + Math.sin(this.aimTimer * 15) * 0.5;
+            ctx.strokeStyle = `rgba(255, 50, 50, ${0.4 + pulse * 0.6})`;
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.arc(this.aimTarget.x, this.aimTarget.y, 20, 0, Math.PI * 2);
+            ctx.stroke();
+            
+            // X central
+            ctx.beginPath();
+            ctx.moveTo(this.aimTarget.x - 8, this.aimTarget.y - 8);
+            ctx.lineTo(this.aimTarget.x + 8, this.aimTarget.y + 8);
+            ctx.moveTo(this.aimTarget.x + 8, this.aimTarget.y - 8);
+            ctx.lineTo(this.aimTarget.x - 8, this.aimTarget.y + 8);
+            ctx.stroke();
+            ctx.restore();
+         }
       }
     }
 
@@ -2035,7 +2662,7 @@
     }
 
     class ChronoCoreDrop {
-      constructor(x, y) {
+      constructor(x, y, type = 'cc') {
         this.x = x;
         this.y = y;
         this.baseY = y;
@@ -2045,6 +2672,7 @@
         this.pickupDistance = 22;
         this.speed = 0;
         this.life = 0;
+        this.type = type; // 'cc' or 'part'
       }
 
       update(dt, player) {
@@ -2082,37 +2710,43 @@
         ctx.ellipse(this.x, this.baseY + 10, 8, 3, 0, 0, Math.PI * 2);
         ctx.fill();
 
-        // Pulso luminoso ao redor
-        const pulse = (Math.sin(this.floatTimer * 1.5) + 1) / 2;
-        ctx.fillStyle = `rgba(0, 229, 255, ${0.2 + pulse * 0.25})`;
-        ctx.beginPath();
-        ctx.arc(this.x, cy, 12, 0, Math.PI * 2);
-        ctx.fill();
+        if (this.type === 'part') {
+          const pulse = (Math.sin(this.floatTimer * 1.5) + 1) / 2;
+          ctx.fillStyle = `rgba(150, 150, 150, ${0.2 + pulse * 0.25})`;
+          ctx.beginPath();
+          ctx.arc(this.x, cy, 10, 0, Math.PI * 2);
+          ctx.fill();
 
-        // Cristal CC facetado em diamante
-        ctx.translate(this.x, cy);
-        ctx.fillStyle = '#00e5ff';
-        ctx.beginPath();
-        ctx.moveTo(0, -9);
-        ctx.lineTo(7, -2);
-        ctx.lineTo(0, 9);
-        ctx.lineTo(-7, -2);
-        ctx.closePath();
-        ctx.fill();
+          ctx.translate(this.x, cy);
+          ctx.fillStyle = '#808080';
+          ctx.beginPath();
+          ctx.arc(0, 0, 6, 0, Math.PI * 2);
+          ctx.fill();
 
-        ctx.strokeStyle = '#ffffff';
-        ctx.lineWidth = 1.5;
-        ctx.stroke();
+          ctx.strokeStyle = '#555555';
+          ctx.lineWidth = 2;
+          ctx.stroke();
+        } else {
+          const pulse = (Math.sin(this.floatTimer * 1.5) + 1) / 2;
+          ctx.fillStyle = `rgba(0, 229, 255, ${0.2 + pulse * 0.25})`;
+          ctx.beginPath();
+          ctx.arc(this.x, cy, 12, 0, Math.PI * 2);
+          ctx.fill();
 
-        // Brilho facetado central
-        ctx.fillStyle = '#ffffff';
-        ctx.beginPath();
-        ctx.moveTo(0, -6);
-        ctx.lineTo(4, -2);
-        ctx.lineTo(0, 2);
-        ctx.lineTo(-4, -2);
-        ctx.closePath();
-        ctx.fill();
+          ctx.translate(this.x, cy);
+          ctx.fillStyle = '#00e5ff';
+          ctx.beginPath();
+          ctx.moveTo(0, -9);
+          ctx.lineTo(7, -2);
+          ctx.lineTo(0, 9);
+          ctx.lineTo(-7, -2);
+          ctx.closePath();
+          ctx.fill();
+
+          ctx.strokeStyle = '#ffffff';
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+        }
 
         ctx.restore();
       }
@@ -2367,6 +3001,7 @@
 
         // Coleta de Itens / Upgrades (Manopla Mecânica)
         this.checkPickups();
+        this.checkArmory();
 
         // 2. Movimentação de Charlotte (WASD / D-Pad)
         this.player.update(dt, this.input, room);
@@ -2382,16 +3017,22 @@
           }
         }
 
-        // Atualização e coleta de drops de CC (Chrono Cores) das caixas
+        // Atualização e coleta de drops de CC (Chrono Cores) e Peças das caixas/inimigos
         for (let i = this.ccDrops.length - 1; i >= 0; i--) {
           const drop = this.ccDrops[i];
           const canPickup = drop.update(dt, this.player);
           if (canPickup) {
             sound.playCCPickup();
-            this.player.chronoCores = (this.player.chronoCores || 0) + 1;
-            this.spawnSparks(drop.x, drop.y, '#00e5ff', 16);
-            this.spawnSparks(drop.x, drop.y, '#ffd700', 10);
-            this.spawnFloatingText('+1 CC', drop.x, drop.y - 12, '#00e5ff');
+            if (drop.type === 'part') {
+               this.player.parts = (this.player.parts || 0) + 1;
+               this.spawnSparks(drop.x, drop.y, '#9e9e9e', 16);
+               this.spawnFloatingText('+1 PEÇA', drop.x, drop.y - 12, '#e0e0e0');
+            } else {
+               this.player.chronoCores = (this.player.chronoCores || 0) + 1;
+               this.spawnSparks(drop.x, drop.y, '#00e5ff', 16);
+               this.spawnSparks(drop.x, drop.y, '#ffd700', 10);
+               this.spawnFloatingText('+1 CC', drop.x, drop.y - 12, '#00e5ff');
+            }
             this.updateHUD();
             this.ccDrops.splice(i, 1);
           }
@@ -2505,7 +3146,178 @@
             this.updateHUD();
             this.spawnSparks(this.player.x, this.player.y, '#ffd700', 35);
             this.spawnSparks(this.player.x, this.player.y, '#00e5ff', 25);
+          } else if (room.grid[pGridY][pGridX] === TILE.BOSS_KEY) {
+            room.grid[pGridY][pGridX] = TILE.EMPTY;
+            this.player.hasBossKey = true;
+            sound.playCCPickup();
+            this.spawnFloatingText('CHAVE DO BOSS', this.player.x, this.player.y - 15, '#ffcc00');
           }
+        }
+      }
+
+      getAvailableCC() {
+        if (!this.player) return 0;
+        return (this.player.chronoCores || 0) + (this.player.depositedCores || 0);
+      }
+
+      getAvailableParts() {
+        if (!this.player) return 0;
+        return (this.player.parts || 0) + (this.player.depositedParts || 0);
+      }
+
+      consumeCurrency(costCC, costParts) {
+        if (!this.player) return;
+
+        let remCC = costCC;
+        if ((this.player.chronoCores || 0) >= remCC) {
+          this.player.chronoCores -= remCC;
+          remCC = 0;
+        } else {
+          remCC -= (this.player.chronoCores || 0);
+          this.player.chronoCores = 0;
+        }
+        if (remCC > 0) {
+          this.player.depositedCores = Math.max(0, (this.player.depositedCores || 0) - remCC);
+        }
+
+        let remParts = costParts;
+        if ((this.player.parts || 0) >= remParts) {
+          this.player.parts -= remParts;
+          remParts = 0;
+        } else {
+          remParts -= (this.player.parts || 0);
+          this.player.parts = 0;
+        }
+        if (remParts > 0) {
+          this.player.depositedParts = Math.max(0, (this.player.depositedParts || 0) - remParts);
+        }
+
+        if (costCC > 0) {
+          this.spawnFloatingText(`-${costCC} CC`, this.player.x, this.player.y - 18, '#ff5252');
+        }
+        if (costParts > 0) {
+          this.spawnFloatingText(`-${costParts} PEÇAS`, this.player.x, this.player.y - 32, '#ffab40');
+        }
+
+        this.updateHUD();
+        this.updateArmoryUI();
+      }
+
+      checkArmory() {
+        if (!this.map || !this.map.currentRoom || !this.player) return;
+        const room = this.map.currentRoom;
+        if (!room.isStart) return;
+
+        const pGridX = Math.floor(this.player.x / TILE_SIZE);
+        const pGridY = Math.floor(this.player.y / TILE_SIZE);
+
+        if (pGridX >= 0 && pGridX < GRID_SIZE && pGridY >= 0 && pGridY < GRID_SIZE) {
+          if (room.grid[pGridY][pGridX] === TILE.ARMORY || 
+             (pGridY > 0 && room.grid[pGridY-1][pGridX] === TILE.ARMORY)) {
+            
+            if (document.getElementById('armory-modal').classList.contains('visible')) return;
+
+            const totalCC = this.getAvailableCC();
+            const totalParts = this.getAvailableParts();
+
+            if (!this.player.armoryUnlocked) {
+               const unlockCostCC = 10;
+               const unlockCostParts = 10;
+
+               if (totalCC >= unlockCostCC && totalParts >= unlockCostParts) {
+                  this.consumeCurrency(unlockCostCC, unlockCostParts);
+                  this.player.armoryUnlocked = true;
+                  
+                  sound.playCCPickup();
+                  showToast('ARSENAL DESBLOQUEADO E ABERTO!');
+                  this.spawnSparks(this.player.x, this.player.y, '#ffd700', 30);
+                  
+                  this.player.y += TILE_SIZE * 0.8;
+                  this.openArmory();
+               } else {
+                  if (!this.player.armoryHintTimer || Date.now() - this.player.armoryHintTimer > 2500) {
+                     showToast(`TRANCADO! CUSTO: 10 CC e 10 PEÇAS (Você tem: ${totalCC} CC | ${totalParts} P)`);
+                     this.player.armoryHintTimer = Date.now();
+                  }
+               }
+            } else {
+               this.player.y += TILE_SIZE * 0.8;
+               this.openArmory();
+            }
+          }
+        }
+      }
+
+      openArmory() {
+        if (this.fadeState !== 'none') return;
+        document.getElementById('armory-modal').classList.add('visible');
+        this.updateArmoryUI();
+      }
+
+      closeArmory() {
+        document.getElementById('armory-modal').classList.remove('visible');
+      }
+
+      updateArmoryUI() {
+        const totalCC = this.getAvailableCC();
+        const totalParts = this.getAvailableParts();
+        document.getElementById('armory-coins').textContent = `Você tem: ${totalCC} CC | ${totalParts} PEÇAS`;
+        
+        // Gauntlet
+        const btnGauntlet = document.getElementById('btn-buy-gauntlet');
+        if (this.player.gauntletLevel >= 3) {
+          btnGauntlet.textContent = 'MÁXIMO';
+          btnGauntlet.disabled = true;
+        } else {
+          btnGauntlet.disabled = (totalCC < 10 || totalParts < 10);
+        }
+
+        // Boots
+        const btnBoots = document.getElementById('btn-buy-boots');
+        if (this.player.bootsLevel >= 1) {
+          btnBoots.textContent = 'COMPRADO';
+          btnBoots.disabled = true;
+        } else {
+          btnBoots.disabled = (totalCC < 15 || totalParts < 15);
+        }
+
+        // Bag
+        const btnBag = document.getElementById('btn-buy-bag');
+        if (this.player.bagLevel >= 3) {
+          btnBag.textContent = 'MÁXIMO';
+          btnBag.disabled = true;
+        } else {
+          btnBag.disabled = (totalCC < 20 || totalParts < 20);
+        }
+      }
+
+      buyUpgrade(type) {
+        let costCC = 0, costParts = 0;
+        if (type === 'gauntlet') { costCC = 10; costParts = 10; }
+        if (type === 'boots') { costCC = 15; costParts = 15; }
+        if (type === 'bag') { costCC = 20; costParts = 20; }
+        
+        const totalCC = this.getAvailableCC();
+        const totalParts = this.getAvailableParts();
+
+        if (totalCC >= costCC && totalParts >= costParts) {
+           this.consumeCurrency(costCC, costParts);
+           
+           if (type === 'gauntlet') {
+             this.player.upgradeGauntlet();
+           } else if (type === 'boots') {
+             this.player.bootsLevel = 1;
+             showToast('BOTAS COMPRADAS! DASH LIBERADO (SHIFT / BOTÃO MOBILE)!');
+           } else if (type === 'bag') {
+             this.player.bagLevel = (this.player.bagLevel || 1) + 1;
+             this.player.maxTimerBombs += 2;
+             this.player.timerBombs = Math.min(this.player.maxTimerBombs, this.player.timerBombs + 2);
+             showToast(`BOLSA EXPANDIDA (NV. ${this.player.bagLevel})! +2 BOMBAS!`);
+           }
+           sound.playCCPickup();
+           this.spawnSparks(this.player.x, this.player.y, '#00e5ff', 25);
+        } else {
+           showToast(`RECURSOS INSUFICIENTES! Necessário: ${costCC} CC e ${costParts} PEÇAS`);
         }
       }
 
@@ -2538,6 +3350,8 @@
           this.player.x = mid * TILE_SIZE + TILE_SIZE / 2;
           this.player.y = mid * TILE_SIZE + TILE_SIZE / 2;
           this.player.isRecoiling = false;
+          this.player.isDashing = false;
+          this.player.dashTimer = 0;
           this.player.recoilVx = 0;
           this.player.recoilVy = 0;
           this.player.animState = 'idle';
@@ -2548,21 +3362,26 @@
 
       checkGoelaDeposit() {
         const room = this.map.currentRoom;
-        if (!room.hasGoela || (this.player.chronoCores || 0) <= 0) return;
+        if (!room.hasGoela) return;
+        if ((this.player.chronoCores || 0) <= 0 && (this.player.parts || 0) <= 0) return;
 
         const pGridX = Math.floor(this.player.x / TILE_SIZE);
         const pGridY = Math.floor(this.player.y / TILE_SIZE);
 
         if (pGridX >= 0 && pGridX < GRID_SIZE && pGridY >= 0 && pGridY < GRID_SIZE) {
           if (room.grid[pGridY][pGridX] === TILE.GOELA) {
-            const deposited = this.player.chronoCores;
+            const depositedCores = this.player.chronoCores || 0;
+            const depositedParts = this.player.parts || 0;
             this.player.chronoCores = 0;
-            this.player.depositedCores = (this.player.depositedCores || 0) + deposited;
+            this.player.parts = 0;
+            this.player.depositedCores = (this.player.depositedCores || 0) + depositedCores;
+            this.player.depositedParts = (this.player.depositedParts || 0) + depositedParts;
             sound.playChuteDeposit();
-            showToast(`DEPOSITADO: ${deposited} CC NA GOELA!`);
+            showToast(`ENVIADO: ${depositedCores} CC | ${depositedParts} PEÇAS`);
             this.spawnSparks(this.player.x, this.player.y, '#4caf50', 30);
             this.spawnSparks(this.player.x, this.player.y, '#00e5ff', 25);
-            this.spawnFloatingText(`+${deposited} CC DEPOSITADO`, this.player.x, this.player.y - 18, '#4caf50');
+            if (depositedCores > 0) this.spawnFloatingText(`+${depositedCores} CC`, this.player.x, this.player.y - 18, '#4caf50');
+            if (depositedParts > 0) this.spawnFloatingText(`+${depositedParts} PEÇAS`, this.player.x, this.player.y - 32, '#9e9e9e');
             this.updateHUD();
           }
         }
@@ -2600,6 +3419,26 @@
         const blastRadius = TILE_SIZE * 1.5;
         this.blasts.push(new ExplosionBlast(cx, cy, blastRadius, false));
         this.spawnSparks(cx, cy, '#ff5252', 25);
+
+        // Implosion: puxa inimigos para o centro
+        const pullRadius = TILE_SIZE * 3.5;
+        room.enemies.forEach(enemy => {
+          const dx = cx - enemy.x;
+          const dy = cy - enemy.y;
+          const dist = Math.hypot(dx, dy);
+          if (dist > 0 && dist < pullRadius) {
+            enemy.applyRepulsion(-dx/dist, -dy/dist, 250); // Puxa
+          }
+        });
+        
+        // Implosion: puxa a Charlotte para o centro
+        const pDist = Math.hypot(this.player.x - cx, this.player.y - cy);
+        if (pDist > 0 && pDist < pullRadius) {
+          let pullX = cx - this.player.x;
+          let pullY = cy - this.player.y;
+          const norm = Math.hypot(pullX, pullY);
+          this.player.applyImpulse(pullX / norm, pullY / norm, 2.5);
+        }
 
         // Destrói blocos quebráveis no raio 3x3 e dropa CC (taxa escala com a profundidade)
         const depth = this.map.currentDepth || 1;
@@ -2825,7 +3664,7 @@
       }
 
       checkHoleFall() {
-        if (this.fadeState !== 'none') return;
+        if (this.fadeState !== 'none' || this.rewindGlitchTimer > 0) return;
         const room = this.map.currentRoom;
         if (room.isSecret) return;
 
@@ -2833,19 +3672,8 @@
         const pGridY = Math.floor(this.player.y / TILE_SIZE);
 
         if (room.grid[pGridY][pGridX] === TILE.HOLE) {
-          this.fadeState = 'out';
-          sound.playChuteDeposit();
-          showToast('QUEDA: ANDAR INFERIOR SECRETO!');
-
-          this.pendingTransition = () => {
-            this.map.secretRoom.returnRoom = room;
-            this.map.currentRoom = this.map.secretRoom;
-            this.player.invulnerableTimer = 0.6;
-            this.map.secretRoom.enemies.forEach(e => e.resetActivationGrace(1.2));
-
-            this.player.x = Math.floor(GRID_SIZE / 2) * TILE_SIZE + TILE_SIZE / 2;
-            this.player.y = TILE_SIZE * 2;
-          };
+          // Se a charllote cair o tempo rebobina
+          this.triggerTimeRewind();
         }
       }
 
@@ -2900,6 +3728,8 @@
           this.player.x = mid * TILE_SIZE + TILE_SIZE / 2;
           this.player.y = mid * TILE_SIZE + TILE_SIZE / 2;
           this.player.isRecoiling = false;
+          this.player.isDashing = false;
+          this.player.dashTimer = 0;
           this.player.recoilVx = 0;
           this.player.recoilVy = 0;
           this.player.animState = 'idle';
@@ -2956,6 +3786,14 @@
             Math.random() * 4 + 2,
             Math.random() * 0.4 + 0.2
           ));
+        }
+
+        const depth = this.map.currentDepth || 1;
+        const partCount = 1 + Math.floor(Math.random() * depth); // Volta a cair mais peças
+        for (let i = 0; i < partCount; i++) {
+           const ox = (Math.random() - 0.5) * 24;
+           const oy = (Math.random() - 0.5) * 24;
+           this.ccDrops.push(new ChronoCoreDrop(x + ox, y + oy, 'part'));
         }
       }
 
@@ -3017,6 +3855,24 @@
         // Efeitos Visuais adicionais no Nodo Secreto de Acesso ao Andar Inferior
         if (room.secretFloorNode) {
           const node = room.secretFloorNode;
+          
+          if (window.game && window.game.showExitHint && node.state === 'intact') {
+            ctx.save();
+            const pulse = (Math.sin(now * 8) + 1) / 2;
+            ctx.strokeStyle = `rgba(0, 229, 255, ${0.4 + pulse * 0.6})`;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(node.x, node.y, TILE_SIZE * 0.4 + pulse * 4, 0, Math.PI * 2);
+            ctx.stroke();
+            
+            ctx.fillStyle = `rgba(0, 229, 255, ${0.8})`;
+            ctx.font = 'bold 12px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('▼ AQUI', node.x, node.y - 20 - Math.sin(now * 5) * 4);
+            ctx.restore();
+          }
+
           if (node.state === 'breaking') {
             const shake = (Math.random() - 0.5) * 4;
             ctx.save();
@@ -3132,12 +3988,19 @@
               ctx.beginPath();
               ctx.arc(px + 26, py + 15, 4, 0, Math.PI * 2);
               ctx.fill();
-              // Texto indicador
-              ctx.fillStyle = 'rgba(255,255,255,0.8)';
-              ctx.font = '9px sans-serif';
-              ctx.textAlign = 'center';
-              ctx.fillText('ARSENAL', px + TILE_SIZE / 2, py - 2);
 
+              // Texto indicador
+              if (window.game && window.game.player) {
+                 ctx.fillStyle = 'rgba(255,255,255,0.8)';
+                 ctx.font = '9px sans-serif';
+                 ctx.textAlign = 'center';
+                 if (window.game.player.armoryUnlocked) {
+                    ctx.fillStyle = '#4caf50';
+                    ctx.fillText('ARSENAL (LIVRE)', px + TILE_SIZE / 2, py - 2);
+                 } else {
+                    ctx.fillText('CUSTO: 10 CC | 10 PEÇAS', px + TILE_SIZE / 2, py - 2);
+                 }
+              }
             } else if (tile === TILE.LOCK_GATE) {
               // Lockdown: Blocos Vermelhos Piscantes
               const pulse = (Math.sin(now * 10) + 1) / 2;
@@ -3152,6 +4015,34 @@
               ctx.moveTo(px + 6, py + TILE_SIZE - 6);
               ctx.lineTo(px + TILE_SIZE - 6, py + 6);
               ctx.stroke();
+            } else if (tile === TILE.BOSS_DOOR) {
+              ctx.fillStyle = '#7f0000';
+              ctx.fillRect(px, py, TILE_SIZE, TILE_SIZE);
+              ctx.fillStyle = '#ffcc00';
+              ctx.fillRect(px + TILE_SIZE/2 - 4, py + TILE_SIZE/2 - 6, 8, 12);
+            } else if (tile === TILE.BOSS_KEY) {
+              ctx.fillStyle = '#ffcc00';
+              ctx.beginPath();
+              ctx.arc(px + TILE_SIZE/2, py + TILE_SIZE/2, 8, 0, Math.PI*2);
+              ctx.fill();
+            } else if (tile === TILE.CHEST) {
+              // Baú
+              ctx.fillStyle = '#6d4c41';
+              ctx.fillRect(px + 4, py + 8, TILE_SIZE - 8, TILE_SIZE - 16);
+              ctx.fillStyle = '#3e2723';
+              ctx.fillRect(px + 4, py + 12, TILE_SIZE - 8, 4);
+              ctx.fillStyle = '#ffcc00';
+              ctx.fillRect(px + TILE_SIZE/2 - 2, py + 12, 4, 4);
+
+              // Texto flutuante mostrando conteúdo do baú global (depositado pela goela)
+              if (window.game && window.game.player) {
+                const depCC = window.game.player.depositedCores || 0;
+                const depP = window.game.player.depositedParts || 0;
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+                ctx.font = 'bold 9px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(`BAÚ: ${depCC} CC | ${depP} PEÇAS`, px + TILE_SIZE/2, py - 6);
+              }
             } else if (tile === TILE.HOLE) {
               // Buraco / Abismo aberto
               if (hasChaoSprite) {
@@ -3161,12 +4052,6 @@
                 ctx.fillStyle = '#08090c';
                 ctx.fillRect(px, py, TILE_SIZE, TILE_SIZE);
               }
-              const pulse = (Math.sin(now * 5) + 1) / 2;
-              ctx.strokeStyle = `rgba(0, 229, 255, ${0.35 + pulse * 0.35})`;
-              ctx.lineWidth = 1.5;
-              ctx.beginPath();
-              ctx.arc(px + TILE_SIZE / 2, py + TILE_SIZE / 2, 12, 0, Math.PI * 2);
-              ctx.stroke();
             } else if (tile === TILE.GOELA) {
               // Goela (Depósito de Chrono Cores): Duto Verde Escuro com borda pulsante
               const pulse = (Math.sin(now * 4) + 1) / 2;
@@ -3436,7 +4321,12 @@
           }
 
           let frameIdx = Math.floor(this.player.animTimer * fps) % totalFrames;
-          if (this.player.animState === 'throw' && this.input.isAiming) {
+          if (this.player.animState === 'dash') {
+            if (this.player.isDashing && this.player.maxDashTime > 0) {
+              const progress = Math.max(0, Math.min(1, 1 - (this.player.dashTimer / this.player.maxDashTime)));
+              frameIdx = Math.min(totalFrames - 1, Math.floor(progress * totalFrames));
+            }
+          } else if (this.player.animState === 'throw' && this.input.isAiming) {
             frameIdx = 3; // Mantém postura de mira com bomba em mãos
           }
 
@@ -3636,7 +4526,7 @@
         for (let y = 0; y < this.map.mapSize; y++) {
           for (let x = 0; x < this.map.mapSize; x++) {
             const room = this.map.rooms.get(`${x},${y}`);
-            if (room && room.visited) {
+            if (room && (room.visited || (this.showExitHint && room.secretFloorNode))) {
               const mx = margin + x * cell;
               const my = margin + y * cell;
 
@@ -3654,6 +4544,11 @@
                 mctx.fillStyle = '#4caf50';
                 mctx.fillRect(mx + cell / 2 - 2, my + cell / 2 - 2, 3, 3);
               }
+              
+              if (this.showExitHint && room.secretFloorNode) {
+                mctx.fillStyle = '#00e5ff';
+                mctx.fillRect(mx + cell / 2 - 3, my + cell / 2 - 3, 5, 5);
+              }
             }
           }
         }
@@ -3667,9 +4562,10 @@
 
         const depth = this.map.currentDepth || 1;
         if (room.isSecret) {
-          coordsEl.textContent = `ANDAR SECRETO • NÍVEL ${depth}`;
+          coordsEl.textContent = `ANDAR SECRETO   NÍVEL ${depth}`;
         } else {
-          coordsEl.textContent = `NÍVEL ${depth} • SALA [${room.rx}, ${room.ry}]`;
+          let extra = this.player.hasBossKey ? '   [CHAVE DO BOSS]' : '';
+          coordsEl.textContent = `NÍVEL ${depth}   SALA [${room.rx}, ${room.ry}]${extra}`;
         }
 
         enemyEl.textContent = `INIMIGOS: ${room.enemies.length}`;
@@ -3685,6 +4581,15 @@
           lockdownBanner.style.display = 'none';
         }
 
+        // Bombas (Bag Level)
+        const bagLvl = this.player.bagLevel || 1;
+        document.querySelectorAll('.bomb-btn').forEach(btn => {
+          const type = btn.getAttribute('data-bomb');
+          if (type === 'impact') btn.style.display = bagLvl >= 2 ? 'flex' : 'none';
+          if (type === 'propulsor') btn.style.display = bagLvl >= 3 ? 'flex' : 'none';
+        });
+
+        // Atualiza nível da manopla e cristais
         const gauntletEl = document.getElementById('gauntlet-level');
         if (gauntletEl) {
           gauntletEl.textContent = this.player.getGauntletTitle();
@@ -3694,10 +4599,37 @@
         if (ccEl) {
           ccEl.textContent = `${this.player.chronoCores || 0} CC`;
         }
+        
+        const partEl = document.getElementById('part-counter');
+        if (partEl) {
+          partEl.textContent = `${this.player.parts || 0} PEÇAS`;
+        }
 
         const ammoEl = document.getElementById('ammo-counter');
         if (ammoEl) {
           ammoEl.textContent = `(${this.player.timerBombs})`;
+        }
+
+        // Atualiza Botão de Dash Mobile
+        const dashBtn = document.getElementById('dash-trigger');
+        const dashOverlay = document.getElementById('dash-cooldown-overlay');
+        if (dashBtn) {
+          if (this.player.bootsLevel <= 0) {
+            dashBtn.classList.add('locked');
+            dashBtn.classList.remove('cooldown');
+            if (dashOverlay) dashOverlay.style.display = 'none';
+          } else if (this.player.dashCooldown > 0) {
+            dashBtn.classList.remove('locked');
+            dashBtn.classList.add('cooldown');
+            if (dashOverlay) {
+              dashOverlay.style.display = 'flex';
+              dashOverlay.textContent = `${this.player.dashCooldown.toFixed(1)}s`;
+            }
+          } else {
+            dashBtn.classList.remove('locked');
+            dashBtn.classList.remove('cooldown');
+            if (dashOverlay) dashOverlay.style.display = 'none';
+          }
         }
       }
     }

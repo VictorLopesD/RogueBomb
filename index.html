@@ -352,6 +352,110 @@
       background: radial-gradient(circle at 30% 30%, #ff8a65, #e64a19);
     }
 
+    /* Agrupamento de Ação & Dash Mobile */
+    .action-buttons-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      justify-content: flex-end;
+    }
+
+    /* Botão de Dash Mobile */
+    .dash-btn {
+      position: relative;
+      width: 66px;
+      height: 66px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #00e5ff, #0277bd);
+      border: 3px solid rgba(0, 229, 255, 0.75);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(0, 229, 255, 0.4), inset 0 0 10px rgba(0, 229, 255, 0.3);
+      transition: transform 0.08s, box-shadow 0.08s, background 0.15s, border-color 0.15s, opacity 0.15s;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: none;
+      overflow: hidden;
+    }
+
+    .dash-btn:active, .dash-btn.active {
+      transform: scale(0.92);
+      box-shadow: 0 2px 10px rgba(0, 229, 255, 0.9), 0 0 18px #00e5ff;
+      background: radial-gradient(circle at 30% 30%, #80d8ff, #0091ea);
+    }
+
+    .dash-btn.locked {
+      background: radial-gradient(circle at 30% 30%, #37474f, #212121);
+      border-color: rgba(255, 255, 255, 0.25);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+      opacity: 0.75;
+    }
+
+    .dash-btn.locked .dash-icon {
+      opacity: 0.6;
+      filter: grayscale(0.8);
+    }
+
+    .dash-btn.locked .dash-label {
+      color: #90a4ae;
+    }
+
+    .dash-btn.cooldown {
+      border-color: rgba(255, 112, 67, 0.85);
+      box-shadow: 0 0 14px rgba(255, 87, 34, 0.55);
+      background: radial-gradient(circle at 30% 30%, #bf360c, #263238);
+    }
+
+    .dash-icon {
+      font-size: 18px;
+      line-height: 1;
+      pointer-events: none;
+      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+    }
+
+    .dash-label {
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      line-height: 1.1;
+      pointer-events: none;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+    }
+
+    .dash-cost {
+      font-size: 8px;
+      font-weight: 800;
+      color: #80d8ff;
+      line-height: 1;
+      margin-top: 1px;
+      pointer-events: none;
+    }
+
+    .dash-cooldown-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(10, 14, 20, 0.85);
+      border-radius: 50%;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 900;
+      color: #ff7043;
+      letter-spacing: 0.5px;
+      pointer-events: none;
+      backdrop-filter: blur(2px);
+      -webkit-backdrop-filter: blur(2px);
+    }
+
     /* Guia de Atalhos Desktop */
     #desktop-guide {
       position: absolute;
@@ -467,6 +571,18 @@
       .joystick-zone { transform: scale(0.95); }
       .actions-container { transform: scale(0.95); }
     }
+
+    @media (max-width: 480px) {
+      .action-btn { width: 74px; height: 74px; font-size: 13px; }
+      .dash-btn { width: 56px; height: 56px; }
+      .dash-icon { font-size: 15px; }
+      .dash-label { font-size: 9px; }
+      .dash-cost { font-size: 7px; }
+      .dash-cooldown-overlay { font-size: 11px; }
+      .bomb-btn { width: 48px; height: 48px; font-size: 10px; }
+      .actions-container { gap: 8px; }
+      .action-buttons-group { gap: 8px; }
+    }
   </style>
 </head>
 <body>
@@ -541,19 +657,38 @@
         </div>
       </div>
 
-      <!-- Seleção de Bombas e Botão de Ação -->
+      <!-- Seleção de Bombas e Botões de Ação Mobile -->
       <div class="actions-container">
         <div class="bomb-selectors">
+          <button class="bomb-btn" data-bomb="impact" style="display: none;" title="1: Bomba de Impacto">
+            <span class="icon"></span>
+            <span>IMP</span>
+          </button>
+          <button class="bomb-btn" data-bomb="propulsor" style="display: none;" title="2: Bomba Propulsora">
+            <span class="icon"></span>
+            <span>PROP</span>
+          </button>
           <button class="bomb-btn selected" data-bomb="timed" title="3: Bomba Temporizada">
             <span class="icon"></span>
             <span>TEMP <br><span id="ammo-counter">(5)</span></span>
           </button>
         </div>
 
-        <button class="action-btn" id="action-trigger" title="Plantar / Ativar Bomba">
-          <span style="font-size: 20px;">💣</span>
-          <span>AÇÃO</span>
-        </button>
+        <div class="action-buttons-group">
+          <!-- Botão de Dash Mobile -->
+          <button class="dash-btn locked" id="dash-trigger" title="Realizar Dash com Botas Propulsoras (Shift)">
+            <span class="dash-icon">💨</span>
+            <span class="dash-label">DASH</span>
+            <span class="dash-cost">1 CC</span>
+            <div class="dash-cooldown-overlay" id="dash-cooldown-overlay">5.0s</div>
+          </button>
+
+          <!-- Botão de Ação / Lançar Bomba -->
+          <button class="action-btn" id="action-trigger" title="Plantar / Ativar Bomba">
+            <span style="font-size: 20px;">💣</span>
+            <span>AÇÃO</span>
+          </button>
+        </div>
       </div>
     </div>
 
@@ -577,7 +712,7 @@
       <div class="armory-item">
         <div class="armory-info">
           <span class="armory-title">Botas Propulsoras</span>
-          <span class="armory-desc">Permite dar Dash (Aperte SHIFT). Custo: 1 CC. Superaquece por 5s.</span>
+          <span class="armory-desc">Permite dar Dash (Aperte SHIFT ou Botão Mobile). Custo: 1 CC. Superaquece por 5s.</span>
           <span class="armory-cost">Custo: 15 CC | 15 PEÇAS</span>
         </div>
         <button class="btn-buy" id="btn-buy-boots" onclick="window.game.buyUpgrade('boots')">Comprar</button>
@@ -1038,6 +1173,7 @@
         this.keys = {};
         this.selectedBomb = BOMB_TYPE.TIMED;
         this.actionTriggered = false;
+        this.dashTriggered = false;
 
         // Joystick Virtual Dinâmico por Arrasto (Controle Fluido 360°)
         this.joystickActive = false;
@@ -1160,6 +1296,21 @@
           };
           actionBtn.addEventListener('pointerdown', triggerAction);
           actionBtn.addEventListener('click', triggerAction);
+        }
+
+        // Botão de Dash Mobile
+        const dashBtn = document.getElementById('dash-trigger');
+        if (dashBtn) {
+          const triggerDash = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            sound.init();
+            dashBtn.classList.add('active');
+            this.dashTriggered = true;
+            setTimeout(() => dashBtn.classList.remove('active'), 120);
+          };
+          dashBtn.addEventListener('pointerdown', triggerDash);
+          dashBtn.addEventListener('click', triggerDash);
         }
       }
 
@@ -1361,6 +1512,14 @@
       consumeAction() {
         if (this.actionTriggered) {
           this.actionTriggered = false;
+          return true;
+        }
+        return false;
+      }
+
+      consumeDash() {
+        if (this.dashTriggered) {
+          this.dashTriggered = false;
           return true;
         }
         return false;
@@ -1848,8 +2007,15 @@
           if (window.game) window.game.spawnSparks(this.x + (Math.random() - 0.5) * 8, this.y + 12, '#ff7043', 1);
         }
 
-        if (this.bootsLevel > 0 && (input.keys['ShiftLeft'] || input.keys['ShiftRight'])) {
-          if (this.dashCooldown > 0) {
+        const isDashRequested = (input.consumeDash() || input.keys['ShiftLeft'] || input.keys['ShiftRight']);
+        if (isDashRequested && !this.isDashing) {
+          if (this.bootsLevel <= 0) {
+            if (!this.dashWarnTimer || Date.now() - this.dashWarnTimer > 800) {
+              this.dashWarnTimer = Date.now();
+              if (window.showToast) window.showToast('BOTAS BLOQUEADAS! COMPRE NO ARSENAL');
+              if (window.game) window.game.spawnSparks(this.x, this.y + 12, '#90a4ae', 3);
+            }
+          } else if (this.dashCooldown > 0) {
             // Em superaquecimento
             if (!this.dashWarnTimer || Date.now() - this.dashWarnTimer > 800) {
               this.dashWarnTimer = Date.now();
@@ -3141,7 +3307,7 @@
              this.player.upgradeGauntlet();
            } else if (type === 'boots') {
              this.player.bootsLevel = 1;
-             showToast('BOTAS COMPRADAS! DASH LIBERADO (SHIFT)!');
+             showToast('BOTAS COMPRADAS! DASH LIBERADO (SHIFT / BOTÃO MOBILE)!');
            } else if (type === 'bag') {
              this.player.bagLevel = (this.player.bagLevel || 1) + 1;
              this.player.maxTimerBombs += 2;
@@ -4442,6 +4608,28 @@
         const ammoEl = document.getElementById('ammo-counter');
         if (ammoEl) {
           ammoEl.textContent = `(${this.player.timerBombs})`;
+        }
+
+        // Atualiza Botão de Dash Mobile
+        const dashBtn = document.getElementById('dash-trigger');
+        const dashOverlay = document.getElementById('dash-cooldown-overlay');
+        if (dashBtn) {
+          if (this.player.bootsLevel <= 0) {
+            dashBtn.classList.add('locked');
+            dashBtn.classList.remove('cooldown');
+            if (dashOverlay) dashOverlay.style.display = 'none';
+          } else if (this.player.dashCooldown > 0) {
+            dashBtn.classList.remove('locked');
+            dashBtn.classList.add('cooldown');
+            if (dashOverlay) {
+              dashOverlay.style.display = 'flex';
+              dashOverlay.textContent = `${this.player.dashCooldown.toFixed(1)}s`;
+            }
+          } else {
+            dashBtn.classList.remove('locked');
+            dashBtn.classList.remove('cooldown');
+            if (dashOverlay) dashOverlay.style.display = 'none';
+          }
         }
       }
     }
