@@ -1608,6 +1608,7 @@
         this.depth = depth;
         this.doors = { north: false, south: false, east: false, west: false };
         this.grid = Array(GRID_SIZE).fill(null).map(() => Array(GRID_SIZE).fill(TILE.EMPTY));
+        this.railGrid = Array(GRID_SIZE).fill(null).map(() => Array(GRID_SIZE).fill(false));
         this.enemies = [];
         this.visited = false;
         this.cleared = isStart || isSecret;
@@ -1757,13 +1758,13 @@
         // Pilares internos e blocos quebráveis (marrom)
         for (let y = 2; y < GRID_SIZE - 2; y++) {
           for (let x = 2; x < GRID_SIZE - 2; x++) {
-            // Evita bloquear entradas imediatas
+            // Evita bloquear entradas imediatas das portas (cruz central)
             if ((x === mid && (y <= 2 || y >= GRID_SIZE - 3)) ||
                 (y === mid && (x <= 2 || x >= GRID_SIZE - 3))) {
               continue;
             }
             
-            // Sala do boss contém poucas ou nenhuma caixa (Item 6)
+            // Sala do boss contém poucas ou nenhuma caixa
             if (this.isBossRoom) {
                if (Math.random() < 0.05) this.grid[y][x] = TILE.BREAKABLE;
                continue;
@@ -1771,15 +1772,52 @@
 
             // Pilares fixos geométricos
             if (x % 2 === 0 && y % 2 === 0) {
-              if (Math.random() < 0.25) { // Diminui quantidade de blocos cinzas
+              if (Math.random() < 0.25) { 
                 this.grid[y][x] = TILE.WALL;
               }
             } else if (Math.random() < 0.20) {
-              // Blocos quebráveis marrons
               this.grid[y][x] = TILE.BREAKABLE;
-            } else if (Math.random() < 0.05) {
-              // Quadrados vazios para o jogador derrubar ou cair
-              this.grid[y][x] = TILE.HOLE;
+            }
+          }
+        }
+
+        // Gera Abismos Maiores (Clusters) em vez de buracos 1x1
+        if (!this.isBossRoom && !this.isStart) {
+          const numAbysses = Math.floor(Math.random() * 3); // 0 a 2 grandes abismos por sala
+          for (let i = 0; i < numAbysses; i++) {
+            let cx = Math.floor(Math.random() * (GRID_SIZE - 6)) + 3;
+            let cy = Math.floor(Math.random() * (GRID_SIZE - 6)) + 3;
+            let radius = Math.random() * 2.5 + 1.5; // Raio entre 1.5 e 4 (buracos gigantes)
+            
+            for (let y = 1; y < GRID_SIZE - 1; y++) {
+              for (let x = 1; x < GRID_SIZE - 1; x++) {
+                // Área de segurança de 3 blocos em volta das 4 portas
+                const distTop = Math.hypot(x - mid, y - 0);
+                const distBottom = Math.hypot(x - mid, y - (GRID_SIZE - 1));
+                const distLeft = Math.hypot(x - 0, y - mid);
+                const distRight = Math.hypot(x - (GRID_SIZE - 1), y - mid);
+                
+                const isSafeZone = (distTop <= 3.5 || distBottom <= 3.5 || distLeft <= 3.5 || distRight <= 3.5);
+                
+                if (!isSafeZone) {
+                   if (Math.hypot(cx - x, cy - y) <= radius) {
+                     this.grid[y][x] = TILE.HOLE;
+                   }
+                }
+              }
+            }
+            
+            // Gerar zonas de chão batido (terra)
+            let dx = Math.floor(Math.random() * (GRID_SIZE - 6)) + 3;
+            let dy = Math.floor(Math.random() * (GRID_SIZE - 6)) + 3;
+            let dradius = Math.random() * 3 + 2; // Zonas maiores de terra
+            
+            for (let y = 1; y < GRID_SIZE - 1; y++) {
+              for (let x = 1; x < GRID_SIZE - 1; x++) {
+                 if (this.grid[y][x] === TILE.EMPTY && Math.hypot(dx - x, dy - y) <= dradius) {
+                     this.grid[y][x] = TILE.DIRT;
+                 }
+              }
             }
           }
         }
@@ -1815,6 +1853,8 @@
             }
           }
         }
+        
+        this.generateRails();
       }
 
       findSecretFloorSpot() {
@@ -1853,6 +1893,8 @@
             }
           }
         }
+        
+        this.generateRails();
       }
 
       buildStartLayout() {
@@ -1876,6 +1918,39 @@
               }
             }
           }
+        }
+        
+        this.generateRails();
+      }
+
+      generateRails() {
+        if (Math.random() > 0.8) return; // Algumas salas não têm trilhos
+        
+        let x = 1;
+        let y = Math.floor(Math.random() * (GRID_SIZE - 4)) + 2;
+        let dir = 1; // 1: direita, 2: baixo, 0: cima
+        let length = 0;
+        const maxLen = 15;
+
+        while (x >= 1 && x < GRID_SIZE - 1 && y >= 1 && y < GRID_SIZE - 1 && length < maxLen) {
+          this.railGrid[y][x] = true;
+          
+          let nextDir = dir;
+          if (Math.random() < 0.3) {
+            nextDir = (Math.random() < 0.5) ? 0 : 2; // Vira para cima ou para baixo
+            if (dir !== 1 && Math.random() < 0.6) nextDir = 1; // Tenta voltar pra direita
+          }
+          
+          // Evitar voltar para trás (espiral infinita)
+          if (dir === 0 && nextDir === 2) nextDir = 0;
+          if (dir === 2 && nextDir === 0) nextDir = 2;
+          
+          if (nextDir === 0) y--;
+          else if (nextDir === 1) x++;
+          else if (nextDir === 2) y++;
+          
+          dir = nextDir;
+          length++;
         }
       }
 
@@ -2344,9 +2419,9 @@
                return false;
             }
             if (isKnockback) {
-              if (tile === TILE.BREAKABLE || tile === TILE.LOCK_GATE || tile === TILE.BOSS_DOOR || tile === TILE.ARMORY || tile === TILE.CHEST || tile === TILE.INVENTOR_NPC || tile === TILE.SWITCH_TARGET) return true;
+              if (tile === TILE.WALL || tile === TILE.BREAKABLE || tile === TILE.LOCK_GATE || tile === TILE.BOSS_DOOR || tile === TILE.ARMORY || tile === TILE.CHEST || tile === TILE.INVENTOR_NPC || tile === TILE.SWITCH_TARGET) return true;
             } else {
-              if (tile === TILE.WALL || tile === TILE.BREAKABLE || tile === TILE.LOCK_GATE || tile === TILE.BOSS_DOOR || tile === TILE.ARMORY || tile === TILE.CHEST || tile === TILE.INVENTOR_NPC || tile === TILE.SWITCH_TARGET || tile === TILE.HOLE) {
+              if (tile === TILE.WALL || tile === TILE.BREAKABLE || tile === TILE.LOCK_GATE || tile === TILE.BOSS_DOOR || tile === TILE.ARMORY || tile === TILE.CHEST || tile === TILE.INVENTOR_NPC || tile === TILE.SWITCH_TARGET) {
                 if (tile === TILE.BOSS_DOOR && Math.random() < 0.02) {
                    if (window.showToast) window.showToast('VOCÊ PRECISA DA CHAVE DO BOSS!');
                 }
@@ -2527,18 +2602,56 @@
             let nextX = this.x + desiredVx * dt;
             let nextY = this.y + desiredVy * dt;
 
-            if (!this.checkTileCollision(nextX, nextY, room)) {
-              this.x = nextX;
-              this.y = nextY;
-            } else {
-              // Desvio inteligente
-              const altX = this.x + desiredVx * dt;
-              if (!this.checkTileCollision(altX, this.y, room)) {
-                this.x = altX;
+            let hitWall = this.checkTileCollision(nextX, nextY, room);
+            let hitHole = this.checkTileCollisionHolesOnly(nextX, nextY, room);
+
+            if (this.depth === 1) {
+              // Nível 1: Ignora buracos, tenta desviar de paredes normalmente
+              if (!hitWall) {
+                this.x = nextX;
+                this.y = nextY;
               } else {
-                const altY = this.y + desiredVy * dt;
-                if (!this.checkTileCollision(this.x, altY, room)) {
-                  this.y = altY;
+                const altX = this.x + desiredVx * dt;
+                if (!this.checkTileCollision(altX, this.y, room)) this.x = altX;
+                else {
+                  const altY = this.y + desiredVy * dt;
+                  if (!this.checkTileCollision(this.x, altY, room)) this.y = altY;
+                }
+              }
+            } else if (this.depth === 2) {
+              // Nível 2: Para de ir atrás se o próximo passo for um buraco
+              if (hitHole) {
+                 // Fica parado encarando o buraco
+                 this.wanderDir = { dx: 0, dy: 0 };
+              } else if (!hitWall) {
+                this.x = nextX;
+                this.y = nextY;
+              } else {
+                // Se bateu na parede, tenta desviar, mas não desvia para dentro de um buraco
+                const altX = this.x + desiredVx * dt;
+                if (!this.checkTileCollision(altX, this.y, room) && !this.checkTileCollisionHolesOnly(altX, this.y, room)) {
+                  this.x = altX;
+                } else {
+                  const altY = this.y + desiredVy * dt;
+                  if (!this.checkTileCollision(this.x, altY, room) && !this.checkTileCollisionHolesOnly(this.x, altY, room)) {
+                    this.y = altY;
+                  }
+                }
+              }
+            } else {
+              // Nível 3+: Tenta contornar ativamente se bater num buraco ou parede
+              if (!hitWall && !hitHole) {
+                this.x = nextX;
+                this.y = nextY;
+              } else {
+                const altX = this.x + desiredVx * dt;
+                if (!this.checkTileCollision(altX, this.y, room) && !this.checkTileCollisionHolesOnly(altX, this.y, room)) {
+                  this.x = altX;
+                } else {
+                  const altY = this.y + desiredVy * dt;
+                  if (!this.checkTileCollision(this.x, altY, room) && !this.checkTileCollisionHolesOnly(this.x, altY, room)) {
+                    this.y = altY;
+                  }
                 }
               }
             }
@@ -2547,10 +2660,17 @@
       }
 
       moveWithCollision(targetX, targetY, room, isKnockback = false) {
-        if (!this.checkTileCollision(targetX, this.y, room, isKnockback)) {
+        let avoidHoles = (!isKnockback && this.depth >= 2);
+        
+        let hitWallX = this.checkTileCollision(targetX, this.y, room, isKnockback);
+        let hitHoleX = avoidHoles ? this.checkTileCollisionHolesOnly(targetX, this.y, room) : false;
+        if (!hitWallX && !hitHoleX) {
           this.x = targetX;
         }
-        if (!this.checkTileCollision(this.x, targetY, room, isKnockback)) {
+
+        let hitWallY = this.checkTileCollision(this.x, targetY, room, isKnockback);
+        let hitHoleY = avoidHoles ? this.checkTileCollisionHolesOnly(this.x, targetY, room) : false;
+        if (!hitWallY && !hitHoleY) {
           this.y = targetY;
         }
       }
@@ -2566,12 +2686,27 @@
             if (tx < 0 || tx >= GRID_SIZE || ty < 0 || ty >= GRID_SIZE) return isKnockback ? false : true;
             const tile = room.grid[ty][tx];
             if (isKnockback) {
-              if (tile === TILE.BREAKABLE || tile === TILE.LOCK_GATE || tile === TILE.BOSS_DOOR || tile === TILE.ARMORY || tile === TILE.CHEST || tile === TILE.INVENTOR_NPC || tile === TILE.SWITCH_TARGET) return true;
+              if (tile === TILE.WALL || tile === TILE.BREAKABLE || tile === TILE.LOCK_GATE || tile === TILE.BOSS_DOOR || tile === TILE.ARMORY || tile === TILE.CHEST || tile === TILE.INVENTOR_NPC || tile === TILE.SWITCH_TARGET) return true;
             } else {
-              if (tile === TILE.WALL || tile === TILE.BREAKABLE || tile === TILE.LOCK_GATE || tile === TILE.BOSS_DOOR || tile === TILE.ARMORY || tile === TILE.CHEST || tile === TILE.INVENTOR_NPC || tile === TILE.SWITCH_TARGET || tile === TILE.HOLE) {
+              if (tile === TILE.WALL || tile === TILE.BREAKABLE || tile === TILE.LOCK_GATE || tile === TILE.BOSS_DOOR || tile === TILE.ARMORY || tile === TILE.CHEST || tile === TILE.INVENTOR_NPC || tile === TILE.SWITCH_TARGET) {
                 return true;
               }
             }
+          }
+        }
+        return false;
+      }
+
+      checkTileCollisionHolesOnly(x, y, room) {
+        const left = Math.floor((x - this.radius) / TILE_SIZE);
+        const right = Math.floor((x + this.radius) / TILE_SIZE);
+        const top = Math.floor((y - this.radius) / TILE_SIZE);
+        const bottom = Math.floor((y + this.radius) / TILE_SIZE);
+
+        for (let ty = top; ty <= bottom; ty++) {
+          for (let tx = left; tx <= right; tx++) {
+            if (tx < 0 || tx >= GRID_SIZE || ty < 0 || ty >= GRID_SIZE) continue;
+            if (room.grid[ty][tx] === TILE.HOLE) return true;
           }
         }
         return false;
@@ -3072,7 +3207,7 @@
         this.chaoSprite.src = 'Img/chao_mina.png';
 
         this.chaoExtraSprite = new Image();
-        this.chaoExtraSprite.src = 'Img/chao_mina1-2.png';
+        this.chaoExtraSprite.src = 'Img/chao_mina1-3.png';
 
         this.ccDrops = [];
         this.floatingTexts = [];
@@ -3249,7 +3384,7 @@
             eInAbyss = true;
           } else {
             const tile = room.grid[eGridY][eGridX];
-            if (tile === TILE.WALL || tile === TILE.HOLE) eInAbyss = true;
+            if (tile === TILE.HOLE) eInAbyss = true;
           }
           
           if (eInAbyss) {
@@ -3382,7 +3517,7 @@
           inAbyss = true;
         } else {
           const tile = room.grid[pGridY][pGridX];
-          if (tile === TILE.WALL || tile === TILE.HOLE) inAbyss = true;
+          if (tile === TILE.HOLE) inAbyss = true;
         }
 
         if (inAbyss && this.player.invulnerableTimer <= 0) {
@@ -4166,22 +4301,94 @@
               // Se este ladrilho for o nodo secreto integrado ao chão, renderiza seu frame correspondente
               if (room.secretFloorNode && room.secretFloorNode.gridX === x && room.secretFloorNode.gridY === y) {
                 const node = room.secretFloorNode;
-                const frame = CHAO_FRAMES[node.frameIndex] || CHAO_FRAMES[2];
-                ctx.drawImage(this.chaoSprite, frame.sx, frame.sy, 64, 64, px, py, TILE_SIZE, TILE_SIZE);
-              } else {
-                // Variação orgânica usando as imagens de chão e trilho
-                const tileHash = (x * 37 + y * 59 + (room.rx || 0) * 101 + (room.ry || 0) * 131) % 100;
-                let frameIdx = 0;
-                if (tileHash < 60) frameIdx = 0;      // Piso padrão limpo
-                else if (tileHash < 75) frameIdx = 1; // Fissura leve
-                else if (tileHash < 85) frameIdx = 2; // Rachadura detalhada
-                else frameIdx = 8;                    // Trilho (Visual)
-
-                if (frameIdx === 8 && this.chaoExtraSprite && this.chaoExtraSprite.complete) {
-                  // O trilho está no chao_mina1-2.png, vamos assumir que é o segundo frame (0, 64)
-                  ctx.drawImage(this.chaoExtraSprite, 0, 64, 64, 64, px, py, TILE_SIZE, TILE_SIZE);
+                if (this.chaoExtraSprite && this.chaoExtraSprite.complete) {
+                   let sx = 0, sy = 384; // Linha 7: Tampa de Bueiro
+                   if (node.state === 'intact') { sx = 0; } // 7-1 (fechado)
+                   else if (node.frameIndex === 3) { sx = 64; } // 7-2 (abrindo)
+                   else { sx = 128; } // 7-3 (aberto)
+                   ctx.drawImage(this.chaoExtraSprite, sx, sy, 64, 64, px, py, TILE_SIZE, TILE_SIZE);
                 } else {
-                  const frame = CHAO_FRAMES[frameIdx === 8 ? 0 : frameIdx];
+                   const frame = CHAO_FRAMES[node.frameIndex] || CHAO_FRAMES[2];
+                   ctx.drawImage(this.chaoSprite, frame.sx, frame.sy, 64, 64, px, py, TILE_SIZE, TILE_SIZE);
+                }
+              } else {
+                // Variação orgânica usando as novas imagens de chão (1-1 a 3-1)
+                const isDirt = (room.grid[y][x] === TILE.DIRT);
+                
+                if (this.chaoExtraSprite && this.chaoExtraSprite.complete) {
+                  let sx = 0, sy = 0;
+                  
+                  if (isDirt) {
+                     // Autotile para chão batido (Dirt)
+                     const n = (y > 0 && room.grid[y-1][x] === TILE.DIRT);
+                     const s = (y < GRID_SIZE-1 && room.grid[y+1][x] === TILE.DIRT);
+                     const w = (x > 0 && room.grid[y][x-1] === TILE.DIRT);
+                     const e = (x < GRID_SIZE-1 && room.grid[y][x+1] === TILE.DIRT);
+                     
+                     sx = 256; sy = 0; // 1-5 Chao batido (default interior)
+                     if (!n && !w) { sx = 320; sy = 0; } // 1-6 Quina superior esquerda
+                     else if (!n && !e) { sx = 128; sy = 64; } // 2-3 Quina superior direita
+                     else if (!s && !w) { sx = 64; sy = 64; } // 2-2 Quina inferior esquerda
+                     else if (!s && !e) { sx = 0; sy = 64; } // 2-1 Quina inferior direita
+                     else if (!n) { sx = 0; sy = 128; } // 3-1 Parte superior
+                     else if (!s) { sx = 320; sy = 64; } // 2-6 Parte inferior
+                     else if (!w) { sx = 256; sy = 64; } // 2-5 Lateral esquerda
+                     else if (!e) { sx = 192; sy = 64; } // 2-4 Lateral direita
+                  } else {
+                     const tileHash = (x * 37 + y * 59 + (room.rx || 0) * 101 + (room.ry || 0) * 131) % 100;
+                     if (tileHash < 40) { sx = 0; sy = 0; } // 1-1 Piso normal
+                     else if (tileHash < 65) { sx = 64; sy = 0; } // 1-2 Rachado
+                     else if (tileHash < 85) { sx = 128; sy = 0; } // 1-3 Mais rachado
+                     else { sx = 192; sy = 0; } // 1-4 Quebrado
+                  }
+                  
+                  ctx.drawImage(this.chaoExtraSprite, sx, sy, 64, 64, px, py, TILE_SIZE, TILE_SIZE);
+                  
+                  // Trilhos sobre o chão (Autotiling)
+                  if (room.railGrid && room.railGrid[y][x]) {
+                     const rn = y > 0 && room.railGrid[y-1][x];
+                     const rs = y < GRID_SIZE-1 && room.railGrid[y+1][x];
+                     const rw = x > 0 && room.railGrid[y][x-1];
+                     const re = x < GRID_SIZE-1 && room.railGrid[y][x+1];
+                     
+                     let rsx = 128, rsy = 320; // Default Horizontal (6-3)
+                     if (rn && rs) { rsx = 320; rsy = 256; }      // 5-6: Vertical
+                     else if (rw && re || (!rn && !rs)) { 
+                         // Linha horizontal completa: precisamos saber se ela se conecta com uma curva para CIMA
+                         // Se sim, ela tem que usar o sprite horizontal de baixo (6-4) para encaixar
+                         let useBottom = false;
+                         let cx = x;
+                         // Varre para a direita para ver se termina curvando para cima
+                         while(cx < GRID_SIZE-1 && room.railGrid[y][cx]) {
+                             if (y > 0 && room.railGrid[y-1][cx] && !(cx < GRID_SIZE-1 && room.railGrid[y][cx+1])) { useBottom = true; break; }
+                             cx++;
+                         }
+                         // Varre para a esquerda para ver se termina curvando para cima
+                         cx = x;
+                         while(cx > 0 && room.railGrid[y][cx]) {
+                             if (y > 0 && room.railGrid[y-1][cx] && !(cx > 0 && room.railGrid[y][cx-1])) { useBottom = true; break; }
+                             cx--;
+                         }
+                         rsx = useBottom ? 192 : 128; // 6-4 (Baixo) ou 6-3 (Cima)
+                         rsy = 320; 
+                     } 
+                     else if (rn && re) { rsx = 0; rsy = 320; }   // 6-1: Pra cima direita (N-E)
+                     else if (rn && rw) { rsx = 64; rsy = 320; }  // 6-2: Pra cima esquerda (N-W)
+                     else if (rs && re) { rsx = 256; rsy = 320; } // 6-5: Pra baixo direita (S-E)
+                     else if (rs && rw) { rsx = 320; rsy = 320; } // 6-6: Pra baixo esquerda (S-W)
+                     else if (rn || rs) { rsx = 320; rsy = 256; } // Ponta vertical (5-6)
+                     else { rsx = 128; rsy = 320; }               // Fallback
+
+                     ctx.drawImage(this.chaoExtraSprite, rsx, rsy, 64, 64, px, py, TILE_SIZE, TILE_SIZE);
+                  }
+                } else {
+                  // Fallback antigo
+                  let frameIdx = 0;
+                  if (tileHash < 60) frameIdx = 0;
+                  else if (tileHash < 75) frameIdx = 1;
+                  else if (tileHash < 85) frameIdx = 2;
+                  else frameIdx = 0;
+                  const frame = CHAO_FRAMES[frameIdx];
                   ctx.drawImage(this.chaoSprite, frame.sx, frame.sy, 64, 64, px, py, TILE_SIZE, TILE_SIZE);
                 }
               }
@@ -4270,20 +4477,15 @@
             const py = y * TILE_SIZE;
 
             if (tile === TILE.WALL) {
-              // Paredes Fixas (Indestrutíveis): Abismos e Buracos
-              if (this.chaoExtraSprite && this.chaoExtraSprite.complete) {
-                // Abismo/Buraco está no chao_mina1-2.png, vamos assumir que é o primeiro frame (0, 0)
-                ctx.drawImage(this.chaoExtraSprite, 0, 0, 64, 64, px, py, TILE_SIZE, TILE_SIZE);
-              } else {
-                ctx.fillStyle = '#21262d';
-                ctx.fillRect(px, py, TILE_SIZE, TILE_SIZE);
-                ctx.strokeStyle = '#30363d';
-                ctx.lineWidth = 2;
-                ctx.strokeRect(px + 1, py + 1, TILE_SIZE - 2, TILE_SIZE - 2);
+              // Paredes Fixas (Indestrutíveis): Rocha e metal reforçado
+              ctx.fillStyle = '#21262d';
+              ctx.fillRect(px, py, TILE_SIZE, TILE_SIZE);
+              ctx.strokeStyle = '#30363d';
+              ctx.lineWidth = 2;
+              ctx.strokeRect(px + 1, py + 1, TILE_SIZE - 2, TILE_SIZE - 2);
 
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
-                ctx.fillRect(px + 2, py + 2, TILE_SIZE - 4, 3);
-              }
+              ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
+              ctx.fillRect(px + 2, py + 2, TILE_SIZE - 4, 3);
             } else if (tile === TILE.BREAKABLE) {
               // Caixa de Madeira / Minério Quebrável (Tem chance de dropar CC)
               ctx.fillStyle = '#5d4037';
@@ -4406,9 +4608,43 @@
                 ctx.fillText(`BAÚ: ${depCC} CC | ${depP} PEÇAS`, px + TILE_SIZE/2, py - 6);
               }
             } else if (tile === TILE.HOLE) {
-              // Buraco / Abismo aberto
+              // Buraco / Abismo aberto (Com Autotiling)
               if (this.chaoExtraSprite && this.chaoExtraSprite.complete) {
-                ctx.drawImage(this.chaoExtraSprite, 0, 0, 64, 64, px, py, TILE_SIZE, TILE_SIZE);
+                const isAbyss = (gx, gy) => {
+                  if (gx < 0 || gx >= GRID_SIZE || gy < 0 || gy >= GRID_SIZE) return false;
+                  return room.grid[gy][gx] === TILE.HOLE;
+                };
+
+                const n = isAbyss(x, y - 1);
+                const s = isAbyss(x, y + 1);
+                const w = isAbyss(x - 1, y);
+                const e = isAbyss(x + 1, y);
+
+                const nw = isAbyss(x - 1, y - 1);
+                const ne = isAbyss(x + 1, y - 1);
+                const sw = isAbyss(x - 1, y + 1);
+                const se = isAbyss(x + 1, y + 1);
+
+                let sx = 0, sy = 256; // 5-1: Abismo completo (Default)
+
+                // Outer corners and edges
+                if (!n && !s && !w && !e) { sx = 192; sy = 128; } // 3-4: Buraco isolado
+                else if (!n && !w) { sx = 256; sy = 128; } // 3-5: Quina superior esquerda
+                else if (!n && !e) { sx = 0; sy = 192; }   // 4-1: Quina superior direita
+                else if (!s && !w) { sx = 64; sy = 192; }  // 4-2: Quina inferior esquerda
+                else if (!s && !e) { sx = 192; sy = 192; } // 4-4: Quina inferior direita
+                else if (!n) { sx = 320; sy = 128; }       // 3-6: Parte superior
+                else if (!s) { sx = 128; sy = 192; }       // 4-3: Parte inferior
+                else if (!w) { sx = 320; sy = 192; }       // 4-6: Lateral esquerda
+                else if (!e) { sx = 256; sy = 192; }       // 4-5: Lateral direita
+                
+                // Inner corners
+                else if (!nw) { sx = 64; sy = 256; }       // 5-2: Terra no topo-esquerdo
+                else if (!sw) { sx = 128; sy = 256; }      // 5-3: Terra no fundo-esquerdo
+                else if (!se) { sx = 192; sy = 256; }      // 5-4: Terra no fundo-direito
+                else if (!ne) { sx = 256; sy = 256; }      // 5-5: Terra no topo-direito
+
+                ctx.drawImage(this.chaoExtraSprite, sx, sy, 64, 64, px, py, TILE_SIZE, TILE_SIZE);
               } else {
                 ctx.fillStyle = '#08090c';
                 ctx.fillRect(px, py, TILE_SIZE, TILE_SIZE);
