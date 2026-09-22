@@ -1191,8 +1191,6 @@
       TIMED: 'timed'
     };
 
-    // Spritesheet do Chão da Mina (chao_mina.png: 192x192 em células 64x64)
-    // As 3 primeiras imagens são chão normal, as 4 seguintes são a animação de quebra
     const CHAO_FRAMES = [
       { sx: 0,   sy: 0 },   // 0: Piso normal limpo
       { sx: 64,  sy: 0 },   // 1: Piso com fissura leve
@@ -2259,7 +2257,7 @@
           const nextX = this.x + this.recoilVelocity.x * dt;
           const nextY = this.y + this.recoilVelocity.y * dt;
 
-          this.moveWithCollision(nextX, nextY, currentRoom);
+          this.moveWithCollision(nextX, nextY, currentRoom, true);
 
           this.recoilVelocity.x *= 0.88;
           this.recoilVelocity.y *= 0.88;
@@ -2313,22 +2311,22 @@
         }
       }
 
-      moveWithCollision(targetX, targetY, currentRoom) {
+      moveWithCollision(targetX, targetY, currentRoom, isKnockback = false) {
         let newX = targetX;
         let newY = this.y;
 
-        if (!this.checkTileCollision(newX, newY, currentRoom)) {
+        if (!this.checkTileCollision(newX, newY, currentRoom, isKnockback)) {
           this.x = newX;
         }
 
         newX = this.x;
         newY = targetY;
-        if (!this.checkTileCollision(newX, newY, currentRoom)) {
+        if (!this.checkTileCollision(newX, newY, currentRoom, isKnockback)) {
           this.y = newY;
         }
       }
 
-      checkTileCollision(x, y, room) {
+      checkTileCollision(x, y, room, isKnockback = false) {
         const left = Math.floor((x - this.radius + 2) / TILE_SIZE);
         const right = Math.floor((x + this.radius - 2) / TILE_SIZE);
         const top = Math.floor((y - this.radius + 2) / TILE_SIZE);
@@ -2336,7 +2334,7 @@
 
         for (let ty = top; ty <= bottom; ty++) {
           for (let tx = left; tx <= right; tx++) {
-            if (tx < 0 || tx >= GRID_SIZE || ty < 0 || ty >= GRID_SIZE) return true;
+            if (tx < 0 || tx >= GRID_SIZE || ty < 0 || ty >= GRID_SIZE) return isKnockback ? false : true;
             const tile = room.grid[ty][tx];
             if (tile === TILE.BOSS_DOOR && this.hasBossKey) {
                room.grid[ty][tx] = TILE.EMPTY;
@@ -2345,11 +2343,15 @@
                if (window.game) window.game.spawnFloatingText('PORTA ABERTA', this.x, this.y - 15, '#fff');
                return false;
             }
-            if (tile === TILE.WALL || tile === TILE.BREAKABLE || tile === TILE.LOCK_GATE || tile === TILE.BOSS_DOOR || tile === TILE.ARMORY || tile === TILE.CHEST || tile === TILE.INVENTOR_NPC || tile === TILE.SWITCH_TARGET) {
-              if (tile === TILE.BOSS_DOOR && Math.random() < 0.02) {
-                 if (window.showToast) window.showToast('VOCÊ PRECISA DA CHAVE DO BOSS!');
+            if (isKnockback) {
+              if (tile === TILE.BREAKABLE || tile === TILE.LOCK_GATE || tile === TILE.BOSS_DOOR || tile === TILE.ARMORY || tile === TILE.CHEST || tile === TILE.INVENTOR_NPC || tile === TILE.SWITCH_TARGET) return true;
+            } else {
+              if (tile === TILE.WALL || tile === TILE.BREAKABLE || tile === TILE.LOCK_GATE || tile === TILE.BOSS_DOOR || tile === TILE.ARMORY || tile === TILE.CHEST || tile === TILE.INVENTOR_NPC || tile === TILE.SWITCH_TARGET || tile === TILE.HOLE) {
+                if (tile === TILE.BOSS_DOOR && Math.random() < 0.02) {
+                   if (window.showToast) window.showToast('VOCÊ PRECISA DA CHAVE DO BOSS!');
+                }
+                return true;
               }
-              return true;
             }
           }
         }
@@ -2442,7 +2444,7 @@
           const nextX = this.x + this.repelVelocity.x * dt;
           const nextY = this.y + this.repelVelocity.y * dt;
 
-          this.moveWithCollision(nextX, nextY, room);
+          this.moveWithCollision(nextX, nextY, room, true);
 
           this.repelVelocity.x *= 0.88;
           this.repelVelocity.y *= 0.88;
@@ -2544,16 +2546,16 @@
         }
       }
 
-      moveWithCollision(targetX, targetY, room) {
-        if (!this.checkTileCollision(targetX, this.y, room)) {
+      moveWithCollision(targetX, targetY, room, isKnockback = false) {
+        if (!this.checkTileCollision(targetX, this.y, room, isKnockback)) {
           this.x = targetX;
         }
-        if (!this.checkTileCollision(this.x, targetY, room)) {
+        if (!this.checkTileCollision(this.x, targetY, room, isKnockback)) {
           this.y = targetY;
         }
       }
 
-      checkTileCollision(x, y, room) {
+      checkTileCollision(x, y, room, isKnockback = false) {
         const left = Math.floor((x - this.radius) / TILE_SIZE);
         const right = Math.floor((x + this.radius) / TILE_SIZE);
         const top = Math.floor((y - this.radius) / TILE_SIZE);
@@ -2561,10 +2563,14 @@
 
         for (let ty = top; ty <= bottom; ty++) {
           for (let tx = left; tx <= right; tx++) {
-            if (tx < 0 || tx >= GRID_SIZE || ty < 0 || ty >= GRID_SIZE) return true;
+            if (tx < 0 || tx >= GRID_SIZE || ty < 0 || ty >= GRID_SIZE) return isKnockback ? false : true;
             const tile = room.grid[ty][tx];
-            if (tile === TILE.WALL || tile === TILE.BREAKABLE || tile === TILE.LOCK_GATE || tile === TILE.BOSS_DOOR || tile === TILE.ARMORY || tile === TILE.CHEST || tile === TILE.INVENTOR_NPC || tile === TILE.SWITCH_TARGET) {
-              return true;
+            if (isKnockback) {
+              if (tile === TILE.BREAKABLE || tile === TILE.LOCK_GATE || tile === TILE.BOSS_DOOR || tile === TILE.ARMORY || tile === TILE.CHEST || tile === TILE.INVENTOR_NPC || tile === TILE.SWITCH_TARGET) return true;
+            } else {
+              if (tile === TILE.WALL || tile === TILE.BREAKABLE || tile === TILE.LOCK_GATE || tile === TILE.BOSS_DOOR || tile === TILE.ARMORY || tile === TILE.CHEST || tile === TILE.INVENTOR_NPC || tile === TILE.SWITCH_TARGET || tile === TILE.HOLE) {
+                return true;
+              }
             }
           }
         }
@@ -3065,6 +3071,9 @@
         this.chaoSprite = new Image();
         this.chaoSprite.src = 'Img/chao_mina.png';
 
+        this.chaoExtraSprite = new Image();
+        this.chaoExtraSprite.src = 'Img/chao_mina1-2.png';
+
         this.ccDrops = [];
         this.floatingTexts = [];
 
@@ -3174,6 +3183,7 @@
         // Atualização da Sala de Desafio / Metroidvania e Perigos de Cenário
         this.updatePuzzleRoom(dt);
         this.checkLavaHazard();
+        this.checkAbyssHazard();
 
         // Atualização e proximidade do Nodo do Chão Secreto (Andar Inferior)
         if (room.secretFloorNode) {
@@ -3231,6 +3241,23 @@
         // Inimigos
         for (let i = room.enemies.length - 1; i >= 0; i--) {
           const enemy = room.enemies[i];
+          
+          const eGridX = Math.floor(enemy.x / TILE_SIZE);
+          const eGridY = Math.floor(enemy.y / TILE_SIZE);
+          let eInAbyss = false;
+          if (eGridX < 0 || eGridX >= GRID_SIZE || eGridY < 0 || eGridY >= GRID_SIZE) {
+            eInAbyss = true;
+          } else {
+            const tile = room.grid[eGridY][eGridX];
+            if (tile === TILE.WALL || tile === TILE.HOLE) eInAbyss = true;
+          }
+          
+          if (eInAbyss) {
+            this.spawnEnemyDeath(enemy.x, enemy.y);
+            room.enemies.splice(i, 1);
+            continue;
+          }
+          
           enemy.update(dt, this.player, room);
 
           // Contato com Charlotte = TEMPO REBOBINA (apenas se o autômato já estiver ativo/acordado)
@@ -3340,6 +3367,26 @@
               this.spawnFloatingText('LAVA! USE PROPULSÃO', this.player.x, this.player.y - 16, '#ff5722');
             }
           }
+        }
+      }
+
+      checkAbyssHazard() {
+        const room = this.map.currentRoom;
+        if (!room) return;
+
+        const pGridX = Math.floor(this.player.x / TILE_SIZE);
+        const pGridY = Math.floor(this.player.y / TILE_SIZE);
+
+        let inAbyss = false;
+        if (pGridX < 0 || pGridX >= GRID_SIZE || pGridY < 0 || pGridY >= GRID_SIZE) {
+          inAbyss = true;
+        } else {
+          const tile = room.grid[pGridY][pGridX];
+          if (tile === TILE.WALL || tile === TILE.HOLE) inAbyss = true;
+        }
+
+        if (inAbyss && this.player.invulnerableTimer <= 0) {
+          this.triggerTimeRewind();
         }
       }
 
@@ -4122,15 +4169,21 @@
                 const frame = CHAO_FRAMES[node.frameIndex] || CHAO_FRAMES[2];
                 ctx.drawImage(this.chaoSprite, frame.sx, frame.sy, 64, 64, px, py, TILE_SIZE, TILE_SIZE);
               } else {
-                // Variação orgânica usando as 3 primeiras imagens de chão normal (Frames 0, 1, 2)
+                // Variação orgânica usando as imagens de chão e trilho
                 const tileHash = (x * 37 + y * 59 + (room.rx || 0) * 101 + (room.ry || 0) * 131) % 100;
                 let frameIdx = 0;
-                if (tileHash < 68) frameIdx = 0;      // Piso padrão limpo
-                else if (tileHash < 90) frameIdx = 1; // Fissura leve
-                else frameIdx = 2;                    // Rachadura detalhada
+                if (tileHash < 60) frameIdx = 0;      // Piso padrão limpo
+                else if (tileHash < 75) frameIdx = 1; // Fissura leve
+                else if (tileHash < 85) frameIdx = 2; // Rachadura detalhada
+                else frameIdx = 8;                    // Trilho (Visual)
 
-                const frame = CHAO_FRAMES[frameIdx];
-                ctx.drawImage(this.chaoSprite, frame.sx, frame.sy, 64, 64, px, py, TILE_SIZE, TILE_SIZE);
+                if (frameIdx === 8 && this.chaoExtraSprite && this.chaoExtraSprite.complete) {
+                  // O trilho está no chao_mina1-2.png, vamos assumir que é o segundo frame (0, 64)
+                  ctx.drawImage(this.chaoExtraSprite, 0, 64, 64, 64, px, py, TILE_SIZE, TILE_SIZE);
+                } else {
+                  const frame = CHAO_FRAMES[frameIdx === 8 ? 0 : frameIdx];
+                  ctx.drawImage(this.chaoSprite, frame.sx, frame.sy, 64, 64, px, py, TILE_SIZE, TILE_SIZE);
+                }
               }
             } else {
               ctx.fillStyle = room.isSecret ? '#141820' : '#1c212a';
@@ -4217,15 +4270,20 @@
             const py = y * TILE_SIZE;
 
             if (tile === TILE.WALL) {
-              // Paredes Fixas (Indestrutíveis): Rocha e metal reforçado
-              ctx.fillStyle = '#21262d';
-              ctx.fillRect(px, py, TILE_SIZE, TILE_SIZE);
-              ctx.strokeStyle = '#30363d';
-              ctx.lineWidth = 2;
-              ctx.strokeRect(px + 1, py + 1, TILE_SIZE - 2, TILE_SIZE - 2);
+              // Paredes Fixas (Indestrutíveis): Abismos e Buracos
+              if (this.chaoExtraSprite && this.chaoExtraSprite.complete) {
+                // Abismo/Buraco está no chao_mina1-2.png, vamos assumir que é o primeiro frame (0, 0)
+                ctx.drawImage(this.chaoExtraSprite, 0, 0, 64, 64, px, py, TILE_SIZE, TILE_SIZE);
+              } else {
+                ctx.fillStyle = '#21262d';
+                ctx.fillRect(px, py, TILE_SIZE, TILE_SIZE);
+                ctx.strokeStyle = '#30363d';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(px + 1, py + 1, TILE_SIZE - 2, TILE_SIZE - 2);
 
-              ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
-              ctx.fillRect(px + 2, py + 2, TILE_SIZE - 4, 3);
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
+                ctx.fillRect(px + 2, py + 2, TILE_SIZE - 4, 3);
+              }
             } else if (tile === TILE.BREAKABLE) {
               // Caixa de Madeira / Minério Quebrável (Tem chance de dropar CC)
               ctx.fillStyle = '#5d4037';
@@ -4349,9 +4407,8 @@
               }
             } else if (tile === TILE.HOLE) {
               // Buraco / Abismo aberto
-              if (hasChaoSprite) {
-                const f = CHAO_FRAMES[6];
-                ctx.drawImage(this.chaoSprite, f.sx, f.sy, 64, 64, px, py, TILE_SIZE, TILE_SIZE);
+              if (this.chaoExtraSprite && this.chaoExtraSprite.complete) {
+                ctx.drawImage(this.chaoExtraSprite, 0, 0, 64, 64, px, py, TILE_SIZE, TILE_SIZE);
               } else {
                 ctx.fillStyle = '#08090c';
                 ctx.fillRect(px, py, TILE_SIZE, TILE_SIZE);
