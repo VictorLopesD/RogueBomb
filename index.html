@@ -1181,7 +1181,8 @@
       VAULT_CHEST: 14,    // Cofre de Peças (Chrono Cores) trancado
       VAULT_CHEST_OPEN: 15, // Cofre aberto
       PRESSURE_PLATE: 16, // Placa de pressão de puzzle (Nível 1)
-      SWITCH_TARGET: 17   // Cristal interruptor elevado (Nível 3+)
+      SWITCH_TARGET: 17,  // Cristal interruptor elevado (Nível 3+)
+      DIRT: 18            // Chão batido / Terra orgânica
     };
 
     // Tipos de Bomba
@@ -1615,6 +1616,7 @@
         this.isLockdown = false;
         this.hasGoela = false;
         this.isBossRoom = false;
+        this.isMiniBossRoom = false;
         this.hasBossKey = false;
         this.blackHoles = [];
         this.secretFloorNode = null; // Nodo integrado ao chão que dá acesso ao andar inferior (raro, 1 por nível)
@@ -1755,6 +1757,11 @@
           return;
         }
 
+        if (this.isMiniBossRoom) {
+          this.buildMiniBossLayout();
+          return;
+        }
+
         // Pilares internos e blocos quebráveis (marrom)
         for (let y = 2; y < GRID_SIZE - 2; y++) {
           for (let x = 2; x < GRID_SIZE - 2; x++) {
@@ -1844,12 +1851,7 @@
           for (let i = 0; i < enemyCount; i++) {
             const pos = this.findSpawnSpot();
             if (pos) {
-               // Item 5: No 3º nível chance de aparecer mini-boss humano
-               if (this.depth === 3 && Math.random() < 0.20 && i === 0) {
-                 this.enemies.push(new HumanBoss(pos.x, pos.y, this.depth, false));
-               } else {
-                 this.enemies.push(new Automaton(pos.x, pos.y, this.depth));
-               }
+              this.enemies.push(new Automaton(pos.x, pos.y, this.depth));
             }
           }
         }
@@ -1894,6 +1896,29 @@
           }
         }
         
+        this.generateRails();
+      }
+
+      buildMiniBossLayout() {
+        const mid = Math.floor(GRID_SIZE / 2);
+        
+        // 4 Pilares estruturais simétricos para cobertura tática de bombas
+        this.grid[4][4] = TILE.WALL;
+        this.grid[4][GRID_SIZE - 5] = TILE.WALL;
+        this.grid[GRID_SIZE - 5][4] = TILE.WALL;
+        this.grid[GRID_SIZE - 5][GRID_SIZE - 5] = TILE.WALL;
+
+        // Caixas quebráveis nos cantos
+        this.grid[2][2] = TILE.BREAKABLE;
+        this.grid[2][GRID_SIZE - 3] = TILE.BREAKABLE;
+        this.grid[GRID_SIZE - 3][2] = TILE.BREAKABLE;
+        this.grid[GRID_SIZE - 3][GRID_SIZE - 3] = TILE.BREAKABLE;
+
+        // EXCLUSIVO: exatamente UM inimigo (o Mini-Boss Rival isolado)
+        this.enemies = [
+          new HumanBoss(mid * TILE_SIZE + TILE_SIZE / 2, mid * TILE_SIZE + TILE_SIZE / 2, this.depth, false)
+        ];
+
         this.generateRails();
       }
 
@@ -1981,7 +2006,13 @@
             this.isLockdown = true;
             sound.playLockdownSound();
             sound.setMusicMode('battle');
-            showToast('LOCKDOWN ATIVADO!');
+            if (this.isMiniBossRoom) {
+              showToast('DUELO! DERROTE O ENGENHEIRO RIVAL!');
+            } else if (this.isBossRoom) {
+              showToast('CONFRONTO FINAL! CHEFE MESTRE!');
+            } else {
+              showToast('LOCKDOWN ATIVADO!');
+            }
           }
           // Tranca as passagens de porta com blocos vermelhos piscantes
           if (this.doors.north) this.grid[0][mid] = TILE.LOCK_GATE;
@@ -1994,7 +2025,15 @@
           this.cleared = true;
           sound.playUnlockSound();
           sound.setMusicMode('explore');
-          showToast('SALA LIBERADA!');
+          if (this.isMiniBossRoom) {
+            showToast('RIVAL DERROTADO! ARENA LIBERADA!');
+            sound.playUpgradeFanfare();
+          } else if (this.isBossRoom) {
+            showToast('CHEFE MESTRE DERROTADO! VITÓRIA!');
+            sound.playUpgradeFanfare();
+          } else {
+            showToast('SALA LIBERADA!');
+          }
 
           if (this.doors.north) this.grid[0][mid] = TILE.EMPTY;
           if (this.doors.south) this.grid[GRID_SIZE - 1][mid] = TILE.EMPTY;
@@ -2116,6 +2155,16 @@
           else puzzleRoomTarget.puzzleType = 'gauntlet_target';
         }
 
+        // Define Sala Isolada exclusiva para o Mini-Boss (no nível 3 e 4)
+        if (this.currentDepth === 3 || this.currentDepth === 4) {
+          const mbCandidates = roomArray.filter(r => !r.isStart && !r.hasGoela && !r.isBossRoom && !r.isPuzzleRoom);
+          let deadEnds = mbCandidates.filter(r => (r.doors.north + r.doors.south + r.doors.east + r.doors.west === 1));
+          const miniBossTarget = deadEnds.length > 0 ? deadEnds[0] : mbCandidates[0];
+          if (miniBossTarget) {
+            miniBossTarget.isMiniBossRoom = true;
+          }
+        }
+
         // Constrói layouts internos e popula inimigos com a profundidade atual
         roomArray.forEach(r => {
           if (r.isPuzzleRoom) {
@@ -2125,11 +2174,11 @@
           }
         });
 
-        // Define apenas UMA área secreta com nodo de descida por andar (tornando áreas secretas raras e especiais)
-        const secretCandidates = roomArray.filter(r => !r.isStart && !r.hasGoela && !r.isBossRoom && !r.isPuzzleRoom);
+        // Define apenas UMA área secreta com nodo de descida por andar (excluindo salas de chefe e puzzle)
+        const secretCandidates = roomArray.filter(r => !r.isStart && !r.hasGoela && !r.isBossRoom && !r.isPuzzleRoom && !r.isMiniBossRoom);
         const secretRoomTarget = secretCandidates.length > 0
           ? secretCandidates[Math.floor(Math.random() * secretCandidates.length)]
-          : (roomArray.find(r => !r.isStart && !r.isBossRoom && !r.isPuzzleRoom) || roomArray[0]);
+          : (roomArray.find(r => !r.isStart && !r.isBossRoom && !r.isPuzzleRoom && !r.isMiniBossRoom) || roomArray[0]);
 
         if (secretRoomTarget) {
           const spot = secretRoomTarget.findSecretFloorSpot();
@@ -2723,156 +2772,321 @@
     class HumanBoss extends Automaton {
       constructor(x, y, depth, isFinalBoss = false) {
         super(x, y, depth);
+        this.isHumanBoss = true;
         this.isFinalBoss = isFinalBoss;
-        this.radius = 20;
-        this.speed = isFinalBoss ? 160 : 130;
+        this.radius = 16; // Mesmo raio físico da Charlotte
+        this.speed = isFinalBoss ? 165 : 150;
         this.hp = isFinalBoss ? 5 : 3;
-        this.color = isFinalBoss ? '#b71c1c' : '#d32f2f'; // vermelho escuro
-        this.lungeTimer = 0;
-        
-        this.bombCooldown = 3.0; // Atira bomba a cada 3 segundos
-        this.aimTimer = 0;
-        this.aimTarget = null;
-        this.bombType = BOMB_TYPE.IMPACT;
-        this.dodgeCooldown = 10.0;
+        this.maxHp = this.hp;
+        this.color = isFinalBoss ? '#b71c1c' : '#d32f2f';
+
+        // Animação e Direcionamento (Espelhando Charlotte)
+        this.animState = 'idle'; // 'idle', 'walk', 'throw', 'dash'
+        this.animTimer = 0;
+        this.facing = { dx: 1, dy: 0 };
+        this.facingSide = 1;
+        this.throwAnimTimer = 0;
+
+        // Botas Propulsoras (Dash com i-frames)
+        this.isDashing = false;
+        this.dashTimer = 0;
+        this.maxDashTime = 0.25;
+        this.dashCooldown = 0;
+        this.dashDir = { dx: 0, dy: 0 };
+
+        // Arsenal de Bombas
+        this.bombCooldown = 2.0;
+        this.selectedBomb = BOMB_TYPE.IMPACT;
+        this.invulnerableTimer = 0;
+
+        // Estratégia de Movimentação e Espaçamento
+        this.strafeDir = Math.random() < 0.5 ? 1 : -1;
+        this.strafeTimer = 1.5;
       }
-      
+
       update(dt, player, room) {
         if (this.state === 'dormant') {
-          this.activationGrace -= dt;
-          if (this.activationGrace <= 0) this.state = 'active';
+          this.activationDelay -= dt;
+          if (this.activationDelay <= 0) this.state = 'active';
           return;
         }
-        
-        if (this.repelVelocity.x !== 0 || this.repelVelocity.y !== 0) {
-          this.x += this.repelVelocity.x * dt;
-          this.y += this.repelVelocity.y * dt;
-          this.repelVelocity.x *= 0.85;
-          this.repelVelocity.y *= 0.85;
-          if (Math.abs(this.repelVelocity.x) < 5) this.repelVelocity.x = 0;
-          if (Math.abs(this.repelVelocity.y) < 5) this.repelVelocity.y = 0;
+
+        this.animTimer += dt;
+        if (this.invulnerableTimer > 0) this.invulnerableTimer -= dt;
+        if (this.flashTimer > 0) this.flashTimer -= dt;
+        if (this.throwAnimTimer > 0) this.throwAnimTimer -= dt;
+        if (this.dashCooldown > 0) this.dashCooldown -= dt;
+
+        // 1. Repulsão física por explosão (Knockback)
+        if (this.isRepelled) {
+          const nextX = this.x + this.repelVelocity.x * dt;
+          const nextY = this.y + this.repelVelocity.y * dt;
+          this.moveWithCollision(nextX, nextY, room, true);
+          this.repelVelocity.x *= 0.88;
+          this.repelVelocity.y *= 0.88;
+          if (Math.hypot(this.repelVelocity.x, this.repelVelocity.y) < 15) {
+            this.isRepelled = false;
+            this.repelVelocity = { x: 0, y: 0 };
+          }
+          return;
+        }
+
+        // 2. Dash das Botas Propulsoras ativo
+        if (this.isDashing) {
+          this.dashTimer -= dt;
+          const dashSpeed = 460;
+          const targetX = this.x + this.dashDir.dx * dashSpeed * dt;
+          const targetY = this.y + this.dashDir.dy * dashSpeed * dt;
+          this.moveWithCollision(targetX, targetY, room, true);
+
+          if (window.game && Math.random() < 0.5) {
+            window.game.spawnSparks(this.x, this.y, '#00e5ff', 2);
+          }
+
+          if (this.dashTimer <= 0) {
+            this.isDashing = false;
+            this.animState = 'idle';
+          }
+          return;
         }
 
         const dx = player.x - this.x;
         const dy = player.y - this.y;
         const dist = Math.hypot(dx, dy);
 
-        if (this.dodgeCooldown > 0) {
-           this.dodgeCooldown -= dt;
-        }
+        // 3. Esquiva Tática (Dash ao detectar bombas próximas ou encurralamento)
+        if (this.dashCooldown <= 0 && window.game) {
+          let dangerSource = null;
 
-        // Esquiva
-        if (this.state === 'active' && this.dodgeCooldown <= 0 && window.game) {
-           let bombNear = false;
-           for (const bomb of window.game.timedBombs) {
-              const bDist = Math.hypot(bomb.x - this.x, bomb.y - this.y);
-              if (bDist < TILE_SIZE * 3.5) { // Se bomba está perto
-                 bombNear = true;
-                 break;
-              }
-           }
-           if (bombNear) {
-              this.state = 'dodging';
-              this.dodgeCooldown = 10.0;
-              // Dash aleatório
-              const angle = Math.random() * Math.PI * 2;
-              this.repelVelocity = { x: Math.cos(angle) * 500, y: Math.sin(angle) * 500 };
-           }
-        }
-
-        if (this.state === 'active') {
-          // Lógica de bomba do Boss
-          if (this.aimTimer > 0) {
-             this.aimTimer -= dt;
-             if (this.aimTimer <= 0) {
-                // Lança a bomba
-                if (window.game) {
-                   window.game.flyingBombs.push(new FlyingBomb(this.x, this.y, this.aimTarget.x, this.aimTarget.y, this.bombType));
-                   if (window.sound) window.sound.playThrowWhoosh();
-                }
-                this.aimTarget = null;
-                this.bombCooldown = 3.0;
-                this.bombType = Math.random() < 0.5 ? BOMB_TYPE.IMPACT : BOMB_TYPE.PROPULSOR;
-             }
-             // Fica parado enquanto mira para dar chance ao jogador? Ou anda devagar?
-             // Vamos deixar ele se mover lentamente (30% da velocidade)
-             if (dist > 0.001) {
-                this.x += (dx / dist) * (this.speed * 0.3) * dt;
-                this.y += (dy / dist) * (this.speed * 0.3) * dt;
-             }
-          } else {
-             this.bombCooldown -= dt;
-             if (this.bombCooldown <= 0) {
-                this.aimTimer = 2.0; // Mostra mira por 2 segundos
-                this.aimTarget = { x: player.x, y: player.y };
-             }
-             
-             // Comportamento normal de lunge e seguir
-             this.lungeTimer -= dt;
-             if (this.lungeTimer <= 0 && dist < TILE_SIZE * 4) {
-               this.state = 'lunging';
-               this.lungeTimer = 0.5; // duração do lunge
-               const nx = dist > 0.001 ? dx/dist : 1;
-               const ny = dist > 0.001 ? dy/dist : 0;
-               this.repelVelocity = { x: nx * 300, y: ny * 300 };
-             } else {
-               // Segue o player rapidamente
-               if (dist > 0.001) {
-                  this.x += (dx / dist) * this.speed * dt;
-                  this.y += (dy / dist) * this.speed * dt;
-               }
-             }
+          for (const b of window.game.timedBombs) {
+            const bDist = Math.hypot(b.x - this.x, b.y - this.y);
+            if (bDist < TILE_SIZE * 3.2) {
+              dangerSource = { x: b.x, y: b.y };
+              break;
+            }
           }
-        } else if (this.state === 'lunging') {
-           this.lungeTimer -= dt;
-           if (this.lungeTimer <= 0) {
-             this.state = 'active';
-             this.lungeTimer = this.isFinalBoss ? 1.5 : 2.5; // Cooldown
-           }
-        } else if (this.state === 'dodging') {
-           if (this.repelVelocity.x === 0 && this.repelVelocity.y === 0) {
-              this.state = 'active';
-           }
+
+          if (!dangerSource && dist < TILE_SIZE * 1.8) {
+            dangerSource = { x: player.x, y: player.y };
+          }
+
+          if (dangerSource) {
+            let awayX = this.x - dangerSource.x;
+            let awayY = this.y - dangerSource.y;
+            if (Math.hypot(awayX, awayY) < 0.001) {
+              awayX = -this.facing.dx || -1;
+              awayY = -this.facing.dy || 0;
+            }
+            const norm = Math.hypot(awayX, awayY) || 1;
+            this.dashDir = { dx: awayX / norm, dy: awayY / norm };
+            this.isDashing = true;
+            this.dashTimer = this.maxDashTime;
+            this.dashCooldown = this.isFinalBoss ? 3.5 : 4.5;
+            this.invulnerableTimer = 0.45; // I-frames durante o dash
+            this.animState = 'dash';
+
+            if (window.sound) window.sound.playPropulsorSteam();
+            if (window.game) {
+              window.game.spawnSparks(this.x, this.y, '#00e5ff', 16);
+              window.game.spawnFloatingText('DASH!', this.x, this.y - 18, '#00e5ff');
+            }
+            return;
+          }
         }
 
-        this.x = Math.max(TILE_SIZE, Math.min(WORLD_WIDTH - TILE_SIZE, this.x));
-        this.y = Math.max(TILE_SIZE, Math.min(WORLD_HEIGHT - TILE_SIZE, this.y));
+        // 4. Movimentação Tática (Manter distância de combate e circular como Charlotte)
+        this.strafeTimer -= dt;
+        if (this.strafeTimer <= 0) {
+          this.strafeDir = Math.random() < 0.5 ? 1 : -1;
+          this.strafeTimer = 1.2 + Math.random() * 1.5;
+        }
+
+        const normX = dist > 0.001 ? dx / dist : 1;
+        const normY = dist > 0.001 ? dy / dist : 0;
+        const perpX = -normY * this.strafeDir;
+        const perpY = normX * this.strafeDir;
+
+        let moveVx = 0;
+        let moveVy = 0;
+
+        if (dist < TILE_SIZE * 2.8) {
+          // Perto demais: recua enquanto faz strafe lateral
+          moveVx = -normX * 0.8 + perpX * 0.4;
+          moveVy = -normY * 0.8 + perpY * 0.4;
+        } else if (dist > TILE_SIZE * 5.2) {
+          // Longe demais: avança na direção de Charlotte
+          moveVx = normX * 0.75 + perpX * 0.35;
+          moveVy = normY * 0.75 + perpY * 0.35;
+        } else {
+          // Zona ideal de duelo: circula lateralmente e finta
+          const weave = Math.sin(performance.now() * 0.003) * 0.25;
+          moveVx = perpX * 0.85 + normX * weave;
+          moveVy = perpY * 0.85 + normY * weave;
+        }
+
+        const moveMag = Math.hypot(moveVx, moveVy);
+        if (moveMag > 0.001) {
+          moveVx /= moveMag;
+          moveVy /= moveMag;
+
+          const targetX = this.x + moveVx * this.speed * dt;
+          const targetY = this.y + moveVy * this.speed * dt;
+          this.moveWithCollision(targetX, targetY, room, false);
+
+          this.facing = { dx: normX, dy: normY };
+          this.facingSide = normX < -0.05 ? -1 : (normX > 0.05 ? 1 : this.facingSide);
+
+          if (this.throwAnimTimer <= 0) {
+            this.animState = 'walk';
+          }
+        } else {
+          if (this.throwAnimTimer <= 0) {
+            this.animState = 'idle';
+          }
+        }
+
+        // 5. Arremesso Balístico de Bombas (Arsenal Idêntico a Charlotte)
+        this.bombCooldown -= dt;
+        if (this.bombCooldown <= 0 && window.game) {
+          if (dist <= TILE_SIZE * 2.5) {
+            // Perto: lança bomba de propulsão para repelir Charlotte ou impacto
+            this.selectedBomb = Math.random() < 0.5 ? BOMB_TYPE.PROPULSOR : BOMB_TYPE.IMPACT;
+          } else {
+            // Distância normal: impacto (60%) ou temporizada (40%)
+            this.selectedBomb = Math.random() < 0.6 ? BOMB_TYPE.IMPACT : BOMB_TYPE.TIMED;
+          }
+
+          // Previsão de movimento de Charlotte
+          const leadX = player.x + (player.facing ? player.facing.dx * 18 : 0);
+          const leadY = player.y + (player.facing ? player.facing.dy * 18 : 0);
+
+          this.throwAnimTimer = 0.32;
+          this.animState = 'throw';
+          this.facingSide = leadX < this.x ? -1 : 1;
+
+          window.game.flyingBombs.push(new FlyingBomb(this.x, this.y, leadX, leadY, this.selectedBomb));
+          if (window.sound) window.sound.playThrowWhoosh();
+
+          this.bombCooldown = this.isFinalBoss ? (1.8 + Math.random() * 0.8) : (2.4 + Math.random() * 1.0);
+        }
       }
-      
+
+      takeDamage(amount, engine) {
+        if (this.invulnerableTimer > 0) {
+          if (engine) engine.spawnFloatingText('ESQUIVOU!', this.x, this.y - 20, '#00e5ff');
+          return false;
+        }
+
+        this.hp -= amount;
+        this.flashTimer = 0.25;
+        this.invulnerableTimer = 0.35;
+
+        if (engine) {
+          engine.spawnSparks(this.x, this.y, '#ffd700', 18);
+          engine.spawnFloatingText(`-${amount} HP`, this.x, this.y - 20, '#ff5252');
+        }
+
+        if (this.hp <= 0) {
+          if (engine) {
+            for (let i = 0; i < 5; i++) {
+              const offX = (Math.random() - 0.5) * 40;
+              const offY = (Math.random() - 0.5) * 40;
+              engine.ccDrops.push(new ChronoCoreDrop(this.x + offX, this.y + offY));
+            }
+            engine.player.parts = (engine.player.parts || 0) + 5;
+            engine.spawnFloatingText('+5 PEÇAS!', this.x, this.y - 35, '#cfd8dc');
+          }
+          return true;
+        }
+        return false;
+      }
+
       render(ctx) {
-         ctx.save();
-         ctx.translate(this.x, this.y);
-         ctx.fillStyle = this.color;
-         ctx.beginPath();
-         ctx.arc(0, 0, this.radius, 0, Math.PI * 2);
-         ctx.fill();
-         // Desenha uma bandana/olho indicando o boss humano
-         ctx.fillStyle = '#fff';
-         ctx.fillRect(-10, -5, 20, 6);
-         ctx.fillStyle = '#000';
-         ctx.fillRect(-4, -4, 3, 4);
-         ctx.fillRect(4, -4, 3, 4);
-         ctx.restore();
-         
-         // Desenha a mira se estiver prestes a lançar a bomba
-         if (this.aimTimer > 0 && this.aimTarget) {
-            ctx.save();
-            const pulse = 0.5 + Math.sin(this.aimTimer * 15) * 0.5;
-            ctx.strokeStyle = `rgba(255, 50, 50, ${0.4 + pulse * 0.6})`;
-            ctx.lineWidth = 3;
-            ctx.beginPath();
-            ctx.arc(this.aimTarget.x, this.aimTarget.y, 20, 0, Math.PI * 2);
-            ctx.stroke();
-            
-            // X central
-            ctx.beginPath();
-            ctx.moveTo(this.aimTarget.x - 8, this.aimTarget.y - 8);
-            ctx.lineTo(this.aimTarget.x + 8, this.aimTarget.y + 8);
-            ctx.moveTo(this.aimTarget.x + 8, this.aimTarget.y - 8);
-            ctx.lineTo(this.aimTarget.x - 8, this.aimTarget.y + 8);
-            ctx.stroke();
-            ctx.restore();
-         }
+        // Sombra suave nos pés
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.35)';
+        ctx.beginPath();
+        ctx.ellipse(this.x, this.y + 13, 14, 5, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        const sprite = window.game ? window.game.charlloteSprite : null;
+        if (sprite && sprite.complete && sprite.naturalWidth > 0) {
+          let row = 0;
+          let fps = 8;
+          let totalFrames = 10;
+
+          if (this.animState === 'dash') {
+            row = 3;
+            fps = 14;
+          } else if (this.animState === 'throw') {
+            row = 4;
+            fps = 12;
+          } else if (this.animState === 'walk') {
+            row = 1;
+            fps = 10;
+          } else {
+            row = 0;
+            fps = 8;
+          }
+
+          let frameIdx = Math.floor(this.animTimer * fps) % totalFrames;
+          if (this.animState === 'dash') {
+            const progress = Math.max(0, Math.min(1, 1 - (this.dashTimer / this.maxDashTime)));
+            frameIdx = Math.min(totalFrames - 1, Math.floor(progress * totalFrames));
+          } else if (this.animState === 'throw') {
+            frameIdx = 3;
+          }
+
+          ctx.save();
+          ctx.translate(this.x, this.y);
+          if (this.facingSide === -1) {
+            ctx.scale(-1, 1);
+          }
+
+          // Filtro para o rival: tom rubro/carmim contrastante
+          if (this.flashTimer > 0) {
+            ctx.filter = 'brightness(3) contrast(1.5)';
+          } else if (this.isFinalBoss) {
+            ctx.filter = 'hue-rotate(145deg) saturate(2.2) contrast(1.2)';
+          } else {
+            ctx.filter = 'hue-rotate(160deg) saturate(2.5) contrast(1.1)';
+          }
+
+          ctx.drawImage(
+            sprite,
+            frameIdx * 64, row * 64, 64, 64,
+            -32, -44, 64, 64
+          );
+          ctx.restore();
+        } else {
+          // Fallback vetorial
+          ctx.save();
+          ctx.fillStyle = this.color;
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.strokeStyle = '#fff';
+          ctx.lineWidth = 2;
+          ctx.stroke();
+          ctx.restore();
+        }
+
+        // Barra de Vida
+        const barWidth = 32;
+        const barHeight = 4;
+        const barX = this.x - barWidth / 2;
+        const barY = this.y - 28;
+
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+        ctx.fillRect(barX - 1, barY - 1, barWidth + 2, barHeight + 2);
+
+        const hpRatio = Math.max(0, this.hp / this.maxHp);
+        ctx.fillStyle = hpRatio > 0.5 ? '#e91e63' : (hpRatio > 0.25 ? '#ff9800' : '#f44336');
+        ctx.fillRect(barX, barY, barWidth * hpRatio, barHeight);
+
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 8px monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText(this.isFinalBoss ? 'CHEFE MESTRE' : 'ENGENHEIRO RIVAL', this.x, barY - 3);
       }
     }
 
@@ -3384,7 +3598,7 @@
             eInAbyss = true;
           } else {
             const tile = room.grid[eGridY][eGridX];
-            if (tile === TILE.HOLE) eInAbyss = true;
+            if (tile === TILE.HOLE && !enemy.isDashing) eInAbyss = true;
           }
           
           if (eInAbyss) {
@@ -3395,8 +3609,22 @@
           
           enemy.update(dt, this.player, room);
 
-          // Contato com Charlotte = TEMPO REBOBINA (apenas se o autômato já estiver ativo/acordado)
           const distToPlayer = Math.hypot(enemy.x - this.player.x, enemy.y - this.player.y);
+          if (enemy.isHumanBoss) {
+            // Em duelo contra o Mini Boss: colisão física empurra ambos para longe com recuo (não é morte instantânea por toque)
+            if (distToPlayer < enemy.radius + this.player.radius) {
+              const nx = distToPlayer > 0.001 ? (this.player.x - enemy.x) / distToPlayer : 1;
+              const ny = distToPlayer > 0.001 ? (this.player.y - enemy.y) / distToPlayer : 0;
+              this.player.applyImpulse(nx, ny, 1.8);
+              enemy.applyRepulsion(-nx, -ny, 250);
+              sound.playImpactExplosion();
+              this.spawnSparks((this.player.x + enemy.x) / 2, (this.player.y + enemy.y) / 2, '#00e5ff', 12);
+              this.spawnFloatingText('AFASTE-SE!', enemy.x, enemy.y - 20, '#ffca28');
+            }
+            continue;
+          }
+
+          // Contato com autômatos hostis = TEMPO REBOBINA
           if (enemy.state !== 'dormant' && distToPlayer < enemy.radius + this.player.radius && this.player.invulnerableTimer <= 0) {
             this.triggerTimeRewind();
             break;
@@ -3868,24 +4096,31 @@
         this.blasts.push(new ExplosionBlast(cx, cy, blastRadius, false));
         this.spawnSparks(cx, cy, '#ff5252', 25);
 
-        // Implosion: puxa inimigos para o centro
-        const pullRadius = TILE_SIZE * 3.5;
+        // Onda de choque: empurra inimigos para longe
+        const shockwaveRadius = TILE_SIZE * 3.0;
         room.enemies.forEach(enemy => {
-          const dx = cx - enemy.x;
-          const dy = cy - enemy.y;
+          const dx = enemy.x - cx;
+          const dy = enemy.y - cy;
           const dist = Math.hypot(dx, dy);
-          if (dist > 0 && dist < pullRadius) {
-            enemy.applyRepulsion(-dx/dist, -dy/dist, 250); // Puxa
+          if (dist > 0 && dist < shockwaveRadius) {
+            const nx = dist > 0.001 ? dx / dist : 1;
+            const ny = dist > 0.001 ? dy / dist : 0;
+            enemy.applyRepulsion(nx, ny, 250);
           }
         });
         
-        // Implosion: puxa a Charlotte para o centro
+        // Se Charlotte estiver no raio da explosão de impacto, sofre recuo (repulsão) para longe
         const pDist = Math.hypot(this.player.x - cx, this.player.y - cy);
-        if (pDist > 0 && pDist < pullRadius) {
-          let pullX = cx - this.player.x;
-          let pullY = cy - this.player.y;
-          const norm = Math.hypot(pullX, pullY);
-          this.player.applyImpulse(pullX / norm, pullY / norm, 2.5);
+        const playerRepelRadius = TILE_SIZE * 2.2;
+        if (pDist < playerRepelRadius) {
+          let pushX = this.player.x - cx;
+          let pushY = this.player.y - cy;
+          if (Math.hypot(pushX, pushY) < 0.001) {
+            pushX = -this.player.facing.dx || -1;
+            pushY = -this.player.facing.dy || 0;
+          }
+          const norm = Math.hypot(pushX, pushY) || 1;
+          this.player.applyImpulse(pushX / norm, pushY / norm, 2.0);
         }
 
         // Destrói blocos quebráveis no raio 3x3 e dropa CC (taxa escala com a profundidade)
@@ -5241,6 +5476,8 @@
                 mctx.fillStyle = '#29b6f6';
               } else if (room.isPuzzleRoom && (!room.puzzleState || !room.puzzleState.solved)) {
                 mctx.fillStyle = '#ffb300'; // Dourado radiante para sala de desafio/puzzle
+              } else if (room.isMiniBossRoom && !room.cleared) {
+                mctx.fillStyle = '#e91e63'; // Magenta vivo para a arena do Mini-Boss
               } else if (room.cleared) {
                 mctx.fillStyle = '#455a64';
               } else {
@@ -5252,6 +5489,9 @@
               if (room.isPuzzleRoom) {
                 // Ícone de Diamante/Cofre no Minimap
                 mctx.fillStyle = (room.puzzleState && room.puzzleState.solved) ? '#81c784' : '#ffd700';
+                mctx.fillRect(mx + cell / 2 - 2, my + cell / 2 - 2, 4, 4);
+              } else if (room.isMiniBossRoom && !room.cleared) {
+                mctx.fillStyle = '#ff4081';
                 mctx.fillRect(mx + cell / 2 - 2, my + cell / 2 - 2, 4, 4);
               } else if (room.hasGoela) {
                 mctx.fillStyle = '#4caf50';
@@ -5276,6 +5516,10 @@
         const depth = this.map.currentDepth || 1;
         if (room.isPuzzleRoom) {
           coordsEl.textContent = `NÍVEL ${depth} • CÂMARA DE DESAFIO 💎 [${room.rx}, ${room.ry}]`;
+        } else if (room.isMiniBossRoom) {
+          coordsEl.textContent = `NÍVEL ${depth} • ARENA DO RIVAL ⚔️ [${room.rx}, ${room.ry}]`;
+        } else if (room.isBossRoom) {
+          coordsEl.textContent = `NÍVEL ${depth} • SALA DO CHEFE 💀 [${room.rx}, ${room.ry}]`;
         } else if (room.isSecret) {
           coordsEl.textContent = `ANDAR SECRETO • NÍVEL ${depth}`;
         } else {
