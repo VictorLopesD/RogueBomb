@@ -155,6 +155,34 @@
       background: rgba(10, 14, 20, 0.85);
     }
 
+    #hud-resources {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .hud-badge-info {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+
+    .hud-badge-label {
+      font-size: 10px;
+      color: var(--text-dim);
+      text-transform: uppercase;
+    }
+
+    .hud-badge-value {
+      font-weight: 800;
+      font-size: 11px;
+    }
+
+    .hud-icon {
+      font-size: 16px;
+      line-height: 1;
+    }
+
     /* Overlay de Lockdown */
     #lockdown-banner {
       position: absolute;
@@ -289,34 +317,44 @@
     }
 
     .bomb-btn {
-      width: 54px;
-      height: 54px;
+      width: 52px;
+      height: 52px;
       border-radius: 50%;
       background: var(--panel-bg);
       border: 2px solid var(--border-color);
       color: #fff;
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 800;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 2px;
+      gap: 1px;
       cursor: pointer;
       transition: all 0.15s ease;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: none;
     }
 
-    .bomb-btn span.icon {
-      width: 14px;
-      height: 14px;
-      border-radius: 3px;
-      display: inline-block;
+    .bomb-btn span.icon, .bomb-btn .bomb-icon {
+      font-size: 16px;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: auto;
+      height: auto;
+      background: none !important;
     }
 
-    .bomb-btn[data-bomb="impact"] span.icon { background: var(--accent-red); }
-    .bomb-btn[data-bomb="propulsor"] span.icon { background: var(--accent-cyan); }
-    .bomb-btn[data-bomb="timed"] span.icon { background: var(--accent-yellow); }
+    .bomb-name {
+      font-size: 9px;
+      font-weight: 800;
+      line-height: 1;
+      letter-spacing: 0.3px;
+    }
 
     .bomb-btn.selected {
       transform: scale(1.12);
@@ -565,23 +603,149 @@
     }
     .btn-close:hover { background: #f85149; }
 
-    /* Ajustes para telas pequenas / mobile */
-    @media (max-width: 768px) {
-      #desktop-guide { display: none; }
-      .joystick-zone { transform: scale(0.95); }
-      .actions-container { transform: scale(0.95); }
+    /* Responsividade e Ergonomia Mobile: Portrait e Landscape */
+    @media (max-width: 900px), (max-height: 600px), (pointer: coarse) {
+      #desktop-guide { display: none !important; }
     }
 
-    @media (max-width: 480px) {
-      .action-btn { width: 74px; height: 74px; font-size: 13px; }
-      .dash-btn { width: 56px; height: 56px; }
-      .dash-icon { font-size: 15px; }
-      .dash-label { font-size: 9px; }
-      .dash-cost { font-size: 7px; }
-      .dash-cooldown-overlay { font-size: 11px; }
-      .bomb-btn { width: 48px; height: 48px; font-size: 10px; }
-      .actions-container { gap: 8px; }
-      .action-buttons-group { gap: 8px; }
+    /* MODO VERTICAL / PORTRAIT MOBILE */
+    @media (orientation: portrait) and (max-width: 900px) {
+      #hud-top {
+        top: calc(8px + env(safe-area-inset-top, 0px));
+        left: calc(8px + env(safe-area-inset-left, 0px));
+        right: calc(8px + env(safe-area-inset-right, 0px));
+        align-items: center;
+        gap: 6px;
+      }
+      .hud-badge {
+        padding: 5px 8px;
+        font-size: 11px;
+        gap: 5px;
+        border-radius: 6px;
+      }
+      .hud-badge-label {
+        display: none;
+      }
+      #hud-resources {
+        gap: 5px;
+      }
+      .minimap-badge-label {
+        display: none;
+      }
+      #minimap-canvas {
+        width: 50px;
+        height: 50px;
+      }
+      #mobile-controls {
+        padding: 8px calc(10px + env(safe-area-inset-right, 0px)) calc(12px + env(safe-area-inset-bottom, 0px)) calc(10px + env(safe-area-inset-left, 0px));
+      }
+      .joystick-zone {
+        width: 135px;
+        height: 135px;
+        margin: 0;
+      }
+      .joystick-base {
+        width: 120px;
+        height: 120px;
+      }
+      .joystick-knob {
+        width: 48px;
+        height: 48px;
+      }
+      .actions-container {
+        margin: 0;
+        gap: 8px;
+      }
+      .bomb-selectors {
+        gap: 6px;
+      }
+      .bomb-btn {
+        width: 44px;
+        height: 44px;
+      }
+      .action-btn {
+        width: 76px;
+        height: 76px;
+        font-size: 12px;
+      }
+      .dash-btn {
+        width: 58px;
+        height: 58px;
+      }
+    }
+
+    /* MODO HORIZONTAL / LANDSCAPE MOBILE */
+    @media (orientation: landscape) and (max-height: 600px) {
+      #hud-top {
+        top: calc(6px + env(safe-area-inset-top, 0px));
+        left: calc(10px + env(safe-area-inset-left, 0px));
+        right: calc(10px + env(safe-area-inset-right, 0px));
+        pointer-events: none;
+      }
+      .hud-badge {
+        padding: 4px 8px;
+        font-size: 11px;
+        gap: 5px;
+      }
+      .hud-badge-label {
+        display: none;
+      }
+      #hud-resources {
+        gap: 6px;
+      }
+      .minimap-badge-label {
+        display: none;
+      }
+      #minimap-canvas {
+        width: 48px;
+        height: 48px;
+      }
+      #lockdown-banner {
+        top: 40px;
+        font-size: 11px;
+        padding: 4px 14px;
+      }
+      #mobile-controls {
+        padding: 6px calc(12px + env(safe-area-inset-right, 0px)) calc(8px + env(safe-area-inset-bottom, 0px)) calc(12px + env(safe-area-inset-left, 0px));
+        align-items: flex-end;
+      }
+      .joystick-zone {
+        width: 130px;
+        height: 130px;
+        margin: 0;
+      }
+      .joystick-base {
+        width: 115px;
+        height: 115px;
+      }
+      .joystick-knob {
+        width: 46px;
+        height: 46px;
+      }
+      .actions-container {
+        margin: 0;
+        gap: 6px;
+      }
+      .bomb-selectors {
+        gap: 6px;
+      }
+      .bomb-btn {
+        width: 42px;
+        height: 42px;
+      }
+      .action-btn {
+        width: 68px;
+        height: 68px;
+        font-size: 12px;
+      }
+      .dash-btn {
+        width: 54px;
+        height: 54px;
+      }
+      #armory-modal {
+        max-height: 85vh;
+        overflow-y: auto;
+      }
     }
   </style>
 </head>
@@ -594,32 +758,34 @@
         <div id="enemy-counter" class="status-ok">INIMIGOS: 0</div>
       </div>
 
-      <div id="gauntlet-badge" class="hud-badge" title="Clique ou pressione [U] para aprimorar o alcance da Manopla">
-        <span style="font-size: 16px;">🥊</span>
-        <div>
-          <div style="font-size: 10px; color: var(--text-dim); text-transform: uppercase;">Manopla</div>
-          <div id="gauntlet-level" style="color: var(--accent-yellow); font-weight: 800; font-size: 11px;">NV. 1 (140px)</div>
+      <div id="hud-resources">
+        <div id="gauntlet-badge" class="hud-badge" title="Clique ou pressione [U] para aprimorar o alcance da Manopla">
+          <span class="hud-icon" style="font-size: 16px;">🥊</span>
+          <div class="hud-badge-info">
+            <div class="hud-badge-label">Manopla</div>
+            <div id="gauntlet-level" class="hud-badge-value" style="color: var(--accent-yellow);">NV. 1 (140px)</div>
+          </div>
         </div>
-      </div>
 
-      <div id="cc-badge" class="hud-badge" title="Cristal Coal coletado das caixas. Deposite na Goela!">
-        <span style="font-size: 16px;">💎</span>
-        <div>
-          <div style="font-size: 10px; color: var(--text-dim); text-transform: uppercase;">Cristal Coal</div>
-          <div id="cc-counter" style="color: var(--accent-cyan); font-weight: 800; font-size: 11px;">0 CC</div>
+        <div id="cc-badge" class="hud-badge" title="Cristal Coal coletado das caixas. Deposite na Goela!">
+          <span class="hud-icon" style="font-size: 16px;">💎</span>
+          <div class="hud-badge-info">
+            <div class="hud-badge-label">Cristal Coal</div>
+            <div id="cc-counter" class="hud-badge-value" style="color: var(--accent-cyan);">0 CC</div>
+          </div>
         </div>
-      </div>
 
-      <div id="part-badge" class="hud-badge" title="Peças coletadas de autômatos destruídos.">
-        <span style="font-size: 16px;">⚙️</span>
-        <div>
-          <div style="font-size: 10px; color: var(--text-dim); text-transform: uppercase;">Peças</div>
-          <div id="part-counter" style="color: #9e9e9e; font-weight: 800; font-size: 11px;">0 PEÇAS</div>
+        <div id="part-badge" class="hud-badge" title="Peças coletadas de autômatos destruídos.">
+          <span class="hud-icon" style="font-size: 16px;">⚙️</span>
+          <div class="hud-badge-info">
+            <div class="hud-badge-label">Peças</div>
+            <div id="part-counter" class="hud-badge-value" style="color: #9e9e9e;">0 PEÇAS</div>
+          </div>
         </div>
       </div>
       
       <div id="minimap-container">
-        <div class="hud-badge" style="padding: 4px 8px; font-size: 11px;">MAPA PROCEDURAL</div>
+        <div class="hud-badge minimap-badge-label" style="padding: 4px 8px; font-size: 11px;">MAPA PROCEDURAL</div>
         <canvas id="minimap-canvas" width="70" height="70"></canvas>
       </div>
     </div>
@@ -661,16 +827,16 @@
       <div class="actions-container">
         <div class="bomb-selectors">
           <button class="bomb-btn" data-bomb="impact" style="display: none;" title="1: Bomba de Impacto">
-            <span class="icon"></span>
-            <span>IMP</span>
+            <span class="icon bomb-icon">💥</span>
+            <span class="bomb-name">IMP</span>
           </button>
           <button class="bomb-btn" data-bomb="propulsor" style="display: none;" title="2: Bomba Propulsora">
-            <span class="icon"></span>
-            <span>PROP</span>
+            <span class="icon bomb-icon">🚀</span>
+            <span class="bomb-name">PROP</span>
           </button>
           <button class="bomb-btn selected" data-bomb="timed" title="3: Bomba Temporizada">
-            <span class="icon"></span>
-            <span>TEMP <br><span id="ammo-counter">(5)</span></span>
+            <span class="icon bomb-icon">⏱️</span>
+            <span class="bomb-name">TEMP <span id="ammo-counter">(5)</span></span>
           </button>
         </div>
 
@@ -1678,8 +1844,8 @@
             this.puzzleState.barrierPositions.push(c);
           });
 
-          // 1 Autômato de guarda
-          this.enemies.push(new Automaton((mid - 2) * TILE_SIZE, (mid - 2) * TILE_SIZE, depth));
+          // 1 Autômato de guarda enferrujado (Nível 1)
+          this.enemies.push(new Automaton((mid - 2) * TILE_SIZE, (mid - 2) * TILE_SIZE, depth, 'rusty'));
         } else if (this.puzzleType === 'lava_chasm' || depth === 2) {
           this.puzzleType = 'lava_chasm';
           this.puzzleState.ccReward = 7;
@@ -1701,8 +1867,8 @@
           this.grid[mid][mid] = TILE.VAULT_CHEST;
           this.puzzleState.solved = true; // Acessível assim que cruzar a lava!
 
-          // 1 Autômato na área externa
-          this.enemies.push(new Automaton(2 * TILE_SIZE + TILE_SIZE / 2, 2 * TILE_SIZE + TILE_SIZE / 2, depth));
+          // 1 Autômato perfurador enferrujado na área externa (Nível 2)
+          this.enemies.push(new Automaton(2 * TILE_SIZE + TILE_SIZE / 2, 2 * TILE_SIZE + TILE_SIZE / 2, depth, 'rusty_charger'));
         } else {
           // Nível 3+: gauntlet_target
           this.puzzleType = 'gauntlet_target';
@@ -1723,9 +1889,15 @@
           this.grid[mid - 1][mid] = TILE.SWITCH_TARGET;
           this.puzzleState.switches = [{ x: mid, y: mid - 1, hit: false }];
 
-          // 2 Autômatos blindados patrulhando fora
-          this.enemies.push(new Automaton(2 * TILE_SIZE, (GRID_SIZE - 3) * TILE_SIZE, depth));
-          this.enemies.push(new Automaton((GRID_SIZE - 3) * TILE_SIZE, 2 * TILE_SIZE, depth));
+          if (depth === 3) {
+            // Nível 3: 2 Autômatos enferrujados (Charger e Bomber) patrulhando fora
+            this.enemies.push(new Automaton(2 * TILE_SIZE, (GRID_SIZE - 3) * TILE_SIZE, depth, 'rusty_charger'));
+            this.enemies.push(new Automaton((GRID_SIZE - 3) * TILE_SIZE, 2 * TILE_SIZE, depth, 'rusty_bomber'));
+          } else {
+            // Níveis 4 e 5: 2 Autômatos de elite blindados (Charger e Bomber reforçados)
+            this.enemies.push(new Automaton(2 * TILE_SIZE, (GRID_SIZE - 3) * TILE_SIZE, depth, 'charger'));
+            this.enemies.push(new Automaton((GRID_SIZE - 3) * TILE_SIZE, 2 * TILE_SIZE, depth, 'bomber'));
+          }
         }
       }
 
@@ -1851,7 +2023,26 @@
           for (let i = 0; i < enemyCount; i++) {
             const pos = this.findSpawnSpot();
             if (pos) {
-              this.enemies.push(new Automaton(pos.x, pos.y, this.depth));
+              let type = 'rusty';
+              const rand = Math.random();
+              if (this.depth === 1) {
+                // Nível 1: Setor mais abandonado e esquecido. 100% autômatos enferrujados (1 HP)
+                type = 'rusty';
+              } else if (this.depth === 2) {
+                // Nível 2: Introdução do Charger Enferrujado com broca lascada (1 HP)
+                type = rand < 0.50 ? 'rusty' : 'rusty_charger';
+              } else if (this.depth === 3) {
+                // Nível 3: Oficinas esquecidas com Charger e Bomber Enferrujados (1 HP)
+                if (rand < 0.40) type = 'rusty_charger';
+                else if (rand < 0.80) type = 'rusty_bomber';
+                else type = 'rusty';
+              } else {
+                // Níveis 4 e 5: Apenas aqui surgem os autômatos mais fortes de elite (2+ HP, velozes e blindados)
+                if (rand < 0.35) type = 'charger';
+                else if (rand < 0.70) type = 'bomber';
+                else type = 'scout';
+              }
+              this.enemies.push(new Automaton(pos.x, pos.y, this.depth, type));
             }
           }
         }
@@ -2501,55 +2692,253 @@
       }
     }
 
+    class EnemyBomb {
+      constructor(startX, startY, targetX, targetY, isRusty = false) {
+        this.startX = startX;
+        this.startY = startY;
+        this.x = startX;
+        this.y = startY;
+        this.targetX = targetX;
+        this.targetY = targetY;
+        this.duration = isRusty ? 0.75 : 0.65;
+        this.elapsed = 0;
+        this.arcY = 0;
+        this.state = 'flying'; // 'flying', 'fusing', 'exploded'
+        this.fuseTimer = isRusty ? 1.6 : 1.4;
+        this.exploded = false;
+        this.animTimer = 0;
+        this.isRusty = isRusty;
+      }
+
+      update(dt, game) {
+        this.animTimer += dt;
+        if (this.state === 'flying') {
+          this.elapsed += dt;
+          const t = Math.min(1, this.elapsed / this.duration);
+          this.x = this.startX + (this.targetX - this.startX) * t;
+          this.y = this.startY + (this.targetY - this.startY) * t;
+          this.arcY = -Math.sin(t * Math.PI) * (this.isRusty ? 40 : 45);
+
+          if (t >= 1) {
+            this.state = 'fusing';
+            this.arcY = 0;
+            if (window.sound) window.sound.playTimedBeep(1.0);
+          }
+        } else if (this.state === 'fusing') {
+          this.fuseTimer -= dt;
+          if (this.fuseTimer <= 0) {
+            this.explode(game);
+          }
+        }
+      }
+
+      explode(game) {
+        this.exploded = true;
+        this.state = 'exploded';
+        if (window.sound) window.sound.playImpactExplosion();
+
+        if (this.isRusty) {
+          game.spawnSparks(this.x, this.y, '#8d6e63', 14);
+          game.spawnSparks(this.x, this.y, '#bf360c', 10);
+          game.spawnFloatingText('💥', this.x, this.y - 15, '#d7ccc8');
+        } else {
+          game.spawnSparks(this.x, this.y, '#ff7043', 18);
+          game.spawnFloatingText('💥', this.x, this.y - 15, '#ff5722');
+        }
+
+        const blastRadius = 46;
+        const room = game.map.currentRoom;
+        const gridX = Math.floor(this.x / TILE_SIZE);
+        const gridY = Math.floor(this.y / TILE_SIZE);
+        for (let dy = -1; dy <= 1; dy++) {
+          for (let dx = -1; dx <= 1; dx++) {
+            const tx = gridX + dx;
+            const ty = gridY + dy;
+            if (tx >= 0 && tx < GRID_SIZE && ty >= 0 && ty < GRID_SIZE) {
+              if (room.grid[ty][tx] === TILE.BREAKABLE) {
+                room.grid[ty][tx] = TILE.EMPTY;
+                game.spawnSparks(tx * TILE_SIZE + TILE_SIZE/2, ty * TILE_SIZE + TILE_SIZE/2, '#8d6e63', 8);
+              }
+            }
+          }
+        }
+
+        const distToPlayer = Math.hypot(this.x - game.player.x, this.y - game.player.y);
+        if (distToPlayer < blastRadius) {
+          const nx = distToPlayer > 0.001 ? (game.player.x - this.x) / distToPlayer : 1;
+          const ny = distToPlayer > 0.001 ? (game.player.y - this.y) / distToPlayer : 0;
+          game.player.applyImpulse(nx, ny, 2.2);
+          if (game.player.invulnerableTimer <= 0) {
+            game.spawnFloatingText('CUIDADO!', game.player.x, game.player.y - 20, '#ffca28');
+          }
+        }
+      }
+
+      render(ctx, now) {
+        ctx.save();
+        const renderY = this.y + (this.arcY || 0);
+
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.35)';
+        ctx.beginPath();
+        const shadowScale = Math.max(0.4, 1 - Math.abs(this.arcY || 0) / 60);
+        ctx.ellipse(this.x, this.y + 4, 8 * shadowScale, 3 * shadowScale, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        const pulse = this.state === 'fusing' ? (Math.sin(this.animTimer * 16) + 1) / 2 : 0;
+        if (this.isRusty) {
+          ctx.fillStyle = pulse > 0.5 ? '#bf360c' : '#5d3a28';
+        } else {
+          ctx.fillStyle = pulse > 0.5 ? '#ff1744' : '#d84315';
+        }
+        ctx.beginPath();
+        ctx.arc(this.x, renderY, 7, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = this.isRusty ? '#3e2723' : '#212121';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        ctx.strokeStyle = '#ffb300';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(this.x, renderY - 6);
+        ctx.quadraticCurveTo(this.x + 3, renderY - 11, this.x + 5, renderY - 10);
+        ctx.stroke();
+
+        ctx.fillStyle = '#ffeb3b';
+        ctx.beginPath();
+        ctx.arc(this.x + 5, renderY - 10, 2 + Math.sin(now * 20), 0, Math.PI * 2);
+        ctx.fill();
+
+        if (this.state === 'fusing') {
+          ctx.fillStyle = '#ff5722';
+          ctx.font = 'bold 9px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText('⚠️', this.x, renderY - 14);
+        }
+
+        ctx.restore();
+      }
+    }
+
     class Automaton {
-      constructor(x, y, depth = 1) {
+      constructor(x, y, depth = 1, type = (depth === 1 ? 'rusty' : 'scout')) {
         this.x = x;
         this.y = y;
         this.depth = depth;
-        this.radius = 15;
+        this.type = type; // 'rusty', 'rusty_charger', 'rusty_bomber', 'scout', 'charger', 'bomber'
 
-        // Escala de Vida e Resistência conforme o Andar/Nível
-        // Nível 1: 1 HP (Vermelho) | Nível 2: 2 HP (Ametista) | Nível 3+: 3+ HP (Titã Dourado/Obsidiana)
-        this.maxHp = Math.max(1, Math.min(6, Math.floor(depth)));
-        this.hp = this.maxHp;
+        const isRusty = (this.type === 'rusty' || this.type === 'rusty_charger' || this.type === 'rusty_bomber');
+
+        if (isRusty) {
+          // Autômatos Enferrujados (Níveis 1, 2 e 3): Sempre 1 HP, quebram com facilidade!
+          this.maxHp = 1;
+          this.hp = 1;
+          this.reactionDelay = 1.05;
+          this.rustFlicker = Math.random() * 10;
+          this.searchRange = TILE_SIZE * 3.8;
+          this.loseRange = TILE_SIZE * 5.2;
+
+          if (this.type === 'rusty_charger') {
+            this.radius = 15;
+            this.speed = 48;
+            this.patrolSpeed = 22;
+            this.chargeState = 'ready';
+            this.chargeTimer = 0;
+            this.chargeCooldown = 4.2 + Math.random() * 1.5;
+            this.chargeDir = { dx: 0, dy: 0 };
+          } else if (this.type === 'rusty_bomber') {
+            this.radius = 15;
+            this.speed = 40;
+            this.patrolSpeed = 20;
+            this.shootCooldown = 3.8 + Math.random() * 1.4;
+            this.recoilTimer = 0;
+          } else {
+            // rusty (scout enferrujado)
+            this.radius = 13.5;
+            this.speed = 36;
+            this.patrolSpeed = 18;
+            this.stumbleTimer = 2.5 + Math.random() * 2.0;
+            this.isStumbling = false;
+            this.stumbleDuration = 0;
+          }
+        } else {
+          // Apenas Níveis 4 e 5: Autômatos de Elite mais fortes com múltiplas blindagens!
+          this.maxHp = Math.max(2, Math.min(6, Math.floor(depth) - 1)); // 2 HP no Nível 4, 3+ HP no Nível 5
+          this.hp = this.maxHp;
+
+          const speedBonus = Math.min(45, (depth - 3) * 12);
+          if (this.type === 'charger') {
+            this.radius = 16;
+            this.speed = 72 + speedBonus * 0.5;
+            this.patrolSpeed = 34 + speedBonus * 0.3;
+            this.chargeState = 'ready';
+            this.chargeTimer = 0;
+            this.chargeCooldown = 3.2 + Math.random() * 1.2;
+            this.chargeDir = { dx: 0, dy: 0 };
+          } else if (this.type === 'bomber') {
+            this.radius = 16;
+            this.speed = 54 + speedBonus * 0.4;
+            this.patrolSpeed = 28 + speedBonus * 0.2;
+            this.shootCooldown = 2.6 + Math.random() * 1.0;
+            this.recoilTimer = 0;
+          } else {
+            // Scout de elite
+            this.radius = 14;
+            this.speed = 84 + speedBonus;
+            this.patrolSpeed = 38 + speedBonus * 0.4;
+          }
+
+          const searchBonus = Math.min(40, (depth - 1) * 10);
+          this.searchRange = TILE_SIZE * 4.5 + searchBonus;
+          this.loseRange = TILE_SIZE * 6.0 + searchBonus;
+          this.reactionDelay = Math.max(0.32, 0.58 - (depth - 3) * 0.08);
+        }
+
         this.flashTimer = 0;
-
-        // Velocidade e agressividade calibradas com a profundidade
-        const speedBonus = Math.min(45, (depth - 1) * 12);
-        this.speed = 80 + speedBonus;          // Velocidade de perseguição calibrada
-        this.patrolSpeed = 36 + speedBonus * 0.4;
+        this.animTimer = Math.random() * 10;
+        this.facing = { dx: 0, dy: 1 };
         this.vx = 0;
         this.vy = 0;
         this.isRepelled = false;
         this.repelVelocity = { x: 0, y: 0 };
         this.pulseAngle = Math.random() * Math.PI * 2;
-
-        // Sistema de Range de Busca e Retardo de Reação
-        const searchBonus = Math.min(40, (depth - 1) * 10);
-        this.searchRange = TILE_SIZE * 4.5 + searchBonus;
-        this.loseRange = TILE_SIZE * 6.0 + searchBonus;
-        this.reactionDelay = Math.max(0.38, 0.65 - (depth - 1) * 0.07); // Tempo de retardo ao detectar Charlotte
         this.reactionTimer = 0;
-        this.activationDelay = 1.0;         // Retardo ao entrar na sala (1.0s de carência inicial)
-        this.state = 'dormant';             // 'dormant', 'idle', 'alert', 'chase'
+        this.activationDelay = 1.0;
+        this.state = 'dormant';
 
-        // Patrulha aleatória quando ocioso
         this.wanderTimer = Math.random() * 1.5 + 0.8;
         this.wanderDir = { dx: 0, dy: 0 };
         this.alertAnimation = 0;
       }
 
+      isStunned() {
+        return (this.type === 'charger' || this.type === 'rusty_charger') && this.chargeState === 'stunned';
+      }
+
       takeDamage(amount, engine) {
         this.hp -= amount;
         this.flashTimer = 0.25;
-        engine.spawnSparks(this.x, this.y, this.maxHp > 1 ? '#ffca28' : '#ef5350', 14);
-        engine.spawnFloatingText(`-${amount} HP`, this.x, this.y - this.radius - 8, '#ff5252');
+        const isRusty = (this.type === 'rusty' || this.type === 'rusty_charger' || this.type === 'rusty_bomber');
+        if (engine) {
+          if (isRusty) {
+            engine.spawnSparks(this.x, this.y, '#8d6e63', 18);
+            engine.spawnSparks(this.x, this.y, '#d87d4a', 12);
+            engine.spawnFloatingText('ESFACELOU!', this.x, this.y - this.radius - 8, '#d7ccc8');
+          } else {
+            engine.spawnSparks(this.x, this.y, this.maxHp > 1 ? '#ffca28' : '#ef5350', 14);
+            engine.spawnFloatingText(`-${amount} HP`, this.x, this.y - this.radius - 8, '#ff5252');
+          }
+        }
         return this.hp <= 0;
       }
 
       applyRepulsion(nx, ny, force = 300) {
         this.isRepelled = true;
         this.repelVelocity = { x: nx * force, y: ny * force };
+        if ((this.type === 'charger' || this.type === 'rusty_charger') && this.chargeState === 'windup') {
+          this.chargeState = 'ready';
+          this.chargeCooldown = 2.0;
+        }
       }
 
       resetActivationGrace(seconds = 1.1) {
@@ -2557,9 +2946,14 @@
         this.state = 'dormant';
         this.reactionTimer = 0;
         this.wanderDir = { dx: 0, dy: 0 };
+        if (this.type === 'charger') {
+          this.chargeState = 'ready';
+          this.chargeTimer = 0;
+        }
       }
 
       update(dt, player, room) {
+        this.animTimer += dt;
         this.pulseAngle += dt * (this.state === 'chase' ? 8 : (this.state === 'alert' ? 12 : 3));
         if (this.flashTimer > 0) this.flashTimer -= dt;
 
@@ -2567,12 +2961,9 @@
         if (this.isRepelled) {
           const nextX = this.x + this.repelVelocity.x * dt;
           const nextY = this.y + this.repelVelocity.y * dt;
-
           this.moveWithCollision(nextX, nextY, room, true);
-
           this.repelVelocity.x *= 0.88;
           this.repelVelocity.y *= 0.88;
-
           if (Math.hypot(this.repelVelocity.x, this.repelVelocity.y) < 15) {
             this.isRepelled = false;
             this.repelVelocity = { x: 0, y: 0 };
@@ -2580,7 +2971,7 @@
           return;
         }
 
-        // 1. Carência inicial ao entrar na sala (dormant / ligando engrenagens)
+        // 1. Carência inicial ao entrar na sala
         if (this.activationDelay > 0) {
           this.activationDelay -= dt;
           this.state = 'dormant';
@@ -2593,14 +2984,133 @@
         const dx = player.x - this.x;
         const dy = player.y - this.y;
         const dist = Math.hypot(dx, dy);
+        if (dist > 1) {
+          this.facing = { dx: dx / dist, dy: dy / dist };
+        }
 
-        // 2. Máquina de Estados com Retardo de Reação e Range de Busca
+        // Recuperação de engasgo do autômato enferrujado
+        if (this.type === 'rusty' && this.isStumbling) {
+          this.stumbleDuration -= dt;
+          if (this.stumbleDuration <= 0) {
+            this.isStumbling = false;
+            this.stumbleTimer = 3.0 + Math.random() * 2.5;
+          }
+          return;
+        }
+
+        // --- COMPORTAMENTO DO CHARGER (PERFURADOR) ---
+        if (this.type === 'charger' || this.type === 'rusty_charger') {
+          const isRustyCharger = this.type === 'rusty_charger';
+          if (this.chargeCooldown > 0) this.chargeCooldown -= dt;
+
+          if (this.chargeState === 'stunned') {
+            this.chargeTimer -= dt;
+            if (this.chargeTimer <= 0) {
+              this.chargeState = 'ready';
+              this.chargeCooldown = isRustyCharger ? 4.5 : 3.5;
+              this.state = 'idle';
+            }
+            return;
+          }
+
+          if (this.chargeState === 'windup') {
+            this.chargeTimer -= dt;
+            if (window.game && Math.random() < 0.4) {
+              const sparkCol = isRustyCharger ? '#8d6e63' : '#ffd54f';
+              window.game.spawnSparks(this.x + this.chargeDir.dx * (this.radius + 10), this.y + this.chargeDir.dy * (this.radius + 10), sparkCol, 2);
+            }
+            if (this.chargeTimer <= 0) {
+              this.chargeState = 'charge';
+              this.chargeTimer = isRustyCharger ? 1.0 : 1.2;
+              if (window.sound) window.sound.playPropulsorSteam();
+              if (window.game) window.game.spawnFloatingText(isRustyCharger ? 'ARRANCADA!' : 'INVESTIDA!', this.x, this.y - 18, isRustyCharger ? '#d7ccc8' : '#ffca28');
+            }
+            return;
+          }
+
+          if (this.chargeState === 'charge') {
+            this.chargeTimer -= dt;
+            const chargeSpeed = isRustyCharger ? 175 : 280; // Enferrujado é mais lento
+            const targetX = this.x + this.chargeDir.dx * chargeSpeed * dt;
+            const targetY = this.y + this.chargeDir.dy * chargeSpeed * dt;
+
+            if (window.game && Math.random() < (isRustyCharger ? 0.4 : 0.6)) {
+              window.game.spawnSparks(this.x, this.y, isRustyCharger ? '#8d6e63' : '#ffb74d', 2);
+            }
+
+            const gridX = Math.floor(targetX / TILE_SIZE);
+            const gridY = Math.floor(targetY / TILE_SIZE);
+            if (gridX >= 0 && gridX < GRID_SIZE && gridY >= 0 && gridY < GRID_SIZE) {
+              if (room.grid[gridY][gridX] === TILE.BREAKABLE) {
+                room.grid[gridY][gridX] = TILE.EMPTY;
+                if (window.sound) window.sound.playImpactExplosion();
+                if (window.game) {
+                  window.game.spawnSparks(gridX * TILE_SIZE + TILE_SIZE/2, gridY * TILE_SIZE + TILE_SIZE/2, '#8d6e63', 12);
+                  window.game.spawnFloatingText('QUEBROU!', targetX, targetY - 14, '#d7ccc8');
+                }
+              }
+            }
+
+            const hitWall = this.checkTileCollision(targetX, targetY, room, false);
+            const hitHole = this.checkTileCollisionHolesOnly(targetX, targetY, room);
+
+            if (hitWall || hitHole) {
+              this.chargeState = 'stunned';
+              this.chargeTimer = isRustyCharger ? 2.2 : 1.5; // Enferrujado fica atordoado por mais tempo!
+              if (window.sound) window.sound.playImpactExplosion();
+              if (window.game) {
+                window.game.spawnSparks(this.x, this.y, isRustyCharger ? '#8d6e63' : '#ffeb3b', 16);
+                window.game.spawnFloatingText(isRustyCharger ? 'TRAVOU!' : 'ATORDOADO!', this.x, this.y - 20, isRustyCharger ? '#ffca28' : '#fff59d');
+              }
+              return;
+            } else {
+              this.x = targetX;
+              this.y = targetY;
+            }
+
+            if (this.chargeTimer <= 0) {
+              this.chargeState = 'ready';
+              this.chargeCooldown = isRustyCharger ? 4.5 : 4.0;
+            }
+            return;
+          }
+        }
+
+        // --- COMPORTAMENTO DO BOMBER (BOMBARDEIRO) ---
+        if (this.type === 'bomber' || this.type === 'rusty_bomber') {
+          const isRustyBomber = this.type === 'rusty_bomber';
+          if (this.recoilTimer > 0) {
+            this.recoilTimer -= dt;
+            return; // Tranco de recuo do morteiro enferrujado
+          }
+
+          if (this.shootCooldown > 0) this.shootCooldown -= dt;
+
+          if (this.state === 'chase' && this.shootCooldown <= 0 && dist <= TILE_SIZE * 5.5 && window.game) {
+            const leadX = player.x + (player.facing ? player.facing.dx * 12 : 0);
+            const leadY = player.y + (player.facing ? player.facing.dy * 12 : 0);
+
+            window.game.enemyBombs.push(new EnemyBomb(this.x, this.y, leadX, leadY, isRustyBomber));
+            if (window.sound) window.sound.playThrowWhoosh();
+            if (window.game) {
+              window.game.spawnSparks(this.x, this.y - 12, isRustyBomber ? '#8d6e63' : '#ff7043', 8);
+              window.game.spawnFloatingText(isRustyBomber ? 'DISPARO!' : 'MINA!', this.x, this.y - 18, isRustyBomber ? '#d7ccc8' : '#ff7043');
+            }
+            if (isRustyBomber) {
+              this.shootCooldown = 4.2 + Math.random() * 1.5;
+              this.recoilTimer = 0.5; // Pausa breve para absorver o tranco
+            } else {
+              this.shootCooldown = 2.8 + Math.random() * 1.0;
+            }
+          }
+        }
+
+        // 2. Máquina de Estados Geral
         if (this.state === 'dormant') {
           this.state = 'idle';
         }
 
         if (this.state === 'idle') {
-          // Checa se Charlotte entrou no campo de visão/busca
           if (dist <= this.searchRange) {
             this.state = 'alert';
             this.reactionTimer = this.reactionDelay;
@@ -2608,11 +3118,11 @@
             sound.playEnemyAlert();
             this.wanderDir = { dx: 0, dy: 0 };
           } else {
-            // Patrulha lenta / descanso
             this.wanderTimer -= dt;
             if (this.wanderTimer <= 0) {
               this.wanderTimer = Math.random() * 2.0 + 1.0;
-              if (Math.random() < 0.45) {
+              const stopChance = this.type === 'rusty' ? 0.65 : 0.45;
+              if (Math.random() < stopChance) {
                 this.wanderDir = { dx: 0, dy: 0 };
               } else {
                 const angle = Math.floor(Math.random() * 4) * (Math.PI / 2);
@@ -2627,11 +3137,9 @@
             }
           }
         } else if (this.state === 'alert') {
-          // Retardo de reação ativo! O autômato trava por instantes, sobe alerta visual "!" e prepara o ataque
           this.reactionTimer -= dt;
           if (this.alertAnimation > 0) this.alertAnimation -= dt;
 
-          // Se o jogador fugir para fora do range durante o tempo de reação, cancela o alerta
           if (dist > this.searchRange * 1.25) {
             this.state = 'idle';
             this.reactionTimer = 0;
@@ -2639,14 +3147,65 @@
             this.state = 'chase';
           }
         } else if (this.state === 'chase') {
-          // Perseguição ativa
           if (dist > this.loseRange) {
-            // Perdeu Charlotte de vista (fora do range de perseguição)
             this.state = 'idle';
             this.reactionTimer = 0;
-          } else if (dist > 2) {
-            let desiredVx = (dx / dist) * this.speed;
-            let desiredVy = (dy / dist) * this.speed;
+          } else {
+            if (this.type === 'rusty') {
+              this.stumbleTimer -= dt;
+              if (this.stumbleTimer <= 0) {
+                this.isStumbling = true;
+                this.stumbleDuration = 0.55;
+                if (window.game && Math.random() < 0.8) {
+                  window.game.spawnSparks(this.x, this.y, '#8d5b4c', 4);
+                  window.game.spawnFloatingText('⚙️', this.x, this.y - this.radius - 10, '#bcaaa4');
+                }
+                return;
+              }
+              // Comportamento bobo: se Charlotte se distanciar, pode ficar desorientado facilmente
+              if (dist > TILE_SIZE * 3.0 && Math.random() < 0.008) {
+                this.state = 'idle';
+                this.wanderTimer = 1.6;
+                this.wanderDir = { dx: 0, dy: 0 };
+                if (window.game) {
+                  window.game.spawnFloatingText('?', this.x, this.y - this.radius - 10, '#ffcc80');
+                }
+                return;
+              }
+            }
+
+            if ((this.type === 'charger' || this.type === 'rusty_charger') && this.chargeCooldown <= 0 && dist <= TILE_SIZE * 4.5) {
+              const normX = dx / dist;
+              const normY = dy / dist;
+              this.chargeState = 'windup';
+              this.chargeTimer = this.type === 'rusty_charger' ? 0.85 : 0.6;
+              this.chargeDir = { dx: normX, dy: normY };
+              this.facing = { dx: normX, dy: normY };
+              if (window.sound) window.sound.playTimedBeep(1.5);
+              return;
+            }
+
+            let desiredVx = 0;
+            let desiredVy = 0;
+
+            if (this.type === 'bomber' || this.type === 'rusty_bomber') {
+              const normX = dx / dist;
+              const normY = dy / dist;
+              if (dist < TILE_SIZE * 2.6) {
+                desiredVx = -normX * this.speed;
+                desiredVy = -normY * this.speed;
+              } else if (dist > TILE_SIZE * 4.5) {
+                desiredVx = normX * this.speed;
+                desiredVy = normY * this.speed;
+              } else {
+                const strafeDir = Math.sin(this.animTimer * 2) > 0 ? 1 : -1;
+                desiredVx = -normY * strafeDir * (this.speed * 0.85);
+                desiredVy = normX * strafeDir * (this.speed * 0.85);
+              }
+            } else {
+              desiredVx = (dx / dist) * this.speed;
+              desiredVy = (dy / dist) * this.speed;
+            }
 
             let nextX = this.x + desiredVx * dt;
             let nextY = this.y + desiredVy * dt;
@@ -2655,7 +3214,6 @@
             let hitHole = this.checkTileCollisionHolesOnly(nextX, nextY, room);
 
             if (this.depth === 1) {
-              // Nível 1: Ignora buracos, tenta desviar de paredes normalmente
               if (!hitWall) {
                 this.x = nextX;
                 this.y = nextY;
@@ -2668,15 +3226,12 @@
                 }
               }
             } else if (this.depth === 2) {
-              // Nível 2: Para de ir atrás se o próximo passo for um buraco
               if (hitHole) {
-                 // Fica parado encarando o buraco
-                 this.wanderDir = { dx: 0, dy: 0 };
+                this.wanderDir = { dx: 0, dy: 0 };
               } else if (!hitWall) {
                 this.x = nextX;
                 this.y = nextY;
               } else {
-                // Se bateu na parede, tenta desviar, mas não desvia para dentro de um buraco
                 const altX = this.x + desiredVx * dt;
                 if (!this.checkTileCollision(altX, this.y, room) && !this.checkTileCollisionHolesOnly(altX, this.y, room)) {
                   this.x = altX;
@@ -2688,7 +3243,6 @@
                 }
               }
             } else {
-              // Nível 3+: Tenta contornar ativamente se bater num buraco ou parede
               if (!hitWall && !hitHole) {
                 this.x = nextX;
                 this.y = nextY;
@@ -2734,12 +3288,8 @@
           for (let tx = left; tx <= right; tx++) {
             if (tx < 0 || tx >= GRID_SIZE || ty < 0 || ty >= GRID_SIZE) return isKnockback ? false : true;
             const tile = room.grid[ty][tx];
-            if (isKnockback) {
-              if (tile === TILE.WALL || tile === TILE.BREAKABLE || tile === TILE.LOCK_GATE || tile === TILE.BOSS_DOOR || tile === TILE.ARMORY || tile === TILE.CHEST || tile === TILE.INVENTOR_NPC || tile === TILE.SWITCH_TARGET) return true;
-            } else {
-              if (tile === TILE.WALL || tile === TILE.BREAKABLE || tile === TILE.LOCK_GATE || tile === TILE.BOSS_DOOR || tile === TILE.ARMORY || tile === TILE.CHEST || tile === TILE.INVENTOR_NPC || tile === TILE.SWITCH_TARGET) {
-                return true;
-              }
+            if (tile === TILE.WALL || tile === TILE.BREAKABLE || tile === TILE.LOCK_GATE || tile === TILE.BOSS_DOOR || tile === TILE.ARMORY || tile === TILE.CHEST || tile === TILE.INVENTOR_NPC || tile === TILE.SWITCH_TARGET) {
+              return true;
             }
           }
         }
@@ -2761,45 +3311,428 @@
         return false;
       }
 
-      applyRepulsion(dirX, dirY, strength) {
-        this.isRepelled = true;
-        this.repelVelocity = {
-          x: dirX * strength,
-          y: dirY * strength
-        };
+      render(ctx, now) {
+        ctx.save();
+        const pulse = (Math.sin(this.pulseAngle) + 1) / 2;
+        const isFlashing = this.flashTimer > 0;
+        let renderX = this.x;
+        let renderY = this.y;
+
+        const isCharging = (this.type === 'charger' || this.type === 'rusty_charger') && this.chargeState === 'charge';
+        const isRusty = (this.type === 'rusty' || this.type === 'rusty_charger' || this.type === 'rusty_bomber');
+        const isWindingUp = (this.type === 'charger' || this.type === 'rusty_charger') && this.chargeState === 'windup';
+
+        if (this.state === 'alert' || this.isStumbling || this.recoilTimer > 0 || isWindingUp) {
+          renderX += (Math.random() - 0.5) * (this.isStumbling || this.recoilTimer > 0 ? 3 : 4);
+          renderY += (Math.random() - 0.5) * (this.isStumbling || this.recoilTimer > 0 ? 3 : 4);
+        }
+
+        // Sombra nos pés
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
+        ctx.beginPath();
+        ctx.ellipse(renderX, renderY + this.radius - 1, this.radius * 0.95, 4.5, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // 1. Pernas / Esteiras mecânicas articuladas
+        const walkCycle = this.animTimer * (isRusty ? 8 : (this.state === 'chase' ? 14 : (isCharging ? 24 : 6)));
+        const legCount = isRusty ? 4 : (this.type === 'charger' ? 4 : (this.type === 'bomber' ? 4 : 6));
+        ctx.strokeStyle = isFlashing ? '#ffffff' : (isRusty ? '#4e342e' : '#37474f');
+        ctx.lineWidth = isRusty ? 2.0 : 2.5;
+        ctx.lineCap = 'round';
+        for (let i = 0; i < legCount; i++) {
+          const side = (i % 2 === 0) ? -1 : 1;
+          const legIdx = Math.floor(i / 2);
+          const phase = walkCycle + legIdx * 1.6 + (side > 0 ? Math.PI : 0);
+          // O enferrujado manca de uma perna (manco / cambaleante)
+          const legOffset = isRusty 
+            ? (Math.sin(phase) * (i === 1 ? 2.5 : 5) + (i === 1 ? 3 : 0))
+            : (Math.sin(phase) * 5);
+          const legX = renderX + side * (this.radius * (isRusty ? 0.75 : 0.85));
+          const legY = renderY - 4 + legIdx * 8;
+          ctx.beginPath();
+          ctx.moveTo(renderX + side * (this.radius * 0.4), legY);
+          ctx.lineTo(legX + side * 3, legY + 4 + legOffset);
+          ctx.stroke();
+          ctx.fillStyle = isFlashing ? '#ffffff' : (isRusty ? '#3e2723' : '#263238');
+          ctx.beginPath();
+          ctx.arc(legX + side * 3, legY + 4 + legOffset, 1.8, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        // 2. Chassi Metálico Principal (Degradê radial 3D por Tier)
+        let baseGrad = ctx.createRadialGradient(renderX - 4, renderY - 4, 2, renderX, renderY, this.radius);
+        let rimColor = '#5d4037';
+        let detailColor = '#ffd54f';
+
+        if (isRusty) {
+          // Autômato Enferrujado: Ferro fundido corroído e cobre oxidado
+          baseGrad.addColorStop(0, '#8d5b4c');
+          baseGrad.addColorStop(0.5, '#5d3a28');
+          baseGrad.addColorStop(1, '#3e2318');
+          rimColor = '#2b170e';
+          detailColor = '#a1887f';
+        } else if (this.maxHp <= 1) {
+          // Tier 1: Cobre Industrial
+          baseGrad.addColorStop(0, '#e65100');
+          baseGrad.addColorStop(0.7, '#bf360c');
+          baseGrad.addColorStop(1, '#5d4037');
+          rimColor = '#3e2723';
+          detailColor = '#ffb74d';
+        } else if (this.maxHp === 2) {
+          // Tier 2: Ametista Blindada (Nível 4)
+          baseGrad.addColorStop(0, '#ba68c8');
+          baseGrad.addColorStop(0.7, '#7b1fa2');
+          baseGrad.addColorStop(1, '#4a148c');
+          rimColor = '#311b92';
+          detailColor = '#e1bee7';
+        } else {
+          // Tier 3+: Obsidiana e Ouro Maciço (Nível 5)
+          baseGrad.addColorStop(0, '#546e7a');
+          baseGrad.addColorStop(0.7, '#263238');
+          baseGrad.addColorStop(1, '#0f1416');
+          rimColor = '#ffd700';
+          detailColor = '#ffea00';
+        }
+
+        ctx.fillStyle = isFlashing ? '#ffffff' : baseGrad;
+        ctx.beginPath();
+        ctx.arc(renderX, renderY, this.radius, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.strokeStyle = isFlashing ? '#ff8a80' : rimColor;
+        ctx.lineWidth = this.maxHp >= 3 ? 3 : 2;
+        ctx.stroke();
+
+        if (isRusty) {
+          // Manchas e crostas de ferrugem e pátina no chassi
+          ctx.fillStyle = 'rgba(62, 35, 24, 0.75)';
+          ctx.beginPath();
+          ctx.arc(renderX - 3.5, renderY - 3, 3, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.beginPath();
+          ctx.arc(renderX + 3.5, renderY + 3.5, 2.8, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.fillStyle = 'rgba(78, 107, 93, 0.45)'; // Azinhavre / pátina esverdeada
+          ctx.beginPath();
+          ctx.arc(renderX + 2, renderY - 3.5, 1.8, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Rebites faltantes / tortos no enferrujado
+          ctx.fillStyle = isFlashing ? '#ffffff' : '#8d6e63';
+          const rustRivets = [0.2, 1.8, 3.7, 5.1];
+          for (let a of rustRivets) {
+            const rx = renderX + Math.cos(a) * (this.radius - 3);
+            const ry = renderY + Math.sin(a) * (this.radius - 3);
+            ctx.beginPath();
+            ctx.arc(rx, ry, 1.1, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        } else {
+          // Rebites decorativos em volta do chassi
+          ctx.fillStyle = isFlashing ? '#ffffff' : detailColor;
+          for (let a = 0; a < Math.PI * 2; a += Math.PI / 3) {
+            const rx = renderX + Math.cos(a) * (this.radius - 3.5);
+            const ry = renderY + Math.sin(a) * (this.radius - 3.5);
+            ctx.beginPath();
+            ctx.arc(rx, ry, 1.2, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        }
+
+        // 3. Equipamento Especial por Tipo
+        if (this.type === 'charger' || this.type === 'rusty_charger') {
+          const isRustyCharger = this.type === 'rusty_charger';
+          const facing = this.facing || { dx: 1, dy: 0 };
+          const angle = Math.atan2(facing.dy, facing.dx);
+          const drillRot = (this.chargeState === 'windup' || this.chargeState === 'charge') 
+            ? this.animTimer * (isRustyCharger ? 25 : 40) : this.animTimer * (isRustyCharger ? 5 : 8);
+          
+          ctx.save();
+          ctx.translate(renderX, renderY);
+          ctx.rotate(angle);
+          
+          ctx.fillStyle = isFlashing ? '#ffffff' : (isRustyCharger ? '#4e342e' : '#37474f');
+          ctx.fillRect(this.radius - 2, -6, 5, 12);
+          
+          let drillGrad = ctx.createLinearGradient(this.radius + 3, 0, this.radius + 17, 0);
+          if (isRustyCharger) {
+            drillGrad.addColorStop(0, '#8d5b4c');
+            drillGrad.addColorStop(0.5, '#5d3a28');
+            drillGrad.addColorStop(1, '#3e2318');
+          } else {
+            drillGrad.addColorStop(0, '#cfd8dc');
+            drillGrad.addColorStop(0.5, '#78909c');
+            drillGrad.addColorStop(1, '#37474f');
+          }
+          ctx.fillStyle = isFlashing ? '#ffffff' : drillGrad;
+          ctx.beginPath();
+          ctx.moveTo(this.radius + 3, -7);
+          ctx.lineTo(this.radius + 17, 0);
+          ctx.lineTo(this.radius + 3, 7);
+          ctx.closePath();
+          ctx.fill();
+          ctx.strokeStyle = isRustyCharger ? '#2b170e' : '#263238';
+          ctx.lineWidth = 1;
+          ctx.stroke();
+
+          ctx.strokeStyle = isRustyCharger 
+            ? '#8d6e63' 
+            : ((this.chargeState === 'charge' || this.chargeState === 'windup') ? '#ffca28' : '#b0bec5');
+          ctx.lineWidth = 1.5;
+          const spiralShift = (drillRot % 1) * 4;
+          for (let s = 0; s < 3; s++) {
+            const sx = this.radius + 5 + s * 3.5 + spiralShift;
+            if (sx < this.radius + 16) {
+              const h = (1 - (sx - this.radius - 3) / 14) * 6;
+              ctx.beginPath();
+              ctx.moveTo(sx, -h);
+              ctx.lineTo(sx - 1.5, h);
+              ctx.stroke();
+            }
+          }
+          ctx.restore();
+        } else if (this.type === 'bomber' || this.type === 'rusty_bomber') {
+          const isRustyBomber = this.type === 'rusty_bomber';
+          ctx.fillStyle = isFlashing ? '#ffffff' : (isRustyBomber ? '#3e2723' : '#263238');
+          ctx.fillRect(renderX - 4, renderY - this.radius - 6, 8, 7);
+          ctx.strokeStyle = rimColor;
+          ctx.lineWidth = 1.5;
+          ctx.strokeRect(renderX - 4, renderY - this.radius - 6, 8, 7);
+
+          const steamBob = Math.sin(now * 8) * 2;
+          ctx.fillStyle = isRustyBomber 
+            ? `rgba(109, 76, 65, ${0.45 + Math.sin(now * 6) * 0.25})`
+            : `rgba(224, 247, 250, ${0.4 + Math.sin(now * 6) * 0.25})`;
+          ctx.beginPath();
+          ctx.arc(renderX, renderY - this.radius - 8 + steamBob, 4 + Math.abs(steamBob), 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        // 4. Engrenagem Central Giratória
+        const gearAngle = isRusty 
+          ? (walkCycle * 0.4 + Math.sin(this.animTimer * 4) * 0.15) 
+          : (walkCycle * 0.8);
+        const gearRadius = isRusty ? 4.5 : 5.5;
+        ctx.save();
+        ctx.translate(renderX, renderY);
+        ctx.rotate(gearAngle);
+        ctx.fillStyle = isFlashing ? '#ffffff' : (isRusty ? '#4e342e' : '#37474f');
+        ctx.strokeStyle = isFlashing ? '#ffffff' : (isRusty ? '#2b170e' : detailColor);
+        ctx.lineWidth = 1;
+        const teethCount = isRusty ? 5 : 6; // O enferrujado tem 5 dentes, um dente quebrado!
+        for (let g = 0; g < teethCount; g++) {
+          ctx.rotate((Math.PI * 2) / 6);
+          ctx.fillRect(-1.5, -gearRadius - 2, 3, 3);
+        }
+        ctx.beginPath();
+        ctx.arc(0, 0, gearRadius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+        ctx.restore();
+
+        // 5. Olho Ótico / Visor Inteligente
+        const facing = this.facing || { dx: 0, dy: 1 };
+        const eyeOffsetX = facing.dx * 3.5;
+        const eyeOffsetY = facing.dy * 3.5;
+
+        if (isRusty) {
+          // Visor ótico amarelado e falho com lâmpada piscante de filamento
+          const isFlickering = Math.sin(now * 15 + this.rustFlicker) > 0.82;
+          ctx.save();
+          if (isFlickering) ctx.globalAlpha = 0.35;
+
+          if (this.isStumbling || this.recoilTimer > 0) {
+            ctx.fillStyle = '#ff7043';
+            ctx.beginPath();
+            ctx.arc(renderX + eyeOffsetX, renderY + eyeOffsetY, 3.8, 0, Math.PI * 2);
+            ctx.fill();
+            // Ponto de engasgo de engrenagem ou fuligem de disparo
+            ctx.fillStyle = '#d84315';
+            ctx.font = 'bold 9px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(this.recoilTimer > 0 ? '💨' : '⚙️', renderX, renderY - this.radius - 8);
+          } else if (this.state === 'dormant') {
+            ctx.fillStyle = '#3e2723';
+            ctx.beginPath();
+            ctx.arc(renderX + eyeOffsetX, renderY + eyeOffsetY, 2.5, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = 'rgba(215, 204, 200, 0.45)';
+            ctx.font = 'bold 8px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('...', renderX, renderY - this.radius - 4);
+          } else if (this.state === 'alert' || isWindingUp) {
+            ctx.fillStyle = '#ffb74d';
+            ctx.beginPath();
+            ctx.arc(renderX + eyeOffsetX, renderY + eyeOffsetY, 4.5, 0, Math.PI * 2);
+            ctx.fill();
+
+            const bobY = Math.sin(now * 10) * 1.5;
+            ctx.fillStyle = '#ff9800';
+            ctx.strokeStyle = '#3e2723';
+            ctx.lineWidth = 1.2;
+            ctx.beginPath();
+            ctx.arc(renderX, renderY - this.radius - 10 + bobY, 7, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.fillStyle = '#000000';
+            ctx.font = 'bold 10px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(isWindingUp ? '⚡' : '?', renderX, renderY - this.radius - 10 + bobY);
+          } else if (this.state === 'chase' || isCharging) {
+            ctx.fillStyle = '#ff5722';
+            ctx.beginPath();
+            ctx.arc(renderX + eyeOffsetX, renderY + eyeOffsetY, 4.5, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = '#fff9c4';
+            ctx.beginPath();
+            ctx.arc(renderX + eyeOffsetX - 0.8, renderY + eyeOffsetY - 0.8, 1.4, 0, Math.PI * 2);
+            ctx.fill();
+          } else {
+            // Idle
+            ctx.fillStyle = '#d84315';
+            ctx.beginPath();
+            ctx.arc(renderX + eyeOffsetX, renderY + eyeOffsetY, 3.2, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          ctx.restore();
+        } else if (this.chargeState === 'stunned') {
+          ctx.strokeStyle = '#ffd54f';
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(renderX - 3, renderY - 3);
+          ctx.lineTo(renderX + 3, renderY + 3);
+          ctx.moveTo(renderX + 3, renderY - 3);
+          ctx.lineTo(renderX - 3, renderY + 3);
+          ctx.stroke();
+
+          const starAngle = now * 6;
+          for (let st = 0; st < 3; st++) {
+            const a = starAngle + st * (Math.PI * 2 / 3);
+            const sx = renderX + Math.cos(a) * 14;
+            const sy = renderY - this.radius - 6 + Math.sin(a) * 4;
+            ctx.fillStyle = '#ffeb3b';
+            ctx.font = 'bold 10px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('💫', sx, sy);
+          }
+        } else if (this.state === 'dormant') {
+          ctx.fillStyle = '#455a64';
+          ctx.beginPath();
+          ctx.arc(renderX + eyeOffsetX, renderY + eyeOffsetY, 3, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.45)';
+          ctx.font = 'bold 9px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText('zzz', renderX, renderY - this.radius - 4);
+        } else if (this.state === 'alert' || (this.type === 'charger' && this.chargeState === 'windup')) {
+          ctx.fillStyle = '#fff59d';
+          ctx.beginPath();
+          ctx.arc(renderX + eyeOffsetX, renderY + eyeOffsetY, 6, 0, Math.PI * 2);
+          ctx.fill();
+
+          const bobY = Math.sin(now * 12) * 2;
+          ctx.fillStyle = '#ffca28';
+          ctx.strokeStyle = '#ffffff';
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.arc(renderX, renderY - this.radius - 12 + bobY, 8, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.stroke();
+
+          ctx.fillStyle = '#000000';
+          ctx.font = 'bold 11px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(this.chargeState === 'windup' ? '⚡' : '!', renderX, renderY - this.radius - 12 + bobY);
+        } else if (this.state === 'chase' || isCharging) {
+          ctx.fillStyle = '#ff1744';
+          ctx.beginPath();
+          ctx.arc(renderX + eyeOffsetX, renderY + eyeOffsetY, 5.5, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.fillStyle = '#ffffff';
+          ctx.beginPath();
+          ctx.arc(renderX + eyeOffsetX - 1, renderY + eyeOffsetY - 1, 1.8, 0, Math.PI * 2);
+          ctx.fill();
+        } else {
+          ctx.fillStyle = '#00e5ff';
+          ctx.beginPath();
+          ctx.arc(renderX + eyeOffsetX, renderY + eyeOffsetY, 4, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        // 6. Barra de Vida e Segmentos de Blindagem
+        if (this.maxHp > 1) {
+          const barW = 26;
+          const barH = 4;
+          const barX = renderX - barW / 2;
+          const barY = renderY - this.radius - (this.state === 'alert' || (this.type === 'charger' && this.chargeState === 'windup') ? 24 : 10);
+
+          ctx.fillStyle = 'rgba(0, 0, 0, 0.75)';
+          ctx.fillRect(barX - 1, barY - 1, barW + 2, barH + 2);
+
+          const hpRatio = Math.max(0, this.hp / this.maxHp);
+          ctx.fillStyle = hpRatio > 0.5 ? '#00e676' : (hpRatio > 0.25 ? '#ffca28' : '#ef5350');
+          ctx.fillRect(barX, barY, barW * hpRatio, barH);
+
+          ctx.strokeStyle = 'rgba(0, 0, 0, 0.7)';
+          ctx.lineWidth = 1;
+          for (let s = 1; s < this.maxHp; s++) {
+            const divX = barX + (barW / this.maxHp) * s;
+            ctx.beginPath();
+            ctx.moveTo(divX, barY);
+            ctx.lineTo(divX, barY + barH);
+            ctx.stroke();
+          }
+        }
+
+        if (this.type === 'charger') {
+          ctx.font = '9px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText('🔩', renderX, renderY + this.radius + 9);
+        } else if (this.type === 'bomber') {
+          ctx.font = '9px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText('💣', renderX, renderY + this.radius + 9);
+        }
+
+        ctx.restore();
       }
     }
+
     class HumanBoss extends Automaton {
       constructor(x, y, depth, isFinalBoss = false) {
-        super(x, y, depth);
+        super(x, y, depth, 'human_boss');
         this.isHumanBoss = true;
         this.isFinalBoss = isFinalBoss;
-        this.radius = 16; // Mesmo raio físico da Charlotte
+        this.radius = 16;
         this.speed = isFinalBoss ? 165 : 150;
         this.hp = isFinalBoss ? 5 : 3;
         this.maxHp = this.hp;
         this.color = isFinalBoss ? '#b71c1c' : '#d32f2f';
 
-        // Animação e Direcionamento (Espelhando Charlotte)
-        this.animState = 'idle'; // 'idle', 'walk', 'throw', 'dash'
+        this.animState = 'idle';
         this.animTimer = 0;
         this.facing = { dx: 1, dy: 0 };
         this.facingSide = 1;
         this.throwAnimTimer = 0;
 
-        // Botas Propulsoras (Dash com i-frames)
         this.isDashing = false;
         this.dashTimer = 0;
         this.maxDashTime = 0.25;
         this.dashCooldown = 0;
         this.dashDir = { dx: 0, dy: 0 };
 
-        // Arsenal de Bombas
         this.bombCooldown = 2.0;
         this.selectedBomb = BOMB_TYPE.IMPACT;
         this.invulnerableTimer = 0;
 
-        // Estratégia de Movimentação e Espaçamento
         this.strafeDir = Math.random() < 0.5 ? 1 : -1;
         this.strafeTimer = 1.5;
       }
@@ -2817,7 +3750,6 @@
         if (this.throwAnimTimer > 0) this.throwAnimTimer -= dt;
         if (this.dashCooldown > 0) this.dashCooldown -= dt;
 
-        // 1. Repulsão física por explosão (Knockback)
         if (this.isRepelled) {
           const nextX = this.x + this.repelVelocity.x * dt;
           const nextY = this.y + this.repelVelocity.y * dt;
@@ -2831,7 +3763,6 @@
           return;
         }
 
-        // 2. Dash das Botas Propulsoras ativo
         if (this.isDashing) {
           this.dashTimer -= dt;
           const dashSpeed = 460;
@@ -2854,7 +3785,6 @@
         const dy = player.y - this.y;
         const dist = Math.hypot(dx, dy);
 
-        // 3. Esquiva Tática (Dash ao detectar bombas próximas ou encurralamento)
         if (this.dashCooldown <= 0 && window.game) {
           let dangerSource = null;
 
@@ -2882,7 +3812,7 @@
             this.isDashing = true;
             this.dashTimer = this.maxDashTime;
             this.dashCooldown = this.isFinalBoss ? 3.5 : 4.5;
-            this.invulnerableTimer = 0.45; // I-frames durante o dash
+            this.invulnerableTimer = 0.45;
             this.animState = 'dash';
 
             if (window.sound) window.sound.playPropulsorSteam();
@@ -2894,7 +3824,6 @@
           }
         }
 
-        // 4. Movimentação Tática (Manter distância de combate e circular como Charlotte)
         this.strafeTimer -= dt;
         if (this.strafeTimer <= 0) {
           this.strafeDir = Math.random() < 0.5 ? 1 : -1;
@@ -2910,15 +3839,12 @@
         let moveVy = 0;
 
         if (dist < TILE_SIZE * 2.8) {
-          // Perto demais: recua enquanto faz strafe lateral
           moveVx = -normX * 0.8 + perpX * 0.4;
           moveVy = -normY * 0.8 + perpY * 0.4;
         } else if (dist > TILE_SIZE * 5.2) {
-          // Longe demais: avança na direção de Charlotte
           moveVx = normX * 0.75 + perpX * 0.35;
           moveVy = normY * 0.75 + perpY * 0.35;
         } else {
-          // Zona ideal de duelo: circula lateralmente e finta
           const weave = Math.sin(performance.now() * 0.003) * 0.25;
           moveVx = perpX * 0.85 + normX * weave;
           moveVy = perpY * 0.85 + normY * weave;
@@ -2945,18 +3871,14 @@
           }
         }
 
-        // 5. Arremesso Balístico de Bombas (Arsenal Idêntico a Charlotte)
         this.bombCooldown -= dt;
         if (this.bombCooldown <= 0 && window.game) {
           if (dist <= TILE_SIZE * 2.5) {
-            // Perto: lança bomba de propulsão para repelir Charlotte ou impacto
             this.selectedBomb = Math.random() < 0.5 ? BOMB_TYPE.PROPULSOR : BOMB_TYPE.IMPACT;
           } else {
-            // Distância normal: impacto (60%) ou temporizada (40%)
             this.selectedBomb = Math.random() < 0.6 ? BOMB_TYPE.IMPACT : BOMB_TYPE.TIMED;
           }
 
-          // Previsão de movimento de Charlotte
           const leadX = player.x + (player.facing ? player.facing.dx * 18 : 0);
           const leadY = player.y + (player.facing ? player.facing.dy * 18 : 0);
 
@@ -3001,8 +3923,7 @@
         return false;
       }
 
-      render(ctx) {
-        // Sombra suave nos pés
+      render(ctx, now) {
         ctx.fillStyle = 'rgba(0, 0, 0, 0.35)';
         ctx.beginPath();
         ctx.ellipse(this.x, this.y + 13, 14, 5, 0, 0, Math.PI * 2);
@@ -3042,7 +3963,6 @@
             ctx.scale(-1, 1);
           }
 
-          // Filtro para o rival: tom rubro/carmim contrastante
           if (this.flashTimer > 0) {
             ctx.filter = 'brightness(3) contrast(1.5)';
           } else if (this.isFinalBoss) {
@@ -3058,7 +3978,6 @@
           );
           ctx.restore();
         } else {
-          // Fallback vetorial
           ctx.save();
           ctx.fillStyle = this.color;
           ctx.beginPath();
@@ -3070,23 +3989,40 @@
           ctx.restore();
         }
 
-        // Barra de Vida
-        const barWidth = 32;
-        const barHeight = 4;
+        // Barra de Vida Estilizada do Chefe
+        const barWidth = 44;
+        const barHeight = 5;
         const barX = this.x - barWidth / 2;
-        const barY = this.y - 28;
+        const barY = this.y - 32;
 
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
-        ctx.fillRect(barX - 1, barY - 1, barWidth + 2, barHeight + 2);
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.75)';
+        ctx.fillRect(barX - 2, barY - 2, barWidth + 4, barHeight + 4);
 
         const hpRatio = Math.max(0, this.hp / this.maxHp);
-        ctx.fillStyle = hpRatio > 0.5 ? '#e91e63' : (hpRatio > 0.25 ? '#ff9800' : '#f44336');
+        ctx.fillStyle = hpRatio > 0.5 ? '#ff1744' : (hpRatio > 0.25 ? '#ff9100' : '#d50000');
         ctx.fillRect(barX, barY, barWidth * hpRatio, barHeight);
 
-        ctx.fillStyle = '#fff';
-        ctx.font = 'bold 8px monospace';
+        ctx.strokeStyle = '#000';
+        ctx.lineWidth = 1;
+        for (let s = 1; s < this.maxHp; s++) {
+          const divX = barX + (barWidth / this.maxHp) * s;
+          ctx.beginPath();
+          ctx.moveTo(divX, barY);
+          ctx.lineTo(divX, barY + barHeight);
+          ctx.stroke();
+        }
+
+        // Título estilizado do Chefe
+        ctx.save();
+        ctx.font = 'bold 9px sans-serif';
         ctx.textAlign = 'center';
-        ctx.fillText(this.isFinalBoss ? 'CHEFE MESTRE' : 'ENGENHEIRO RIVAL', this.x, barY - 3);
+        ctx.fillStyle = this.isFinalBoss ? '#ff5252' : '#ffca28';
+        ctx.strokeStyle = '#000000';
+        ctx.lineWidth = 2.5;
+        const bossTitle = this.isFinalBoss ? 'CHEFE MESTRE DA MINA 💀' : 'ENGENHEIRO RIVAL ⚔️';
+        ctx.strokeText(bossTitle, this.x, barY - 4);
+        ctx.fillText(bossTitle, this.x, barY - 4);
+        ctx.restore();
       }
     }
 
@@ -3428,6 +4364,7 @@
 
         this.timedBombs = [];
         this.flyingBombs = [];
+        this.enemyBombs = [];
         this.particles = [];
         this.blasts = [];
 
@@ -3449,13 +4386,29 @@
       resizeCanvas() {
         const availableHeight = window.innerHeight;
         const availableWidth = window.innerWidth;
-        const isMobile = window.innerWidth <= 768;
+        const isLandscape = availableWidth > availableHeight;
+        const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || window.innerWidth <= 900;
 
-        let targetSize = Math.min(availableWidth - 32, availableHeight - (isMobile ? 180 : 80));
-        targetSize = Math.max(300, Math.min(targetSize, 600));
+        let targetSize;
+        if (isLandscape && (isTouch || availableHeight <= 600)) {
+          // Mobile Landscape: Canvas centralizado na altura máxima, liberando as asas laterais
+          const topMargin = 48;
+          targetSize = Math.min(availableWidth - 280, availableHeight - topMargin - 16);
+          targetSize = Math.max(220, Math.min(targetSize, 600));
+        } else if (!isLandscape && (isTouch || availableWidth <= 768)) {
+          // Mobile Portrait: Canvas centralizado com espaço reservado para HUD no topo e deck de botões no rodapé
+          const topHud = 65;
+          const bottomDeck = 210;
+          targetSize = Math.min(availableWidth - 24, availableHeight - topHud - bottomDeck);
+          targetSize = Math.max(240, Math.min(targetSize, 560));
+        } else {
+          // Desktop clássico
+          targetSize = Math.min(availableWidth - 40, availableHeight - 90);
+          targetSize = Math.max(300, Math.min(targetSize, 600));
+        }
 
-        this.canvas.style.width = `${targetSize}px`;
-        this.canvas.style.height = `${targetSize}px`;
+        this.canvas.style.width = `${Math.floor(targetSize)}px`;
+        this.canvas.style.height = `${Math.floor(targetSize)}px`;
       }
 
       loop(now) {
@@ -3587,6 +4540,15 @@
           }
         }
 
+        // 5. Bombas de Inimigos (Mina / Projétil do Bomber)
+        for (let i = this.enemyBombs.length - 1; i >= 0; i--) {
+          const eb = this.enemyBombs[i];
+          eb.update(dt, this);
+          if (eb.exploded) {
+            this.enemyBombs.splice(i, 1);
+          }
+        }
+
         // Inimigos
         for (let i = room.enemies.length - 1; i >= 0; i--) {
           const enemy = room.enemies[i];
@@ -3602,7 +4564,7 @@
           }
           
           if (eInAbyss) {
-            this.spawnEnemyDeath(enemy.x, enemy.y);
+            this.spawnEnemyDeath(enemy.x, enemy.y, enemy);
             room.enemies.splice(i, 1);
             continue;
           }
@@ -3624,8 +4586,18 @@
             continue;
           }
 
-          // Contato com autômatos hostis = TEMPO REBOBINA
-          if (enemy.state !== 'dormant' && distToPlayer < enemy.radius + this.player.radius && this.player.invulnerableTimer <= 0) {
+          // Se for charger atordoado, não mata no toque e afasta suavemente
+          const isStunned = enemy.isStunned && enemy.isStunned();
+          if (isStunned && distToPlayer < enemy.radius + this.player.radius) {
+            const nx = distToPlayer > 0.001 ? (this.player.x - enemy.x) / distToPlayer : 1;
+            const ny = distToPlayer > 0.001 ? (this.player.y - enemy.y) / distToPlayer : 0;
+            this.player.x = enemy.x + nx * (enemy.radius + this.player.radius + 1);
+            this.player.y = enemy.y + ny * (enemy.radius + this.player.radius + 1);
+            continue;
+          }
+
+          // Contato com autômatos hostis ativos = TEMPO REBOBINA
+          if (enemy.state !== 'dormant' && !isStunned && distToPlayer < enemy.radius + this.player.radius && this.player.invulnerableTimer <= 0) {
             this.triggerTimeRewind();
             break;
           }
@@ -4185,7 +5157,7 @@
           if (dist <= blastRadius + enemy.radius) {
             const isDead = enemy.takeDamage(1, this);
             if (isDead) {
-              this.spawnEnemyDeath(enemy.x, enemy.y);
+              this.spawnEnemyDeath(enemy.x, enemy.y, enemy);
               room.enemies.splice(i, 1);
             } else {
               const knockX = dist > 0.001 ? (enemy.x - cx) / dist : 1;
@@ -4320,7 +5292,7 @@
           if (hit) {
             const isDead = enemy.takeDamage(2, this);
             if (isDead) {
-              this.spawnEnemyDeath(enemy.x, enemy.y);
+              this.spawnEnemyDeath(enemy.x, enemy.y, enemy);
               room.enemies.splice(i, 1);
             } else {
               const knockX = enemy.x - bx !== 0 ? Math.sign(enemy.x - bx) : 1;
@@ -4495,22 +5467,47 @@
         }
       }
 
-      spawnEnemyDeath(x, y) {
-        for (let i = 0; i < 20; i++) {
+      spawnEnemyDeath(x, y, enemy = null) {
+        const isRusty = enemy && enemy.type === 'rusty';
+
+        // Estilhaços de ferro oxidado e peças gastas para o enferrujado, ou metais nobres
+        const sparkCount = isRusty ? 26 : 22;
+        for (let i = 0; i < sparkCount; i++) {
           const angle = Math.random() * Math.PI * 2;
-          const speed = Math.random() * 160 + 50;
+          const speed = Math.random() * (isRusty ? 140 : 180) + 40;
+          let color = '#ffd54f';
+          if (isRusty) {
+            color = Math.random() < 0.45 ? '#8d5b4c' : (Math.random() < 0.75 ? '#5d3a28' : '#bf360c');
+          } else {
+            color = Math.random() < 0.35 ? '#ffd54f' : (Math.random() < 0.6 ? '#b0bec5' : '#ef5350');
+          }
           this.particles.push(new Particle(
             x, y,
             Math.cos(angle) * speed,
             Math.sin(angle) * speed,
-            '#ef5350',
+            color,
             Math.random() * 4 + 2,
-            Math.random() * 0.4 + 0.2
+            Math.random() * 0.45 + 0.25
+          ));
+        }
+
+        // Fumaça / Nuvem de poeira de ferrugem na explosão
+        const smokeColor = isRusty ? 'rgba(109, 76, 65, 0.75)' : 'rgba(120, 144, 156, 0.6)';
+        for (let i = 0; i < 6; i++) {
+          const angle = Math.random() * Math.PI * 2;
+          const speed = Math.random() * 40 + 10;
+          this.particles.push(new Particle(
+            x, y,
+            Math.cos(angle) * speed,
+            Math.sin(angle) * speed,
+            smokeColor,
+            Math.random() * 8 + 6,
+            0.6
           ));
         }
 
         const depth = this.map.currentDepth || 1;
-        const partCount = 1 + Math.floor(Math.random() * depth); // Volta a cair mais peças
+        const partCount = 1 + Math.floor(Math.random() * depth);
         for (let i = 0; i < partCount; i++) {
            const ox = (Math.random() - 0.5) * 24;
            const oy = (Math.random() - 0.5) * 24;
@@ -5067,166 +6064,15 @@
           ctx.restore();
         });
 
-        // Inimigos (Autômatos: Renderização por Estado, Tier de Profundidade e Barra de Vida)
+        // Inimigos (Autômatos e Chefes com Renderização Dedicada)
         room.enemies.forEach(enemy => {
-          ctx.save();
-          const pulse = (Math.sin(enemy.pulseAngle) + 1) / 2;
-          const isFlashing = enemy.flashTimer > 0;
-
-          let renderX = enemy.x;
-          let renderY = enemy.y;
-
-          // Sombra projetada
-          ctx.fillStyle = 'rgba(0, 0, 0, 0.35)';
-          ctx.beginPath();
-          ctx.ellipse(renderX, renderY + enemy.radius - 2, enemy.radius * 0.9, 4, 0, 0, Math.PI * 2);
-          ctx.fill();
-
-          // Cores base por Nível / Tier de Vida
-          let bodyColor = '#c62828';
-          let strokeColor = '#7f0000';
-          let coreColor = `rgba(255, 205, 210, ${0.4 + pulse * 0.4})`;
-
-          if (enemy.maxHp === 2) {
-            // Nível 2: Autômato Blindado Ametista (2 HP)
-            bodyColor = '#8e24aa';
-            strokeColor = '#4a148c';
-            coreColor = `rgba(225, 190, 231, ${0.5 + pulse * 0.4})`;
-          } else if (enemy.maxHp >= 3) {
-            // Nível 3+: Titã Mecânico de Obsidiana e Ouro (3+ HP)
-            bodyColor = '#263238';
-            strokeColor = '#ffd700';
-            coreColor = `rgba(255, 215, 0, ${0.6 + pulse * 0.4})`;
+          if (enemy.render) {
+            enemy.render(ctx, now);
           }
-
-          if (isFlashing) {
-            bodyColor = '#ffffff';
-            strokeColor = '#ef5350';
-          }
-
-          if (enemy.state === 'dormant') {
-            // Estado Carência / Inicialização na entrada da sala
-            ctx.fillStyle = isFlashing ? '#ffffff' : '#455a64';
-            ctx.beginPath();
-            ctx.arc(renderX, renderY, enemy.radius, 0, Math.PI * 2);
-            ctx.fill();
-
-            ctx.strokeStyle = strokeColor;
-            ctx.lineWidth = enemy.maxHp >= 3 ? 3 : 2;
-            ctx.stroke();
-
-            // Núcleo ótico desligado / pulsando fraco
-            ctx.fillStyle = `rgba(144, 164, 174, ${0.3 + pulse * 0.3})`;
-            ctx.beginPath();
-            ctx.arc(renderX, renderY, 4, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Ícone de boot / dormindo
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.45)';
-            ctx.font = 'bold 9px sans-serif';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'bottom';
-            ctx.fillText('zzz', renderX, renderY - enemy.radius - 2);
-          } else if (enemy.state === 'alert') {
-            // Estado Alerta / Retardo de Reação: Vibrando engrenagens antes de atacar!
-            const shake = (Math.random() - 0.5) * 3;
-            renderX += shake;
-
-            ctx.fillStyle = isFlashing ? '#ffffff' : (enemy.maxHp >= 3 ? '#ff6f00' : (enemy.maxHp === 2 ? '#ab47bc' : '#ff8f00'));
-            ctx.beginPath();
-            ctx.arc(renderX, renderY, enemy.radius, 0, Math.PI * 2);
-            ctx.fill();
-
-            ctx.strokeStyle = strokeColor;
-            ctx.lineWidth = enemy.maxHp >= 3 ? 3 : 2.5;
-            ctx.stroke();
-
-            // Núcleo ótico amarelo incandescente
-            ctx.fillStyle = '#fff59d';
-            ctx.beginPath();
-            ctx.arc(renderX, renderY, 6, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Balão de Alerta com "!" acima do autômato
-            const bobY = Math.sin(now * 12) * 2;
-            ctx.save();
-            ctx.fillStyle = '#ffca28';
-            ctx.strokeStyle = '#ffffff';
-            ctx.lineWidth = 1.5;
-            ctx.beginPath();
-            ctx.arc(renderX, renderY - enemy.radius - 12 + bobY, 8, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.stroke();
-
-            ctx.fillStyle = '#000000';
-            ctx.font = 'bold 11px sans-serif';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText('!', renderX, renderY - enemy.radius - 12 + bobY);
-            ctx.restore();
-          } else if (enemy.state === 'chase') {
-            // Perseguição ativa
-            ctx.fillStyle = isFlashing ? '#ffffff' : (enemy.maxHp >= 3 ? '#37474f' : (enemy.maxHp === 2 ? '#7b1fa2' : '#ef5350'));
-            ctx.beginPath();
-            ctx.arc(renderX, renderY, enemy.radius, 0, Math.PI * 2);
-            ctx.fill();
-
-            ctx.strokeStyle = strokeColor;
-            ctx.lineWidth = enemy.maxHp >= 3 ? 3 : 2.5;
-            ctx.stroke();
-
-            // Núcleo ótico agressivo pulsante
-            ctx.fillStyle = coreColor;
-            ctx.beginPath();
-            ctx.arc(renderX, renderY, 5.5, 0, Math.PI * 2);
-            ctx.fill();
-          } else {
-            // Patrulha / Idle
-            ctx.fillStyle = isFlashing ? '#ffffff' : bodyColor;
-            ctx.beginPath();
-            ctx.arc(renderX, renderY, enemy.radius, 0, Math.PI * 2);
-            ctx.fill();
-
-            ctx.strokeStyle = strokeColor;
-            ctx.lineWidth = enemy.maxHp >= 3 ? 3 : 2;
-            ctx.stroke();
-
-            ctx.fillStyle = coreColor;
-            ctx.beginPath();
-            ctx.arc(renderX, renderY, 4, 0, Math.PI * 2);
-            ctx.fill();
-          }
-
-          // Barra de Vida e Segmentos de Blindagem para Inimigos com 2+ HP
-          if (enemy.maxHp > 1) {
-            const barW = 24;
-            const barH = 4;
-            const barX = renderX - barW / 2;
-            const barY = renderY - enemy.radius - (enemy.state === 'alert' ? 24 : 10);
-
-            // Fundo escuro da barra
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.75)';
-            ctx.fillRect(barX - 1, barY - 1, barW + 2, barH + 2);
-
-            // Preenchimento de HP restante
-            const hpRatio = Math.max(0, enemy.hp / enemy.maxHp);
-            ctx.fillStyle = hpRatio > 0.5 ? '#00e676' : (hpRatio > 0.25 ? '#ffca28' : '#ef5350');
-            ctx.fillRect(barX, barY, barW * hpRatio, barH);
-
-            // Divisórias dos segmentos de HP
-            ctx.strokeStyle = 'rgba(0, 0, 0, 0.65)';
-            ctx.lineWidth = 1;
-            for (let s = 1; s < enemy.maxHp; s++) {
-              const divX = barX + (barW / enemy.maxHp) * s;
-              ctx.beginPath();
-              ctx.moveTo(divX, barY);
-              ctx.lineTo(divX, barY + barH);
-              ctx.stroke();
-            }
-          }
-
-          ctx.restore();
         });
+
+        // Bombas de Inimigos (Mina / Projétil do Bomber)
+        this.enemyBombs.forEach(eb => eb.render(ctx, now));
 
         // Cristais de Chrono Core (CC) caídos no chão
         this.ccDrops.forEach(drop => drop.draw(ctx));
