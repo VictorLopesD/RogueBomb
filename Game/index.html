@@ -931,9 +931,15 @@
         this.bgmExplore.loop = true;
         this.bgmExplore.volume = 0.35;
         
-        this.bgmBattle = new Audio('song/Locked_Gears_and_Steam.mp3');
-        this.bgmBattle.loop = true;
-        this.bgmBattle.volume = 0.35;
+        let battle1 = new Audio('song/Locked_Gears_and_Steam.mp3');
+        battle1.loop = true;
+        battle1.volume = 0.35;
+        
+        let battle2 = new Audio('song/The_Clockwork_Siege.mp3');
+        battle2.loop = true;
+        battle2.volume = 0.35;
+        
+        this.bgmBattleList = [battle1, battle2];
 
         this.currentBgm = null;
         this.musicStarted = false;
@@ -995,12 +1001,14 @@
         
         if (mode === 'explore') {
           if (this.currentBgm === this.bgmExplore) return;
-          this.crossfadeMusic(this.bgmBattle, this.bgmExplore);
+          this.crossfadeMusic(this.currentBgm, this.bgmExplore);
           this.currentBgm = this.bgmExplore;
         } else if (mode === 'battle') {
-          if (this.currentBgm === this.bgmBattle) return;
-          this.crossfadeMusic(this.bgmExplore, this.bgmBattle);
-          this.currentBgm = this.bgmBattle;
+          if (this.currentBgm && this.currentBgm !== this.bgmExplore) return;
+          
+          let randomTrack = this.bgmBattleList[Math.floor(Math.random() * this.bgmBattleList.length)];
+          this.crossfadeMusic(this.currentBgm, randomTrack);
+          this.currentBgm = randomTrack;
         }
       }
 
@@ -2828,36 +2836,37 @@
         this.type = type; // 'rusty', 'rusty_charger', 'rusty_bomber', 'scout', 'charger', 'bomber'
 
         const isRusty = (this.type === 'rusty' || this.type === 'rusty_charger' || this.type === 'rusty_bomber');
+        this.isCrazy = isRusty && this.depth >= 2 && Math.random() < 0.5;
 
         if (isRusty) {
           // Autômatos Enferrujados (Níveis 1, 2 e 3): Sempre 1 HP, quebram com facilidade!
           this.maxHp = 1;
           this.hp = 1;
-          this.reactionDelay = 1.05;
+          this.reactionDelay = this.isCrazy ? 0.15 : 1.05;
           this.rustFlicker = Math.random() * 10;
-          this.searchRange = TILE_SIZE * 3.8;
-          this.loseRange = TILE_SIZE * 5.2;
+          this.searchRange = this.isCrazy ? TILE_SIZE * 6 : TILE_SIZE * 3.8;
+          this.loseRange = this.isCrazy ? TILE_SIZE * 8 : TILE_SIZE * 5.2;
 
           if (this.type === 'rusty_charger') {
             this.radius = 15;
-            this.speed = 48;
-            this.patrolSpeed = 22;
+            this.speed = this.isCrazy ? 130 : 48;
+            this.patrolSpeed = this.isCrazy ? 45 : 22;
             this.chargeState = 'ready';
             this.chargeTimer = 0;
-            this.chargeCooldown = 4.2 + Math.random() * 1.5;
+            this.chargeCooldown = this.isCrazy ? 1.5 + Math.random() * 1.0 : 4.2 + Math.random() * 1.5;
             this.chargeDir = { dx: 0, dy: 0 };
           } else if (this.type === 'rusty_bomber') {
             this.radius = 15;
-            this.speed = 40;
-            this.patrolSpeed = 20;
-            this.shootCooldown = 3.8 + Math.random() * 1.4;
+            this.speed = this.isCrazy ? 100 : 40;
+            this.patrolSpeed = this.isCrazy ? 40 : 20;
+            this.shootCooldown = this.isCrazy ? 1.5 + Math.random() * 0.8 : 3.8 + Math.random() * 1.4;
             this.recoilTimer = 0;
           } else {
             // rusty (scout enferrujado)
             this.radius = 13.5;
-            this.speed = 36;
-            this.patrolSpeed = 18;
-            this.stumbleTimer = 2.5 + Math.random() * 2.0;
+            this.speed = this.isCrazy ? 120 : 36;
+            this.patrolSpeed = this.isCrazy ? 45 : 18;
+            this.stumbleTimer = this.isCrazy ? 0.4 + Math.random() * 0.4 : 2.5 + Math.random() * 2.0;
             this.isStumbling = false;
             this.stumbleDuration = 0;
           }
@@ -2909,6 +2918,8 @@
         this.wanderTimer = Math.random() * 1.5 + 0.8;
         this.wanderDir = { dx: 0, dy: 0 };
         this.alertAnimation = 0;
+        this.boxBreakTimer = 0;
+        this.targetBox = null;
       }
 
       isStunned() {
@@ -2953,6 +2964,7 @@
       }
 
       update(dt, player, room) {
+        this.hittingBoxThisFrame = null;
         this.animTimer += dt;
         this.pulseAngle += dt * (this.state === 'chase' ? 8 : (this.state === 'alert' ? 12 : 3));
         if (this.flashTimer > 0) this.flashTimer -= dt;
@@ -3155,15 +3167,15 @@
               this.stumbleTimer -= dt;
               if (this.stumbleTimer <= 0) {
                 this.isStumbling = true;
-                this.stumbleDuration = 0.55;
+                this.stumbleDuration = this.isCrazy ? 0.15 : 0.55;
                 if (window.game && Math.random() < 0.8) {
-                  window.game.spawnSparks(this.x, this.y, '#8d5b4c', 4);
-                  window.game.spawnFloatingText('⚙️', this.x, this.y - this.radius - 10, '#bcaaa4');
+                  window.game.spawnSparks(this.x, this.y, this.isCrazy ? '#ff1744' : '#8d5b4c', 4);
+                  window.game.spawnFloatingText(this.isCrazy ? '!' : '⚙️', this.x, this.y - this.radius - 10, this.isCrazy ? '#ff5252' : '#bcaaa4');
                 }
                 return;
               }
-              // Comportamento bobo: se Charlotte se distanciar, pode ficar desorientado facilmente
-              if (dist > TILE_SIZE * 3.0 && Math.random() < 0.008) {
+              // Comportamento bobo apenas para os não enlouquecidos
+              if (!this.isCrazy && dist > TILE_SIZE * 3.0 && Math.random() < 0.008) {
                 this.state = 'idle';
                 this.wanderTimer = 1.6;
                 this.wanderDir = { dx: 0, dy: 0 };
@@ -3260,6 +3272,31 @@
             }
           }
         }
+
+        // Processar se o charger está empurrando uma caixa (caminhando normal)
+        if (this.hittingBoxThisFrame) {
+          const box = this.hittingBoxThisFrame;
+          if (!this.targetBox || this.targetBox.tx !== box.tx || this.targetBox.ty !== box.ty) {
+            this.targetBox = box;
+            this.boxBreakTimer = 2.0; // 2 segundos empurrando para quebrar
+          } else {
+            this.boxBreakTimer -= dt;
+            if (this.boxBreakTimer <= 0) {
+              room.grid[box.ty][box.tx] = TILE.EMPTY;
+              this.targetBox = null;
+              if (window.sound) window.sound.playImpactExplosion();
+              if (window.game) {
+                window.game.spawnSparks(box.tx * TILE_SIZE + TILE_SIZE/2, box.ty * TILE_SIZE + TILE_SIZE/2, '#8d6e63', 12);
+                window.game.spawnFloatingText('QUEBROU!', box.tx * TILE_SIZE + TILE_SIZE/2, box.ty * TILE_SIZE, '#d7ccc8');
+              }
+            } else if (Math.random() < 0.1 && window.game) {
+              window.game.spawnSparks(box.tx * TILE_SIZE + TILE_SIZE/2, box.ty * TILE_SIZE + TILE_SIZE/2, '#fff', 1);
+            }
+          }
+        } else {
+          this.targetBox = null;
+          this.boxBreakTimer = 0;
+        }
       }
 
       moveWithCollision(targetX, targetY, room, isKnockback = false) {
@@ -3283,17 +3320,37 @@
         const right = Math.floor((x + this.radius) / TILE_SIZE);
         const top = Math.floor((y - this.radius) / TILE_SIZE);
         const bottom = Math.floor((y + this.radius) / TILE_SIZE);
+        let collision = false;
 
         for (let ty = top; ty <= bottom; ty++) {
           for (let tx = left; tx <= right; tx++) {
             if (tx < 0 || tx >= GRID_SIZE || ty < 0 || ty >= GRID_SIZE) return isKnockback ? false : true;
             const tile = room.grid[ty][tx];
+            // Buff: Chargers destroem caixas (BREAKABLE)
+            if (tile === TILE.BREAKABLE && (this.type === 'charger' || this.type === 'rusty_charger')) {
+              if (this.chargeState === 'charge') {
+                // Passam reto durante a investida
+                room.grid[ty][tx] = TILE.EMPTY;
+                if (window.sound) window.sound.playImpactExplosion();
+                if (window.game) {
+                  window.game.spawnSparks(tx * TILE_SIZE + TILE_SIZE/2, ty * TILE_SIZE + TILE_SIZE/2, '#8d6e63', 12);
+                  window.game.spawnFloatingText('ESMAGADO!', tx * TILE_SIZE + TILE_SIZE/2, ty * TILE_SIZE, '#d7ccc8');
+                }
+                continue;
+              } else {
+                // Caminhando normal: marca a caixa para quebrar depois de 2 segundos
+                if (!this.hittingBoxThisFrame) {
+                  this.hittingBoxThisFrame = { tx, ty };
+                }
+              }
+            }
+
             if (tile === TILE.WALL || tile === TILE.BREAKABLE || tile === TILE.LOCK_GATE || tile === TILE.BOSS_DOOR || tile === TILE.ARMORY || tile === TILE.CHEST || tile === TILE.INVENTOR_NPC || tile === TILE.SWITCH_TARGET) {
-              return true;
+              collision = true;
             }
           }
         }
-        return false;
+        return collision;
       }
 
       checkTileCollisionHolesOnly(x, y, room) {
