@@ -596,12 +596,78 @@
     }
     .btn-buy:hover { background: #2ea043; }
     .btn-buy:disabled { background: #30363d; color: #8b949e; cursor: not-allowed; }
+
+    /* Arsenal - Abas */
+    #armory-tabs {
+      display: flex; gap: 8px; border-bottom: 1px solid #30363d; padding-bottom: 8px;
+    }
+    .armory-tab {
+      flex: 1; background: rgba(255,255,255,0.05); border: 1px solid #30363d;
+      color: #8b949e; padding: 7px 0; border-radius: 6px; cursor: pointer;
+      font-weight: bold; font-size: 12px; transition: 0.2s;
+    }
+    .armory-tab.active {
+      background: rgba(255, 202, 40, 0.15); border-color: #ffca28; color: #ffca28;
+    }
+    /* Bolsa - Grid */
+    #bag-grid {
+      display: flex; flex-wrap: wrap; gap: 6px; justify-content: center;
+      background: rgba(0,0,0,0.25); border-radius: 8px; padding: 10px;
+    }
+    .bag-slot {
+      width: 36px; height: 36px; border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; border: 2px solid #30363d;
+      background: rgba(255,255,255,0.05);
+    }
+    .bag-slot.filled { border-color: #ff6f00; background: rgba(255,111,0,0.15); }
+    .bag-slot.filled.impact { border-color: #ef5350; background: rgba(239,83,80,0.15); }
+    .bag-slot.filled.propulsor { border-color: #42a5f5; background: rgba(66,165,245,0.15); }
+    #bag-types-row {
+      display: flex; gap: 8px; justify-content: center;
+    }
+    .bag-type-pill {
+      padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: bold;
+      border: 1px solid #30363d; color: #8b949e; background: rgba(255,255,255,0.05);
+    }
+    .bag-type-pill.available { border-color: #66bb6a; color: #a5d6a7; background: rgba(102,187,106,0.1); }
     .btn-close {
       background: #da3633; border: none; color: white; padding: 10px;
       border-radius: 6px; cursor: pointer; font-weight: bold; text-transform: uppercase;
       font-size: 14px; margin-top: 10px; transition: 0.2s;
     }
     .btn-close:hover { background: #f85149; }
+
+    /* Modal da Loja do Inventor */
+    #inventor-shop-modal {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 420px;
+      max-width: 92%;
+      background: rgba(10, 14, 20, 0.97);
+      border: 3px solid #7b52ab;
+      border-radius: 14px;
+      padding: 20px;
+      display: none;
+      flex-direction: column;
+      gap: 14px;
+      z-index: 500;
+      box-shadow: 0 0 30px rgba(123, 82, 171, 0.5);
+    }
+    #inventor-shop-modal.visible { display: flex; }
+    #inventor-shop-header {
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      border-bottom: 1px solid #30363d; padding-bottom: 10px;
+    }
+    #inventor-shop-header h2 {
+      margin: 0; color: #ce93d8; font-size: 20px;
+      letter-spacing: 2px; text-transform: uppercase;
+    }
+    #inventor-shop-coins {
+      text-align: center; color: #fff; font-size: 13px; font-weight: bold;
+      background: rgba(255,255,255,0.05); border-radius: 8px; padding: 6px;
+    }
 
     /* Responsividade e Ergonomia Mobile: Portrait e Landscape */
     @media (max-width: 900px), (max-height: 600px), (pointer: coarse) {
@@ -747,6 +813,102 @@
         overflow-y: auto;
       }
     }
+    /* Menus UI (Menu Principal e Opções) */
+    .menu-overlay {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(10, 14, 20, 0.95);
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+    .menu-overlay.hidden {
+      display: none !important;
+    }
+    .menu-title {
+      font-size: 3rem;
+      color: var(--accent-yellow);
+      text-transform: uppercase;
+      letter-spacing: 4px;
+      margin-bottom: 2rem;
+      text-shadow: 0 4px 12px rgba(255, 202, 40, 0.4);
+    }
+    .menu-btn {
+      background: var(--panel-bg);
+      border: 2px solid var(--border-color);
+      color: white;
+      font-size: 1.2rem;
+      font-weight: bold;
+      padding: 12px 32px;
+      margin: 8px;
+      border-radius: 8px;
+      cursor: pointer;
+      width: 250px;
+      transition: all 0.2s ease;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .menu-btn:hover {
+      border-color: var(--accent-blue);
+      background: rgba(41, 182, 246, 0.2);
+      transform: scale(1.05);
+      box-shadow: 0 0 16px rgba(41, 182, 246, 0.4);
+    }
+    .menu-btn:active {
+      transform: scale(0.95);
+    }
+    .options-container {
+      width: 450px;
+      background: var(--panel-bg);
+      border: 2px solid var(--border-color);
+      border-radius: 12px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+    .option-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .option-group.toggle-group {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .option-group label {
+      font-weight: bold;
+      color: var(--text-dim);
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .option-group input[type='range'] {
+      width: 100%;
+      accent-color: var(--accent-blue);
+      cursor: pointer;
+    }
+    .option-group input[type='checkbox'] {
+      width: 20px;
+      height: 20px;
+      accent-color: var(--accent-blue);
+      cursor: pointer;
+    }
+    .option-group select {
+      background: rgba(10, 14, 20, 0.95);
+      color: white;
+      border: 1px solid var(--border-color);
+      padding: 8px;
+      border-radius: 6px;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
@@ -802,10 +964,8 @@
     <div id="desktop-guide">
       <span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> Mover</span>
       <span>🖱️ <b>Clique e Arraste</b>: Mirar & Lançar</span>
-      <span><kbd>1</kbd> Imp | <kbd>2</kbd> Prop | <kbd>3</kbd> Temp</span>
-      <span><kbd>SHIFT</kbd> Dash (1 CC)</span>
-      <span><kbd>U</kbd> Manopla</span>
-      <span><kbd>ESPAÇO</kbd> / Dir: Rápido</span>
+      <span id="guide-bombs" style="display: none;"><kbd>1</kbd> Imp | <kbd>2</kbd> Prop | <kbd>3</kbd> Temp</span>
+      <span id="guide-dash" style="display: none;"><kbd>SHIFT</kbd> Dash (1 CC)</span>
     </div>
 
     <!-- Controles Touch Mobile -->
@@ -859,41 +1019,155 @@
     </div>
 
     <!-- Toast Central -->
-    <div id="center-toast">TEMPO REBOBINADO!</div>
+    <div id="center-toast"></div>
+
+    <!-- Tela de Carregamento -->
+    <div id="loading-screen" class="menu-overlay" style="display: none; flex-direction: column;">
+      <h1 class="menu-title" id="loading-title">Carregando...</h1>
+      <div id="loading-tip" style="margin-top: 20px; font-size: 1.2rem; color: #fff; max-width: 600px; text-align: center; text-shadow: 1px 1px 2px #000;"></div>
+    </div>
+
+    <!-- Tela de Menu Principal -->
+    <div id="main-menu" class="menu-overlay" style="display: flex;">
+      <h1 class="menu-title">RogueBomb</h1>
+      <button class="menu-btn" id="btn-start">Iniciar Jogo</button>
+      <button class="menu-btn" id="btn-continue" style="display: none;">Continuar</button>
+      <button class="menu-btn" id="btn-options">Opções</button>
+      <button class="menu-btn" id="btn-exit" style="display: none;">Sair</button>
+    </div>
+
+    <!-- Tela de Menu de Opções -->
+    <div id="options-menu" class="menu-overlay hidden">
+      <h1 class="menu-title" style="font-size: 2rem;">Opções</h1>
+      <div class="options-container">
+        
+        <div class="option-group">
+          <label for="music-vol">Volume da Música (<span id="music-vol-val">100</span>%)</label>
+          <input type="range" id="music-vol" min="0" max="100" value="100">
+        </div>
+        
+        <div class="option-group">
+          <label for="sfx-vol">Volume dos Efeitos (<span id="sfx-vol-val">100</span>%)</label>
+          <input type="range" id="sfx-vol" min="0" max="100" value="100">
+        </div>
+
+        <div class="option-group toggle-group">
+          <label for="screen-shake">Vibração de Tela</label>
+          <input type="checkbox" id="screen-shake" checked>
+        </div>
+
+        <div class="option-group toggle-group">
+          <label for="fullscreen-toggle">Tela Cheia</label>
+          <input type="checkbox" id="fullscreen-toggle">
+        </div>
+
+        <div class="option-group toggle-group">
+          <label for="crt-effect">Efeito Visual Retrô (CRT)</label>
+          <input type="checkbox" id="crt-effect">
+        </div>
+
+        <div class="option-group toggle-group">
+          <label for="show-fps">Mostrar FPS</label>
+          <input type="checkbox" id="show-fps" checked>
+        </div>
+
+        <div class="option-group">
+          <label for="aim-sens">Sensibilidade da Mira (<span id="aim-sens-val">50</span>%)</label>
+          <input type="range" id="aim-sens" min="1" max="100" value="50">
+        </div>
+
+        <div class="option-group toggle-group">
+          <label for="language-select">Idioma</label>
+          <select id="language-select">
+            <option value="pt">Português</option>
+            <option value="en">English</option>
+          </select>
+        </div>
+
+        <button class="menu-btn" style="width: 100%; margin-top: 16px;" id="btn-back-menu">Voltar</button>
+      </div>
+    </div>
 
     <!-- Modal do Arsenal -->
     <div id="armory-modal">
       <h2>Balcão de Arsenal</h2>
       <div id="armory-coins" style="text-align: center; font-weight: bold; color: #fff; font-size: 14px;">Você tem: 0 CC | 0 PEÇAS</div>
-      
-      <div class="armory-item">
-        <div class="armory-info">
-          <span class="armory-title">Manopla Mecânica</span>
-          <span class="armory-desc">Aumenta o alcance de arremesso.</span>
-          <span class="armory-cost">Custo: 10 CC | 10 PEÇAS</span>
-        </div>
-        <button class="btn-buy" id="btn-buy-gauntlet" onclick="window.game.buyUpgrade('gauntlet')">Melhorar</button>
+
+      <!-- Tabs -->
+      <div id="armory-tabs">
+        <button class="armory-tab active" id="tab-upgrades" onclick="window.game.switchArmoryTab('upgrades')">Upgrades</button>
+        <button class="armory-tab" id="tab-bag" onclick="window.game.switchArmoryTab('bag')">🎒 Bolsa</button>
       </div>
 
-      <div class="armory-item">
-        <div class="armory-info">
-          <span class="armory-title">Botas Propulsoras</span>
-          <span class="armory-desc">Permite dar Dash (Aperte SHIFT ou Botão Mobile). Custo: 1 CC. Superaquece por 5s.</span>
-          <span class="armory-cost">Custo: 15 CC | 15 PEÇAS</span>
+      <!-- Painel: Upgrades -->
+      <div id="armory-panel-upgrades" style="display:flex; flex-direction:column; gap:10px;">
+        <div class="armory-item">
+          <div class="armory-info">
+            <span class="armory-title">Manopla Mecânica</span>
+            <span class="armory-desc">Aumenta o alcance de arremesso.</span>
+            <span class="armory-cost">Custo: 10 CC | 10 PEÇAS</span>
+          </div>
+          <button class="btn-buy" id="btn-buy-gauntlet" onclick="window.game.buyUpgrade('gauntlet')">Melhorar</button>
         </div>
-        <button class="btn-buy" id="btn-buy-boots" onclick="window.game.buyUpgrade('boots')">Comprar</button>
+
+        <div class="armory-item">
+          <div class="armory-info">
+            <span class="armory-title">Botas Propulsoras</span>
+            <span class="armory-desc">Permite dar Dash (Aperte SHIFT ou Botão Mobile). Custo: 1 CC. Superaquece por 5s.</span>
+            <span class="armory-cost">Custo: 15 CC | 15 PEÇAS</span>
+          </div>
+          <button class="btn-buy" id="btn-buy-boots" onclick="window.game.buyUpgrade('boots')">Comprar</button>
+        </div>
+
+        <div class="armory-item">
+          <div class="armory-info">
+            <span class="armory-title">Bolsa Expandida</span>
+            <span class="armory-desc">Aumenta a capacidade de bombas. Nv.1: 5 | Nv.2: 7 | Nv.3: 10</span>
+            <span class="armory-cost" id="bag-upgrade-cost">Custo: 20 CC | 20 PEÇAS</span>
+          </div>
+          <button class="btn-buy" id="btn-buy-bag" onclick="window.game.buyUpgrade('bag')">Melhorar</button>
+        </div>
       </div>
 
-      <div class="armory-item">
-        <div class="armory-info">
-          <span class="armory-title">Bolsa Expandida</span>
-          <span class="armory-desc">Carrega mais bombas e permite trocar de tipo.</span>
-          <span class="armory-cost">Custo: 20 CC | 20 PEÇAS</span>
-        </div>
-        <button class="btn-buy" id="btn-buy-bag" onclick="window.game.buyUpgrade('bag')">Melhorar</button>
+      <!-- Painel: Bolsa -->
+      <div id="armory-panel-bag" style="display:none;">
+        <div id="bag-slot-label" style="text-align:center; color:#8b949e; font-size:12px; margin-bottom:4px;">Slots de Bomba</div>
+        <div id="bag-grid"></div>
+        <div id="bag-types-label" style="text-align:center; color:#8b949e; font-size:12px; margin: 8px 0 4px 0;">Tipos Disponíveis</div>
+        <div id="bag-types-row"></div>
       </div>
 
       <button class="btn-close" onclick="window.game.closeArmory()">Sair</button>
+    </div>
+
+    <!-- Modal da Loja do Inventor -->
+    <div id="inventor-shop-modal">
+      <div id="inventor-shop-header">
+        <span>⚙️</span>
+        <h2>Loja do Inventor</h2>
+        <span>⚙️</span>
+      </div>
+      <div id="inventor-shop-coins">Você tem: <span id="inv-shop-cc">0</span> CC | <span id="inv-shop-parts">0</span> PEÇAS</div>
+
+      <div class="armory-item" id="inv-item-impact">
+        <div class="armory-info">
+          <span class="armory-title">💥 Bomba de Impacto</span>
+          <span class="armory-desc">Explode no impacto com paredes ou inimigos. Libera slot de Impacto na bolsa.</span>
+          <span class="armory-cost" id="inv-cost-impact">Custo: 15 CC | 10 PEÇAS</span>
+        </div>
+        <button class="btn-buy" id="btn-inv-impact" onclick="window.game.buyInventorUpgrade('impact')">Comprar</button>
+      </div>
+
+      <div class="armory-item" id="inv-item-propulsor">
+        <div class="armory-info">
+          <span class="armory-title">🔵 Bomba Propulsora</span>
+          <span class="armory-desc">Empurra Charlotte ao explodir. Requer Bolsa de Impacto. Libera slot Propulsor.</span>
+          <span class="armory-cost" id="inv-cost-propulsor">Custo: 25 CC | 20 PEÇAS</span>
+        </div>
+        <button class="btn-buy" id="btn-inv-propulsor" onclick="window.game.buyInventorUpgrade('propulsor')">Comprar</button>
+      </div>
+
+      <button class="btn-close" onclick="window.game.closeInventorShop()">Sair</button>
     </div>
   </div>
 
@@ -1356,7 +1630,8 @@
       VAULT_CHEST_OPEN: 15, // Cofre aberto
       PRESSURE_PLATE: 16, // Placa de pressão de puzzle (Nível 1)
       SWITCH_TARGET: 17,  // Cristal interruptor elevado (Nível 3+)
-      DIRT: 18            // Chão batido / Terra orgânica
+      DIRT: 18,           // Chão batido / Terra orgânica
+      SIGN: 19            // Placa de aviso
     };
 
     // Tipos de Bomba
@@ -1419,10 +1694,10 @@
           sound.init(); // Ativa áudio no primeiro input
 
           // Seleção numérica de bombas
-          const bagLvl = (window.game && window.game.player) ? window.game.player.bagLevel : 1;
+          const _p = (window.game && window.game.player) ? window.game.player : null;
           if (e.key === '3') this.selectBomb(BOMB_TYPE.TIMED);
-          if (e.key === '1' && bagLvl >= 2) this.selectBomb(BOMB_TYPE.IMPACT);
-          if (e.key === '2' && bagLvl >= 3) this.selectBomb(BOMB_TYPE.PROPULSOR);
+          if (e.key === '1' && _p && _p.unlockedImpact) this.selectBomb(BOMB_TYPE.IMPACT);
+          if (e.key === '2' && _p && _p.unlockedPropulsor) this.selectBomb(BOMB_TYPE.PROPULSOR);
 
           // Disparo com Barra de Espaço
           if (e.code === 'Space') {
@@ -1668,10 +1943,10 @@
 
         // Scroll do mouse para alternar tipo de bomba
         window.addEventListener('wheel', (e) => {
-          const bagLvl = (window.game && window.game.player) ? window.game.player.bagLevel : 1;
+          const _p2 = (window.game && window.game.player) ? window.game.player : null;
           const order = [];
-          if (bagLvl >= 2) order.push(BOMB_TYPE.IMPACT);
-          if (bagLvl >= 3) order.push(BOMB_TYPE.PROPULSOR);
+          if (_p2 && _p2.unlockedImpact) order.push(BOMB_TYPE.IMPACT);
+          if (_p2 && _p2.unlockedPropulsor) order.push(BOMB_TYPE.PROPULSOR);
           order.push(BOMB_TYPE.TIMED);
           
           let currIdx = order.indexOf(this.selectedBomb);
@@ -1774,6 +2049,69 @@
     // --------------------------------------------------------------------------
     // 4. ESTRUTURA DE SALAS E MAPA PROCEDURAL (MapManager)
     // --------------------------------------------------------------------------
+    class PushablePillar {
+      constructor(gridX, gridY) {
+        this.gridX = gridX;
+        this.gridY = gridY;
+        this.x = gridX * TILE_SIZE + TILE_SIZE / 2;
+        this.y = gridY * TILE_SIZE + TILE_SIZE / 2;
+        this.isMoving = false;
+        this.targetX = this.x;
+        this.targetY = this.y;
+        this.speed = 220;
+      }
+      
+      update(dt, room) {
+        if (this.isMoving) {
+          const dx = this.targetX - this.x;
+          const dy = this.targetY - this.y;
+          const dist = Math.hypot(dx, dy);
+          if (dist < this.speed * dt) {
+            this.x = this.targetX;
+            this.y = this.targetY;
+            this.gridX = Math.floor(this.x / TILE_SIZE);
+            this.gridY = Math.floor(this.y / TILE_SIZE);
+            this.isMoving = false;
+          } else {
+            this.x += (dx / dist) * this.speed * dt;
+            this.y += (dy / dist) * this.speed * dt;
+          }
+        }
+      }
+      
+      push(dx, dy, room) {
+        if (this.isMoving) return;
+        const nx = this.gridX + dx;
+        const ny = this.gridY + dy;
+        if (nx >= 1 && nx < GRID_SIZE - 1 && ny >= 1 && ny < GRID_SIZE - 1) {
+          const t = room.grid[ny][nx];
+          if (t === TILE.EMPTY || t === TILE.PRESSURE_PLATE || t === TILE.DIRT || t === TILE.HOLE) {
+             this.targetX = nx * TILE_SIZE + TILE_SIZE / 2;
+             this.targetY = ny * TILE_SIZE + TILE_SIZE / 2;
+             this.isMoving = true;
+          }
+        }
+      }
+      
+      render(ctx) {
+        ctx.fillStyle = '#795548'; 
+        const px = this.x - TILE_SIZE / 2;
+        const py = this.y - TILE_SIZE / 2;
+        ctx.fillRect(px + 4, py + 4, TILE_SIZE - 8, TILE_SIZE - 8);
+        ctx.strokeStyle = '#3e2723';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(px + 4, py + 4, TILE_SIZE - 8, TILE_SIZE - 8);
+        
+        ctx.strokeStyle = '#3e2723';
+        ctx.beginPath();
+        ctx.moveTo(px + 8, py + 8);
+        ctx.lineTo(px + TILE_SIZE - 8, py + TILE_SIZE - 8);
+        ctx.moveTo(px + TILE_SIZE - 8, py + 8);
+        ctx.lineTo(px + 8, py + TILE_SIZE - 8);
+        ctx.stroke();
+      }
+    }
+
     class Room {
       constructor(rx, ry, isStart = false, isSecret = false, depth = 1) {
         this.rx = rx;
@@ -1803,6 +2141,7 @@
           switches: [],
           barrierPositions: []
         };
+        this.pushables = [];
       }
 
       buildPuzzleLayout(depth = 1) {
@@ -1828,7 +2167,7 @@
         if (this.doors.west)  this.grid[mid][0] = TILE.EMPTY;
         if (this.doors.east)  this.grid[mid][GRID_SIZE - 1] = TILE.EMPTY;
 
-        if (this.puzzleType === 'timed_vault' || depth === 1) {
+        if (this.puzzleType === 'timed_vault' || (depth === 1 && this.puzzleType !== 'inventor_room')) {
           this.puzzleType = 'timed_vault';
           this.puzzleState.ccReward = 5;
           // Cofre no centro
@@ -1854,6 +2193,38 @@
 
           // 1 Autômato de guarda enferrujado (Nível 1)
           this.enemies.push(new Automaton((mid - 2) * TILE_SIZE, (mid - 2) * TILE_SIZE, depth, 'rusty'));
+        } else if (this.puzzleType === 'inventor_room' || (depth === 2 && this.puzzleType === 'inventor_room')) {
+           this.puzzleType = 'inventor_room';
+           this.puzzleState.ccReward = 0;
+           
+           for (let y = 1; y <= 4; y++) {
+             for (let x = GRID_SIZE - 5; x <= GRID_SIZE - 2; x++) {
+               if (x === GRID_SIZE - 5 || y === 4) {
+                 this.grid[y][x] = TILE.LOCK_GATE; // As grade da cela
+               } else {
+                 this.grid[y][x] = TILE.EMPTY;
+               }
+             }
+           }
+           // Inventor resgatado? Coloca um baú no lugar. Senão, o inventor fica preso na cela.
+           if (window.gameState && window.gameState.inventorRescued) {
+             this.grid[2][GRID_SIZE - 3] = TILE.VAULT_CHEST;
+           } else {
+             this.grid[2][GRID_SIZE - 3] = TILE.INVENTOR_NPC;
+           }
+           
+           this.grid[mid][3] = TILE.PRESSURE_PLATE;
+           this.grid[mid][mid] = TILE.PRESSURE_PLATE;
+           this.grid[mid][GRID_SIZE - 4] = TILE.PRESSURE_PLATE;
+           
+           this.puzzleState.plates = [
+             { x: 3, y: mid, activeTimer: 0 },
+             { x: mid, y: mid, activeTimer: 0 },
+             { x: GRID_SIZE - 4, y: mid, activeTimer: 0 }
+           ];
+           
+           this.pushables.push(new PushablePillar(3, 3));
+           this.pushables.push(new PushablePillar(GRID_SIZE - 4, GRID_SIZE - 4));
         } else if (this.puzzleType === 'lava_chasm' || depth === 2) {
           this.puzzleType = 'lava_chasm';
           this.puzzleState.ccReward = 7;
@@ -2125,8 +2496,12 @@
         const mid = Math.floor(GRID_SIZE / 2);
         
         if (this.depth === 1) {
-          // Inventor NPC num canto superior esquerdo (exemplo: x=3, y=3)
-          this.grid[3][3] = TILE.INVENTOR_NPC;
+          window.gameState = window.gameState || { inventorRescued: false };
+          if (window.gameState.inventorRescued) {
+            this.grid[3][3] = TILE.INVENTOR_NPC;
+          } else {
+            this.grid[3][3] = TILE.SIGN;
+          }
           
           // Mesa/Armário para Charlotte modificar o arsenal no canto superior direito (ex: x=GRID_SIZE-4, y=3)
           this.grid[3][GRID_SIZE - 4] = TILE.ARMORY;
@@ -2206,11 +2581,11 @@
             sound.playLockdownSound();
             sound.setMusicMode('battle');
             if (this.isMiniBossRoom) {
-              showToast('DUELO! DERROTE O ENGENHEIRO RIVAL!');
+              showToast(window.t('ingame-duel'));
             } else if (this.isBossRoom) {
-              showToast('CONFRONTO FINAL! CHEFE MESTRE!');
+              showToast(window.t('ingame-bossfight'));
             } else {
-              showToast('LOCKDOWN ATIVADO!');
+              showToast(window.t('ingame-protocol'));
             }
           }
           // Tranca as passagens de porta com blocos vermelhos piscantes
@@ -2362,6 +2737,14 @@
           if (miniBossTarget) {
             miniBossTarget.isMiniBossRoom = true;
           }
+        } else if (this.currentDepth === 2) {
+          const invCandidates = roomArray.filter(r => !r.isStart && !r.hasGoela && !r.isBossRoom && !r.isPuzzleRoom);
+          let deadEnds = invCandidates.filter(r => (r.doors.north + r.doors.south + r.doors.east + r.doors.west === 1));
+          const inventorTarget = deadEnds.length > 0 ? deadEnds[0] : invCandidates[0];
+          if (inventorTarget) {
+            inventorTarget.isPuzzleRoom = true;
+            inventorTarget.puzzleType = 'inventor_room';
+          }
         }
 
         // Constrói layouts internos e popula inimigos com a profundidade atual
@@ -2427,6 +2810,8 @@
         this.timerBombs = 5;
         this.bombRechargeTimer = 0;
         this.hasBossKey = false;
+        this.unlockedImpact = false;
+        this.unlockedPropulsor = false;
       }
 
       getThrowRange() {
@@ -2469,13 +2854,16 @@
           this.invulnerableTimer -= dt;
         }
 
-        if (this.timerBombs < this.maxTimerBombs) {
-          this.bombRechargeTimer += dt;
-          if (this.bombRechargeTimer >= 3.0) {
-            this.bombRechargeTimer = 0;
-            this.timerBombs++;
-            if (window.game) window.game.updateHUD();
-          }
+        if (this.bagSlots) {
+          this.bagSlots.forEach(slot => {
+            if (slot.cooldown > 0) {
+              slot.cooldown -= dt;
+              if (slot.cooldown <= 0) {
+                slot.cooldown = 0;
+                if (window.game) window.game.updateHUD();
+              }
+            }
+          });
         }
 
         if (this.dashCooldown > 0) {
@@ -2836,40 +3224,69 @@
         this.type = type; // 'rusty', 'rusty_charger', 'rusty_bomber', 'scout', 'charger', 'bomber'
 
         const isRusty = (this.type === 'rusty' || this.type === 'rusty_charger' || this.type === 'rusty_bomber');
-        this.isCrazy = isRusty && this.depth >= 2 && Math.random() < 0.5;
+        this.canGoCrazy = isRusty && this.depth >= 2;
+        this.isCrazy = false;
+        this.crazyTimer = 0;
+        this.crazyCooldown = Math.random() * 5 + 5;
+
+        this.setCrazyState = (crazy) => {
+          this.isCrazy = crazy;
+          if (crazy) {
+            this.reactionDelay = 0.15;
+            this.searchRange = TILE_SIZE * 6;
+            this.loseRange = TILE_SIZE * 8;
+            if (this.type === 'rusty_charger') {
+              this.speed = 130;
+              this.patrolSpeed = 45;
+              this.chargeCooldown = 1.5 + Math.random() * 1.0;
+            } else if (this.type === 'rusty_bomber') {
+              this.speed = 100;
+              this.patrolSpeed = 40;
+              this.shootCooldown = 1.5 + Math.random() * 0.8;
+            } else {
+              this.speed = 120;
+              this.patrolSpeed = 45;
+              this.stumbleTimer = 0.4 + Math.random() * 0.4;
+            }
+          } else {
+            this.reactionDelay = 1.05;
+            this.searchRange = TILE_SIZE * 3.8;
+            this.loseRange = TILE_SIZE * 5.2;
+            if (this.type === 'rusty_charger') {
+              this.speed = 48;
+              this.patrolSpeed = 22;
+              this.chargeCooldown = 4.2 + Math.random() * 1.5;
+            } else if (this.type === 'rusty_bomber') {
+              this.speed = 40;
+              this.patrolSpeed = 20;
+              this.shootCooldown = 3.8 + Math.random() * 1.4;
+            } else {
+              this.speed = 36;
+              this.patrolSpeed = 18;
+              this.stumbleTimer = 2.5 + Math.random() * 2.0;
+            }
+          }
+        };
 
         if (isRusty) {
           // Autômatos Enferrujados (Níveis 1, 2 e 3): Sempre 1 HP, quebram com facilidade!
           this.maxHp = 1;
           this.hp = 1;
-          this.reactionDelay = this.isCrazy ? 0.15 : 1.05;
           this.rustFlicker = Math.random() * 10;
-          this.searchRange = this.isCrazy ? TILE_SIZE * 6 : TILE_SIZE * 3.8;
-          this.loseRange = this.isCrazy ? TILE_SIZE * 8 : TILE_SIZE * 5.2;
-
+          this.radius = this.type === 'rusty' ? 13.5 : 15;
+          
           if (this.type === 'rusty_charger') {
-            this.radius = 15;
-            this.speed = this.isCrazy ? 130 : 48;
-            this.patrolSpeed = this.isCrazy ? 45 : 22;
             this.chargeState = 'ready';
             this.chargeTimer = 0;
-            this.chargeCooldown = this.isCrazy ? 1.5 + Math.random() * 1.0 : 4.2 + Math.random() * 1.5;
             this.chargeDir = { dx: 0, dy: 0 };
           } else if (this.type === 'rusty_bomber') {
-            this.radius = 15;
-            this.speed = this.isCrazy ? 100 : 40;
-            this.patrolSpeed = this.isCrazy ? 40 : 20;
-            this.shootCooldown = this.isCrazy ? 1.5 + Math.random() * 0.8 : 3.8 + Math.random() * 1.4;
             this.recoilTimer = 0;
           } else {
             // rusty (scout enferrujado)
-            this.radius = 13.5;
-            this.speed = this.isCrazy ? 120 : 36;
-            this.patrolSpeed = this.isCrazy ? 45 : 18;
-            this.stumbleTimer = this.isCrazy ? 0.4 + Math.random() * 0.4 : 2.5 + Math.random() * 2.0;
             this.isStumbling = false;
             this.stumbleDuration = 0;
           }
+          this.setCrazyState(false);
         } else {
           // Apenas Níveis 4 e 5: Autômatos de Elite mais fortes com múltiplas blindagens!
           this.maxHp = Math.max(2, Math.min(6, Math.floor(depth) - 1)); // 2 HP no Nível 4, 3+ HP no Nível 5
@@ -2966,6 +3383,28 @@
       update(dt, player, room) {
         this.hittingBoxThisFrame = null;
         this.animTimer += dt;
+        
+        if (this.canGoCrazy) {
+          if (this.isCrazy) {
+            this.crazyTimer -= dt;
+            if (window.game && Math.random() < 0.4) {
+              // Fumaça preta de motor a diesel
+              window.game.spawnSparks(this.x, this.y - 10, '#111111', 1);
+              window.game.spawnSparks(this.x + (Math.random() - 0.5)*10, this.y - 10, '#333333', 1);
+            }
+            if (this.crazyTimer <= 0) {
+              this.setCrazyState(false);
+              this.crazyCooldown = Math.random() * 5 + 5;
+            }
+          } else {
+            this.crazyCooldown -= dt;
+            if (this.crazyCooldown <= 0) {
+              this.setCrazyState(true);
+              this.crazyTimer = 3.0;
+            }
+          }
+        }
+
         this.pulseAngle += dt * (this.state === 'chase' ? 8 : (this.state === 'alert' ? 12 : 3));
         if (this.flashTimer > 0) this.flashTimer -= dt;
 
@@ -3599,7 +4038,24 @@
           ctx.save();
           if (isFlickering) ctx.globalAlpha = 0.35;
 
-          if (this.isStumbling || this.recoilTimer > 0) {
+          if (this.isCrazy) {
+            ctx.fillStyle = '#ff0000';
+            ctx.beginPath();
+            ctx.arc(renderX + eyeOffsetX, renderY + eyeOffsetY, 4.5, 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.fillStyle = 'rgba(255, 0, 0, 0.6)';
+            ctx.beginPath();
+            ctx.arc(renderX + eyeOffsetX, renderY + eyeOffsetY, 9, 0, Math.PI * 2);
+            ctx.fill();
+            
+            if (this.isStumbling || this.recoilTimer > 0) {
+              ctx.fillStyle = '#d84315';
+              ctx.font = 'bold 9px sans-serif';
+              ctx.textAlign = 'center';
+              ctx.fillText(this.recoilTimer > 0 ? '💨' : '!', renderX, renderY - this.radius - 8);
+            }
+          } else if (this.isStumbling || this.recoilTimer > 0) {
             ctx.fillStyle = '#ff7043';
             ctx.beginPath();
             ctx.arc(renderX + eyeOffsetX, renderY + eyeOffsetY, 3.8, 0, Math.PI * 2);
@@ -4436,6 +4892,7 @@
         window.addEventListener('resize', () => this.resizeCanvas());
         this.updateHUD();
 
+        this.isPaused = true;
         this.loop = this.loop.bind(this);
         requestAnimationFrame(this.loop);
       }
@@ -4464,6 +4921,16 @@
           targetSize = Math.max(300, Math.min(targetSize, 600));
         }
 
+        const mobileControls = document.getElementById('mobile-controls');
+        const desktopGuide = document.getElementById('desktop-guide');
+        if (isTouch) {
+          if (mobileControls) mobileControls.style.display = 'flex';
+          if (desktopGuide) desktopGuide.style.display = 'none';
+        } else {
+          if (mobileControls) mobileControls.style.display = 'none';
+          if (desktopGuide) desktopGuide.style.display = 'flex';
+        }
+
         this.canvas.style.width = `${Math.floor(targetSize)}px`;
         this.canvas.style.height = `${Math.floor(targetSize)}px`;
       }
@@ -4473,7 +4940,9 @@
           const dt = Math.min((now - this.lastTime) / 1000, 0.05);
           this.lastTime = now;
 
-          this.update(dt);
+          if (!this.isPaused) {
+              this.update(dt);
+          }
           this.render();
         } catch (err) {
           console.error("Loop error:", err);
@@ -4535,6 +5004,7 @@
         // Coleta de Itens / Upgrades (Manopla Mecânica)
         this.checkPickups();
         this.checkArmory();
+        this.checkSign();
 
         // 2. Movimentação de Charlotte (WASD / D-Pad)
         this.player.update(dt, this.input, room);
@@ -4737,6 +5207,81 @@
               showToast('COFRE QUÂNTICO DESBLOQUEADO!');
             }
           }
+        } else if (room.puzzleType === 'inventor_room' && room.puzzleState.plates) {
+            room.pushables.forEach(p => p.update(dt, room));
+
+            room.puzzleState.plates.forEach(plate => {
+                const isPlayerOnPlate = (pGridX === plate.x && pGridY === plate.y);
+                const isPillarOnPlate = room.pushables.some(p => p.gridX === plate.x && p.gridY === plate.y);
+
+                if (isPlayerOnPlate || isPillarOnPlate) { 
+                  if (plate.activeTimer <= 0) {
+                    sound.playPlateClick();
+                    this.spawnSparks(plate.x * TILE_SIZE + TILE_SIZE / 2, plate.y * TILE_SIZE + TILE_SIZE / 2, '#00e5ff', 12);
+                  }
+                  plate.activeTimer = 0.6;
+                } else if (plate.activeTimer > 0) {
+                  plate.activeTimer -= dt;
+                }
+            });
+
+            if (!room.puzzleState.solved && room.puzzleState.plates.length >= 3) {
+               const allActive = room.puzzleState.plates.every(p => p.activeTimer > 0);
+               if (allActive) {
+                  room.puzzleState.solved = true;
+                  sound.playUpgradeFanfare();
+                  this.spawnSparks(WORLD_WIDTH / 2, WORLD_HEIGHT / 2, '#ffd700', 30);
+                  
+                  // Open cell door
+                  for (let y = 1; y <= 4; y++) {
+                     for (let x = GRID_SIZE - 5; x <= GRID_SIZE - 2; x++) {
+                        if (room.grid[y][x] === TILE.LOCK_GATE) {
+                           room.grid[y][x] = TILE.EMPTY;
+                           this.spawnDebris(x * TILE_SIZE + TILE_SIZE / 2, y * TILE_SIZE + TILE_SIZE / 2);
+                        }
+                     }
+                  }
+                  showToast('INVENTOR: "GRAÇAS ÀS ENGRENAGENS! ESTOU LIVRE!"');
+               }
+            }
+            
+            // Check interaction
+            if (room.puzzleState.solved) {
+               const distToNPC = Math.hypot(this.player.x - (GRID_SIZE - 3) * TILE_SIZE - TILE_SIZE/2, this.player.y - 2 * TILE_SIZE - TILE_SIZE/2);
+               if (distToNPC < TILE_SIZE * 1.5) {
+                   if (!this.player.inventorTalked) {
+                       window.gameState = window.gameState || {};
+                       window.gameState.inventorRescued = true;
+                       this.player.inventorTalked = true;
+                       
+                       let step = 0;
+                       const msgs = [
+                          'INVENTOR: "Muito obrigado por me salvar! Fui preso pelos autômatos!"',
+                          'CHARLOTTE: "Sem problemas. Eu sempre acabo voltando ao início da mina de qualquer jeito..."',
+                          'INVENTOR: "Entendo... Minha cabana fica perto da entrada também."',
+                          'INVENTOR: "Vou voltar pra lá. Se você aparecer, tentarei te ajudar de alguma forma!"'
+                       ];
+                       const showNext = () => {
+                          if (step < msgs.length) {
+                             if (window.showToast) window.showToast(msgs[step]);
+                             step++;
+                             setTimeout(showNext, 4000);
+                          }
+                       };
+                       showNext();
+                   }
+               }
+            } else {
+               const distToNPC = Math.hypot(this.player.x - (GRID_SIZE - 3) * TILE_SIZE - TILE_SIZE/2, this.player.y - 2 * TILE_SIZE - TILE_SIZE/2);
+               if (distToNPC < TILE_SIZE * 2.5) {
+                   if (!this.player.inventorHintTalked) {
+                       showToast('INVENTOR: "Fiquei preso aqui pelos autômatos! Para me libertar, você deve acionar os 3 painéis de peso ao mesmo tempo. Use bombas para empurrar as pilastras!"');
+                       this.player.inventorHintTalked = true;
+                   }
+               } else {
+                   this.player.inventorHintTalked = false; // reset
+               }
+            }
         }
       }
 
@@ -4783,15 +5328,22 @@
       }
 
       launchThrownBomb(targetX, targetY, bombType) {
-        if (bombType === BOMB_TYPE.TIMED) {
-          if (this.player.timerBombs <= 0) {
-            showToast('SEM BOMBAS! AGUARDE RECARGA...');
-            return;
+        if (!this.player.bagSlots) return;
+
+        const availableSlot = this.player.bagSlots.find(s => s.type === bombType && s.cooldown <= 0);
+        if (!availableSlot) {
+          const hasType = this.player.bagSlots.some(s => s.type === bombType);
+          if (hasType) {
+            showToast('RECARREGANDO...', 1000);
+          } else {
+            showToast('TIPO NÃO EQUIPADO NA BOLSA!', 1000);
           }
-          this.player.timerBombs--;
-          this.updateHUD();
+          return;
         }
-        
+
+        // Coloca o slot em cooldown (5 segundos, conforme solicitado)
+        availableSlot.cooldown = 5.0;
+        this.updateHUD();
         sound.playThrowWhoosh();
         this.player.throwAnimTimer = 0.35;
         const clampedX = Math.max(TILE_SIZE * 0.8, Math.min(WORLD_WIDTH - TILE_SIZE * 0.8, targetX));
@@ -4953,6 +5505,126 @@
         }
       }
 
+      checkSign() {
+        const room = this.map.currentRoom;
+        if (!room) return;
+        if (this.isPaused) return;
+
+        const pGridX = Math.floor(this.player.x / TILE_SIZE);
+        const pGridY = Math.floor(this.player.y / TILE_SIZE);
+        if (pGridX >= 0 && pGridX < GRID_SIZE && pGridY >= 0 && pGridY < GRID_SIZE) {
+           for(let dy=-1; dy<=1; dy++) {
+             for(let dx=-1; dx<=1; dx++) {
+               const ty = pGridY + dy;
+               const tx = pGridX + dx;
+               if (tx >=0 && tx < GRID_SIZE && ty >= 0 && ty < GRID_SIZE) {
+                 const tileHere = room.grid[ty][tx];
+                 if (tileHere === TILE.SIGN) {
+                   if (!this.player.signTalked || Date.now() - this.player.signTalked > 3000) {
+                     showToast('PLACA: "Fui almoçar. Volto logo!"');
+                     this.player.signTalked = Date.now();
+                   }
+                 } else if (tileHere === TILE.INVENTOR_NPC && room.isStart) {
+                   // Inventor disponível na base — abre loja
+                   if (!this.player.inventorShopOpened) {
+                     this.player.inventorShopOpened = true;
+                     setTimeout(() => { this.player.inventorShopOpened = false; }, 1500);
+                     if (document.getElementById('inventor-shop-modal') && !document.getElementById('inventor-shop-modal').classList.contains('visible')) {
+                       this.openInventorShop();
+                     }
+                   }
+                 }
+               }
+             }
+           }
+        }
+      }
+
+      openInventorShop() {
+        if (this.fadeState !== 'none') return;
+        this.updateInventorShopUI();
+        document.getElementById('inventor-shop-modal').classList.add('visible');
+      }
+
+      closeInventorShop() {
+        document.getElementById('inventor-shop-modal').classList.remove('visible');
+        this.player.inventorShopOpened = false;
+      }
+
+      updateInventorShopUI() {
+        const totalCC = this.getAvailableCC();
+        const totalParts = this.getAvailableParts();
+
+        const ccEl = document.getElementById('inv-shop-cc');
+        const partsEl = document.getElementById('inv-shop-parts');
+        if (ccEl) ccEl.textContent = totalCC;
+        if (partsEl) partsEl.textContent = totalParts;
+
+        // Impact bomb
+        const btnImpact = document.getElementById('btn-inv-impact');
+        if (btnImpact) {
+          if (this.player.unlockedImpact) {
+            btnImpact.textContent = 'Comprado ✓';
+            btnImpact.disabled = true;
+          } else {
+            btnImpact.textContent = 'Comprar';
+            btnImpact.disabled = (totalCC < 15 || totalParts < 10);
+          }
+        }
+
+        // Propulsor bomb
+        const btnPropulsor = document.getElementById('btn-inv-propulsor');
+        if (btnPropulsor) {
+          if (this.player.unlockedPropulsor) {
+            btnPropulsor.textContent = 'Comprado ✓';
+            btnPropulsor.disabled = true;
+          } else if (!this.player.unlockedImpact) {
+            btnPropulsor.textContent = 'Bloqueado';
+            btnPropulsor.disabled = true;
+            document.getElementById('inv-cost-propulsor').textContent = 'Requer Bomba de Impacto primeiro!';
+          } else {
+            btnPropulsor.textContent = 'Comprar';
+            btnPropulsor.disabled = (totalCC < 25 || totalParts < 20);
+            document.getElementById('inv-cost-propulsor').textContent = 'Custo: 25 CC | 20 PEÇAS';
+          }
+        }
+      }
+
+      buyInventorUpgrade(type) {
+        let costCC = 0, costParts = 0;
+
+        if (type === 'impact') {
+          if (this.player.unlockedImpact) { showToast('INVENTOR: "Você já tem essa bomba!"'); return; }
+          costCC = 15; costParts = 10;
+        } else if (type === 'propulsor') {
+          if (this.player.unlockedPropulsor) { showToast('INVENTOR: "Você já tem essa bomba!"'); return; }
+          if (!this.player.unlockedImpact) { showToast('INVENTOR: "Compre a Bomba de Impacto primeiro!"'); return; }
+          costCC = 25; costParts = 20;
+        }
+
+        const totalCC = this.getAvailableCC();
+        const totalParts = this.getAvailableParts();
+
+        if (totalCC >= costCC && totalParts >= costParts) {
+          this.consumeCurrency(costCC, costParts);
+
+          if (type === 'impact') {
+            this.player.unlockedImpact = true;
+            showToast('INVENTOR: "Aqui está! Bomba de Impacto instalada na sua bolsa!"');
+          } else {
+            this.player.unlockedPropulsor = true;
+            showToast('INVENTOR: "Cuidado com o recuo! Bomba Propulsora pronta!"');
+          }
+
+          sound.playCCPickup();
+          this.spawnSparks(this.player.x, this.player.y, '#ce93d8', 25);
+          this.updateHUD();
+          this.updateInventorShopUI();
+        } else {
+          showToast(`INVENTOR: "Você precisa de ${costCC} CC e ${costParts} PEÇAS para isso..."`);
+        }
+      }
+
       openArmory() {
         if (this.fadeState !== 'none') return;
         document.getElementById('armory-modal').classList.add('visible');
@@ -4966,41 +5638,119 @@
       updateArmoryUI() {
         const totalCC = this.getAvailableCC();
         const totalParts = this.getAvailableParts();
-        document.getElementById('armory-coins').textContent = `Você tem: ${totalCC} CC | ${totalParts} PEÇAS`;
+        document.getElementById('armory-coins').textContent = `${window.t('armory-youhave')}: ${totalCC} CC | ${totalParts} ${window.t('ingame-parts').toUpperCase()}`;
         
         // Gauntlet
         const btnGauntlet = document.getElementById('btn-buy-gauntlet');
         if (this.player.gauntletLevel >= 3) {
-          btnGauntlet.textContent = 'MÁXIMO';
+          btnGauntlet.textContent = window.t('armory-max');
           btnGauntlet.disabled = true;
         } else {
+          btnGauntlet.textContent = window.t('armory-upgrade');
           btnGauntlet.disabled = (totalCC < 10 || totalParts < 10);
         }
 
         // Boots
         const btnBoots = document.getElementById('btn-buy-boots');
         if (this.player.bootsLevel >= 1) {
-          btnBoots.textContent = 'COMPRADO';
+          btnBoots.textContent = window.t('armory-bought');
           btnBoots.disabled = true;
         } else {
+          btnBoots.textContent = window.t('armory-buy');
           btnBoots.disabled = (totalCC < 15 || totalParts < 15);
         }
 
-        // Bag
+        // Bag — apenas capacidade (nv1=5 nv2=7 nv3=10)
         const btnBag = document.getElementById('btn-buy-bag');
-        if (this.player.bagLevel >= 3) {
-          btnBag.textContent = 'MÁXIMO';
+        const bagCostEl = document.getElementById('bag-upgrade-cost');
+        const bagLvl = this.player.bagLevel || 1;
+        if (bagLvl >= 3) {
+          btnBag.textContent = window.t('armory-max');
           btnBag.disabled = true;
+          if (bagCostEl) bagCostEl.textContent = 'Capacidade máxima atingida!';
         } else {
-          btnBag.disabled = (totalCC < 20 || totalParts < 20);
+          const nextCap = bagLvl === 1 ? 7 : 10;
+          const costCC = bagLvl === 1 ? 15 : 25;
+          const costParts = bagLvl === 1 ? 15 : 25;
+          btnBag.textContent = window.t('armory-upgrade');
+          btnBag.disabled = (totalCC < costCC || totalParts < costParts);
+          if (bagCostEl) bagCostEl.textContent = `→ ${nextCap} bombas  |  Custo: ${costCC} CC | ${costParts} PEÇAS`;
         }
+      }
+
+      switchArmoryTab(tab) {
+        document.getElementById('armory-panel-upgrades').style.display = tab === 'upgrades' ? 'flex' : 'none';
+        document.getElementById('armory-panel-bag').style.display = tab === 'bag' ? 'block' : 'none';
+        document.getElementById('tab-upgrades').classList.toggle('active', tab === 'upgrades');
+        document.getElementById('tab-bag').classList.toggle('active', tab === 'bag');
+        if (tab === 'bag') this.renderBagPanel();
+      }
+
+      renderBagPanel() {
+        const grid = document.getElementById('bag-grid');
+        if (!grid) return;
+        grid.innerHTML = '';
+        
+        if (!this.player.bagSlots) {
+           this.player.bagSlots = [];
+           const caps = [0, 5, 7, 10];
+           const cap = caps[this.player.bagLevel || 1];
+           while(this.player.bagSlots.length < cap) this.player.bagSlots.push({ type: 'timed', cooldown: 0 });
+        }
+
+        this.player.bagSlots.forEach((slot, idx) => {
+          const div = document.createElement('div');
+          div.className = 'bag-slot filled ' + (slot.type === 'impact' ? 'impact' : slot.type === 'propulsor' ? 'propulsor' : '');
+          div.textContent = slot.type === 'impact' ? '💥' : slot.type === 'propulsor' ? '🔵' : '🟠';
+          div.style.cursor = 'pointer';
+          div.onclick = () => this.cycleBagSlot(idx);
+          grid.appendChild(div);
+        });
+
+        // Tipos disponíveis
+        const typesRow = document.getElementById('bag-types-row');
+        if (!typesRow) return;
+        typesRow.innerHTML = '';
+        const types = [
+          { key: 'timed', label: '🟠 Temporizador', always: true },
+          { key: 'impact', label: '💥 Impacto', req: this.player.unlockedImpact },
+          { key: 'propulsor', label: '🔵 Propulsor', req: this.player.unlockedPropulsor },
+        ];
+        types.forEach(t => {
+          if (!t.always && !t.req) return;
+          const pill = document.createElement('div');
+          pill.className = 'bag-type-pill' + (t.always || t.req ? ' available' : '');
+          pill.textContent = t.label;
+          typesRow.appendChild(pill);
+        });
+      }
+
+      cycleBagSlot(index) {
+        if (!this.player.bagSlots) return;
+        const slot = this.player.bagSlots[index];
+        const order = ['timed'];
+        if (this.player.unlockedImpact) order.push('impact');
+        if (this.player.unlockedPropulsor) order.push('propulsor');
+        
+        let curr = order.indexOf(slot.type);
+        if (curr === -1) curr = 0;
+        slot.type = order[(curr + 1) % order.length];
+        slot.cooldown = 0;
+        this.renderBagPanel();
+        this.updateHUD();
+        sound.playCCPickup();
       }
 
       buyUpgrade(type) {
         let costCC = 0, costParts = 0;
         if (type === 'gauntlet') { costCC = 10; costParts = 10; }
         if (type === 'boots') { costCC = 15; costParts = 15; }
-        if (type === 'bag') { costCC = 20; costParts = 20; }
+        if (type === 'bag') {
+          const lvl = this.player.bagLevel || 1;
+          if (lvl >= 3) { showToast('BOLSA JÁ ESTÁ NO NÍVEL MÁXIMO!'); return; }
+          costCC = lvl === 1 ? 15 : 25;
+          costParts = lvl === 1 ? 15 : 25;
+        }
         
         const totalCC = this.getAvailableCC();
         const totalParts = this.getAvailableParts();
@@ -5015,12 +5765,21 @@
              showToast('BOTAS COMPRADAS! DASH LIBERADO (SHIFT / BOTÃO MOBILE)!');
            } else if (type === 'bag') {
              this.player.bagLevel = (this.player.bagLevel || 1) + 1;
-             this.player.maxTimerBombs += 2;
-             this.player.timerBombs = Math.min(this.player.maxTimerBombs, this.player.timerBombs + 2);
-             showToast(`BOLSA EXPANDIDA (NV. ${this.player.bagLevel})! +2 BOMBAS!`);
+             // Capacidades: nv1=5, nv2=7, nv3=10
+             const caps = [0, 5, 7, 10];
+             const newCap = caps[this.player.bagLevel];
+             
+             if (!this.player.bagSlots) this.player.bagSlots = [];
+             while (this.player.bagSlots.length < newCap) {
+               this.player.bagSlots.push({ type: 'timed', cooldown: 0 });
+             }
+             
+             showToast(`BOLSA EXPANDIDA (NV. ${this.player.bagLevel})! Capacidade: ${newCap} bombas!`);
            }
            sound.playCCPickup();
            this.spawnSparks(this.player.x, this.player.y, '#00e5ff', 25);
+           this.updateHUD();
+           this.updateArmoryUI();
         } else {
            showToast(`RECURSOS INSUFICIENTES! Necessário: ${costCC} CC e ${costParts} PEÇAS`);
         }
@@ -5303,6 +6062,20 @@
           }
         });
 
+        // Empurra pilares móveis
+        if (room.pushables) {
+          room.pushables.forEach(p => {
+             const hit = affectedTiles.find(t => t.x === p.gridX && t.y === p.gridY);
+             if (hit) {
+                 const dx = p.gridX === bomb.gridX ? 0 : Math.sign(p.gridX - bomb.gridX);
+                 const dy = p.gridY === bomb.gridY ? 0 : Math.sign(p.gridY - bomb.gridY);
+                 if (dx !== 0 || dy !== 0) {
+                     p.push(dx, dy, room);
+                 }
+             }
+          });
+        }
+
         // Se a explosão em cruz atingir o nodo de chão do andar inferior, inicia animação de quebra!
         if (room.secretFloorNode && room.secretFloorNode.state === 'intact') {
           const distToNode = Math.hypot(bx - room.secretFloorNode.x, by - room.secretFloorNode.y);
@@ -5455,7 +6228,7 @@
         sound.playRewindGlitch();
         this.rewindGlitchTimer = 0.5;
         this.player.invulnerableTimer = 1.8;
-        showToast('TEMPO REBOBINADO: NOVO MAPA GERADO!');
+        showToast(window.t('ingame-rewind-long'));
 
         this.fadeState = 'out';
         this.pendingTransition = () => {
@@ -5823,9 +6596,20 @@
               ctx.fillRect(px + TILE_SIZE / 2 - 8, py + TILE_SIZE / 2 - 4, 16, 5);
               // Texto indicador
               ctx.fillStyle = 'rgba(255,255,255,0.8)';
-              ctx.font = '9px sans-serif';
+              ctx.font = 'bold 12px sans-serif';
               ctx.textAlign = 'center';
-              ctx.fillText('INVENTOR', px + TILE_SIZE / 2, py - 2);
+              ctx.fillText(window.t('ingame-inventor'), px + TILE_SIZE / 2, py - 4);
+
+            } else if (tile === TILE.SIGN) {
+              // Placa de Aviso (quando o inventor não foi resgatado)
+              ctx.fillStyle = '#8d6e63'; // Madeira clara
+              ctx.fillRect(px + 4, py + 10, TILE_SIZE - 8, TILE_SIZE - 24);
+              ctx.fillStyle = '#5d4037';
+              ctx.fillRect(px + TILE_SIZE/2 - 3, py + 10 + TILE_SIZE - 24, 6, 14); // Poste
+              ctx.fillStyle = '#fff';
+              ctx.font = '16px sans-serif';
+              ctx.textAlign = 'center';
+              ctx.fillText('🍔', px + TILE_SIZE/2, py + 26);
 
             } else if (tile === TILE.ARMORY) {
               // Mesa de Arsenal para modificações
@@ -5845,13 +6629,13 @@
               // Texto indicador
               if (window.game && window.game.player) {
                  ctx.fillStyle = 'rgba(255,255,255,0.8)';
-                 ctx.font = '9px sans-serif';
+                 ctx.font = 'bold 12px sans-serif';
                  ctx.textAlign = 'center';
                  if (window.game.player.armoryUnlocked) {
                     ctx.fillStyle = '#4caf50';
-                    ctx.fillText('ARSENAL (LIVRE)', px + TILE_SIZE / 2, py - 2);
+                    ctx.fillText(window.t('ingame-armoryfree'), px + TILE_SIZE / 2, py - 4);
                  } else {
-                    ctx.fillText('CUSTO: 10 CC | 10 PEÇAS', px + TILE_SIZE / 2, py - 2);
+                    ctx.fillText(`${window.t('ingame-cost')} 10 CC | 10 ${window.t('ingame-parts').toUpperCase()}`, px + TILE_SIZE / 2, py - 4);
                  }
               }
             } else if (tile === TILE.LOCK_GATE) {
@@ -5892,9 +6676,9 @@
                 const depCC = window.game.player.depositedCores || 0;
                 const depP = window.game.player.depositedParts || 0;
                 ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-                ctx.font = 'bold 9px sans-serif';
+                ctx.font = 'bold 12px sans-serif';
                 ctx.textAlign = 'center';
-                ctx.fillText(`BAÚ: ${depCC} CC | ${depP} PEÇAS`, px + TILE_SIZE/2, py - 6);
+                ctx.fillText(`${window.t('ingame-chests')} ${depCC} CC | ${depP} ${window.t('ingame-parts').toUpperCase()}`, px + TILE_SIZE/2, py - 6);
               }
             } else if (tile === TILE.HOLE) {
               // Buraco / Abismo aberto (Com Autotiling)
@@ -5957,10 +6741,10 @@
 
               // Ícone ou texto do duto coletor
               ctx.fillStyle = '#81c784';
-              ctx.font = 'bold 10px sans-serif';
+              ctx.font = 'bold 12px sans-serif';
               ctx.textAlign = 'center';
               ctx.textBaseline = 'middle';
-              ctx.fillText('GOELA', px + TILE_SIZE / 2, py + TILE_SIZE / 2);
+              ctx.fillText(window.t('ingame-goela'), px + TILE_SIZE / 2, py + TILE_SIZE / 2);
             } else if (tile === TILE.SECRET_LADDER) {
               // Escada de retorno da sala secreta
               ctx.fillStyle = '#37474f';
@@ -6133,6 +6917,11 @@
 
         // Cristais de Chrono Core (CC) caídos no chão
         this.ccDrops.forEach(drop => drop.draw(ctx));
+
+        // Pushables
+        if (room.pushables) {
+            room.pushables.forEach(p => p.render(ctx));
+        }
 
         // Jogador (Charlotte: Sprite Animado 64x64 com fallback)
         ctx.save();
@@ -6418,19 +7207,19 @@
 
         const depth = this.map.currentDepth || 1;
         if (room.isPuzzleRoom) {
-          coordsEl.textContent = `NÍVEL ${depth} • CÂMARA DE DESAFIO 💎 [${room.rx}, ${room.ry}]`;
+          coordsEl.textContent = `${window.t('ingame-level')} ${depth} • ${window.t('ingame-puzzle')} 💎 [${room.rx}, ${room.ry}]`;
         } else if (room.isMiniBossRoom) {
-          coordsEl.textContent = `NÍVEL ${depth} • ARENA DO RIVAL ⚔️ [${room.rx}, ${room.ry}]`;
+          coordsEl.textContent = `${window.t('ingame-level')} ${depth} • ${window.t('ingame-miniboss')} ⚔️ [${room.rx}, ${room.ry}]`;
         } else if (room.isBossRoom) {
-          coordsEl.textContent = `NÍVEL ${depth} • SALA DO CHEFE 💀 [${room.rx}, ${room.ry}]`;
+          coordsEl.textContent = `${window.t('ingame-level')} ${depth} • ${window.t('ingame-bossroom')} 💀 [${room.rx}, ${room.ry}]`;
         } else if (room.isSecret) {
-          coordsEl.textContent = `ANDAR SECRETO • NÍVEL ${depth}`;
+          coordsEl.textContent = `${window.t('ingame-secret')} • ${window.t('ingame-level')} ${depth}`;
         } else {
-          let extra = this.player.hasBossKey ? '   [CHAVE DO BOSS]' : '';
-          coordsEl.textContent = `NÍVEL ${depth}   SALA [${room.rx}, ${room.ry}]${extra}`;
+          let extra = this.player.hasBossKey ? `   [${window.t('ingame-bosskey')}]` : '';
+          coordsEl.textContent = `${window.t('ingame-level')} ${depth}   ${window.t('ingame-room')} [${room.rx}, ${room.ry}]${extra}`;
         }
 
-        enemyEl.textContent = `INIMIGOS: ${room.enemies.length}`;
+        enemyEl.textContent = `${window.t('ingame-enemies')}: ${room.enemies.length}`;
         if (room.enemies.length > 0) {
           enemyEl.className = 'status-alert';
         } else {
@@ -6439,22 +7228,39 @@
 
         if (room.isLockdown) {
           lockdownBanner.style.display = 'block';
+          lockdownBanner.textContent = window.t('ingame-lockdown');
         } else {
           lockdownBanner.style.display = 'none';
         }
 
-        // Bombas (Bag Level)
-        const bagLvl = this.player.bagLevel || 1;
+        // Bombas
         document.querySelectorAll('.bomb-btn').forEach(btn => {
           const type = btn.getAttribute('data-bomb');
-          if (type === 'impact') btn.style.display = bagLvl >= 2 ? 'flex' : 'none';
-          if (type === 'propulsor') btn.style.display = bagLvl >= 3 ? 'flex' : 'none';
+          if (type === 'impact') btn.style.display = this.player.unlockedImpact ? 'flex' : 'none';
+          if (type === 'propulsor') btn.style.display = this.player.unlockedPropulsor ? 'flex' : 'none';
+          
+          if (this.player.bagSlots) {
+             const slotsOfType = this.player.bagSlots.filter(s => s.type === type);
+             const readyCount = slotsOfType.filter(s => s.cooldown <= 0).length;
+             let ammoSpan = btn.querySelector('.ammo-text');
+             if (!ammoSpan) {
+                ammoSpan = document.createElement('span');
+                ammoSpan.className = 'ammo-text';
+                ammoSpan.style.marginLeft = '4px';
+                btn.querySelector('.bomb-name').appendChild(ammoSpan);
+             }
+             ammoSpan.textContent = `(${readyCount}/${slotsOfType.length})`;
+          }
         });
+
+        // Ocultar o ammo-counter antigo, se existir
+        const ammoEl = document.getElementById('ammo-counter');
+        if (ammoEl) ammoEl.style.display = 'none';
 
         // Atualiza nível da manopla e cristais
         const gauntletEl = document.getElementById('gauntlet-level');
         if (gauntletEl) {
-          gauntletEl.textContent = this.player.getGauntletTitle();
+          gauntletEl.textContent = `${window.t('ingame-gauntlet-lvl')} ${this.player.gauntletLevel} (${this.player.getThrowRange()}px)`;
         }
 
         const ccEl = document.getElementById('cc-counter');
@@ -6464,13 +7270,20 @@
         
         const partEl = document.getElementById('part-counter');
         if (partEl) {
-          partEl.textContent = `${this.player.parts || 0} PEÇAS`;
+          partEl.textContent = `${this.player.parts || 0} ${window.t('ingame-parts').toUpperCase()}`;
         }
-
-        const ammoEl = document.getElementById('ammo-counter');
-        if (ammoEl) {
-          ammoEl.textContent = `(${this.player.timerBombs})`;
-        }
+        
+        const gauntletBadge = document.querySelector('#gauntlet-badge .hud-badge-label');
+        if (gauntletBadge) gauntletBadge.textContent = window.t('ingame-gauntlet');
+        
+        const ccBadge = document.querySelector('#cc-badge .hud-badge-label');
+        if (ccBadge) ccBadge.textContent = window.t('ingame-cc');
+        
+        const partBadge = document.querySelector('#part-badge .hud-badge-label');
+        if (partBadge) partBadge.textContent = window.t('ingame-parts');
+        
+        const mapBadge = document.querySelector('.minimap-badge-label');
+        if (mapBadge) mapBadge.textContent = window.t('ingame-map');
 
         // Atualiza Botão de Dash Mobile
         const dashBtn = document.getElementById('dash-trigger');
@@ -6493,6 +7306,12 @@
             if (dashOverlay) dashOverlay.style.display = 'none';
           }
         }
+        
+        // Atualiza visibilidade dos atalhos no Desktop Guide
+        const guideBombs = document.getElementById('guide-bombs');
+        if (guideBombs) guideBombs.style.display = (this.player.unlockedImpact || this.player.unlockedPropulsor) ? 'inline-block' : 'none';
+        const guideDash = document.getElementById('guide-dash');
+        if (guideDash) guideDash.style.display = (this.player.bootsLevel >= 1) ? 'inline-block' : 'none';
       }
     }
 
@@ -6526,6 +7345,353 @@
           }
         });
       }
+    });
+    // Script de Menus
+    const i18n = {
+      'pt': {
+          'menu-start': 'Iniciar Jogo',
+          'menu-continue': 'Continuar',
+          'menu-options': 'Opções',
+          'menu-exit': 'Sair',
+          'opt-title': 'Opções',
+          'opt-music': 'Volume da Música',
+          'opt-sfx': 'Volume dos Efeitos',
+          'opt-shake': 'Vibração de Tela',
+          'opt-full': 'Tela Cheia',
+          'opt-crt': 'Efeito Visual Retrô (CRT)',
+          'opt-fps': 'Mostrar FPS',
+          'opt-aim': 'Sensibilidade da Mira',
+          'opt-lang': 'Idioma',
+          'opt-back': 'Voltar',
+          'opt-cont': 'Continuar',
+          'ingame-room': 'SALA',
+          'ingame-level': 'NÍVEL',
+          'ingame-enemies': 'INIMIGOS',
+          'ingame-gauntlet': 'Manopla',
+          'ingame-gauntlet-lvl': 'NV.',
+          'ingame-cc': 'Cristal Coal',
+          'ingame-parts': 'Peças',
+          'ingame-map': 'MAPA PROCEDURAL',
+          'ingame-lockdown': 'PORTÕES FECHADOS! ELIMINE OS AUTÔMATOS',
+          'ingame-bosskey': 'CHAVE DO BOSS',
+          'ingame-bossroom': 'SALA DO CHEFE',
+          'ingame-miniboss': 'ARENA DO RIVAL',
+          'ingame-puzzle': 'CÂMARA DE DESAFIO',
+          'ingame-secret': 'ANDAR SECRETO',
+          'ingame-inventor': 'INVENTOR',
+          'ingame-armoryfree': 'ARSENAL (LIVRE)',
+          'ingame-cost': 'CUSTO:',
+          'ingame-chests': 'BAÚS:',
+          'ingame-goela': 'GOELA',
+          'ingame-protocol': 'PROTOCOLO DE SEGURANÇA ATIVO!',
+          'ingame-duel': 'DUELO! DERROTE O ENGENHEIRO RIVAL!',
+          'ingame-bossfight': 'CONFRONTO FINAL! CHEFE MESTRE!',
+          'ingame-cleared': 'SALA LIBERADA!',
+          'ingame-rewind-short': 'TEMPO REBOBINADO!',
+          'ingame-rewind-long': 'TEMPO REBOBINADO: NOVO MAPA GERADO!',
+          'loading-title': 'Carregando...',
+          'tip-1': 'Dica: Bombas normais explodem em cruz!',
+          'tip-2': 'Dica: Use o Dash (Botões propulsores) para pular buracos e escapar de explosões!',
+          'tip-3': 'Dica: O Inventor pode aprimorar seu arsenal se você tiver Cristal Coal e Peças suficientes.',
+          'tip-4': 'Dica: O Chefe Mestre só pode ser acessado com a Chave do Boss.',
+          'armory-title': 'Balcão de Arsenal',
+          'armory-youhave': 'Você tem',
+          'armory-buy': 'Comprar',
+          'armory-max': 'MÁXIMO',
+          'armory-bought': 'COMPRADO',
+          'armory-upgrade': 'Melhorar',
+          'armory-close': 'Sair',
+          'armory-gauntlet-name': 'Manopla Mecânica',
+          'armory-gauntlet-desc': 'Aumenta o alcance de arremesso.',
+          'armory-boots-name': 'Botas Propulsoras',
+          'armory-boots-desc': 'Permite dar Dash (Aperte SHIFT ou Botão Mobile). Custo: 1 CC. Superaquece por 5s.',
+          'armory-bag-name': 'Bolsa Expandida',
+          'armory-bag-desc': 'Carrega mais bombas e permite trocar de tipo.'
+      },
+      'en': {
+          'menu-start': 'Start Game',
+          'menu-continue': 'Continue',
+          'menu-options': 'Options',
+          'menu-exit': 'Exit',
+          'opt-title': 'Options',
+          'opt-music': 'Music Volume',
+          'opt-sfx': 'SFX Volume',
+          'opt-shake': 'Screen Shake',
+          'opt-full': 'Fullscreen',
+          'opt-crt': 'CRT Visual Effect',
+          'opt-fps': 'Show FPS',
+          'opt-aim': 'Aim Sensitivity',
+          'opt-lang': 'Language',
+          'opt-back': 'Back',
+          'opt-cont': 'Continue',
+          'ingame-room': 'ROOM',
+          'ingame-level': 'LEVEL',
+          'ingame-enemies': 'ENEMIES',
+          'ingame-gauntlet': 'Gauntlet',
+          'ingame-gauntlet-lvl': 'LVL',
+          'ingame-cc': 'Crystal Coal',
+          'ingame-parts': 'Parts',
+          'ingame-map': 'PROCEDURAL MAP',
+          'ingame-lockdown': 'GATES CLOSED! ELIMINATE AUTOMATONS',
+          'ingame-bosskey': 'BOSS KEY',
+          'ingame-bossroom': 'BOSS ROOM',
+          'ingame-miniboss': 'RIVAL ARENA',
+          'ingame-puzzle': 'CHALLENGE CHAMBER',
+          'ingame-secret': 'SECRET FLOOR',
+          'ingame-inventor': 'INVENTOR',
+          'ingame-armoryfree': 'ARMORY (FREE)',
+          'ingame-cost': 'COST:',
+          'ingame-chests': 'CHESTS:',
+          'ingame-goela': 'GOELA',
+          'ingame-protocol': 'SECURITY PROTOCOL ACTIVE!',
+          'ingame-duel': 'DUEL! DEFEAT THE RIVAL ENGINEER!',
+          'ingame-bossfight': 'FINAL SHOWDOWN! MASTER BOSS!',
+          'ingame-cleared': 'ROOM CLEARED!',
+          'ingame-rewind-short': 'TIME REWOUND!',
+          'ingame-rewind-long': 'TIME REWOUND: NEW MAP GENERATED!',
+          'loading-title': 'Loading...',
+          'tip-1': 'Tip: Normal bombs explode in a cross pattern!',
+          'tip-2': 'Tip: Use Dash (Propulsion Boots) to jump holes and escape explosions!',
+          'tip-3': 'Tip: The Inventor can upgrade your gear if you have enough Crystal Coal and Parts.',
+          'tip-4': 'Tip: The Master Boss can only be accessed with the Boss Key.',
+          'armory-title': 'Armory Desk',
+          'armory-youhave': 'You have',
+          'armory-buy': 'Buy',
+          'armory-max': 'MAX',
+          'armory-bought': 'BOUGHT',
+          'armory-upgrade': 'Upgrade',
+          'armory-close': 'Close',
+          'armory-gauntlet-name': 'Mechanical Gauntlet',
+          'armory-gauntlet-desc': 'Increases throwing range.',
+          'armory-boots-name': 'Propulsion Boots',
+          'armory-boots-desc': 'Allows Dashing (Press SHIFT or Mobile Button). Cost: 1 CC. Overheats for 5s.',
+          'armory-bag-name': 'Expanded Bag',
+          'armory-bag-desc': 'Carry more bombs and swap types.'
+      }
+    };
+    let currentLang = 'pt';
+    window.t = function(key) { return i18n[currentLang][key] || key; };
+
+    function updateLanguage(lang) {
+      currentLang = lang;
+      
+      document.getElementById('btn-start').innerText = window.t('menu-start');
+      const btnContinue = document.getElementById('btn-continue');
+      if (btnContinue) btnContinue.innerText = window.t('menu-continue');
+      document.getElementById('btn-options').innerText = window.t('menu-options');
+      const btnExit = document.getElementById('btn-exit');
+      if (btnExit) btnExit.innerText = window.t('menu-exit');
+      
+      const optTitle = document.querySelector('#options-menu .menu-title');
+      if(optTitle) optTitle.innerText = window.t('opt-title');
+      
+      const lblMusic = document.querySelector('label[for="music-vol"]');
+      if(lblMusic) {
+          const val = document.getElementById('music-vol-val').innerText;
+          lblMusic.innerHTML = window.t('opt-music') + ' (<span id="music-vol-val">' + val + '</span>%)';
+      }
+      
+      const lblSfx = document.querySelector('label[for="sfx-vol"]');
+      if(lblSfx) {
+          const val = document.getElementById('sfx-vol-val').innerText;
+          lblSfx.innerHTML = window.t('opt-sfx') + ' (<span id="sfx-vol-val">' + val + '</span>%)';
+      }
+      
+      const lblShake = document.querySelector('label[for="screen-shake"]');
+      if(lblShake) lblShake.innerText = window.t('opt-shake');
+      
+      const lblFull = document.querySelector('label[for="fullscreen-toggle"]');
+      if(lblFull) lblFull.innerText = window.t('opt-full');
+      
+      const lblCrt = document.querySelector('label[for="crt-effect"]');
+      if(lblCrt) lblCrt.innerText = window.t('opt-crt');
+      
+      const lblFps = document.querySelector('label[for="show-fps"]');
+      if(lblFps) lblFps.innerText = window.t('opt-fps');
+      
+      const lblAim = document.querySelector('label[for="aim-sens"]');
+      if(lblAim) {
+          const val = document.getElementById('aim-sens-val').innerText;
+          lblAim.innerHTML = window.t('opt-aim') + ' (<span id="aim-sens-val">' + val + '</span>%)';
+      }
+      
+      const lblLang = document.querySelector('label[for="language-select"]');
+      if(lblLang) lblLang.innerText = window.t('opt-lang');
+      
+      const btnBack = document.getElementById('btn-back-menu');
+      if(btnBack) {
+          if (btnBack.innerText === 'Continuar' || btnBack.innerText === 'Continue') {
+              btnBack.innerText = window.t('opt-cont');
+          } else {
+              btnBack.innerText = window.t('opt-back');
+          }
+      }
+
+      if (window.game) { window.game.updateHUD(); window.game.updateArmoryUI(); }
+      const armoryH2 = document.querySelector('#armory-modal h2');
+      if(armoryH2) armoryH2.innerText = window.t('armory-title');
+      const btnClose = document.querySelector('.btn-close');
+      if(btnClose) btnClose.innerText = window.t('armory-close');
+      const armoryTitles = document.querySelectorAll('.armory-title');
+      if(armoryTitles.length >= 3) {
+          armoryTitles[0].innerText = window.t('armory-gauntlet-name');
+          armoryTitles[1].innerText = window.t('armory-boots-name');
+          armoryTitles[2].innerText = window.t('armory-bag-name');
+      }
+      const armoryDescs = document.querySelectorAll('.armory-desc');
+      if(armoryDescs.length >= 3) {
+          armoryDescs[0].innerText = window.t('armory-gauntlet-desc');
+          armoryDescs[1].innerText = window.t('armory-boots-desc');
+          armoryDescs[2].innerText = window.t('armory-bag-desc');
+      }
+      const armoryCosts = document.querySelectorAll('.armory-cost');
+      if(armoryCosts.length >= 3) {
+          armoryCosts[0].innerText = window.t('ingame-cost') + ' 10 CC | 10 ' + window.t('ingame-parts').toUpperCase();
+          armoryCosts[1].innerText = window.t('ingame-cost') + ' 15 CC | 15 ' + window.t('ingame-parts').toUpperCase();
+          armoryCosts[2].innerText = window.t('ingame-cost') + ' 20 CC | 20 ' + window.t('ingame-parts').toUpperCase();
+      }
+
+      const loadingTitle = document.getElementById('loading-title');
+      if(loadingTitle) loadingTitle.innerText = window.t('loading-title');
+      
+      const loadingTip = document.getElementById('loading-tip');
+      if(loadingTip) {
+          const tipKey = loadingTip.getAttribute('data-tip');
+          if(tipKey) loadingTip.innerText = window.t(tipKey);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const mainMenu = document.getElementById('main-menu');
+      const optionsMenu = document.getElementById('options-menu');
+      const loadingScreen = document.getElementById('loading-screen');
+      const loadingTip = document.getElementById('loading-tip');
+      
+      const btnStart = document.getElementById('btn-start');
+      const btnOptions = document.getElementById('btn-options');
+      const btnBackMenu = document.getElementById('btn-back-menu');
+
+      const musicVol = document.getElementById('music-vol');
+      const musicVolVal = document.getElementById('music-vol-val');
+      const sfxVol = document.getElementById('sfx-vol');
+      const sfxVolVal = document.getElementById('sfx-vol-val');
+      
+      const screenShake = document.getElementById('screen-shake');
+      const fullscreenToggle = document.getElementById('fullscreen-toggle');
+      const crtEffect = document.getElementById('crt-effect');
+      const showFps = document.getElementById('show-fps');
+      const aimSens = document.getElementById('aim-sens');
+      const aimSensVal = document.getElementById('aim-sens-val');
+      const languageSelect = document.getElementById('language-select');
+
+      // Botões de navegação
+      btnStart.addEventListener('click', () => {
+        mainMenu.style.display = 'none';
+        mainMenu.classList.add('hidden');
+        
+        // Mostrar tela de carregamento
+        const tipIndex = Math.floor(Math.random() * 4) + 1;
+        const tipKey = `tip-${tipIndex}`;
+        if (loadingTip) {
+            loadingTip.setAttribute('data-tip', tipKey);
+            loadingTip.innerText = window.t(tipKey);
+        }
+        const loadingTitle = document.getElementById('loading-title');
+        if (loadingTitle) loadingTitle.innerText = window.t('loading-title');
+        
+        if (loadingScreen) loadingScreen.style.display = 'flex';
+        
+        setTimeout(() => {
+          if (loadingScreen) loadingScreen.style.display = 'none';
+          if(window.game) {
+              window.game.isPaused = false;
+          }
+        }, 5000);
+      });
+      
+      const btnContinue = document.getElementById('btn-continue');
+      if (btnContinue) {
+        btnContinue.addEventListener('click', () => {
+          mainMenu.classList.add('hidden');
+          if(window.game) {
+              window.game.isPaused = false;
+          }
+        });
+      }
+
+      btnOptions.addEventListener('click', () => {
+        mainMenu.classList.add('hidden');
+        optionsMenu.classList.remove('hidden');
+      });
+
+      btnBackMenu.addEventListener('click', (e) => {
+        if (window.game && window.game.isPaused && btnBackMenu.innerText === "Continuar") {
+          window.game.isPaused = false;
+          optionsMenu.classList.add('hidden');
+          btnBackMenu.innerText = "Voltar";
+        } else {
+          optionsMenu.classList.add('hidden');
+          mainMenu.classList.remove('hidden');
+        }
+      });
+
+      // Pause com ESC
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          if (window.game) {
+            window.game.isPaused = !window.game.isPaused;
+            if (window.game.isPaused) {
+              // Quando pausa, vamos direto pras opções (que tem volume, sensi e shake como pedido)
+              optionsMenu.classList.remove('hidden');
+              mainMenu.classList.add('hidden');
+              // Opcional: mudar texto do botão voltar para continuar
+              btnBackMenu.innerText = "Continuar";
+            } else {
+              optionsMenu.classList.add('hidden');
+              mainMenu.classList.add('hidden');
+              btnBackMenu.innerText = "Voltar";
+            }
+          }
+        }
+      });
+
+      // Atualização dos inputs
+      musicVol.addEventListener('input', (e) => {
+        musicVolVal.innerText = e.target.value;
+      });
+
+      sfxVol.addEventListener('input', (e) => {
+        sfxVolVal.innerText = e.target.value;
+      });
+
+      aimSens.addEventListener('input', (e) => {
+        aimSensVal.innerText = e.target.value;
+      });
+
+      fullscreenToggle.addEventListener('change', (e) => {
+        if(e.target.checked) {
+          document.documentElement.requestFullscreen().catch(err => {
+            console.warn(`Error attempting to enable fullscreen: ${err.message}`);
+            e.target.checked = false;
+          });
+        } else {
+          if (document.fullscreenElement) {
+            document.exitFullscreen();
+          }
+        }
+      });
+
+      if (languageSelect) {
+        languageSelect.addEventListener('change', (e) => {
+          updateLanguage(e.target.value);
+        });
+      }
+      
+      // Initialize with current language to ensure everything matches the select dropdown
+      if (languageSelect) {
+         updateLanguage(languageSelect.value);
+      }
+      
     });
   </script>
 </body>
