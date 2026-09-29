@@ -1579,46 +1579,58 @@
       setupTouch() {
         this.setupTouchJoystick();
 
+        const bindMobileButton = (btn, callback) => {
+          if (!btn) return;
+          let lastTriggerTime = 0;
+          const handler = (e) => {
+            if (e) {
+              if (e.cancelable) e.preventDefault();
+              e.stopPropagation();
+            }
+            const now = Date.now();
+            if (now - lastTriggerTime < 150) return;
+            lastTriggerTime = now;
+            sound.init();
+            callback(e);
+          };
+          btn.addEventListener('pointerdown', handler);
+          btn.addEventListener('touchstart', handler);
+          btn.addEventListener('click', handler);
+        };
+
         // Botões de Seleção de Bombas Mobile
         const bombButtons = document.querySelectorAll('.bomb-btn');
         bombButtons.forEach(btn => {
           const bombType = btn.getAttribute('data-bomb');
-          const triggerSelect = (e) => {
-            e.preventDefault();
-            sound.init();
+          bindMobileButton(btn, () => {
             this.selectBomb(bombType);
-          };
-          btn.addEventListener('pointerdown', triggerSelect);
-          btn.addEventListener('click', triggerSelect);
+          });
         });
 
         // Botão de Ação Mobile (Plantar/Lançar rápido)
         const actionBtn = document.getElementById('action-trigger');
         if (actionBtn) {
-          const triggerAction = (e) => {
-            e.preventDefault();
-            sound.init();
+          bindMobileButton(actionBtn, () => {
             actionBtn.classList.add('active');
             this.actionTriggered = true;
+            this.isAiming = false;
+            this.throwTriggered = false;
+            this.throwTarget = null;
             setTimeout(() => actionBtn.classList.remove('active'), 120);
-          };
-          actionBtn.addEventListener('pointerdown', triggerAction);
-          actionBtn.addEventListener('click', triggerAction);
+          });
         }
 
         // Botão de Dash Mobile
         const dashBtn = document.getElementById('dash-trigger');
         if (dashBtn) {
-          const triggerDash = (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            sound.init();
+          bindMobileButton(dashBtn, () => {
             dashBtn.classList.add('active');
             this.dashTriggered = true;
+            this.isAiming = false;
+            this.throwTriggered = false;
+            this.throwTarget = null;
             setTimeout(() => dashBtn.classList.remove('active'), 120);
-          };
-          dashBtn.addEventListener('pointerdown', triggerDash);
-          dashBtn.addEventListener('click', triggerDash);
+          });
         }
       }
 
@@ -1631,7 +1643,8 @@
         const maxRadius = 46; // Raio máximo de arrasto do analógico
 
         const handleStart = (e) => {
-          e.preventDefault();
+          if (e.cancelable) e.preventDefault();
+          e.stopPropagation();
           sound.init();
           this.joystickPointerId = e.pointerId;
           try { zone.setPointerCapture(e.pointerId); } catch(err) {}
@@ -1650,7 +1663,8 @@
 
         const handleMove = (e) => {
           if (!this.joystickActive || e.pointerId !== this.joystickPointerId) return;
-          e.preventDefault();
+          if (e.cancelable) e.preventDefault();
+          e.stopPropagation();
 
           const deltaX = e.clientX - this.joystickCenter.x;
           const deltaY = e.clientY - this.joystickCenter.y;
@@ -1679,7 +1693,8 @@
 
         const handleEnd = (e) => {
           if (e.pointerId !== this.joystickPointerId && this.joystickPointerId !== null) return;
-          e.preventDefault();
+          if (e.cancelable) e.preventDefault();
+          e.stopPropagation();
           this.joystickActive = false;
           this.joystickPointerId = null;
           this.joystickVector = { dx: 0, dy: 0 };
@@ -1709,45 +1724,65 @@
           const rect = this.canvas.getBoundingClientRect();
           const scaleX = 600 / rect.width;
           const scaleY = 600 / rect.height;
+          let clientX = e.clientX;
+          let clientY = e.clientY;
+          if (clientX === undefined && e.touches && e.touches.length > 0) {
+            clientX = e.touches[0].clientX;
+            clientY = e.touches[0].clientY;
+          } else if (clientX === undefined && e.changedTouches && e.changedTouches.length > 0) {
+            clientX = e.changedTouches[0].clientX;
+            clientY = e.changedTouches[0].clientY;
+          }
+          clientX = clientX || 0;
+          clientY = clientY || 0;
           return {
-            x: Math.max(0, Math.min(600, (e.clientX - rect.left) * scaleX)),
-            y: Math.max(0, Math.min(600, (e.clientY - rect.top) * scaleY))
+            x: Math.max(0, Math.min(600, (clientX - rect.left) * scaleX)),
+            y: Math.max(0, Math.min(600, (clientY - rect.top) * scaleY))
           };
         };
 
         // Pointer Down no Canvas: Inicia mira para jogar bomba
-        this.canvas.addEventListener('pointerdown', (e) => {
+        const handleStartAim = (e) => {
           sound.init();
+
+          // Ignorar se o clique/toque originou de botões de interface sobrepostos
+          if (e.target !== this.canvas && !this.canvas.contains(e.target)) return;
 
           // Botão direito = Lançamento rápido direto no cursor!
           if (e.button === 2) {
-            e.preventDefault();
+            if (e.cancelable) e.preventDefault();
             const coords = getCanvasCoords(e);
             this.throwTriggered = true;
             this.throwTarget = { x: coords.x, y: coords.y };
             return;
           }
 
-          // Botão esquerdo ou toque = Inicia clique e arraste para mirar e jogar
-          if (e.button === 0) {
-            try { this.canvas.setPointerCapture(e.pointerId); } catch(err) {}
+          // Botão esquerdo ou toque
+          if (e.button === 0 || e.button === undefined) {
+            if (e.cancelable) e.preventDefault(); // Prevents mouse event synthesis and scroll
             const coords = getCanvasCoords(e);
             this.isAiming = true;
             this.aimStart = { x: coords.x, y: coords.y };
             this.aimCurrent = { x: coords.x, y: coords.y };
             this.mousePos = { x: coords.x, y: coords.y, active: true };
+            try { this.canvas.setPointerCapture(e.pointerId); } catch(err) {}
           }
-        });
+        };
+
+        this.canvas.addEventListener('pointerdown', handleStartAim);
 
         // Pointer Move: Atualiza direção da mira
-        window.addEventListener('pointermove', (e) => {
+        const handleMoveAim = (e) => {
           const coords = getCanvasCoords(e);
           this.mousePos = { x: coords.x, y: coords.y, active: true };
 
           if (this.isAiming) {
+            if (e.cancelable) e.preventDefault();
             this.aimCurrent = { x: coords.x, y: coords.y };
           }
-        });
+        };
+
+        window.addEventListener('pointermove', handleMoveAim, { passive: false });
 
         // Pointer Up / Cancel: SOLTA PARA LANÇAR A BOMBA!
         const endAim = (e) => {
@@ -1761,6 +1796,9 @@
 
         window.addEventListener('pointerup', endAim);
         window.addEventListener('pointercancel', endAim);
+        this.canvas.addEventListener('pointerup', endAim);
+        this.canvas.addEventListener('pointercancel', endAim);
+        this.canvas.addEventListener('lostpointercapture', endAim);
 
         // Scroll do mouse para alternar tipo de bomba
         window.addEventListener('wheel', (e) => {
@@ -1820,6 +1858,8 @@
       consumeAction() {
         if (this.actionTriggered) {
           this.actionTriggered = false;
+          this.throwTriggered = false;
+          this.throwTarget = null;
           return true;
         }
         return false;
@@ -2529,6 +2569,12 @@
         this.hasBossKey = false;
         this.unlockedImpact = false;
         this.unlockedPropulsor = false;
+        this.bagSlots = [];
+        const caps = [0, 5, 7, 10];
+        const cap = caps[this.bagLevel];
+        while (this.bagSlots.length < cap) {
+          this.bagSlots.push({ type: 'timed', cooldown: 0 });
+        }
       }
 
       getThrowRange() {
