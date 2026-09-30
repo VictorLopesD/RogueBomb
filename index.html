@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
@@ -909,6 +909,65 @@
       border-radius: 6px;
       font-weight: bold;
     }
+      #lore-panel {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translateY(-50%);
+      margin-left: 320px;
+      width: 320px;
+      background: #1e160e;
+      border: 3px solid #c59b27;
+      border-radius: 4px;
+      padding: 16px;
+      display: none;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+      z-index: 100;
+      color: #ecf0f1;
+    }
+    .lore-header {
+      font-family: monospace;
+      font-weight: bold;
+      color: #f39c12;
+      font-size: 14px;
+      border-bottom: 1px solid rgba(197, 155, 39, 0.4);
+      padding-bottom: 6px;
+    }
+    .lore-official {
+      font-family: serif;
+      font-size: 15px;
+      font-style: italic;
+      color: #b0bec5;
+      line-height: 1.4;
+    }
+    .lore-scrawl {
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      font-size: 18px;
+      font-weight: bold;
+      color: #e74c3c;
+      transform: rotate(-2deg);
+      line-height: 1.3;
+      margin: 8px 0;
+    }
+    .lore-tip {
+      font-family: sans-serif;
+      font-size: 13px;
+      color: #00e5ff;
+      background: rgba(0, 229, 255, 0.1);
+      padding: 8px;
+      border-radius: 4px;
+      border: 1px solid rgba(0, 229, 255, 0.3);
+    }
+    @media (max-width: 1260px) {
+      #lore-panel {
+        left: 50%;
+        margin-left: -160px;
+        top: 20px;
+        transform: none;
+      }
+    }
   </style>
 </head>
 <body>
@@ -956,6 +1015,14 @@
     <div id="lockdown-banner">LOCKDOWN! ELIMINE OS AUTÔMATOS</div>
 
     <!-- Canvas Central do Jogo -->
+        <!-- Painel de Lore / Panfleto -->
+    <div id="lore-panel">
+      <div class="lore-header">📜 REGISTRO ENCONTRADO (1826)</div>
+      <div id="lore-official" class="lore-official"></div>
+      <div id="lore-scrawl" class="lore-scrawl"></div>
+      <div id="lore-tip" class="lore-tip"></div>
+      <button style="margin-top: 8px; padding: 6px; background: #333; color: #fff; border: 1px solid #555; cursor: pointer; border-radius: 4px;" onclick="document.getElementById('lore-panel').style.display='none'">Fechar</button>
+    </div>
     <div id="canvas-wrapper">
       <canvas id="game-canvas" width="600" height="600"></canvas>
     </div>
@@ -1032,8 +1099,17 @@
       <h1 class="menu-title">RogueBomb</h1>
       <button class="menu-btn" id="btn-start">Iniciar Jogo</button>
       <button class="menu-btn" id="btn-continue" style="display: none;">Continuar</button>
-      <button class="menu-btn" id="btn-options">Opções</button>
+            <button class="menu-btn" id="btn-options">Opções</button>
+      
       <button class="menu-btn" id="btn-exit" style="display: none;">Sair</button>
+    </div>
+
+        <!-- Tela de Galeria de Lore -->
+    <div id="gallery-menu" class="menu-overlay hidden">
+      <h1 class="menu-title" style="font-size: 2rem; color: #f39c12;">Galeria de Registros</h1>
+      <div id="gallery-list" style="max-height: 60vh; overflow-y: auto; width: 420px; max-width: 90%; background: rgba(0,0,0,0.7); border: 2px solid #333; padding: 15px; border-radius: 8px; text-align: left;">
+      </div>
+      <button class="menu-btn" onclick="closeLoreGallery()" style="margin-top: 20px;">Voltar</button>
     </div>
 
     <!-- Tela de Menu de Opções -->
@@ -1084,7 +1160,8 @@
           </select>
         </div>
 
-        <button class="menu-btn" style="width: 100%; margin-top: 16px;" id="btn-back-menu">Voltar</button>
+                <button class="menu-btn" style="width: 100%; margin-top: 16px; display: none;" id="btn-gallery-in-game" onclick="openLoreGallery()">Galeria de Registros</button>
+        <button class="menu-btn" style="width: 100%; margin-top: 16px; background: #e74c3c; border: 2px solid #c0392b;" onclick="if(confirm('Apagar todo o progresso?')) { clearSave(); location.reload(); }">Apagar Save</button>`n        <button class="menu-btn" style="width: 100%; margin-top: 16px;" id="btn-back-menu">Voltar</button>
       </div>
     </div>
 
@@ -1126,6 +1203,16 @@
             <span class="armory-cost" id="bag-upgrade-cost">Custo: 20 CC | 20 PEÇAS</span>
           </div>
           <button class="btn-buy" id="btn-buy-bag" onclick="window.game.buyUpgrade('bag')">Melhorar</button>
+        </div>
+
+
+        <div class="armory-item">
+          <div class="armory-info">
+            <span class="armory-title">Bomba-Relógio Nível 2</span>
+            <span class="armory-desc">Reação em Cadeia: detonam imediatamente ao sofrer impacto de outras explosões.</span>
+            <span class="armory-cost" id="timerbomb-upgrade-cost">Custo: 20 CC | 15 PEÇAS</span>
+          </div>
+          <button class="btn-buy" id="btn-buy-timerbomb" onclick="window.game.buyUpgrade('timerbomb')">Comprar</button>
         </div>
       </div>
 
@@ -1171,6 +1258,7 @@
     </div>
   </div>
 
+  <script src="lore_data.js"></script>
   <script>
     /* ==========================================================================
        ROGUEBOMB MVP - ARQUITETURA DE CÓDIGO
@@ -1562,6 +1650,39 @@
         gain.connect(this.ctx.destination);
         osc.start(now);
         osc.stop(now + 0.15);
+      }
+
+      playPaperRustle() {
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        
+        // Ruído branco rápido filtrado para parecer papel
+        const bufferSize = this.ctx.sampleRate * 0.15; // 0.15s
+        const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+          data[i] = Math.random() * 2 - 1;
+        }
+        
+        const noiseSource = this.ctx.createBufferSource();
+        noiseSource.buffer = buffer;
+        
+        const filter = this.ctx.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.frequency.value = 2500;
+        filter.Q.value = 0.8;
+        
+        const gain = this.ctx.createGain();
+        gain.gain.setValueAtTime(0, now);
+        gain.gain.linearRampToValueAtTime(0.5, now + 0.05);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+        
+        noiseSource.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.ctx.destination);
+        
+        noiseSource.start(now);
       }
 
       playCCPickup() {
@@ -2167,6 +2288,7 @@
         this.cleared = isStart || isSecret;
         this.isLockdown = false;
         this.hasGoela = false;
+        this.loreDrops = [];
         this.isBossRoom = false;
         this.isMiniBossRoom = false;
         this.hasBossKey = false;
@@ -2595,17 +2717,22 @@
 
       findSpawnSpot() {
         const mid = Math.floor(GRID_SIZE / 2);
-        for (let tries = 0; tries < 70; tries++) {
+        for (let tries = 0; tries < 150; tries++) {
           const x = Math.floor(Math.random() * (GRID_SIZE - 4)) + 2;
           const y = Math.floor(Math.random() * (GRID_SIZE - 4)) + 2;
-          // Não spawna em cima de paredes, da porta central ou da Goela
           if (this.grid[y][x] === TILE.EMPTY && (Math.abs(x - mid) > 1 || Math.abs(y - mid) > 1)) {
-            // Evita spawn próximo às 4 portas para não emboscar o jogador ao entrar na sala
             if (Math.hypot(x - mid, y - 1) < 2.8) continue;
             if (Math.hypot(x - mid, y - (GRID_SIZE - 2)) < 2.8) continue;
             if (Math.hypot(x - 1, y - mid) < 2.8) continue;
             if (Math.hypot(x - (GRID_SIZE - 2), y - mid) < 2.8) continue;
             return { x: x * TILE_SIZE + TILE_SIZE / 2, y: y * TILE_SIZE + TILE_SIZE / 2 };
+          }
+        }
+        for (let y = 2; y < GRID_SIZE - 2; y++) {
+          for (let x = 2; x < GRID_SIZE - 2; x++) {
+            if (this.grid[y][x] === TILE.EMPTY) {
+              return { x: x * TILE_SIZE + TILE_SIZE / 2, y: y * TILE_SIZE + TILE_SIZE / 2 };
+            }
           }
         }
         return null;
@@ -2812,6 +2939,45 @@
         // Sala Inicial
         this.currentRoom = this.rooms.get(`${sx},${sy}`);
         this.currentRoom.visited = true;
+
+        // Distribuição procedural dos Panfletos de Lore
+        // Distribuição procedural dos Panfletos de Lore
+        if (window.LORE_PAMPHLETS) {
+          const collected = (() => {
+            try { return new Set(JSON.parse(localStorage.getItem("roguebomb_collected_lore") || "[]")); } 
+            catch(e) { return new Set(); }
+          })();
+          
+          const fragments = window.LORE_PAMPHLETS.operation_manual.fragments;
+          // Pega só os não coletados
+          let uncollected = fragments.filter(f => !collected.has(f.id));
+          
+          // Embaralha para dar variedade
+          uncollected.sort(() => Math.random() - 0.5);
+          
+          // Define para spawnar até 3 documentos novos na fase!
+          let toSpawn = uncollected.slice(0, 3);
+          
+          toSpawn.forEach(frag => {
+            let targetRoom = null;
+            if (frag.roomTypeTarget === 'goela') targetRoom = roomArray.find(r => r.hasGoela);
+            else if (frag.roomTypeTarget === 'combat') targetRoom = roomArray.find(r => !r.isStart && !r.hasGoela && !r.isPuzzleRoom && !r.isBossRoom && r.enemies && r.enemies.length > 0);
+            else if (frag.roomTypeTarget === 'secret_floor') targetRoom = roomArray.find(r => r.secretFloorNode !== null);
+            
+            // Se for random ou não achou o alvo específico, pega uma sala válida
+            if (!targetRoom || frag.roomTypeTarget === 'random') {
+               const validRooms = roomArray.filter(r => !r.isStart && !r.isBossRoom && !r.isPuzzleRoom && !r.isMiniBossRoom);
+               if (validRooms.length > 0) targetRoom = validRooms[Math.floor(Math.random() * validRooms.length)];
+            }
+            if (!targetRoom) targetRoom = roomArray.find(r => !r.isStart);
+            if (!targetRoom) targetRoom = roomArray[0];
+
+            const spot = targetRoom.findSpawnSpot();
+            if (spot) {
+              targetRoom.loreDrops.push(new LorePamphletDrop(spot.x, spot.y, frag));
+            }
+          });
+        }
       }
 
       getRoom(rx, ry) {
@@ -2839,7 +3005,8 @@
         this.throwAnimTimer = 0;
         this.gauntletLevel = 1; // Nível da Manopla Mecânica (1: 140px, 2: 220px, 3: 300px)
         this.bootsLevel = 0;    // 1 para liberar Dash
-        this.bagLevel = 1;      // +2 bombas e tipos por nível
+        this.bagLevel = 1;
+        this.timerBombLevel = 1;      // +2 bombas e tipos por nível
         this.dashCooldown = 0;
         this.isDashing = false;
         this.dashTimer = 0;
@@ -2862,10 +3029,10 @@
 
       getThrowRange() {
         switch (this.gauntletLevel) {
-          case 1: return 140; // Nível 1: ~3.5 tiles
-          case 2: return 220; // Nível 2: ~5.5 tiles
+          case 1: return 130; // N�vel 1
+          case 2: return 190; // N�vel 2
           case 3:
-          default: return 300; // Nível 3: ~7.5 tiles (Alcance Máximo)
+          default: return 250; // N�vel 3
         }
       }
 
@@ -3213,6 +3380,10 @@
           if (game.player.invulnerableTimer <= 0) {
             game.spawnFloatingText('CUIDADO!', game.player.x, game.player.y - 20, '#ffca28');
           }
+        }
+        
+        if (game.triggerChainReaction) {
+          game.triggerChainReaction(this.x, this.y, blastRadius);
         }
       }
 
@@ -4475,8 +4646,9 @@
               engine.ccDrops.push(new ChronoCoreDrop(this.x + offX, this.y + offY));
             }
             engine.player.parts = (engine.player.parts || 0) + 5;
-            engine.spawnFloatingText('+5 PEÇAS!', this.x, this.y - 35, '#cfd8dc');
-          }
+            engine.spawnFloatingText('+5 PEAS!', this.x, this.y - 35, '#cfd8dc');
+            if (!this.isFinalBoss) { engine.player.hasSteamPropulsionCore = true; showToast('VOCE ENCONTROU: NUCLEO DE PROPULSAO A VAPOR!'); }
+          } if(window.game) saveGame();
           return true;
         }
         return false;
@@ -4672,6 +4844,44 @@
           ctx.lineWidth = 1.5;
           ctx.strokeRect(-9, -9, 18, 18);
         }
+        ctx.restore();
+      }
+    }
+
+    class LorePamphletDrop {
+      constructor(x, y, fragment) {
+        this.x = x;
+        this.y = y;
+        this.baseY = y;
+        this.radius = 16;
+        this.floatTimer = Math.random() * Math.PI * 2;
+        this.pickupDistance = 30;
+        this.fragment = fragment;
+      }
+
+      update(dt, player) {
+        this.floatTimer += dt * 3;
+        const dx = player.x - this.x;
+        const dy = (player.y - 6) - this.y;
+        return Math.hypot(dx, dy) < this.pickupDistance;
+      }
+
+      draw(ctx) {
+        ctx.save();
+        const bounce = Math.sin(this.floatTimer) * 5;
+        ctx.translate(this.x, this.y + bounce);
+        const glow = Math.abs(Math.sin(this.floatTimer * 2));
+        ctx.shadowColor = '#f1c40f';
+        ctx.shadowBlur = 10 + glow * 15;
+        ctx.fillStyle = '#f5deb3';
+        ctx.fillRect(-10, -12, 20, 24);
+        ctx.strokeStyle = '#c59b27';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(-10, -12, 20, 24);
+        ctx.fillStyle = '#e74c3c';
+        ctx.fillRect(-6, -6, 12, 2);
+        ctx.fillRect(-6, -1, 10, 2);
+        ctx.fillRect(-6, 4, 8, 2);
         ctx.restore();
       }
     }
@@ -4918,6 +5128,7 @@
         this.chaoExtraSprite = new Image();
         this.chaoExtraSprite.src = 'Img/chao_mina1-3.png';
 
+        this.loreManager = new window.LoreManager();
         this.ccDrops = [];
         this.floatingTexts = [];
 
@@ -5071,7 +5282,20 @@
           }
         }
 
-        // Atualização e coleta de drops de CC (Chrono Cores) e Peças das caixas/inimigos
+        
+        if (room && room.loreDrops) {
+          for (let i = room.loreDrops.length - 1; i >= 0; i--) {
+            const drop = room.loreDrops[i];
+            const canPickup = drop.update(dt, this.player);
+            if (canPickup) {
+              this.loreManager.collect(drop.fragment, sound);
+              this.spawnSparks(drop.x, drop.y, '#d4b886', 15);
+              this.spawnFloatingText('Registro Encontrado', drop.x, drop.y - 15, '#d4b886');
+              room.loreDrops.splice(i, 1);
+            }
+          }
+        }
+
         for (let i = this.ccDrops.length - 1; i >= 0; i--) {
           const drop = this.ccDrops[i];
           const canPickup = drop.update(dt, this.player);
@@ -5450,8 +5674,8 @@
               this.spawnSparks(this.player.x, this.player.y, '#ffd700', 45);
               this.spawnSparks(this.player.x, this.player.y, '#00e5ff', 35);
               this.spawnFloatingText(`+${rewardCount} CC & +${partReward} PEÇAS`, this.player.x, this.player.y - 22, '#ffd700');
-              showToast(`COFRE QUÂNTICO ABERTO: +${rewardCount} CC & +${partReward} PEÇAS!`);
-            } else {
+              if (this.map.currentDepth >= 4 && !this.player.hasHydraulicPiston) { this.player.hasHydraulicPiston = true; showToast('COFRE ABERTO! + PISTÃO HIDRÁULICO OBTIDO!'); } else { showToast(`COFRE QUÂNTICO ABERTO: +${rewardCount} CC`); }
+            } else { saveGame();
               showToast('COFRE TRANCADO! RESOLVA O PUZZLE DA SALA');
             }
           }
@@ -5677,6 +5901,54 @@
         this.updateArmoryUI();
       }
 
+      checkChest() {
+        if (!this.map || !this.map.currentRoom || !this.player) return;
+        const room = this.map.currentRoom;
+        const pGridX = Math.floor(this.player.x / TILE_SIZE);
+        const pGridY = Math.floor(this.player.y / TILE_SIZE);
+
+        if (pGridX >= 0 && pGridX < GRID_SIZE && pGridY >= 0 && pGridY < GRID_SIZE) {
+          if (room.grid[pGridY][pGridX] === TILE.CHEST || (pGridY > 0 && room.grid[pGridY-1][pGridX] === TILE.CHEST)) {
+            if (document.getElementById('chest-modal').style.display !== 'none') return;
+            this.openChest();
+          }
+        }
+      }
+
+      openChest() {
+        const modal = document.getElementById('chest-modal');
+        if (!modal) return;
+        
+        const depCC = this.player.depositedCores || 0;
+        const depP = this.player.depositedParts || 0;
+        
+        document.getElementById('chest-resources').innerHTML = `
+          <div style="color:#ffcc00; margin-bottom:4px;">💎 Cristal Coal Guardado: <b>` + depCC + ` CC</b></div>
+          <div style="color:#b0bec5;">⚙️ Peças Guardadas: <b>` + depP + `</b></div>
+        `;
+        
+        let keysHtml = '';
+        if (this.player.hasHydraulicPiston) keysHtml += '<div>🔹 Pistão Hidráulico de Alta Pressão</div>';
+        if (this.player.hasSteamPropulsionCore) keysHtml += '<div>💨 Núcleo de Propulsão a Vapor</div>';
+        if (this.player.hasBossKey) keysHtml += '<div>🔑 Chave do Boss</div>';
+        if (keysHtml === '') keysHtml = '<div style="color:#555;">Nenhum item especial guardado.</div>';
+        document.getElementById('chest-key-items').innerHTML = keysHtml;
+        
+        let upgHtml = '';
+        upgHtml += `<div>Manopla Nível ` + this.player.gauntletLevel + (this.player.gauntletLevel >= 2 ? ` <span style="color:#a5d6a7;">(Pistão Aplicado)</span>` : (this.player.hasHydraulicPiston ? ` <span style="color:#ffca28;">(Pistão Disponível - Use a Oficina)</span>` : ` <span style="color:#ef5350;">(Falta Pistão Hidráulico)</span>`)) + `</div>`;
+        upgHtml += `<div>Botas Propulsoras: ` + (this.player.bootsLevel >= 1 ? `<span style="color:#a5d6a7;">Desbloqueadas</span>` : (this.player.hasSteamPropulsionCore ? `<span style="color:#ffca28;">Prontas para fabricar</span>` : `<span style="color:#ef5350;">Falta Núcleo a Vapor</span>`)) + `</div>`;
+        
+        document.getElementById('chest-upgrades').innerHTML = upgHtml;
+        
+        modal.style.display = 'block';
+      }
+
+      closeChest() {
+        const modal = document.getElementById('chest-modal');
+        if (modal) modal.style.display = 'none';
+        this.player.y += TILE_SIZE * 0.8; // Empurra jogador um pouco pra tras
+      }
+
       closeArmory() {
         document.getElementById('armory-modal').classList.remove('visible');
       }
@@ -5720,9 +5992,21 @@
           const costParts = bagLvl === 1 ? 15 : 25;
           btnBag.textContent = window.t('armory-upgrade');
           btnBag.disabled = (totalCC < costCC || totalParts < costParts);
-          if (bagCostEl) bagCostEl.textContent = `→ ${nextCap} bombas  |  Custo: ${costCC} CC | ${costParts} PEÇAS`;
+          if (bagCostEl) bagCostEl.textContent = '  ' + nextCap + ' bombas  |  Custo: ' + costCC + ' CC | ' + costParts + ' PECAS';
+        }
+
+        var btnTimer = document.getElementById('btn-buy-timerbomb');
+        if (btnTimer) {
+          if (this.player.timerBombLevel >= 2) {
+            btnTimer.textContent = 'Adquirido';
+            btnTimer.disabled = true;
+          } else {
+            btnTimer.textContent = 'Comprar';
+            btnTimer.disabled = (totalCC < 20 || totalParts < 15);
+          }
         }
       }
+
 
       switchArmoryTab(tab) {
         document.getElementById('armory-panel-upgrades').style.display = tab === 'upgrades' ? 'flex' : 'none';
@@ -5780,7 +6064,24 @@
         
         let curr = order.indexOf(slot.type);
         if (curr === -1) curr = 0;
-        slot.type = order[(curr + 1) % order.length];
+        
+        let nextType = order[(curr + 1) % order.length];
+        
+        // Custo da Impact Bomb: 1 CC (Eliminada exigência de peças)
+        if (nextType === 'impact') {
+          if (this.getAvailableCC() >= 1) {
+            this.consumeCurrency(1, 0); // 1 CC, 0 parts
+            showToast('Bomba de Impacto Fabricada: -1 CC', 1000);
+          } else {
+            showToast('CC Insuficiente para Bomba de Impacto!', 1000);
+            // Pula para a próxima (Propulsor ou volta pro Timed)
+            curr++;
+            nextType = order[(curr + 1) % order.length];
+          }
+        }
+
+        // Custo do Propulsor (Mantendo original ou mudando? Prompt não fala do propulsor, só Impact)
+        slot.type = nextType;
         slot.cooldown = 0;
         this.renderBagPanel();
         this.updateHUD();
@@ -5790,7 +6091,14 @@
       buyUpgrade(type) {
         let costCC = 0, costParts = 0;
         if (type === 'gauntlet') { costCC = 10; costParts = 10; }
-        if (type === 'boots') { costCC = 15; costParts = 15; }
+        if (type === 'timerbomb') { costCC = 20; costParts = 15; }
+        if (type === 'boots') {
+          if (!this.player.hasSteamPropulsionCore) {
+            showToast('REQUER NUCLEO DE PROPULSAO A VAPOR!');
+            return;
+          }
+          costCC = 15; costParts = 15;
+        }
         if (type === 'bag') {
           const lvl = this.player.bagLevel || 1;
           if (lvl >= 3) { showToast('BOLSA JÁ ESTÁ NO NÍVEL MÁXIMO!'); return; }
@@ -5806,6 +6114,9 @@
            
            if (type === 'gauntlet') {
              this.player.upgradeGauntlet();
+           } else if (type === 'timerbomb') {
+             this.player.timerBombLevel = 2;
+             showToast('BOMBA-RELOGIO ATUALIZADA (REACAO EM CADEIA)!');
            } else if (type === 'boots') {
              this.player.bootsLevel = 1;
              showToast('BOTAS COMPRADAS! DASH LIBERADO (SHIFT / BOTÃO MOBILE)!');
@@ -5825,6 +6136,7 @@
            sound.playCCPickup();
            this.spawnSparks(this.player.x, this.player.y, '#00e5ff', 25);
            this.updateHUD();
+           saveGame();
            this.updateArmoryUI();
         } else {
            showToast(`RECURSOS INSUFICIENTES! Necessário: ${costCC} CC e ${costParts} PEÇAS`);
@@ -5893,6 +6205,7 @@
             if (depositedCores > 0) this.spawnFloatingText(`+${depositedCores} CC`, this.player.x, this.player.y - 18, '#4caf50');
             if (depositedParts > 0) this.spawnFloatingText(`+${depositedParts} PEÇAS`, this.player.x, this.player.y - 32, '#9e9e9e');
             this.updateHUD();
+            saveGame();
           }
         }
       }
@@ -5922,6 +6235,21 @@
           sound.playTimedBeep(1.0);
           this.timedBombs.push(new TimedBomb(gridX, gridY));
         }
+      }
+
+      triggerChainReaction(cx, cy, radius, affectedTiles = null) {
+        if (!this.player || (this.player.timerBombLevel || 1) < 2) return;
+        this.timedBombs.forEach(tb => {
+          if (tb.timer > 0) {
+            if (affectedTiles) {
+              const inTile = affectedTiles.some(t => t.x === tb.gridX && t.y === tb.gridY);
+              if (inTile) tb.timer = 0;
+            } else {
+              const dist = Math.hypot(tb.x - cx, tb.y - cy);
+              if (dist <= radius) tb.timer = 0;
+            }
+          }
+        });
       }
 
       detonateImpact(cx, cy, gridX, gridY) {
@@ -6028,6 +6356,8 @@
             }
           }
         }
+        
+        this.triggerChainReaction(cx, cy, blastRadius);
       }
 
       detonatePropulsor(cx, cy) {
@@ -6060,6 +6390,8 @@
             enemy.applyRepulsion(nx, ny, 380);
           }
         });
+        
+        this.triggerChainReaction(cx, cy, TILE_SIZE * 2.2);
       }
 
       detonateTimedBomb(bomb) {
@@ -6177,6 +6509,8 @@
             }
           }
         }
+        
+        this.triggerChainReaction(bx, by, 0, affectedTiles);
       }
 
       checkRoomTransitions() {
@@ -6275,6 +6609,7 @@
         this.rewindGlitchTimer = 0.5;
         this.player.invulnerableTimer = 1.8;
         showToast(window.t('ingame-rewind-long'));
+        saveGame();
 
         this.fadeState = 'out';
         this.pendingTransition = () => {
@@ -6962,6 +7297,9 @@
         this.enemyBombs.forEach(eb => eb.render(ctx, now));
 
         // Cristais de Chrono Core (CC) caídos no chão
+        if (room && room.loreDrops) {
+          room.loreDrops.forEach(drop => drop.draw(ctx));
+        }
         this.ccDrops.forEach(drop => drop.draw(ctx));
 
         // Pushables
@@ -7192,6 +7530,7 @@
           ctx.restore();
         }
 
+        
         this.renderMinimap();
       }
 
@@ -7375,8 +7714,78 @@
       }, 1600);
     }
 
+    const SAVE_KEY = "ROGUEBOMB_SAVE_DATA_V1";
+
+    function getSaveData() {
+      const p = window.game.player;
+      return {
+        depositedCores: p.depositedCores,
+        depositedParts: p.depositedParts,
+        gauntletLevel: p.gauntletLevel,
+        bootsLevel: p.bootsLevel,
+        bagLevel: p.bagLevel,
+        timerBombLevel: p.timerBombLevel,
+        unlockedImpact: p.unlockedImpact,
+        unlockedPropulsor: p.unlockedPropulsor,
+        hasHydraulicPiston: p.hasHydraulicPiston,
+        hasSteamPropulsionCore: p.hasSteamPropulsionCore,
+        lastSaved: Date.now()
+      };
+    }
+
+    function saveGame() {
+      if (!window.game || !window.game.player) return;
+      try {
+        const data = JSON.stringify(getSaveData());
+        localStorage.setItem(SAVE_KEY, data);
+        console.log("Progresso salvo com sucesso!");
+      } catch (err) {
+        console.error("Falha ao salvar no navegador:", err);
+      }
+    }
+
+    function loadGame() {
+      try {
+        const raw = localStorage.getItem(SAVE_KEY);
+        if (!raw) return false;
+
+        const data = JSON.parse(raw);
+        const p = window.game.player;
+        
+        p.depositedCores = data.depositedCores ?? 0;
+        p.depositedParts = data.depositedParts ?? 0;
+        p.gauntletLevel = data.gauntletLevel ?? 1;
+        p.bootsLevel = data.bootsLevel ?? 0;
+        p.bagLevel = data.bagLevel ?? 1;
+        p.timerBombLevel = data.timerBombLevel ?? 1;
+        p.unlockedImpact = data.unlockedImpact ?? false;
+        p.unlockedPropulsor = data.unlockedPropulsor ?? false;
+        p.hasHydraulicPiston = data.hasHydraulicPiston ?? false;
+        p.hasSteamPropulsionCore = data.hasSteamPropulsionCore ?? false;
+
+        // Atualizar inventário de bombas de acordo com o nível da bolsa
+        p.bagSlots = [];
+        const caps = [0, 5, 7, 10];
+        const cap = caps[p.bagLevel] || 5;
+        while (p.bagSlots.length < cap) {
+          p.bagSlots.push({ type: 'timed', cooldown: 0 });
+        }
+        p.maxTimerBombs = cap;
+        p.timerBombs = cap;
+
+        return true;
+      } catch (err) {
+        console.error("Erro ao carregar save:", err);
+        return false;
+      }
+    }
+
+    function clearSave() {
+      localStorage.removeItem(SAVE_KEY);
+    }
     window.addEventListener('DOMContentLoaded', () => {
       window.game = new GameEngine();
+      loadGame();
 
       // Botão HUD da Manopla para clique/toque direto de upgrade
       const gauntletBadge = document.getElementById('gauntlet-badge');
@@ -7392,6 +7801,45 @@
         });
       }
     });
+    function closeLoreGallery() {
+      document.getElementById('gallery-menu').style.display = 'none';
+      document.getElementById('gallery-menu').classList.add('hidden');
+      document.getElementById('options-menu').classList.remove('hidden');
+    }
+
+    function openLoreGallery() {
+      document.getElementById('options-menu').classList.add('hidden');
+      const gm = document.getElementById('gallery-menu');
+      gm.classList.remove('hidden');
+      gm.style.display = 'flex';
+      
+      const list = window.game ? window.game.loreManager.getCollectedList() : new window.LoreManager().getCollectedList();
+      const container = document.getElementById('gallery-list');
+      container.innerHTML = '';
+      
+      if (list.length === 0) {
+        container.innerHTML = '<div style="color: #999; text-align: center; padding: 20px;">Nenhum registro encontrado ainda. Explore os mapas!</div>';
+        return;
+      }
+      
+      list.forEach(frag => {
+        const div = document.createElement('div');
+        div.style.marginBottom = '15px';
+        div.style.padding = '10px';
+        div.style.border = '1px solid #c59b27';
+        div.style.background = '#1e160e';
+        div.style.borderRadius = '4px';
+        
+        div.innerHTML = `
+          <div style="font-family: monospace; font-weight: bold; color: #f39c12; font-size: 14px; border-bottom: 1px solid rgba(197, 155, 39, 0.4); padding-bottom: 6px; margin-bottom: 6px;">REGISTRO (1826)</div>
+          <div style="font-family: serif; font-size: 14px; font-style: italic; color: #b0bec5; line-height: 1.4;">` + frag.officialText + `</div>
+          <div style="font-family: 'Comic Sans MS', cursive, sans-serif; font-size: 16px; font-weight: bold; color: #e74c3c; line-height: 1.3; margin: 8px 0;">` + frag.minerScrawl + `</div>
+          <div style="font-family: sans-serif; font-size: 12px; color: #00e5ff; background: rgba(0, 229, 255, 0.1); padding: 6px; border-radius: 4px; border: 1px solid rgba(0, 229, 255, 0.3);">` + frag.popupTip + `</div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
     // Script de Menus
     const i18n = {
       'pt': {
@@ -7666,6 +8114,8 @@
       }
 
       btnOptions.addEventListener('click', () => {
+        const btnGallery = document.getElementById('btn-gallery-in-game');
+        if (btnGallery) btnGallery.style.display = 'none';
         mainMenu.classList.add('hidden');
         optionsMenu.classList.remove('hidden');
       });
@@ -7692,6 +8142,8 @@
               mainMenu.classList.add('hidden');
               // Opcional: mudar texto do botão voltar para continuar
               btnBackMenu.innerText = "Continuar";
+              const btnGallery = document.getElementById('btn-gallery-in-game');
+              if (btnGallery) btnGallery.style.display = 'block';
             } else {
               optionsMenu.classList.add('hidden');
               mainMenu.classList.add('hidden');
