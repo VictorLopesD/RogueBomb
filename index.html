@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
@@ -638,6 +638,45 @@
     }
     .btn-close:hover { background: #f85149; }
 
+    /* Modal de Coleta de Item Especial (Pistão Hidráulico) */
+    #item-collected-modal {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      z-index: 2000;
+      background: rgba(6, 8, 12, 0.85);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+    .item-card {
+      background: radial-gradient(circle at center, #2e1d0c 0%, #150e06 100%);
+      border: 3px solid #f39c12;
+      box-shadow: 0 0 35px rgba(243, 156, 18, 0.6), inset 0 0 20px rgba(243, 156, 18, 0.25);
+      border-radius: 12px;
+      padding: 26px 28px;
+      text-align: center;
+      max-width: 440px;
+      width: 90%;
+      color: #fff;
+      animation: popInItem 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    @keyframes popInItem {
+      0% { transform: scale(0.65); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    @keyframes pulsePistonBadge {
+      0%, 100% {
+        box-shadow: 0 0 12px rgba(255, 215, 0, 0.4), inset 0 0 6px rgba(255, 215, 0, 0.2);
+        border-color: #ffd700;
+      }
+      50% {
+        box-shadow: 0 0 24px rgba(255, 215, 0, 0.85), inset 0 0 10px rgba(255, 215, 0, 0.4);
+        border-color: #fff176;
+        transform: scale(1.04);
+      }
+    }
+
     /* Modal da Loja do Inventor */
     #inventor-shop-modal {
       position: absolute;
@@ -1025,6 +1064,14 @@
     </div>
     <div id="canvas-wrapper">
       <canvas id="game-canvas" width="600" height="600"></canvas>
+      <!-- Badge de Item no Canto da Tela (Pistão Hidráulico aguardando Goela) -->
+      <div id="piston-corner-badge" style="display: none; position: absolute; top: 12px; right: 12px; z-index: 80; align-items: center; gap: 8px; background: rgba(22, 14, 6, 0.94); border: 2px solid #ffd700; border-radius: 8px; padding: 6px 12px; box-shadow: 0 0 16px rgba(255, 215, 0, 0.5), inset 0 0 8px rgba(255, 215, 0, 0.25); pointer-events: none; animation: pulsePistonBadge 2s infinite ease-in-out;">
+        <span style="font-size: 24px; filter: drop-shadow(0 0 6px #ffd700);">🦾</span>
+        <div style="display: flex; flex-direction: column; text-align: left;">
+          <span style="font-size: 11px; font-weight: bold; color: #ffd700; letter-spacing: 0.5px;">PISTÃO HIDRÁULICO</span>
+          <span style="font-size: 10px; color: #00e5ff; font-weight: bold;">LEVE ATÉ A GOELA ➔</span>
+        </div>
+      </div>
     </div>
 
     <!-- Guia Teclado / Mouse Desktop -->
@@ -1087,6 +1134,22 @@
 
     <!-- Toast Central -->
     <div id="center-toast"></div>
+
+    <!-- Modal Central de Coleta de Item Especial (ex: Pistão Hidráulico) -->
+    <div id="item-collected-modal" style="display: none;">
+      <div class="item-card">
+        <div style="font-size: 13px; font-weight: bold; letter-spacing: 2px; color: #ffd700; text-transform: uppercase; margin-bottom: 6px;">★ ITEM RARO COLETADO ★</div>
+        <div id="collected-item-icon" style="font-size: 58px; margin: 10px 0; text-shadow: 0 0 20px #ffd700;">🦾</div>
+        <h2 id="collected-item-title" style="font-size: 24px; color: #ffca28; margin: 0 0 8px 0; font-family: monospace; text-shadow: 1px 1px 4px #000;">PISTÃO HIDRÁULICO</h2>
+        <p id="collected-item-desc" style="font-size: 14px; color: #cfd8dc; line-height: 1.5; margin: 10px 0 16px 0;">
+          Componente de alta compressão forjado nos fornos a vapor da Mina. Essencial para aprimorar a Manopla Mecânica!
+        </p>
+        <div id="collected-item-hint" style="background: rgba(0, 229, 255, 0.12); border: 1px solid rgba(0, 229, 255, 0.4); border-radius: 6px; padding: 10px 14px; font-size: 12px; color: #00e5ff; margin-bottom: 20px; font-weight: bold; line-height: 1.4;">
+          📦 Envie este item ao Baú através de uma <b>GOELA (Duto Verde)</b> para desbloquear seu uso na Oficina!
+        </div>
+        <button id="btn-close-item-modal" class="menu-btn" style="margin: 0 auto; width: 150px; padding: 10px 18px; font-size: 14px; background: #f39c12; color: #111; font-weight: bold; cursor: pointer; border-radius: 4px;" onclick="window.game.closeItemModal()">CONTINUAR</button>
+      </div>
+    </div>
 
     <!-- Tela de Carregamento -->
     <div id="loading-screen" class="menu-overlay" style="display: none; flex-direction: column;">
@@ -1814,6 +1877,14 @@
           this.keys[e.code] = true;
           sound.init(); // Ativa áudio no primeiro input
 
+          if (window.game && window.game.isItemModalOpen) {
+            if (e.code === 'Space' || e.code === 'Enter' || e.code === 'Escape') {
+              e.preventDefault();
+              window.game.closeItemModal();
+              return;
+            }
+          }
+
           // Seleção numérica de bombas
           const _p = (window.game && window.game.player) ? window.game.player : null;
           if (e.key === '3') this.selectBomb(BOMB_TYPE.TIMED);
@@ -2431,13 +2502,56 @@
           this.puzzleState.switches = [{ x: mid, y: mid - 1, hit: false }];
 
           if (depth === 3) {
-            // Nível 3: 2 Autômatos enferrujados (Charger e Bomber) patrulhando fora
+            // Nivel 3: 2 Automatos enferrujados (Charger e Bomber) patrulhando fora
             this.enemies.push(new Automaton(2 * TILE_SIZE, (GRID_SIZE - 3) * TILE_SIZE, depth, 'rusty_charger'));
             this.enemies.push(new Automaton((GRID_SIZE - 3) * TILE_SIZE, 2 * TILE_SIZE, depth, 'rusty_bomber'));
           } else {
-            // Níveis 4 e 5: 2 Autômatos de elite blindados (Charger e Bomber reforçados)
-            this.enemies.push(new Automaton(2 * TILE_SIZE, (GRID_SIZE - 3) * TILE_SIZE, depth, 'charger'));
-            this.enemies.push(new Automaton((GRID_SIZE - 3) * TILE_SIZE, 2 * TILE_SIZE, depth, 'bomber'));
+            // Nivel 4+: steam_overload (Desafio da Sobrecarga de Vapor dos Automatos)
+            this.puzzleType = 'steam_overload';
+            this.puzzleState.ccReward = 15;
+            this.puzzleState.session = 1;
+            this.puzzleState.sessionTotal = 3;
+            this.puzzleState.steamActive = false;
+            this.puzzleState.steamTimer = 0;
+            this.puzzleState.steamCooldown = 10.0; // 10s inicialmente
+            this.puzzleState.steamDuration = 5.0;  // 5s ativo nos cantos
+            this.puzzleState.meltdownTimer = 15.0; // 15s de invasao de vapor de fora pra dentro
+            this.puzzleState.meltdownActive = false;
+
+            // Cofre no centro cercado por grades de contencao
+            this.grid[mid][mid] = TILE.VAULT_CHEST;
+            const barrierCoords = [
+              { x: mid - 1, y: mid }, { x: mid + 1, y: mid },
+              { x: mid, y: mid - 1 }, { x: mid, y: mid + 1 }
+            ];
+            barrierCoords.forEach(c => {
+              this.grid[c.y][c.x] = TILE.LOCK_GATE;
+              this.puzzleState.barrierPositions.push(c);
+            });
+
+            // 3 Placas de Pressao nos cantos da sala
+            const plateCoords = [
+              { x: 2, y: 2 },
+              { x: GRID_SIZE - 3, y: 2 },
+              { x: 2, y: GRID_SIZE - 3 }
+            ];
+            plateCoords.forEach(p => {
+              this.grid[p.y][p.x] = TILE.PRESSURE_PLATE;
+            });
+            this.puzzleState.plates = plateCoords.map(p => ({ x: p.x, y: p.y, activeTimer: 0 }));
+
+            // 4 Zonas de Vapor Superaquecido nos cantos (3x3 tiles cada canto)
+            this.puzzleState.steamVents = [
+              { minX: 1, maxX: 3, minY: 1, maxY: 3 },
+              { minX: GRID_SIZE - 4, maxX: GRID_SIZE - 2, minY: 1, maxY: 3 },
+              { minX: 1, maxX: 3, minY: GRID_SIZE - 4, maxY: GRID_SIZE - 2 },
+              { minX: GRID_SIZE - 4, maxX: GRID_SIZE - 2, minY: GRID_SIZE - 4, maxY: GRID_SIZE - 2 }
+            ];
+
+            // Sessao 1: 2 lava velhas (bobos)
+            const e1 = new Automaton((mid - 3) * TILE_SIZE, (mid - 2) * TILE_SIZE, depth, 'rusty');
+            const e2 = new Automaton((mid + 3) * TILE_SIZE, (mid + 2) * TILE_SIZE, depth, 'rusty');
+            this.enemies.push(e1, e2);
           }
         }
       }
@@ -3019,6 +3133,8 @@
         this.hasBossKey = false;
         this.unlockedImpact = false;
         this.unlockedPropulsor = false;
+        this.carryingHydraulicPiston = false;
+        this.hasHydraulicPiston = false;
         this.bagSlots = [];
         const caps = [0, 5, 7, 10];
         const cap = caps[this.bagLevel];
@@ -3554,13 +3670,39 @@
         this.alertAnimation = 0;
         this.boxBreakTimer = 0;
         this.targetBox = null;
+        this.hasArmor = (this.type === 'charger' || this.type === 'rusty_charger');
+        this.attackPhase = 0;
       }
 
       isStunned() {
         return (this.type === 'charger' || this.type === 'rusty_charger') && this.chargeState === 'stunned';
       }
 
-      takeDamage(amount, engine) {
+      takeDamage(amount, engine, bombType = 'timed') {
+        if (this.hasArmor) {
+          if (bombType === 'timed') {
+            this.hasArmor = false;
+            this.flashTimer = 0.35;
+            if (engine) {
+              engine.spawnSparks(this.x, this.y, '#ffd54f', 24);
+              engine.spawnSparks(this.x, this.y, '#ff9100', 16);
+              engine.spawnFloatingText('BLINDAGEM DESTRU\u00CDDA!', this.x, this.y - this.radius - 10, '#ffd54f');
+              if (window.sound) window.sound.playImpactExplosion();
+            }
+            this.hp -= amount;
+            return this.hp <= 0;
+          } else {
+            // ImpactBomb nao afeta a blindagem
+            this.flashTimer = 0.15;
+            if (engine) {
+              engine.spawnSparks(this.x, this.y, '#90caf9', 14);
+              engine.spawnFloatingText('BLINDAGEM! (USE TIMERBOMB)', this.x, this.y - this.radius - 10, '#90caf9');
+              if (window.sound) window.sound.playTimedBeep(0.8);
+            }
+            return false;
+          }
+        }
+
         this.hp -= amount;
         this.flashTimer = 0.25;
         const isRusty = (this.type === 'rusty' || this.type === 'rusty_charger' || this.type === 'rusty_bomber');
@@ -3698,37 +3840,49 @@
 
           if (this.chargeState === 'charge') {
             this.chargeTimer -= dt;
-            const chargeSpeed = isRustyCharger ? 175 : 280; // Enferrujado é mais lento
+            const chargeSpeed = isRustyCharger ? 200 : 300;
             const targetX = this.x + this.chargeDir.dx * chargeSpeed * dt;
             const targetY = this.y + this.chargeDir.dy * chargeSpeed * dt;
 
-            if (window.game && Math.random() < (isRustyCharger ? 0.4 : 0.6)) {
+            if (window.game && Math.random() < 0.6) {
               window.game.spawnSparks(this.x, this.y, isRustyCharger ? '#8d6e63' : '#ffb74d', 2);
             }
 
-            const gridX = Math.floor(targetX / TILE_SIZE);
-            const gridY = Math.floor(targetY / TILE_SIZE);
-            if (gridX >= 0 && gridX < GRID_SIZE && gridY >= 0 && gridY < GRID_SIZE) {
-              if (room.grid[gridY][gridX] === TILE.BREAKABLE) {
-                room.grid[gridY][gridX] = TILE.EMPTY;
-                if (window.sound) window.sound.playImpactExplosion();
-                if (window.game) {
-                  window.game.spawnSparks(gridX * TILE_SIZE + TILE_SIZE/2, gridY * TILE_SIZE + TILE_SIZE/2, '#8d6e63', 12);
-                  window.game.spawnFloatingText('QUEBROU!', targetX, targetY - 14, '#d7ccc8');
+            // Destroi TODOS os obstaculos no caminho da investida (caixas e paredes internas)!
+            const checkRadius = this.radius + 6;
+            const left = Math.floor((targetX - checkRadius) / TILE_SIZE);
+            const right = Math.floor((targetX + checkRadius) / TILE_SIZE);
+            const top = Math.floor((targetY - checkRadius) / TILE_SIZE);
+            const bottom = Math.floor((targetY + checkRadius) / TILE_SIZE);
+
+            for (let ty = top; ty <= bottom; ty++) {
+              for (let tx = left; tx <= right; tx++) {
+                if (tx > 0 && tx < GRID_SIZE - 1 && ty > 0 && ty < GRID_SIZE - 1) {
+                  const tile = room.grid[ty][tx];
+                  if (tile === TILE.BREAKABLE || tile === TILE.WALL) {
+                    room.grid[ty][tx] = TILE.EMPTY;
+                    if (window.sound) window.sound.playImpactExplosion();
+                    if (window.game) {
+                      window.game.spawnSparks(tx * TILE_SIZE + TILE_SIZE/2, ty * TILE_SIZE + TILE_SIZE/2, '#8d6e63', 14);
+                      window.game.spawnDebris(tx * TILE_SIZE + TILE_SIZE/2, ty * TILE_SIZE + TILE_SIZE/2);
+                      window.game.spawnFloatingText('DEMOLIDO!', targetX, targetY - 14, '#ffca28');
+                    }
+                  }
                 }
               }
             }
 
-            const hitWall = this.checkTileCollision(targetX, targetY, room, false);
-            const hitHole = this.checkTileCollisionHolesOnly(targetX, targetY, room);
+            // Verificacao de borda da sala (nao sai do mapa, mas NUNCA fica atordoado!)
+            const hitPerimeter = (targetX - this.radius < TILE_SIZE || targetX + this.radius > WORLD_WIDTH - TILE_SIZE ||
+                                  targetY - this.radius < TILE_SIZE || targetY + this.radius > WORLD_HEIGHT - TILE_SIZE);
 
-            if (hitWall || hitHole) {
-              this.chargeState = 'stunned';
-              this.chargeTimer = isRustyCharger ? 2.2 : 1.5; // Enferrujado fica atordoado por mais tempo!
+            if (hitPerimeter) {
+              // Bateu no limite da sala: interrompe a investida imediatamente SEM ficar atordoado!
+              this.chargeState = 'ready';
+              this.chargeCooldown = isRustyCharger ? 2.0 : 1.2;
               if (window.sound) window.sound.playImpactExplosion();
               if (window.game) {
-                window.game.spawnSparks(this.x, this.y, isRustyCharger ? '#8d6e63' : '#ffeb3b', 16);
-                window.game.spawnFloatingText(isRustyCharger ? 'TRAVOU!' : 'ATORDOADO!', this.x, this.y - 20, isRustyCharger ? '#ffca28' : '#fff59d');
+                window.game.spawnSparks(this.x, this.y, '#ffd54f', 12);
               }
               return;
             } else {
@@ -3738,37 +3892,57 @@
 
             if (this.chargeTimer <= 0) {
               this.chargeState = 'ready';
-              this.chargeCooldown = isRustyCharger ? 4.5 : 4.0;
+              this.chargeCooldown = isRustyCharger ? 2.5 : 1.8;
             }
             return;
           }
         }
 
-        // --- COMPORTAMENTO DO BOMBER (BOMBARDEIRO) ---
+        // --- COMPORTAMENTO DO BOMBER (BOMBARDEIRO ARTILHEIRO) ---
         if (this.type === 'bomber' || this.type === 'rusty_bomber') {
           const isRustyBomber = this.type === 'rusty_bomber';
           if (this.recoilTimer > 0) {
             this.recoilTimer -= dt;
-            return; // Tranco de recuo do morteiro enferrujado
+            return; // Tranco de recuo do morteiro
           }
 
           if (this.shootCooldown > 0) this.shootCooldown -= dt;
 
-          if (this.state === 'chase' && this.shootCooldown <= 0 && dist <= TILE_SIZE * 5.5 && window.game) {
-            const leadX = player.x + (player.facing ? player.facing.dx * 12 : 0);
-            const leadY = player.y + (player.facing ? player.facing.dy * 12 : 0);
+          if (this.state === 'chase' && this.shootCooldown <= 0 && dist <= TILE_SIZE * 6.5 && window.game) {
+            this.attackPhase = this.attackPhase || 0;
 
-            window.game.enemyBombs.push(new EnemyBomb(this.x, this.y, leadX, leadY, isRustyBomber));
-            if (window.sound) window.sound.playThrowWhoosh();
-            if (window.game) {
-              window.game.spawnSparks(this.x, this.y - 12, isRustyBomber ? '#8d6e63' : '#ff7043', 8);
-              window.game.spawnFloatingText(isRustyBomber ? 'DISPARO!' : 'MINA!', this.x, this.y - 18, isRustyBomber ? '#d7ccc8' : '#ff7043');
-            }
-            if (isRustyBomber) {
-              this.shootCooldown = 4.2 + Math.random() * 1.5;
-              this.recoilTimer = 0.5; // Pausa breve para absorver o tranco
+            // Inteligencia tatica de emboscada: alterna entre TimerBomb (reacao em cadeia) e ImpactBomb telegrafada
+            if (this.attackPhase === 0) {
+              // 1. TimerBomb: joga na rota de fuga prevista de Charlotte para emboscar e criar reacao em cadeia
+              const leadDist = 50;
+              const leadX = player.x + (player.facing ? player.facing.dx * leadDist : 0);
+              const leadY = player.y + (player.facing ? player.facing.dy * leadDist : 0);
+              const gx = Math.max(1, Math.min(GRID_SIZE - 2, Math.round(leadX / TILE_SIZE)));
+              const gy = Math.max(1, Math.min(GRID_SIZE - 2, Math.round(leadY / TILE_SIZE)));
+
+              window.game.timedBombs.push(new TimedBomb(gx, gy));
+              if (window.sound) window.sound.playThrowWhoosh();
+              if (window.game) {
+                window.game.spawnSparks(gx * TILE_SIZE + TILE_SIZE/2, gy * TILE_SIZE + TILE_SIZE/2, '#00e5ff', 12);
+                window.game.spawnFloatingText('EMBOSCADA TIMER!', this.x, this.y - 18, '#00e5ff');
+              }
+              this.shootCooldown = isRustyBomber ? 3.5 : 2.5;
+              this.recoilTimer = 0.35;
+              this.attackPhase = 1;
             } else {
-              this.shootCooldown = 2.8 + Math.random() * 1.0;
+              // 2. ImpactBomb: telegrafa com circulo visual vermelho de mira (estilo mini boss) onde o jogador esta
+              const leadX = player.x + (player.facing ? player.facing.dx * 18 : 0);
+              const leadY = player.y + (player.facing ? player.facing.dy * 18 : 0);
+              const telegraphDuration = isRustyBomber ? 2.4 : 1.8;
+
+              window.game.targetMarkers.push(new TargetMarker(leadX, leadY, telegraphDuration, this, BOMB_TYPE.IMPACT));
+              if (window.sound) window.sound.playTimedBeep(1.6);
+              if (window.game) {
+                window.game.spawnFloatingText('MIRA DE IMPACTO!', this.x, this.y - 18, '#ff5252');
+              }
+              this.shootCooldown = isRustyBomber ? 4.0 : 3.0;
+              this.recoilTimer = 0.35;
+              this.attackPhase = 0;
             }
           }
         }
@@ -3815,7 +3989,9 @@
             this.state = 'chase';
           }
         } else if (this.state === 'chase') {
-          if (dist > this.loseRange) {
+          // Em lockdown ou se for scout, o automato nunca para de perseguir Charlotte
+          const isScout = (this.type === 'scout' || this.type === 'rusty');
+          if (!room.isLockdown && !isScout && dist > this.loseRange) {
             this.state = 'idle';
             this.reactionTimer = 0;
           } else {
@@ -3826,11 +4002,11 @@
                 this.stumbleDuration = this.isCrazy ? 0.15 : 0.55;
                 if (window.game && Math.random() < 0.8) {
                   window.game.spawnSparks(this.x, this.y, this.isCrazy ? '#ff1744' : '#8d5b4c', 4);
-                  window.game.spawnFloatingText(this.isCrazy ? '!' : '⚙️', this.x, this.y - this.radius - 10, this.isCrazy ? '#ff5252' : '#bcaaa4');
+                  window.game.spawnFloatingText(this.isCrazy ? '!' : '\u2699\uFE0F', this.x, this.y - this.radius - 10, this.isCrazy ? '#ff5252' : '#bcaaa4');
                 }
                 return;
               }
-              // Comportamento bobo apenas para os não enlouquecidos
+              // Comportamento bobo apenas para os nao enlouquecidos
               if (!this.isCrazy && dist > TILE_SIZE * 3.0 && Math.random() < 0.008) {
                 this.state = 'idle';
                 this.wanderTimer = 1.6;
@@ -3870,6 +4046,48 @@
                 desiredVx = -normY * strafeDir * (this.speed * 0.85);
                 desiredVy = normX * strafeDir * (this.speed * 0.85);
               }
+            } else if (isScout) {
+              // Scout: Perseguicao implacavel com desvio ativo de bombas e obstaculos no caminho
+              let baseVx = (dx / dist) * this.speed;
+              let baseVy = (dy / dist) * this.speed;
+
+              // Desvio dinamico de bombas no chao (TimedBombs e EnemyBombs em fusao)
+              let avoidVx = 0, avoidVy = 0;
+              if (window.game && window.game.timedBombs) {
+                for (const b of window.game.timedBombs) {
+                  const bDist = Math.hypot(this.x - b.x, this.y - b.y);
+                  const dangerRadius = TILE_SIZE * 2.2;
+                  if (bDist < dangerRadius && bDist > 1) {
+                    const rep = (1 - bDist / dangerRadius) * this.speed * 2.0;
+                    avoidVx += ((this.x - b.x) / bDist) * rep;
+                    avoidVy += ((this.y - b.y) / bDist) * rep;
+                  }
+                }
+              }
+              if (window.game && window.game.enemyBombs) {
+                for (const eb of window.game.enemyBombs) {
+                  if (eb.state === 'fusing') {
+                    const ebDist = Math.hypot(this.x - eb.x, this.y - eb.y);
+                    const dangerRadius = TILE_SIZE * 2.0;
+                    if (ebDist < dangerRadius && ebDist > 1) {
+                      const rep = (1 - ebDist / dangerRadius) * this.speed * 1.8;
+                      avoidVx += ((this.x - eb.x) / ebDist) * rep;
+                      avoidVy += ((this.y - eb.y) / ebDist) * rep;
+                    }
+                  }
+                }
+              }
+
+              let totalVx = baseVx + avoidVx;
+              let totalVy = baseVy + avoidVy;
+              const spd = Math.hypot(totalVx, totalVy);
+              if (spd > 0.01) {
+                desiredVx = (totalVx / spd) * this.speed;
+                desiredVy = (totalVy / spd) * this.speed;
+              } else {
+                desiredVx = baseVx;
+                desiredVy = baseVy;
+              }
             } else {
               desiredVx = (dx / dist) * this.speed;
               desiredVy = (dy / dist) * this.speed;
@@ -3881,7 +4099,34 @@
             let hitWall = this.checkTileCollision(nextX, nextY, room);
             let hitHole = this.checkTileCollisionHolesOnly(nextX, nextY, room);
 
-            if (this.depth === 1) {
+            if (isScout && (hitWall || hitHole)) {
+              // Scout desvia ativamente ao redor de paredes, pedras e caixas sem parar de perseguir
+              const baseAngle = Math.atan2(desiredVy, desiredVx);
+              const testOffsets = [Math.PI / 4, -Math.PI / 4, Math.PI / 2, -Math.PI / 2, Math.PI * 0.75, -Math.PI * 0.75];
+              let steered = false;
+              for (const off of testOffsets) {
+                const ang = baseAngle + off;
+                const testX = this.x + Math.cos(ang) * this.speed * dt;
+                const testY = this.y + Math.sin(ang) * this.speed * dt;
+                if (!this.checkTileCollision(testX, testY, room) && !this.checkTileCollisionHolesOnly(testX, testY, room)) {
+                  this.x = testX;
+                  this.y = testY;
+                  steered = true;
+                  break;
+                }
+              }
+              if (!steered) {
+                const altX = this.x + desiredVx * dt;
+                if (!this.checkTileCollision(altX, this.y, room) && !this.checkTileCollisionHolesOnly(altX, this.y, room)) {
+                  this.x = altX;
+                } else {
+                  const altY = this.y + desiredVy * dt;
+                  if (!this.checkTileCollision(this.x, altY, room) && !this.checkTileCollisionHolesOnly(this.x, altY, room)) {
+                    this.y = altY;
+                  }
+                }
+              }
+            } else if (this.depth === 1) {
               if (!hitWall) {
                 this.x = nextX;
                 this.y = nextY;
@@ -3983,22 +4228,16 @@
             if (tx < 0 || tx >= GRID_SIZE || ty < 0 || ty >= GRID_SIZE) return isKnockback ? false : true;
             const tile = room.grid[ty][tx];
             // Buff: Chargers destroem caixas (BREAKABLE)
-            if (tile === TILE.BREAKABLE && (this.type === 'charger' || this.type === 'rusty_charger')) {
-              if (this.chargeState === 'charge') {
-                // Passam reto durante a investida
-                room.grid[ty][tx] = TILE.EMPTY;
-                if (window.sound) window.sound.playImpactExplosion();
-                if (window.game) {
-                  window.game.spawnSparks(tx * TILE_SIZE + TILE_SIZE/2, ty * TILE_SIZE + TILE_SIZE/2, '#8d6e63', 12);
-                  window.game.spawnFloatingText('ESMAGADO!', tx * TILE_SIZE + TILE_SIZE/2, ty * TILE_SIZE, '#d7ccc8');
-                }
-                continue;
-              } else {
-                // Caminhando normal: marca a caixa para quebrar depois de 2 segundos
-                if (!this.hittingBoxThisFrame) {
-                  this.hittingBoxThisFrame = { tx, ty };
-                }
+            // Buff: Chargers destroem todos os obstaculos (caixas e paredes internas) imediatamente!
+            if ((this.type === 'charger' || this.type === 'rusty_charger') && (tile === TILE.BREAKABLE || (tile === TILE.WALL && tx > 0 && tx < GRID_SIZE - 1 && ty > 0 && ty < GRID_SIZE - 1))) {
+              room.grid[ty][tx] = TILE.EMPTY;
+              if (window.sound) window.sound.playImpactExplosion();
+              if (window.game) {
+                window.game.spawnSparks(tx * TILE_SIZE + TILE_SIZE/2, ty * TILE_SIZE + TILE_SIZE/2, '#8d6e63', 14);
+                window.game.spawnDebris(tx * TILE_SIZE + TILE_SIZE/2, ty * TILE_SIZE + TILE_SIZE/2);
+                window.game.spawnFloatingText('ESMAGADO!', tx * TILE_SIZE + TILE_SIZE/2, ty * TILE_SIZE, '#d7ccc8');
               }
+              continue;
             }
 
             if (tile === TILE.WALL || tile === TILE.BREAKABLE || tile === TILE.LOCK_GATE || tile === TILE.BOSS_DOOR || tile === TILE.ARMORY || tile === TILE.CHEST || tile === TILE.INVENTOR_NPC || tile === TILE.SWITCH_TARGET) {
@@ -4422,6 +4661,35 @@
           }
         }
 
+        if (this.hasArmor) {
+          ctx.save();
+          const shieldPulse = (Math.sin(now * 6) + 1) / 2;
+          ctx.strokeStyle = `rgba(255, 215, 0, ${0.7 + shieldPulse * 0.3})`;
+          ctx.lineWidth = 2.5;
+          ctx.beginPath();
+          ctx.arc(renderX, renderY, this.radius + 4, 0, Math.PI * 2);
+          ctx.stroke();
+
+          for (let i = 0; i < 4; i++) {
+            const a = (i * Math.PI / 2) + now * 2;
+            const px = renderX + Math.cos(a) * (this.radius + 4);
+            const py = renderY + Math.sin(a) * (this.radius + 4);
+            ctx.fillStyle = '#ffe082';
+            ctx.beginPath();
+            ctx.arc(px, py, 2.5, 0, Math.PI * 2);
+            ctx.fill();
+          }
+
+          ctx.font = 'bold 8px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillStyle = '#ffca28';
+          ctx.strokeStyle = '#000';
+          ctx.lineWidth = 2;
+          ctx.strokeText('\uD83D\uDEE1\uFE0F BLINDADO', renderX, renderY - this.radius - 12);
+          ctx.fillText('\uD83D\uDEE1\uFE0F BLINDADO', renderX, renderY - this.radius - 12);
+          ctx.restore();
+        }
+
         if (this.type === 'charger') {
           ctx.font = '9px sans-serif';
           ctx.textAlign = 'center';
@@ -4616,8 +4884,13 @@
           this.animState = 'throw';
           this.facingSide = leadX < this.x ? -1 : 1;
 
-          window.game.flyingBombs.push(new FlyingBomb(this.x, this.y, leadX, leadY, this.selectedBomb));
-          if (window.sound) window.sound.playThrowWhoosh();
+          if (this.selectedBomb === BOMB_TYPE.IMPACT) {
+            window.game.targetMarkers.push(new TargetMarker(leadX, leadY, 3.0, this, BOMB_TYPE.IMPACT));
+            if (window.sound) window.sound.playTimedBeep(1.6);
+          } else {
+            window.game.flyingBombs.push(new FlyingBomb(this.x, this.y, leadX, leadY, this.selectedBomb));
+            if (window.sound) window.sound.playThrowWhoosh();
+          }
 
           this.bombCooldown = this.isFinalBoss ? (1.8 + Math.random() * 0.8) : (2.4 + Math.random() * 1.0);
         }
@@ -4844,6 +5117,49 @@
           ctx.lineWidth = 1.5;
           ctx.strokeRect(-9, -9, 18, 18);
         }
+        ctx.restore();
+      }
+    }
+
+    class TargetMarker {
+      constructor(targetX, targetY, duration, source, bombType = BOMB_TYPE.IMPACT) {
+        this.targetX = targetX;
+        this.targetY = targetY;
+        this.duration = duration;
+        this.timer = duration;
+        this.source = source;
+        this.bombType = bombType;
+        this.radius = 28;
+      }
+
+      update(dt, engine) {
+        this.timer -= dt;
+        if (this.timer <= 0) {
+          if (this.source && engine) {
+            engine.flyingBombs.push(new FlyingBomb(this.source.x, this.source.y, this.targetX, this.targetY, this.bombType));
+            if (window.sound) window.sound.playThrowWhoosh();
+          }
+          return true;
+        }
+        return false;
+      }
+
+      draw(ctx) {
+        const progress = Math.min(1.0, 1 - Math.max(0, this.timer / this.duration));
+        ctx.save();
+        // Círculo preenchido vermelho (marcação no chão para Charlotte esquivar)
+        ctx.fillStyle = `rgba(231, 76, 60, ${0.25 + progress * 0.45})`;
+        ctx.beginPath();
+        ctx.arc(this.targetX, this.targetY, this.radius, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Borda de aviso vermelha
+        ctx.strokeStyle = '#e74c3c';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.arc(this.targetX, this.targetY, this.radius * (0.35 + progress * 0.65), 0, Math.PI * 2);
+        ctx.stroke();
+
         ctx.restore();
       }
     }
@@ -5134,6 +5450,7 @@
 
         this.timedBombs = [];
         this.flyingBombs = [];
+        this.targetMarkers = [];
         this.enemyBombs = [];
         this.particles = [];
         this.blasts = [];
@@ -5197,7 +5514,7 @@
           const dt = Math.min((now - this.lastTime) / 1000, 0.05);
           this.lastTime = now;
 
-          if (!this.isPaused) {
+          if (!this.isPaused && !this.isItemModalOpen) {
               this.update(dt);
           }
           this.render();
@@ -5325,6 +5642,14 @@
           if (bomb.update(dt)) {
             this.landThrownBomb(bomb);
             this.flyingBombs.splice(i, 1);
+          }
+        }
+
+        // Atualização de Miras Telegrafadas (TargetMarkers de Impacto)
+        for (let i = this.targetMarkers.length - 1; i >= 0; i--) {
+          const tm = this.targetMarkers[i];
+          if (tm.update(dt, this)) {
+            this.targetMarkers.splice(i, 1);
           }
         }
 
@@ -5552,6 +5877,152 @@
                    this.player.inventorHintTalked = false; // reset
                }
             }
+        } else if (room.puzzleType === 'steam_overload') {
+          const state = room.puzzleState;
+          if (!state) return;
+
+          // 1. Ciclo de Vapor Superaquecido nos Cantos (5s ativo, recarga decrescente por sessao)
+          if (!state.steamActive && !state.meltdownActive) {
+            state.steamTimer += dt;
+            if (state.steamTimer >= state.steamCooldown) {
+              state.steamActive = true;
+              state.steamTimer = state.steamDuration;
+              if (window.sound) window.sound.playPropulsorSteam();
+              showToast('\u26A0\uFE0F VAPOR SUPERAQUECIDO ATIVO NOS CANTOS! (5s)');
+            }
+          } else if (state.steamActive && !state.meltdownActive) {
+            state.steamTimer -= dt;
+            if (state.steamVents) {
+              state.steamVents.forEach(vent => {
+                const vx = ((vent.minX + vent.maxX) / 2) * TILE_SIZE + TILE_SIZE / 2;
+                const vy = ((vent.minY + vent.maxY) / 2) * TILE_SIZE + TILE_SIZE / 2;
+                if (Math.random() < 0.4) {
+                  this.spawnSparks(vx + (Math.random() - 0.5) * TILE_SIZE * 2, vy + (Math.random() - 0.5) * TILE_SIZE * 2, '#eceff1', 2);
+                }
+              });
+            }
+
+            // Dano de vapor quente nos cantos
+            if (this.player.invulnerableTimer <= 0 && state.steamVents) {
+              const inVent = state.steamVents.some(vent => pGridX >= vent.minX && pGridX <= vent.maxX && pGridY >= vent.minY && pGridY <= vent.maxY);
+              if (inVent) {
+                this.spawnFloatingText('QUEIMADURA DE VAPOR!', this.player.x, this.player.y - 20, '#ff7043');
+                if (this.player.takeDamage(1)) {
+                  this.triggerTimeRewind();
+                }
+              }
+            }
+
+            if (state.steamTimer <= 0) {
+              state.steamActive = false;
+              state.steamTimer = 0;
+            }
+          }
+
+          // 2. Progressao das 3 Sessoes de Inimigos
+          // Sessao 1: 2 lava velhas (bobos) -> Sessao 2: 3 enlouquecidos -> Sessao 3: 2 de elite -> Meltdown: 15s
+          if (state.session === 1 && room.enemies.length === 0) {
+            state.session = 2;
+            state.steamCooldown = Math.max(4.0, state.steamCooldown - 2.0); // 10s -> 8s
+            state.steamActive = false;
+            state.steamTimer = 0;
+            sound.playEnemyAlert();
+            showToast('SESS\u00C3O 2: 3 AUT\u00D4MATOS ENLOUQUECIDOS! REC. VAPOR: 8s');
+
+            const mid = Math.floor(GRID_SIZE / 2);
+            const crazy1 = new Automaton(3 * TILE_SIZE, mid * TILE_SIZE, room.depth, 'rusty_charger');
+            const crazy2 = new Automaton((GRID_SIZE - 4) * TILE_SIZE, mid * TILE_SIZE, room.depth, 'rusty_bomber');
+            const crazy3 = new Automaton(mid * TILE_SIZE, 3 * TILE_SIZE, room.depth, 'rusty');
+            [crazy1, crazy2, crazy3].forEach(e => {
+              e.canGoCrazy = true;
+              e.setCrazyState(true);
+              e.state = 'chase';
+              this.spawnSparks(e.x, e.y, '#ff1744', 16);
+            });
+            room.enemies.push(crazy1, crazy2, crazy3);
+          } else if (state.session === 2 && room.enemies.length === 0) {
+            state.session = 3;
+            state.steamCooldown = Math.max(4.0, state.steamCooldown - 2.0); // 8s -> 6s
+            state.steamActive = false;
+            state.steamTimer = 0;
+            sound.playEnemyAlert();
+            showToast('SESS\u00C3O 3: 2 AUT\u00D4MATOS DE ELITE BLINDADOS! REC. VAPOR: 6s');
+
+            const mid = Math.floor(GRID_SIZE / 2);
+            const elite1 = new Automaton(3 * TILE_SIZE, (GRID_SIZE - 4) * TILE_SIZE, room.depth, 'charger');
+            const elite2 = new Automaton((GRID_SIZE - 4) * TILE_SIZE, (GRID_SIZE - 4) * TILE_SIZE, room.depth, 'bomber');
+            [elite1, elite2].forEach(e => {
+              e.state = 'chase';
+              this.spawnSparks(e.x, e.y, '#ffd700', 20);
+            });
+            room.enemies.push(elite1, elite2);
+          } else if (state.session === 3 && room.enemies.length === 0 && !state.meltdownActive && !state.solved) {
+            state.session = 'meltdown';
+            state.meltdownActive = true;
+            state.meltdownTimer = 15.0; // 15 segundos
+            if (window.sound) window.sound.playBossRoar ? window.sound.playBossRoar() : window.sound.playPropulsorSteam();
+            showToast('\u26A0\uFE0F SOBRECARGA! VAPOR INVADINDO! COLOQUE 3 TIMERBOMBS NAS PLACAS!');
+          }
+
+          // 3. Fase de Sobrecarga (Meltdown: Vapor invade de fora pra dentro durando 15s)
+          if (state.meltdownActive && !state.solved) {
+            state.meltdownTimer -= dt;
+
+            // Invasao do vapor de fora para dentro:
+            const elapsed = 15.0 - state.meltdownTimer;
+            const steamRing = Math.min(4, Math.floor(elapsed / 3.75) + 1);
+
+            // Verifica se Charlotte esta na area invadida pelo vapor
+            const distFromEdge = Math.min(pGridX, GRID_SIZE - 1 - pGridX, pGridY, GRID_SIZE - 1 - pGridY);
+            if (distFromEdge <= steamRing && this.player.invulnerableTimer <= 0) {
+              this.spawnFloatingText('VAPOR ASFIXIANTE!', this.player.x, this.player.y - 20, '#ff3d00');
+              if (this.player.takeDamage(1)) {
+                this.triggerTimeRewind();
+              }
+            }
+
+            // Para desativar: 3 TimerBombs nas 3 placas de pressao dos cantos!
+            if (state.plates) {
+              state.plates.forEach(plate => {
+                const hasTimerBomb = this.timedBombs.some(b => b.gridX === plate.x && b.gridY === plate.y);
+                if (hasTimerBomb) {
+                  if (plate.activeTimer <= 0) {
+                    sound.playPlateClick();
+                    this.spawnSparks(plate.x * TILE_SIZE + TILE_SIZE / 2, plate.y * TILE_SIZE + TILE_SIZE / 2, '#00e5ff', 15);
+                  }
+                  plate.activeTimer = 0.6;
+                } else if (plate.activeTimer > 0) {
+                  plate.activeTimer -= dt;
+                }
+              });
+
+              // Verifica se as 3 placas estao com TimerBombs ativas simultaneamente
+              const allThreeActive = state.plates.every(p => p.activeTimer > 0);
+              if (allThreeActive) {
+                state.solved = true;
+                state.meltdownActive = false;
+                state.steamActive = false;
+                sound.playUpgradeFanfare();
+                if (state.barrierPositions) {
+                  state.barrierPositions.forEach(pos => {
+                    room.grid[pos.y][pos.x] = TILE.EMPTY;
+                    this.spawnDebris(pos.x * TILE_SIZE + TILE_SIZE / 2, pos.y * TILE_SIZE + TILE_SIZE / 2);
+                  });
+                }
+                this.spawnSparks(WORLD_WIDTH / 2, WORLD_HEIGHT / 2, '#ffd700', 40);
+                showToast('SOBRECARGA DE VAPOR DESATIVADA! COFRE LIBERADO!');
+              }
+            }
+
+            // Se o tempo acabar antes de desativar: pulso de emergencia e reset da sobrecarga
+            if (state.meltdownTimer <= 0) {
+              if (this.player.takeDamage(1)) {
+                this.triggerTimeRewind();
+              }
+              state.meltdownTimer = 10.0; // Da mais 10s para tentar novamente sem travar o jogo
+              showToast('\u26A0\uFE0F V\u00C1LVULAS EXPELIRAM VAPOR! COLOQUE AS 3 TIMERBOMBS!');
+            }
+          }
         }
       }
 
@@ -5674,12 +6145,56 @@
               this.spawnSparks(this.player.x, this.player.y, '#ffd700', 45);
               this.spawnSparks(this.player.x, this.player.y, '#00e5ff', 35);
               this.spawnFloatingText(`+${rewardCount} CC & +${partReward} PEÇAS`, this.player.x, this.player.y - 22, '#ffd700');
-              if (this.map.currentDepth >= 4 && !this.player.hasHydraulicPiston) { this.player.hasHydraulicPiston = true; showToast('COFRE ABERTO! + PISTÃO HIDRÁULICO OBTIDO!'); } else { showToast(`COFRE QUÂNTICO ABERTO: +${rewardCount} CC`); }
-            } else { saveGame();
+              if ((this.map.currentDepth >= 4 || room.puzzleType === 'steam_overload') && !this.player.hasHydraulicPiston && !this.player.carryingHydraulicPiston) {
+                this.collectHydraulicPiston();
+              } else {
+                showToast(`COFRE QUÂNTICO ABERTO: +${rewardCount} CC`);
+              }
+            } else {
+              saveGame();
               showToast('COFRE TRANCADO! RESOLVA O PUZZLE DA SALA');
             }
           }
         }
+      }
+
+      collectHydraulicPiston() {
+        this.player.carryingHydraulicPiston = true;
+        this.spawnSparks(this.player.x, this.player.y, '#ffd700', 50);
+        this.spawnSparks(this.player.x, this.player.y, '#ffca28', 35);
+        if (window.sound) window.sound.playUpgradeFanfare();
+        this.showItemCollectedModal(
+          window.t('item-piston-title') || 'PISTÃO HIDRÁULICO',
+          '🦾',
+          window.t('item-piston-desc') || 'Componente de alta compressão forjado nos fornos a vapor da Mina. Essencial para aprimorar a Manopla Mecânica!',
+          window.t('item-piston-hint') || 'Envie este item ao Baú através de uma GOELA para desbloquear seu uso na Oficina!'
+        );
+        this.updateHUD();
+        saveGame();
+      }
+
+      showItemCollectedModal(title, icon, desc, hint) {
+        const modal = document.getElementById('item-collected-modal');
+        if (!modal) return;
+        const titleEl = document.getElementById('collected-item-title');
+        const iconEl = document.getElementById('collected-item-icon');
+        const descEl = document.getElementById('collected-item-desc');
+        const hintEl = document.getElementById('collected-item-hint');
+        
+        if (titleEl) titleEl.textContent = title;
+        if (iconEl) iconEl.textContent = icon;
+        if (descEl) descEl.textContent = desc;
+        if (hintEl) hintEl.innerHTML = `📦 ${hint}`;
+        
+        modal.style.display = 'flex';
+        this.isItemModalOpen = true;
+      }
+
+      closeItemModal() {
+        const modal = document.getElementById('item-collected-modal');
+        if (modal) modal.style.display = 'none';
+        this.isItemModalOpen = false;
+        this.updateHUD();
       }
 
       getAvailableCC() {
@@ -5963,6 +6478,9 @@
         if (this.player.gauntletLevel >= 3) {
           btnGauntlet.textContent = window.t('armory-max');
           btnGauntlet.disabled = true;
+        } else if (this.player.gauntletLevel === 1 && !this.player.hasHydraulicPiston) {
+          btnGauntlet.textContent = 'Falta Pistão';
+          btnGauntlet.disabled = true;
         } else {
           btnGauntlet.textContent = window.t('armory-upgrade');
           btnGauntlet.disabled = (totalCC < 10 || totalParts < 10);
@@ -6090,7 +6608,13 @@
 
       buyUpgrade(type) {
         let costCC = 0, costParts = 0;
-        if (type === 'gauntlet') { costCC = 10; costParts = 10; }
+        if (type === 'gauntlet') {
+          if (this.player.gauntletLevel === 1 && !this.player.hasHydraulicPiston) {
+            showToast('REQUER PISTÃO HIDRÁULICO NO BAÚ!');
+            return;
+          }
+          costCC = 10; costParts = 10;
+        }
         if (type === 'timerbomb') { costCC = 20; costParts = 15; }
         if (type === 'boots') {
           if (!this.player.hasSteamPropulsionCore) {
@@ -6185,7 +6709,8 @@
       checkGoelaDeposit() {
         const room = this.map.currentRoom;
         if (!room.hasGoela) return;
-        if ((this.player.chronoCores || 0) <= 0 && (this.player.parts || 0) <= 0) return;
+        const hasCarryingPiston = !!(this.player && this.player.carryingHydraulicPiston);
+        if ((this.player.chronoCores || 0) <= 0 && (this.player.parts || 0) <= 0 && !hasCarryingPiston) return;
 
         const pGridX = Math.floor(this.player.x / TILE_SIZE);
         const pGridY = Math.floor(this.player.y / TILE_SIZE);
@@ -6198,10 +6723,24 @@
             this.player.parts = 0;
             this.player.depositedCores = (this.player.depositedCores || 0) + depositedCores;
             this.player.depositedParts = (this.player.depositedParts || 0) + depositedParts;
+
+            let pistonDeposited = false;
+            if (this.player.carryingHydraulicPiston) {
+              this.player.carryingHydraulicPiston = false;
+              this.player.hasHydraulicPiston = true;
+              pistonDeposited = true;
+            }
+
             sound.playChuteDeposit();
-            showToast(`ENVIADO: ${depositedCores} CC | ${depositedParts} PEÇAS`);
-            this.spawnSparks(this.player.x, this.player.y, '#4caf50', 30);
-            this.spawnSparks(this.player.x, this.player.y, '#00e5ff', 25);
+            if (pistonDeposited) {
+              sound.playUpgradeFanfare();
+              showToast(window.t('item-piston-deposited') || 'PISTÃO HIDRÁULICO ENVIADO AO BAÚ COM SUCESSO!');
+              this.spawnFloatingText('🦾 PISTÃO ENVIADO AO BAÚ!', this.player.x, this.player.y - 48, '#ffd700');
+            } else {
+              showToast(`ENVIADO: ${depositedCores} CC | ${depositedParts} PEÇAS`);
+            }
+            this.spawnSparks(this.player.x, this.player.y, '#4caf50', 35);
+            this.spawnSparks(this.player.x, this.player.y, '#ffd700', 30);
             if (depositedCores > 0) this.spawnFloatingText(`+${depositedCores} CC`, this.player.x, this.player.y - 18, '#4caf50');
             if (depositedParts > 0) this.spawnFloatingText(`+${depositedParts} PEÇAS`, this.player.x, this.player.y - 32, '#9e9e9e');
             this.updateHUD();
@@ -6345,7 +6884,7 @@
           const enemy = room.enemies[i];
           const dist = Math.hypot(enemy.x - cx, enemy.y - cy);
           if (dist <= blastRadius + enemy.radius) {
-            const isDead = enemy.takeDamage(1, this);
+            const isDead = enemy.takeDamage(1, this, 'timed');
             if (isDead) {
               this.spawnEnemyDeath(enemy.x, enemy.y, enemy);
               room.enemies.splice(i, 1);
@@ -6498,7 +7037,7 @@
           }
 
           if (hit) {
-            const isDead = enemy.takeDamage(2, this);
+            const isDead = enemy.takeDamage(2, this, 'impact');
             if (isDead) {
               this.spawnEnemyDeath(enemy.x, enemy.y, enemy);
               room.enemies.splice(i, 1);
@@ -6624,8 +7163,10 @@
           this.particles = [];
           this.blasts = [];
 
-          // 3. Reseta CCs não depositados da corrida atual (mantém depositados salvos)
+          // 3. Reseta CCs e Peças não depositados da corrida atual (mantém depositados salvos)
           this.player.chronoCores = 0;
+          this.player.parts = 0;
+          this.player.carryingHydraulicPiston = false;
 
           // 4. Posiciona Charlotte no centro da nova sala inicial
           const mid = Math.floor(GRID_SIZE / 2);
@@ -7240,6 +7781,14 @@
               // Miolo da placa
               ctx.fillStyle = isActive ? '#ffffff' : 'rgba(0, 229, 255, 0.3)';
               ctx.fillRect(px + 12, py + 12, TILE_SIZE - 24, TILE_SIZE - 24);
+              if (room.puzzleType === 'steam_overload') {
+                ctx.save();
+                ctx.font = 'bold 7px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillStyle = isActive ? '#00e676' : '#ffd54f';
+                ctx.fillText(isActive ? '\u2705 OK' : '\u23F1\uFE0F TIMER', px + TILE_SIZE / 2, py - 3);
+                ctx.restore();
+              }
             } else if (tile === TILE.SWITCH_TARGET) {
               // Cristal Interruptor Elevado (Puzzle Nível 3+)
               const isHit = room.puzzleState.solved;
@@ -7265,6 +7814,58 @@
               ctx.stroke();
               ctx.restore();
             }
+          }
+        }
+
+        // Renderizacao Especial da Sobrecarga de Vapor (Nivel 4 Puzzle)
+        if (room && room.puzzleType === 'steam_overload' && room.puzzleState) {
+          if (room.puzzleState.steamVents) {
+            room.puzzleState.steamVents.forEach(vent => {
+              const vx = vent.minX * TILE_SIZE;
+              const vy = vent.minY * TILE_SIZE;
+              const vw = (vent.maxX - vent.minX + 1) * TILE_SIZE;
+              const vh = (vent.maxY - vent.minY + 1) * TILE_SIZE;
+              ctx.save();
+              ctx.fillStyle = room.puzzleState.steamActive ? 'rgba(255, 112, 67, 0.28)' : 'rgba(96, 125, 139, 0.12)';
+              ctx.fillRect(vx, vy, vw, vh);
+              ctx.strokeStyle = room.puzzleState.steamActive ? 'rgba(255, 87, 34, 0.7)' : 'rgba(120, 144, 156, 0.35)';
+              ctx.lineWidth = 2;
+              ctx.strokeRect(vx, vy, vw, vh);
+
+              if (room.puzzleState.steamActive) {
+                ctx.fillStyle = 'rgba(236, 239, 241, 0.4)';
+                ctx.beginPath();
+                ctx.arc(vx + vw / 2, vy + vh / 2, vw * 0.45, 0, Math.PI * 2);
+                ctx.fill();
+              }
+              ctx.restore();
+            });
+          }
+
+          // Meltdown: vapor invadindo de fora para dentro e banner com contagem regressiva
+          if (room.puzzleState.meltdownActive && !room.puzzleState.solved) {
+            const elapsed = 15.0 - room.puzzleState.meltdownTimer;
+            const steamRing = Math.min(4, Math.floor(elapsed / 3.75) + 1);
+
+            ctx.save();
+            ctx.fillStyle = 'rgba(255, 87, 34, 0.32)';
+            for (let r = 0; r < steamRing; r++) {
+              ctx.fillRect(r * TILE_SIZE, 0, TILE_SIZE, WORLD_HEIGHT);
+              ctx.fillRect((GRID_SIZE - 1 - r) * TILE_SIZE, 0, TILE_SIZE, WORLD_HEIGHT);
+              ctx.fillRect(0, r * TILE_SIZE, WORLD_WIDTH, TILE_SIZE);
+              ctx.fillRect(0, (GRID_SIZE - 1 - r) * TILE_SIZE, WORLD_WIDTH, TILE_SIZE);
+            }
+
+            const activeCount = room.puzzleState.plates ? room.puzzleState.plates.filter(p => p.activeTimer > 0).length : 0;
+            ctx.font = 'bold 13px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillStyle = '#ff1744';
+            ctx.strokeStyle = '#000000';
+            ctx.lineWidth = 3;
+            const bannerText = `\u26A0\uFE0F SOBRECARGA: ${Math.max(0, room.puzzleState.meltdownTimer).toFixed(1)}s [TIMERBOMBS NAS PLACAS: ${activeCount}/3]`;
+            ctx.strokeText(bannerText, WORLD_WIDTH / 2, 28);
+            ctx.fillText(bannerText, WORLD_WIDTH / 2, 28);
+            ctx.restore();
           }
         }
 
@@ -7380,6 +7981,9 @@
           ctx.fill();
         }
         ctx.restore();
+
+        // Renderiza Marcadores de Mira no Chão (Telegraph de ImpactBomb)
+        this.targetMarkers.forEach(tm => tm.draw(ctx));
 
         // Renderiza Bombas em Voo (Arremessadas)
         this.flyingBombs.forEach(b => b.draw(ctx));
@@ -7657,6 +8261,13 @@
         if (partEl) {
           partEl.textContent = `${this.player.parts || 0} ${window.t('ingame-parts').toUpperCase()}`;
         }
+
+        // Ícone do Pistão no canto da tela até enviar ao baú pela Goela
+        const pistonBadge = document.getElementById('piston-corner-badge');
+        if (pistonBadge) {
+          const isCarrying = !!(this.player && this.player.carryingHydraulicPiston);
+          pistonBadge.style.display = isCarrying ? 'flex' : 'none';
+        }
         
         const gauntletBadge = document.querySelector('#gauntlet-badge .hud-badge-label');
         if (gauntletBadge) gauntletBadge.textContent = window.t('ingame-gauntlet');
@@ -7728,6 +8339,7 @@
         unlockedImpact: p.unlockedImpact,
         unlockedPropulsor: p.unlockedPropulsor,
         hasHydraulicPiston: p.hasHydraulicPiston,
+        carryingHydraulicPiston: p.carryingHydraulicPiston,
         hasSteamPropulsionCore: p.hasSteamPropulsionCore,
         lastSaved: Date.now()
       };
@@ -7761,6 +8373,7 @@
         p.unlockedImpact = data.unlockedImpact ?? false;
         p.unlockedPropulsor = data.unlockedPropulsor ?? false;
         p.hasHydraulicPiston = data.hasHydraulicPiston ?? false;
+        p.carryingHydraulicPiston = data.carryingHydraulicPiston ?? false;
         p.hasSteamPropulsionCore = data.hasSteamPropulsionCore ?? false;
 
         // Atualizar inventário de bombas de acordo com o nível da bolsa
@@ -7783,6 +8396,14 @@
     function clearSave() {
       localStorage.removeItem(SAVE_KEY);
     }
+    window.GameEngine = GameEngine;
+    window.Automaton = Automaton;
+    window.Room = Room;
+    window.TargetMarker = TargetMarker;
+    window.TILE = TILE;
+    window.TILE_SIZE = TILE_SIZE;
+    window.GRID_SIZE = GRID_SIZE;
+
     window.addEventListener('DOMContentLoaded', () => {
       window.game = new GameEngine();
       loadGame();
@@ -7900,7 +8521,11 @@
           'armory-boots-name': 'Botas Propulsoras',
           'armory-boots-desc': 'Permite dar Dash (Aperte SHIFT ou Botão Mobile). Custo: 1 CC. Superaquece por 5s.',
           'armory-bag-name': 'Bolsa Expandida',
-          'armory-bag-desc': 'Carrega mais bombas e permite trocar de tipo.'
+          'armory-bag-desc': 'Carrega mais bombas e permite trocar de tipo.',
+          'item-piston-title': 'PISTÃO HIDRÁULICO',
+          'item-piston-desc': 'Componente de alta compressão forjado nos fornos a vapor da Mina. Essencial para aprimorar a Manopla Mecânica!',
+          'item-piston-hint': 'Envie este item ao Baú através de uma GOELA para desbloquear seu uso na Oficina!',
+          'item-piston-deposited': 'PISTÃO HIDRÁULICO ENVIADO AO BAÚ COM SUCESSO!'
       },
       'en': {
           'menu-start': 'Start Game',
@@ -7960,7 +8585,11 @@
           'armory-boots-name': 'Propulsion Boots',
           'armory-boots-desc': 'Allows Dashing (Press SHIFT or Mobile Button). Cost: 1 CC. Overheats for 5s.',
           'armory-bag-name': 'Expanded Bag',
-          'armory-bag-desc': 'Carry more bombs and swap types.'
+          'armory-bag-desc': 'Carry more bombs and swap types.',
+          'item-piston-title': 'HYDRAULIC PISTON',
+          'item-piston-desc': 'High compression component forged in the Mine steam furnaces. Essential to upgrade the Mechanical Gauntlet!',
+          'item-piston-hint': 'Send this item to the Vault via a GOELA chute to unlock its use in the Armory!',
+          'item-piston-deposited': 'HYDRAULIC PISTON SAFELY SENT TO THE VAULT!'
       }
     };
     let currentLang = 'pt';
