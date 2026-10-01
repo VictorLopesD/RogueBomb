@@ -598,20 +598,38 @@
     .btn-buy:disabled { background: #30363d; color: #8b949e; cursor: not-allowed; }
 
     /* Arsenal - Abas */
-    #armory-tabs { display: flex; gap: 8px; border-bottom: 1px solid #30363d; padding-bottom: 8px; }
+    #armory-tabs {
+      display: flex; gap: 8px; border-bottom: 1px solid #30363d; padding-bottom: 8px;
+    }
     .armory-tab {
       flex: 1; background: rgba(255,255,255,0.05); border: 1px solid #30363d;
       color: #8b949e; padding: 7px 0; border-radius: 6px; cursor: pointer;
       font-weight: bold; font-size: 12px; transition: 0.2s;
     }
-    .armory-tab.active { background: rgba(255,202,40,0.15); border-color: #ffca28; color: #ffca28; }
-    #bag-grid { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; background: rgba(0,0,0,0.25); border-radius: 8px; padding: 10px; }
-    .bag-slot { width: 36px; height: 36px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 18px; border: 2px solid #30363d; background: rgba(255,255,255,0.05); }
+    .armory-tab.active {
+      background: rgba(255, 202, 40, 0.15); border-color: #ffca28; color: #ffca28;
+    }
+    /* Bolsa - Grid */
+    #bag-grid {
+      display: flex; flex-wrap: wrap; gap: 6px; justify-content: center;
+      background: rgba(0,0,0,0.25); border-radius: 8px; padding: 10px;
+    }
+    .bag-slot {
+      width: 36px; height: 36px; border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; border: 2px solid #30363d;
+      background: rgba(255,255,255,0.05);
+    }
     .bag-slot.filled { border-color: #ff6f00; background: rgba(255,111,0,0.15); }
     .bag-slot.filled.impact { border-color: #ef5350; background: rgba(239,83,80,0.15); }
     .bag-slot.filled.propulsor { border-color: #42a5f5; background: rgba(66,165,245,0.15); }
-    #bag-types-row { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
-    .bag-type-pill { padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; border: 1px solid #30363d; color: #8b949e; background: rgba(255,255,255,0.05); }
+    #bag-types-row {
+      display: flex; gap: 8px; justify-content: center;
+    }
+    .bag-type-pill {
+      padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: bold;
+      border: 1px solid #30363d; color: #8b949e; background: rgba(255,255,255,0.05);
+    }
     .bag-type-pill.available { border-color: #66bb6a; color: #a5d6a7; background: rgba(102,187,106,0.1); }
     .btn-close {
       background: #da3633; border: none; color: white; padding: 10px;
@@ -619,6 +637,340 @@
       font-size: 14px; margin-top: 10px; transition: 0.2s;
     }
     .btn-close:hover { background: #f85149; }
+
+    /* Modal de Tutorial de Bombas (PC & Mobile) */
+    #tutorial-modal {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(4, 7, 12, 0.88);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      z-index: 2500;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 12px;
+      overflow-y: auto;
+    }
+    #tutorial-modal.visible {
+      display: flex !important;
+    }
+    .tutorial-card {
+      background: radial-gradient(circle at 50% 0%, #1f2735 0%, #0d1117 100%);
+      border: 3px solid #ffca28;
+      border-radius: 14px;
+      box-shadow: 0 0 35px rgba(255, 202, 40, 0.35), inset 0 0 15px rgba(255, 202, 40, 0.12);
+      max-width: 740px;
+      width: 100%;
+      max-height: 94vh;
+      display: flex;
+      flex-direction: column;
+      padding: 18px 22px;
+      color: #fff;
+      box-sizing: border-box;
+      overflow-y: auto;
+      animation: popInItem 0.28s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .tutorial-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      border-bottom: 2px solid rgba(255, 202, 40, 0.3);
+      padding-bottom: 12px;
+      margin-bottom: 12px;
+    }
+    .tutorial-badge-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .tutorial-badge-title h2 {
+      margin: 0;
+      color: #ffca28;
+      font-size: 19px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      font-family: monospace;
+      text-shadow: 0 0 10px rgba(255, 202, 40, 0.5);
+    }
+    .tutorial-tabs {
+      display: flex;
+      background: rgba(0, 0, 0, 0.45);
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      padding: 3px;
+      gap: 4px;
+    }
+    .tut-tab-btn {
+      background: transparent;
+      border: none;
+      color: #8b949e;
+      padding: 6px 14px;
+      font-size: 12px;
+      font-weight: bold;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+    .tut-tab-btn:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.08);
+    }
+    .tut-tab-btn.active {
+      background: #ffca28;
+      color: #111;
+      box-shadow: 0 0 12px rgba(255, 202, 40, 0.4);
+    }
+    .tutorial-instruction-banner {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(255, 202, 40, 0.12);
+      border: 1px solid rgba(255, 202, 40, 0.4);
+      border-radius: 8px;
+      padding: 10px 14px;
+      margin-bottom: 14px;
+      font-size: 14px;
+      color: #ffd54f;
+      line-height: 1.4;
+    }
+    .tutorial-instruction-banner.mobile-banner {
+      background: rgba(0, 229, 255, 0.12);
+      border-color: rgba(0, 229, 255, 0.4);
+      color: #80deea;
+    }
+    .banner-icon {
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+    .tutorial-steps-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .tutorial-step-card {
+      background: rgba(0, 0, 0, 0.45);
+      border: 1px solid #30363d;
+      border-radius: 10px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      position: relative;
+      transition: border-color 0.2s;
+    }
+    .tutorial-step-card:hover {
+      border-color: #ffca28;
+    }
+    .step-num {
+      position: absolute;
+      top: 6px;
+      left: 6px;
+      width: 22px;
+      height: 22px;
+      background: #ffca28;
+      color: #111;
+      font-weight: bold;
+      font-size: 12px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+    }
+    .step-img-box {
+      width: 100%;
+      height: 140px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #11161d;
+      border-radius: 6px;
+      overflow: hidden;
+      margin-bottom: 8px;
+      border: 1px solid #21262d;
+    }
+    .step-img {
+      max-height: 100%;
+      max-width: 100%;
+      object-fit: contain;
+      image-rendering: pixelated;
+    }
+    .step-title {
+      font-size: 13px;
+      font-weight: bold;
+      color: #ffca28;
+      margin-bottom: 4px;
+      letter-spacing: 0.5px;
+    }
+    .step-desc {
+      font-size: 11px;
+      color: #c9d1d9;
+      line-height: 1.4;
+    }
+    .tutorial-tip-box {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px dashed rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 11.5px;
+      color: #8b949e;
+      margin-bottom: 14px;
+      line-height: 1.4;
+    }
+    .tutorial-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      border-top: 1px solid #30363d;
+      padding-top: 12px;
+      margin-top: auto;
+    }
+    .tutorial-dont-show-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: #8b949e;
+      cursor: pointer;
+      user-select: none;
+    }
+    .tutorial-confirm-btn {
+      background: linear-gradient(135deg, #f39c12, #e67e22);
+      border: none;
+      color: #111;
+      padding: 9px 20px;
+      font-size: 13px;
+      font-weight: bold;
+      border-radius: 6px;
+      cursor: pointer;
+      letter-spacing: 0.5px;
+      transition: all 0.2s ease;
+      box-shadow: 0 0 15px rgba(243, 156, 18, 0.4);
+    }
+    .tutorial-confirm-btn:hover {
+      background: linear-gradient(135deg, #f1c40f, #f39c12);
+      transform: translateY(-1px);
+      box-shadow: 0 0 22px rgba(243, 156, 18, 0.7);
+    }
+    #mobile-guide {
+      position: absolute;
+      bottom: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--panel-bg);
+      border: 1px solid var(--border-color);
+      padding: 5px 14px;
+      border-radius: 16px;
+      font-size: 11px;
+      color: #ffca28;
+      display: none;
+      pointer-events: none;
+      z-index: 20;
+      white-space: nowrap;
+      text-shadow: 1px 1px 2px #000;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+    }
+    @media (max-width: 650px) {
+      .tutorial-card {
+        padding: 12px 14px;
+        max-height: 96vh;
+      }
+      .tutorial-badge-title h2 {
+        font-size: 15px;
+      }
+      .tutorial-steps-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+      .tutorial-step-card {
+        flex-direction: row;
+        text-align: left;
+        gap: 12px;
+        padding: 8px;
+      }
+      .step-img-box {
+        width: 76px;
+        height: 76px;
+        flex-shrink: 0;
+        margin-bottom: 0;
+      }
+      .step-title {
+        font-size: 12px;
+      }
+      .step-desc {
+        font-size: 10.5px;
+      }
+      .tutorial-instruction-banner {
+        font-size: 12px;
+        padding: 8px 10px;
+        gap: 8px;
+      }
+      .banner-icon {
+        font-size: 20px;
+      }
+      .tutorial-footer {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .tutorial-confirm-btn {
+        width: 100%;
+        text-align: center;
+      }
+      #mobile-guide {
+        bottom: calc(212px + env(safe-area-inset-bottom, 0px));
+        font-size: 10px;
+        padding: 4px 10px;
+      }
+    }
+
+    /* Modal de Coleta de Item Especial (Pistão Hidráulico) */
+    #item-collected-modal {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      z-index: 2000;
+      background: rgba(6, 8, 12, 0.85);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+    .item-card {
+      background: radial-gradient(circle at center, #2e1d0c 0%, #150e06 100%);
+      border: 3px solid #f39c12;
+      box-shadow: 0 0 35px rgba(243, 156, 18, 0.6), inset 0 0 20px rgba(243, 156, 18, 0.25);
+      border-radius: 12px;
+      padding: 26px 28px;
+      text-align: center;
+      max-width: 440px;
+      width: 90%;
+      color: #fff;
+      animation: popInItem 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    @keyframes popInItem {
+      0% { transform: scale(0.65); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    @keyframes pulsePistonBadge {
+      0%, 100% {
+        box-shadow: 0 0 12px rgba(255, 215, 0, 0.4), inset 0 0 6px rgba(255, 215, 0, 0.2);
+        border-color: #ffd700;
+      }
+      50% {
+        box-shadow: 0 0 24px rgba(255, 215, 0, 0.85), inset 0 0 10px rgba(255, 215, 0, 0.4);
+        border-color: #fff176;
+        transform: scale(1.04);
+      }
+    }
 
     /* Modal da Loja do Inventor */
     #inventor-shop-modal {
@@ -795,6 +1147,161 @@
         overflow-y: auto;
       }
     }
+    /* Menus UI (Menu Principal e Opções) */
+    .menu-overlay {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(10, 14, 20, 0.95);
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+    .menu-overlay.hidden {
+      display: none !important;
+    }
+    .menu-title {
+      font-size: 3rem;
+      color: var(--accent-yellow);
+      text-transform: uppercase;
+      letter-spacing: 4px;
+      margin-bottom: 2rem;
+      text-shadow: 0 4px 12px rgba(255, 202, 40, 0.4);
+    }
+    .menu-btn {
+      background: var(--panel-bg);
+      border: 2px solid var(--border-color);
+      color: white;
+      font-size: 1.2rem;
+      font-weight: bold;
+      padding: 12px 32px;
+      margin: 8px;
+      border-radius: 8px;
+      cursor: pointer;
+      width: 250px;
+      transition: all 0.2s ease;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .menu-btn:hover {
+      border-color: var(--accent-blue);
+      background: rgba(41, 182, 246, 0.2);
+      transform: scale(1.05);
+      box-shadow: 0 0 16px rgba(41, 182, 246, 0.4);
+    }
+    .menu-btn:active {
+      transform: scale(0.95);
+    }
+    .options-container {
+      width: 450px;
+      background: var(--panel-bg);
+      border: 2px solid var(--border-color);
+      border-radius: 12px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+    .option-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .option-group.toggle-group {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .option-group label {
+      font-weight: bold;
+      color: var(--text-dim);
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .option-group input[type='range'] {
+      width: 100%;
+      accent-color: var(--accent-blue);
+      cursor: pointer;
+    }
+    .option-group input[type='checkbox'] {
+      width: 20px;
+      height: 20px;
+      accent-color: var(--accent-blue);
+      cursor: pointer;
+    }
+    .option-group select {
+      background: rgba(10, 14, 20, 0.95);
+      color: white;
+      border: 1px solid var(--border-color);
+      padding: 8px;
+      border-radius: 6px;
+      font-weight: bold;
+    }
+      #lore-panel {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translateY(-50%);
+      margin-left: 320px;
+      width: 320px;
+      background: #1e160e;
+      border: 3px solid #c59b27;
+      border-radius: 4px;
+      padding: 16px;
+      display: none;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+      z-index: 100;
+      color: #ecf0f1;
+    }
+    .lore-header {
+      font-family: monospace;
+      font-weight: bold;
+      color: #f39c12;
+      font-size: 14px;
+      border-bottom: 1px solid rgba(197, 155, 39, 0.4);
+      padding-bottom: 6px;
+    }
+    .lore-official {
+      font-family: serif;
+      font-size: 15px;
+      font-style: italic;
+      color: #b0bec5;
+      line-height: 1.4;
+    }
+    .lore-scrawl {
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      font-size: 18px;
+      font-weight: bold;
+      color: #e74c3c;
+      transform: rotate(-2deg);
+      line-height: 1.3;
+      margin: 8px 0;
+    }
+    .lore-tip {
+      font-family: sans-serif;
+      font-size: 13px;
+      color: #00e5ff;
+      background: rgba(0, 229, 255, 0.1);
+      padding: 8px;
+      border-radius: 4px;
+      border: 1px solid rgba(0, 229, 255, 0.3);
+    }
+    @media (max-width: 1260px) {
+      #lore-panel {
+        left: 50%;
+        margin-left: -160px;
+        top: 20px;
+        transform: none;
+      }
+    }
   </style>
 </head>
 <body>
@@ -836,24 +1343,50 @@
         <div class="hud-badge minimap-badge-label" style="padding: 4px 8px; font-size: 11px;">MAPA PROCEDURAL</div>
         <canvas id="minimap-canvas" width="70" height="70"></canvas>
       </div>
+      <div id="hud-help-btn" class="hud-badge" title="Como Jogar / Tutorial de Bombas" onclick="openTutorialModal()" style="cursor: pointer; background: rgba(243, 156, 18, 0.2); border-color: #f39c12; align-self: center;">
+        <span style="font-size: 16px;">❓</span>
+        <div class="hud-badge-info">
+          <div class="hud-badge-label" id="hud-help-label">Ajuda</div>
+          <div class="hud-badge-value" style="color: #ffca28; font-size: 10px;">TUTORIAL</div>
+        </div>
+      </div>
     </div>
 
     <!-- Alerta de Trancamento / Lockdown -->
     <div id="lockdown-banner">LOCKDOWN! ELIMINE OS AUTÔMATOS</div>
 
     <!-- Canvas Central do Jogo -->
+        <!-- Painel de Lore / Panfleto -->
+    <div id="lore-panel">
+      <div class="lore-header">📜 REGISTRO ENCONTRADO (1826)</div>
+      <div id="lore-official" class="lore-official"></div>
+      <div id="lore-scrawl" class="lore-scrawl"></div>
+      <div id="lore-tip" class="lore-tip"></div>
+      <button style="margin-top: 8px; padding: 6px; background: #333; color: #fff; border: 1px solid #555; cursor: pointer; border-radius: 4px;" onclick="document.getElementById('lore-panel').style.display='none'">Fechar</button>
+    </div>
     <div id="canvas-wrapper">
       <canvas id="game-canvas" width="600" height="600"></canvas>
+      <!-- Badge de Item no Canto da Tela (Pistão Hidráulico aguardando Goela) -->
+      <div id="piston-corner-badge" style="display: none; position: absolute; top: 12px; right: 12px; z-index: 80; align-items: center; gap: 8px; background: rgba(22, 14, 6, 0.94); border: 2px solid #ffd700; border-radius: 8px; padding: 6px 12px; box-shadow: 0 0 16px rgba(255, 215, 0, 0.5), inset 0 0 8px rgba(255, 215, 0, 0.25); pointer-events: none; animation: pulsePistonBadge 2s infinite ease-in-out;">
+        <span style="font-size: 24px; filter: drop-shadow(0 0 6px #ffd700);">🦾</span>
+        <div style="display: flex; flex-direction: column; text-align: left;">
+          <span style="font-size: 11px; font-weight: bold; color: #ffd700; letter-spacing: 0.5px;">PISTÃO HIDRÁULICO</span>
+          <span style="font-size: 10px; color: #00e5ff; font-weight: bold;">LEVE ATÉ A GOELA ➔</span>
+        </div>
+      </div>
     </div>
 
     <!-- Guia Teclado / Mouse Desktop -->
     <div id="desktop-guide">
       <span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> Mover</span>
-      <span>🖱️ <b>Clique e Arraste</b>: Mirar & Lançar</span>
-      <span><kbd>1</kbd> Imp | <kbd>2</kbd> Prop | <kbd>3</kbd> Temp</span>
-      <span><kbd>SHIFT</kbd> Dash (1 CC)</span>
-      <span><kbd>U</kbd> Manopla</span>
-      <span><kbd>ESPAÇO</kbd> / Dir: Rápido</span>
+      <span id="desktop-guide-throw">🖱️ <b>Clique & Solte</b>: Lançar Bomba</span>
+      <span id="guide-bombs" style="display: none;"><kbd>1</kbd> Imp | <kbd>2</kbd> Prop | <kbd>3</kbd> Temp</span>
+      <span id="guide-dash" style="display: none;"><kbd>SHIFT</kbd> Dash (1 CC)</span>
+    </div>
+
+    <!-- Guia Mobile Touch -->
+    <div id="mobile-guide" style="display: none;">
+      <span id="mobile-guide-text">👆 <b>Direcione e Solte</b> para Lançar Bomba</span>
     </div>
 
     <!-- Controles Touch Mobile -->
@@ -907,7 +1440,217 @@
     </div>
 
     <!-- Toast Central -->
-    <div id="center-toast">TEMPO REBOBINADO!</div>
+    <div id="center-toast"></div>
+
+    <!-- Modal Central de Coleta de Item Especial (ex: Pistão Hidráulico) -->
+    <div id="item-collected-modal" style="display: none;">
+      <div class="item-card">
+        <div style="font-size: 13px; font-weight: bold; letter-spacing: 2px; color: #ffd700; text-transform: uppercase; margin-bottom: 6px;">★ ITEM RARO COLETADO ★</div>
+        <div id="collected-item-icon" style="font-size: 58px; margin: 10px 0; text-shadow: 0 0 20px #ffd700;">🦾</div>
+        <h2 id="collected-item-title" style="font-size: 24px; color: #ffca28; margin: 0 0 8px 0; font-family: monospace; text-shadow: 1px 1px 4px #000;">PISTÃO HIDRÁULICO</h2>
+        <p id="collected-item-desc" style="font-size: 14px; color: #cfd8dc; line-height: 1.5; margin: 10px 0 16px 0;">
+          Componente de alta compressão forjado nos fornos a vapor da Mina. Essencial para aprimorar a Manopla Mecânica!
+        </p>
+        <div id="collected-item-hint" style="background: rgba(0, 229, 255, 0.12); border: 1px solid rgba(0, 229, 255, 0.4); border-radius: 6px; padding: 10px 14px; font-size: 12px; color: #00e5ff; margin-bottom: 20px; font-weight: bold; line-height: 1.4;">
+          📦 Envie este item ao Baú através de uma <b>GOELA (Duto Verde)</b> para desbloquear seu uso na Oficina!
+        </div>
+        <button id="btn-close-item-modal" class="menu-btn" style="margin: 0 auto; width: 150px; padding: 10px 18px; font-size: 14px; background: #f39c12; color: #111; font-weight: bold; cursor: pointer; border-radius: 4px;" onclick="window.game.closeItemModal()">CONTINUAR</button>
+      </div>
+    </div>
+
+    <!-- Tela de Carregamento -->
+    <div id="loading-screen" class="menu-overlay" style="display: none; flex-direction: column;">
+      <h1 class="menu-title" id="loading-title">Carregando...</h1>
+      <div id="loading-tip" style="margin-top: 20px; font-size: 1.2rem; color: #fff; max-width: 600px; text-align: center; text-shadow: 1px 1px 2px #000;"></div>
+    </div>
+
+    <!-- Tela de Menu Principal -->
+    <div id="main-menu" class="menu-overlay" style="display: flex;">
+      <h1 class="menu-title">RogueBomb</h1>
+      <button class="menu-btn" id="btn-start">Iniciar Jogo</button>
+      <button class="menu-btn" id="btn-continue" style="display: none;">Continuar</button>
+      <button class="menu-btn" id="btn-tutorial" onclick="openTutorialModal()">Como Jogar</button>
+      <button class="menu-btn" id="btn-options">Opções</button>
+      
+      <button class="menu-btn" id="btn-exit" style="display: none;">Sair</button>
+    </div>
+
+        <!-- Tela de Galeria de Lore -->
+    <div id="gallery-menu" class="menu-overlay hidden">
+      <h1 class="menu-title" style="font-size: 2rem; color: #f39c12;">Galeria de Registros</h1>
+      <div id="gallery-list" style="max-height: 60vh; overflow-y: auto; width: 420px; max-width: 90%; background: rgba(0,0,0,0.7); border: 2px solid #333; padding: 15px; border-radius: 8px; text-align: left;">
+      </div>
+      <button class="menu-btn" onclick="closeLoreGallery()" style="margin-top: 20px;">Voltar</button>
+    </div>
+
+    <!-- Tela de Menu de Opções -->
+    <div id="options-menu" class="menu-overlay hidden">
+      <h1 class="menu-title" style="font-size: 2rem;">Opções</h1>
+      <div class="options-container">
+        
+        <div class="option-group">
+          <label for="music-vol">Volume da Música (<span id="music-vol-val">100</span>%)</label>
+          <input type="range" id="music-vol" min="0" max="100" value="100">
+        </div>
+        
+        <div class="option-group">
+          <label for="sfx-vol">Volume dos Efeitos (<span id="sfx-vol-val">100</span>%)</label>
+          <input type="range" id="sfx-vol" min="0" max="100" value="100">
+        </div>
+
+        <div class="option-group toggle-group">
+          <label for="screen-shake">Vibração de Tela</label>
+          <input type="checkbox" id="screen-shake" checked>
+        </div>
+
+        <div class="option-group toggle-group">
+          <label for="fullscreen-toggle">Tela Cheia</label>
+          <input type="checkbox" id="fullscreen-toggle">
+        </div>
+
+        <div class="option-group toggle-group">
+          <label for="crt-effect">Efeito Visual Retrô (CRT)</label>
+          <input type="checkbox" id="crt-effect">
+        </div>
+
+        <div class="option-group toggle-group">
+          <label for="show-fps">Mostrar FPS</label>
+          <input type="checkbox" id="show-fps" checked>
+        </div>
+
+        <div class="option-group">
+          <label for="aim-sens">Sensibilidade da Mira (<span id="aim-sens-val">50</span>%)</label>
+          <input type="range" id="aim-sens" min="1" max="100" value="50">
+        </div>
+
+        <div class="option-group toggle-group">
+          <label for="language-select">Idioma</label>
+          <select id="language-select">
+            <option value="pt">Português</option>
+            <option value="en">English</option>
+          </select>
+        </div>
+
+        <button class="menu-btn" style="width: 100%; margin-top: 16px;" id="btn-options-tutorial" onclick="openTutorialModal()">Como Jogar (Tutorial)</button>
+        <button class="menu-btn" style="width: 100%; margin-top: 16px; display: none;" id="btn-gallery-in-game" onclick="openLoreGallery()">Galeria de Registros</button>
+        <button class="menu-btn" style="width: 100%; margin-top: 16px; background: #e74c3c; border: 2px solid #c0392b;" onclick="if(confirm('Apagar todo o progresso?')) { clearSave(); location.reload(); }">Apagar Save</button>
+        <button class="menu-btn" style="width: 100%; margin-top: 16px;" id="btn-back-menu">Voltar</button>
+      </div>
+    </div>
+
+    <!-- Modal de Tutorial: Como Jogar Bombas (PC & Mobile) -->
+    <div id="tutorial-modal" class="menu-overlay hidden">
+      <div class="tutorial-card">
+        <div class="tutorial-header">
+          <div class="tutorial-badge-title">
+            <span style="font-size: 24px;">💣</span>
+            <h2 id="tutorial-title-text">COMO LANÇAR BOMBAS</h2>
+          </div>
+          <!-- Seletor de Plataforma (Auto-selecionado, com tabs interativas) -->
+          <div class="tutorial-tabs">
+            <button class="tut-tab-btn active" id="tut-tab-pc" onclick="switchTutorialPlatform('pc')">
+              <span>🖥️</span> <span id="tut-tab-pc-text">Computador</span>
+            </button>
+            <button class="tut-tab-btn" id="tut-tab-mobile" onclick="switchTutorialPlatform('mobile')">
+              <span>📱</span> <span id="tut-tab-mobile-text">Celular</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Conteúdo do Tutorial PC -->
+        <div id="tutorial-content-pc" class="tutorial-platform-content">
+          <div class="tutorial-instruction-banner pc-banner">
+            <span class="banner-icon">🖱️</span>
+            <span id="tut-pc-banner-text"><b>Clique com o mouse e solte</b> para lançar a bomba!</span>
+          </div>
+
+          <div class="tutorial-steps-grid">
+            <div class="tutorial-step-card">
+              <div class="step-num">1</div>
+              <div class="step-img-box">
+                <img src="Img/tutorial_step1.png" alt="Mire com o Mouse" class="step-img" />
+              </div>
+              <div class="step-title" id="tut-pc-s1-title">1. MIRAR</div>
+              <div class="step-desc" id="tut-pc-s1-desc">Posicione o cursor do mouse no alvo onde deseja jogar a bomba.</div>
+            </div>
+
+            <div class="tutorial-step-card">
+              <div class="step-num">2</div>
+              <div class="step-img-box">
+                <img src="Img/tutorial_step2.png" alt="Segure e Mire" class="step-img" />
+              </div>
+              <div class="step-title" id="tut-pc-s2-title">2. SEGURAR</div>
+              <div class="step-desc" id="tut-pc-s2-desc"><b>Clique e segure o botão esquerdo</b>. Veja o arco de trajetória e o limite de alcance.</div>
+            </div>
+
+            <div class="tutorial-step-card">
+              <div class="step-num">3</div>
+              <div class="step-img-box">
+                <img src="Img/tutorial_step3.png" alt="Solte para Lançar" class="step-img" />
+              </div>
+              <div class="step-title" id="tut-pc-s3-title">3. SOLTAR</div>
+              <div class="step-desc" id="tut-pc-s3-desc"><b>Solte o clique</b>! A bomba voará até o alvo e iniciará a contagem regressiva para explodir.</div>
+            </div>
+          </div>
+
+          <div class="tutorial-tip-box">
+            💡 <b id="tut-pc-tip-tag">Dica Rápida:</b> <span id="tut-pc-tip-desc">Você também pode clicar com o <b>Botão Direito</b> para lançar diretamente na posição do cursor sem carregar mira!</span>
+          </div>
+        </div>
+
+        <!-- Conteúdo do Tutorial Mobile -->
+        <div id="tutorial-content-mobile" class="tutorial-platform-content" style="display: none;">
+          <div class="tutorial-instruction-banner mobile-banner">
+            <span class="banner-icon">👆</span>
+            <span id="tut-mobile-banner-text"><b>Utilize o dedo para direcionar</b> a bomba clicando na direção que deseja lançar a bomba e <b>solte para arremessar</b>!</span>
+          </div>
+
+          <div class="tutorial-steps-grid">
+            <div class="tutorial-step-card">
+              <div class="step-num">1</div>
+              <div class="step-img-box">
+                <img src="Img/tutorial_step1.png" alt="Toque na tela" class="step-img" />
+              </div>
+              <div class="step-title" id="tut-mob-s1-title">1. TOCAR</div>
+              <div class="step-desc" id="tut-mob-s1-desc">Toque na tela do jogo na direção onde deseja direcionar o ataque.</div>
+            </div>
+
+            <div class="tutorial-step-card">
+              <div class="step-num">2</div>
+              <div class="step-img-box">
+                <img src="Img/tutorial_step2.png" alt="Direcionar a bomba" class="step-img" />
+              </div>
+              <div class="step-title" id="tut-mob-s2-title">2. DIRECIONAR</div>
+              <div class="step-desc" id="tut-mob-s2-desc"><b>Arraste o dedo</b> para ajustar o arco da bomba até o alvo dentro do alcance.</div>
+            </div>
+
+            <div class="tutorial-step-card">
+              <div class="step-num">3</div>
+              <div class="step-img-box">
+                <img src="Img/tutorial_step3.png" alt="Soltar para arremessar" class="step-img" />
+              </div>
+              <div class="step-title" id="tut-mob-s3-title">3. SOLTAR</div>
+              <div class="step-desc" id="tut-mob-s3-desc"><b>Retire o dedo da tela</b> para arremessar! A bomba pousará e começará a contagem para explodir.</div>
+            </div>
+          </div>
+
+          <div class="tutorial-tip-box">
+            💡 <b id="tut-mob-tip-tag">Controles Touch:</b> <span id="tut-mob-tip-desc">Use o analógico na esquerda para mover Charlotte e os botões na direita para alternar bombas e usar Dash!</span>
+          </div>
+        </div>
+
+        <!-- Rodapé do Modal -->
+        <div class="tutorial-footer">
+          <label class="tutorial-dont-show-label">
+            <input type="checkbox" id="tut-dont-show" />
+            <span id="tut-dont-show-text">Não mostrar novamente ao iniciar</span>
+          </label>
+          <button class="tutorial-confirm-btn" id="btn-close-tutorial" onclick="closeTutorialModal()">
+            <span id="tut-btn-confirm-text">ENTENDIDO! JOGAR</span> ➔
+          </button>
+        </div>
+      </div>
+    </div>
 
     <!-- Modal do Arsenal -->
     <div id="armory-modal">
@@ -934,7 +1677,7 @@
         <div class="armory-item">
           <div class="armory-info">
             <span class="armory-title">Botas Propulsoras</span>
-            <span class="armory-desc">Permite dar Dash (SHIFT ou Botão Mobile). Custo: 1 CC. Superaquece por 5s.</span>
+            <span class="armory-desc">Permite dar Dash (Aperte SHIFT ou Botão Mobile). Custo: 1 CC. Superaquece por 5s.</span>
             <span class="armory-cost">Custo: 15 CC | 15 PEÇAS</span>
           </div>
           <button class="btn-buy" id="btn-buy-boots" onclick="window.game.buyUpgrade('boots')">Comprar</button>
@@ -944,9 +1687,19 @@
           <div class="armory-info">
             <span class="armory-title">Bolsa Expandida</span>
             <span class="armory-desc">Aumenta a capacidade de bombas. Nv.1: 5 | Nv.2: 7 | Nv.3: 10</span>
-            <span class="armory-cost" id="bag-upgrade-cost">Custo: 15 CC | 15 PEÇAS</span>
+            <span class="armory-cost" id="bag-upgrade-cost">Custo: 20 CC | 20 PEÇAS</span>
           </div>
           <button class="btn-buy" id="btn-buy-bag" onclick="window.game.buyUpgrade('bag')">Melhorar</button>
+        </div>
+
+
+        <div class="armory-item">
+          <div class="armory-info">
+            <span class="armory-title">Bomba-Relógio Nível 2</span>
+            <span class="armory-desc">Reação em Cadeia: detonam imediatamente ao sofrer impacto de outras explosões.</span>
+            <span class="armory-cost" id="timerbomb-upgrade-cost">Custo: 20 CC | 15 PEÇAS</span>
+          </div>
+          <button class="btn-buy" id="btn-buy-timerbomb" onclick="window.game.buyUpgrade('timerbomb')">Comprar</button>
         </div>
       </div>
 
@@ -992,6 +1745,7 @@
     </div>
   </div>
 
+  <script src="lore_data.js"></script>
   <script>
     /* ==========================================================================
        ROGUEBOMB MVP - ARQUITETURA DE CÓDIGO
@@ -1022,6 +1776,10 @@
         this.isMuted = false;
 
         // Background Music
+        this.bgmMenu = new Audio('song/Turn_of_the_Great_Wheel.mp3');
+        this.bgmMenu.loop = true;
+        this.bgmMenu.volume = 0.35;
+
         this.bgmExplore = new Audio('song/The_Weight_of_Brass.mp3');
         this.bgmExplore.loop = true;
         this.bgmExplore.volume = 0.35;
@@ -1038,9 +1796,10 @@
 
         this.currentBgm = null;
         this.musicStarted = false;
+        this.musicVolume = 1.0;
       }
 
-      init() {
+      init(initialMode = null) {
         if (!this.ctx) {
           const AudioContextClass = window.AudioContext || window.webkitAudioContext;
           if (AudioContextClass) {
@@ -1052,8 +1811,16 @@
         }
 
         if (!this.musicStarted) {
-          this.musicStarted = true;
-          this.setMusicMode('explore');
+          const mode = initialMode || (window.game && !window.game.isPaused ? 'explore' : 'menu');
+          this.setMusicMode(mode);
+        }
+      }
+
+      setMusicVolume(vol) {
+        this.musicVolume = Math.max(0, Math.min(1, vol));
+        const target = 0.35 * this.musicVolume;
+        if (this.currentBgm) {
+          this.currentBgm.volume = target;
         }
       }
 
@@ -1064,7 +1831,7 @@
         const duration = 1200; // 1.2 segundos
         const steps = 30;
         const stepTime = duration / steps;
-        const maxVol = 0.35;
+        const maxVol = 0.35 * (this.musicVolume !== undefined ? this.musicVolume : 1.0);
         
         let fromStartVol = fromAudio ? fromAudio.volume : 0;
         if (toAudio) {
@@ -1085,21 +1852,31 @@
           if (step >= steps) {
             clearInterval(this.fadeInterval);
             this.fadeInterval = null;
-            if (fromAudio) fromAudio.pause();
+            if (fromAudio && fromAudio !== toAudio) fromAudio.pause();
             if (toAudio) toAudio.volume = maxVol;
           }
         }, stepTime);
       }
 
       setMusicMode(mode) {
-        if (!this.musicStarted) return;
+        this.musicStarted = true;
         
-        if (mode === 'explore') {
-          if (this.currentBgm === this.bgmExplore) return;
+        if (mode === 'menu') {
+          if (this.currentBgm === this.bgmMenu) {
+            if (this.bgmMenu.paused) this.bgmMenu.play().catch(() => {});
+            return;
+          }
+          this.crossfadeMusic(this.currentBgm, this.bgmMenu);
+          this.currentBgm = this.bgmMenu;
+        } else if (mode === 'explore') {
+          if (this.currentBgm === this.bgmExplore) {
+            if (this.bgmExplore.paused) this.bgmExplore.play().catch(() => {});
+            return;
+          }
           this.crossfadeMusic(this.currentBgm, this.bgmExplore);
           this.currentBgm = this.bgmExplore;
         } else if (mode === 'battle') {
-          if (this.currentBgm && this.currentBgm !== this.bgmExplore) return;
+          if (this.currentBgm && this.currentBgm !== this.bgmExplore && this.currentBgm !== this.bgmMenu) return;
           
           let randomTrack = this.bgmBattleList[Math.floor(Math.random() * this.bgmBattleList.length)];
           this.crossfadeMusic(this.currentBgm, randomTrack);
@@ -1385,6 +2162,39 @@
         osc.stop(now + 0.15);
       }
 
+      playPaperRustle() {
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        
+        // Ruído branco rápido filtrado para parecer papel
+        const bufferSize = this.ctx.sampleRate * 0.15; // 0.15s
+        const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+          data[i] = Math.random() * 2 - 1;
+        }
+        
+        const noiseSource = this.ctx.createBufferSource();
+        noiseSource.buffer = buffer;
+        
+        const filter = this.ctx.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.frequency.value = 2500;
+        filter.Q.value = 0.8;
+        
+        const gain = this.ctx.createGain();
+        gain.gain.setValueAtTime(0, now);
+        gain.gain.linearRampToValueAtTime(0.5, now + 0.05);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+        
+        noiseSource.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.ctx.destination);
+        
+        noiseSource.start(now);
+      }
+
       playCCPickup() {
         this.init();
         if (!this.ctx) return;
@@ -1422,6 +2232,18 @@
     }
 
     const sound = new SoundEngine();
+    window.sound = sound;
+
+    // Inicialização da música do menu inicial na primeira interação do usuário
+    const triggerMenuAudioOnUserGesture = () => {
+      const mainMenu = document.getElementById('main-menu');
+      if (mainMenu && !mainMenu.classList.contains('hidden') && mainMenu.style.display !== 'none') {
+        sound.init('menu');
+      }
+    };
+    ['pointerdown', 'click', 'keydown', 'touchstart'].forEach(evt => {
+      window.addEventListener(evt, triggerMenuAudioOnUserGesture, { once: true });
+    });
 
     // --------------------------------------------------------------------------
     // 2. CONSTANTES E CONFIGURAÇÕES DO GRID
@@ -1513,6 +2335,14 @@
         window.addEventListener('keydown', (e) => {
           this.keys[e.code] = true;
           sound.init(); // Ativa áudio no primeiro input
+
+          if (window.game && window.game.isItemModalOpen) {
+            if (e.code === 'Space' || e.code === 'Enter' || e.code === 'Escape') {
+              e.preventDefault();
+              window.game.closeItemModal();
+              return;
+            }
+          }
 
           // Seleção numérica de bombas
           const _p = (window.game && window.game.player) ? window.game.player : null;
@@ -1910,6 +2740,69 @@
     // --------------------------------------------------------------------------
     // 4. ESTRUTURA DE SALAS E MAPA PROCEDURAL (MapManager)
     // --------------------------------------------------------------------------
+    class PushablePillar {
+      constructor(gridX, gridY) {
+        this.gridX = gridX;
+        this.gridY = gridY;
+        this.x = gridX * TILE_SIZE + TILE_SIZE / 2;
+        this.y = gridY * TILE_SIZE + TILE_SIZE / 2;
+        this.isMoving = false;
+        this.targetX = this.x;
+        this.targetY = this.y;
+        this.speed = 220;
+      }
+      
+      update(dt, room) {
+        if (this.isMoving) {
+          const dx = this.targetX - this.x;
+          const dy = this.targetY - this.y;
+          const dist = Math.hypot(dx, dy);
+          if (dist < this.speed * dt) {
+            this.x = this.targetX;
+            this.y = this.targetY;
+            this.gridX = Math.floor(this.x / TILE_SIZE);
+            this.gridY = Math.floor(this.y / TILE_SIZE);
+            this.isMoving = false;
+          } else {
+            this.x += (dx / dist) * this.speed * dt;
+            this.y += (dy / dist) * this.speed * dt;
+          }
+        }
+      }
+      
+      push(dx, dy, room) {
+        if (this.isMoving) return;
+        const nx = this.gridX + dx;
+        const ny = this.gridY + dy;
+        if (nx >= 1 && nx < GRID_SIZE - 1 && ny >= 1 && ny < GRID_SIZE - 1) {
+          const t = room.grid[ny][nx];
+          if (t === TILE.EMPTY || t === TILE.PRESSURE_PLATE || t === TILE.DIRT || t === TILE.HOLE) {
+             this.targetX = nx * TILE_SIZE + TILE_SIZE / 2;
+             this.targetY = ny * TILE_SIZE + TILE_SIZE / 2;
+             this.isMoving = true;
+          }
+        }
+      }
+      
+      render(ctx) {
+        ctx.fillStyle = '#795548'; 
+        const px = this.x - TILE_SIZE / 2;
+        const py = this.y - TILE_SIZE / 2;
+        ctx.fillRect(px + 4, py + 4, TILE_SIZE - 8, TILE_SIZE - 8);
+        ctx.strokeStyle = '#3e2723';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(px + 4, py + 4, TILE_SIZE - 8, TILE_SIZE - 8);
+        
+        ctx.strokeStyle = '#3e2723';
+        ctx.beginPath();
+        ctx.moveTo(px + 8, py + 8);
+        ctx.lineTo(px + TILE_SIZE - 8, py + TILE_SIZE - 8);
+        ctx.moveTo(px + TILE_SIZE - 8, py + 8);
+        ctx.lineTo(px + 8, py + TILE_SIZE - 8);
+        ctx.stroke();
+      }
+    }
+
     class Room {
       constructor(rx, ry, isStart = false, isSecret = false, depth = 1) {
         this.rx = rx;
@@ -1925,6 +2818,7 @@
         this.cleared = isStart || isSecret;
         this.isLockdown = false;
         this.hasGoela = false;
+        this.loreDrops = [];
         this.isBossRoom = false;
         this.isMiniBossRoom = false;
         this.hasBossKey = false;
@@ -1939,6 +2833,7 @@
           switches: [],
           barrierPositions: []
         };
+        this.pushables = [];
       }
 
       buildPuzzleLayout(depth = 1) {
@@ -1964,7 +2859,7 @@
         if (this.doors.west)  this.grid[mid][0] = TILE.EMPTY;
         if (this.doors.east)  this.grid[mid][GRID_SIZE - 1] = TILE.EMPTY;
 
-        if (this.puzzleType === 'timed_vault' || depth === 1) {
+        if (this.puzzleType === 'timed_vault' || (depth === 1 && this.puzzleType !== 'inventor_room')) {
           this.puzzleType = 'timed_vault';
           this.puzzleState.ccReward = 5;
           // Cofre no centro
@@ -1990,6 +2885,38 @@
 
           // 1 Autômato de guarda enferrujado (Nível 1)
           this.enemies.push(new Automaton((mid - 2) * TILE_SIZE, (mid - 2) * TILE_SIZE, depth, 'rusty'));
+        } else if (this.puzzleType === 'inventor_room' || (depth === 2 && this.puzzleType === 'inventor_room')) {
+           this.puzzleType = 'inventor_room';
+           this.puzzleState.ccReward = 0;
+           
+           for (let y = 1; y <= 4; y++) {
+             for (let x = GRID_SIZE - 5; x <= GRID_SIZE - 2; x++) {
+               if (x === GRID_SIZE - 5 || y === 4) {
+                 this.grid[y][x] = TILE.LOCK_GATE; // As grade da cela
+               } else {
+                 this.grid[y][x] = TILE.EMPTY;
+               }
+             }
+           }
+           // Inventor resgatado? Coloca um baú no lugar. Senão, o inventor fica preso na cela.
+           if (window.gameState && window.gameState.inventorRescued) {
+             this.grid[2][GRID_SIZE - 3] = TILE.VAULT_CHEST;
+           } else {
+             this.grid[2][GRID_SIZE - 3] = TILE.INVENTOR_NPC;
+           }
+           
+           this.grid[mid][3] = TILE.PRESSURE_PLATE;
+           this.grid[mid][mid] = TILE.PRESSURE_PLATE;
+           this.grid[mid][GRID_SIZE - 4] = TILE.PRESSURE_PLATE;
+           
+           this.puzzleState.plates = [
+             { x: 3, y: mid, activeTimer: 0 },
+             { x: mid, y: mid, activeTimer: 0 },
+             { x: GRID_SIZE - 4, y: mid, activeTimer: 0 }
+           ];
+           
+           this.pushables.push(new PushablePillar(3, 3));
+           this.pushables.push(new PushablePillar(GRID_SIZE - 4, GRID_SIZE - 4));
         } else if (this.puzzleType === 'lava_chasm' || depth === 2) {
           this.puzzleType = 'lava_chasm';
           this.puzzleState.ccReward = 7;
@@ -2034,13 +2961,56 @@
           this.puzzleState.switches = [{ x: mid, y: mid - 1, hit: false }];
 
           if (depth === 3) {
-            // Nível 3: 2 Autômatos enferrujados (Charger e Bomber) patrulhando fora
+            // Nivel 3: 2 Automatos enferrujados (Charger e Bomber) patrulhando fora
             this.enemies.push(new Automaton(2 * TILE_SIZE, (GRID_SIZE - 3) * TILE_SIZE, depth, 'rusty_charger'));
             this.enemies.push(new Automaton((GRID_SIZE - 3) * TILE_SIZE, 2 * TILE_SIZE, depth, 'rusty_bomber'));
           } else {
-            // Níveis 4 e 5: 2 Autômatos de elite blindados (Charger e Bomber reforçados)
-            this.enemies.push(new Automaton(2 * TILE_SIZE, (GRID_SIZE - 3) * TILE_SIZE, depth, 'charger'));
-            this.enemies.push(new Automaton((GRID_SIZE - 3) * TILE_SIZE, 2 * TILE_SIZE, depth, 'bomber'));
+            // Nivel 4+: steam_overload (Desafio da Sobrecarga de Vapor dos Automatos)
+            this.puzzleType = 'steam_overload';
+            this.puzzleState.ccReward = 15;
+            this.puzzleState.session = 1;
+            this.puzzleState.sessionTotal = 3;
+            this.puzzleState.steamActive = false;
+            this.puzzleState.steamTimer = 0;
+            this.puzzleState.steamCooldown = 10.0; // 10s inicialmente
+            this.puzzleState.steamDuration = 5.0;  // 5s ativo nos cantos
+            this.puzzleState.meltdownTimer = 15.0; // 15s de invasao de vapor de fora pra dentro
+            this.puzzleState.meltdownActive = false;
+
+            // Cofre no centro cercado por grades de contencao
+            this.grid[mid][mid] = TILE.VAULT_CHEST;
+            const barrierCoords = [
+              { x: mid - 1, y: mid }, { x: mid + 1, y: mid },
+              { x: mid, y: mid - 1 }, { x: mid, y: mid + 1 }
+            ];
+            barrierCoords.forEach(c => {
+              this.grid[c.y][c.x] = TILE.LOCK_GATE;
+              this.puzzleState.barrierPositions.push(c);
+            });
+
+            // 3 Placas de Pressao nos cantos da sala
+            const plateCoords = [
+              { x: 2, y: 2 },
+              { x: GRID_SIZE - 3, y: 2 },
+              { x: 2, y: GRID_SIZE - 3 }
+            ];
+            plateCoords.forEach(p => {
+              this.grid[p.y][p.x] = TILE.PRESSURE_PLATE;
+            });
+            this.puzzleState.plates = plateCoords.map(p => ({ x: p.x, y: p.y, activeTimer: 0 }));
+
+            // 4 Zonas de Vapor Superaquecido nos cantos (3x3 tiles cada canto)
+            this.puzzleState.steamVents = [
+              { minX: 1, maxX: 3, minY: 1, maxY: 3 },
+              { minX: GRID_SIZE - 4, maxX: GRID_SIZE - 2, minY: 1, maxY: 3 },
+              { minX: 1, maxX: 3, minY: GRID_SIZE - 4, maxY: GRID_SIZE - 2 },
+              { minX: GRID_SIZE - 4, maxX: GRID_SIZE - 2, minY: GRID_SIZE - 4, maxY: GRID_SIZE - 2 }
+            ];
+
+            // Sessao 1: 2 lava velhas (bobos)
+            const e1 = new Automaton((mid - 3) * TILE_SIZE, (mid - 2) * TILE_SIZE, depth, 'rusty');
+            const e2 = new Automaton((mid + 3) * TILE_SIZE, (mid + 2) * TILE_SIZE, depth, 'rusty');
+            this.enemies.push(e1, e2);
           }
         }
       }
@@ -2320,17 +3290,22 @@
 
       findSpawnSpot() {
         const mid = Math.floor(GRID_SIZE / 2);
-        for (let tries = 0; tries < 70; tries++) {
+        for (let tries = 0; tries < 150; tries++) {
           const x = Math.floor(Math.random() * (GRID_SIZE - 4)) + 2;
           const y = Math.floor(Math.random() * (GRID_SIZE - 4)) + 2;
-          // Não spawna em cima de paredes, da porta central ou da Goela
           if (this.grid[y][x] === TILE.EMPTY && (Math.abs(x - mid) > 1 || Math.abs(y - mid) > 1)) {
-            // Evita spawn próximo às 4 portas para não emboscar o jogador ao entrar na sala
             if (Math.hypot(x - mid, y - 1) < 2.8) continue;
             if (Math.hypot(x - mid, y - (GRID_SIZE - 2)) < 2.8) continue;
             if (Math.hypot(x - 1, y - mid) < 2.8) continue;
             if (Math.hypot(x - (GRID_SIZE - 2), y - mid) < 2.8) continue;
             return { x: x * TILE_SIZE + TILE_SIZE / 2, y: y * TILE_SIZE + TILE_SIZE / 2 };
+          }
+        }
+        for (let y = 2; y < GRID_SIZE - 2; y++) {
+          for (let x = 2; x < GRID_SIZE - 2; x++) {
+            if (this.grid[y][x] === TILE.EMPTY) {
+              return { x: x * TILE_SIZE + TILE_SIZE / 2, y: y * TILE_SIZE + TILE_SIZE / 2 };
+            }
           }
         }
         return null;
@@ -2346,11 +3321,11 @@
             sound.playLockdownSound();
             sound.setMusicMode('battle');
             if (this.isMiniBossRoom) {
-              showToast('DUELO! DERROTE O ENGENHEIRO RIVAL!');
+              showToast(window.t('ingame-duel'));
             } else if (this.isBossRoom) {
-              showToast('CONFRONTO FINAL! CHEFE MESTRE!');
+              showToast(window.t('ingame-bossfight'));
             } else {
-              showToast('LOCKDOWN ATIVADO!');
+              showToast(window.t('ingame-protocol'));
             }
           }
           // Tranca as passagens de porta com blocos vermelhos piscantes
@@ -2502,6 +3477,14 @@
           if (miniBossTarget) {
             miniBossTarget.isMiniBossRoom = true;
           }
+        } else if (this.currentDepth === 2) {
+          const invCandidates = roomArray.filter(r => !r.isStart && !r.hasGoela && !r.isBossRoom && !r.isPuzzleRoom);
+          let deadEnds = invCandidates.filter(r => (r.doors.north + r.doors.south + r.doors.east + r.doors.west === 1));
+          const inventorTarget = deadEnds.length > 0 ? deadEnds[0] : invCandidates[0];
+          if (inventorTarget) {
+            inventorTarget.isPuzzleRoom = true;
+            inventorTarget.puzzleType = 'inventor_room';
+          }
         }
 
         // Constrói layouts internos e popula inimigos com a profundidade atual
@@ -2529,6 +3512,45 @@
         // Sala Inicial
         this.currentRoom = this.rooms.get(`${sx},${sy}`);
         this.currentRoom.visited = true;
+
+        // Distribuição procedural dos Panfletos de Lore
+        // Distribuição procedural dos Panfletos de Lore
+        if (window.LORE_PAMPHLETS) {
+          const collected = (() => {
+            try { return new Set(JSON.parse(localStorage.getItem("roguebomb_collected_lore") || "[]")); } 
+            catch(e) { return new Set(); }
+          })();
+          
+          const fragments = window.LORE_PAMPHLETS.operation_manual.fragments;
+          // Pega só os não coletados
+          let uncollected = fragments.filter(f => !collected.has(f.id));
+          
+          // Embaralha para dar variedade
+          uncollected.sort(() => Math.random() - 0.5);
+          
+          // Define para spawnar até 3 documentos novos na fase!
+          let toSpawn = uncollected.slice(0, 3);
+          
+          toSpawn.forEach(frag => {
+            let targetRoom = null;
+            if (frag.roomTypeTarget === 'goela') targetRoom = roomArray.find(r => r.hasGoela);
+            else if (frag.roomTypeTarget === 'combat') targetRoom = roomArray.find(r => !r.isStart && !r.hasGoela && !r.isPuzzleRoom && !r.isBossRoom && r.enemies && r.enemies.length > 0);
+            else if (frag.roomTypeTarget === 'secret_floor') targetRoom = roomArray.find(r => r.secretFloorNode !== null);
+            
+            // Se for random ou não achou o alvo específico, pega uma sala válida
+            if (!targetRoom || frag.roomTypeTarget === 'random') {
+               const validRooms = roomArray.filter(r => !r.isStart && !r.isBossRoom && !r.isPuzzleRoom && !r.isMiniBossRoom);
+               if (validRooms.length > 0) targetRoom = validRooms[Math.floor(Math.random() * validRooms.length)];
+            }
+            if (!targetRoom) targetRoom = roomArray.find(r => !r.isStart);
+            if (!targetRoom) targetRoom = roomArray[0];
+
+            const spot = targetRoom.findSpawnSpot();
+            if (spot) {
+              targetRoom.loreDrops.push(new LorePamphletDrop(spot.x, spot.y, frag));
+            }
+          });
+        }
       }
 
       getRoom(rx, ry) {
@@ -2556,7 +3578,8 @@
         this.throwAnimTimer = 0;
         this.gauntletLevel = 1; // Nível da Manopla Mecânica (1: 140px, 2: 220px, 3: 300px)
         this.bootsLevel = 0;    // 1 para liberar Dash
-        this.bagLevel = 1;      // +2 bombas e tipos por nível
+        this.bagLevel = 1;
+        this.timerBombLevel = 1;      // +2 bombas e tipos por nível
         this.dashCooldown = 0;
         this.isDashing = false;
         this.dashTimer = 0;
@@ -2569,6 +3592,8 @@
         this.hasBossKey = false;
         this.unlockedImpact = false;
         this.unlockedPropulsor = false;
+        this.carryingHydraulicPiston = false;
+        this.hasHydraulicPiston = false;
         this.bagSlots = [];
         const caps = [0, 5, 7, 10];
         const cap = caps[this.bagLevel];
@@ -2579,10 +3604,10 @@
 
       getThrowRange() {
         switch (this.gauntletLevel) {
-          case 1: return 140; // Nível 1: ~3.5 tiles
-          case 2: return 220; // Nível 2: ~5.5 tiles
+          case 1: return 130; // N�vel 1
+          case 2: return 190; // N�vel 2
           case 3:
-          default: return 300; // Nível 3: ~7.5 tiles (Alcance Máximo)
+          default: return 250; // N�vel 3
         }
       }
 
@@ -2931,6 +3956,10 @@
             game.spawnFloatingText('CUIDADO!', game.player.x, game.player.y - 20, '#ffca28');
           }
         }
+        
+        if (game.triggerChainReaction) {
+          game.triggerChainReaction(this.x, this.y, blastRadius);
+        }
       }
 
       render(ctx, now) {
@@ -3100,13 +4129,39 @@
         this.alertAnimation = 0;
         this.boxBreakTimer = 0;
         this.targetBox = null;
+        this.hasArmor = (this.type === 'charger' || this.type === 'rusty_charger');
+        this.attackPhase = 0;
       }
 
       isStunned() {
         return (this.type === 'charger' || this.type === 'rusty_charger') && this.chargeState === 'stunned';
       }
 
-      takeDamage(amount, engine) {
+      takeDamage(amount, engine, bombType = 'timed') {
+        if (this.hasArmor) {
+          if (bombType === 'timed') {
+            this.hasArmor = false;
+            this.flashTimer = 0.35;
+            if (engine) {
+              engine.spawnSparks(this.x, this.y, '#ffd54f', 24);
+              engine.spawnSparks(this.x, this.y, '#ff9100', 16);
+              engine.spawnFloatingText('BLINDAGEM DESTRU\u00CDDA!', this.x, this.y - this.radius - 10, '#ffd54f');
+              if (window.sound) window.sound.playImpactExplosion();
+            }
+            this.hp -= amount;
+            return this.hp <= 0;
+          } else {
+            // ImpactBomb nao afeta a blindagem
+            this.flashTimer = 0.15;
+            if (engine) {
+              engine.spawnSparks(this.x, this.y, '#90caf9', 14);
+              engine.spawnFloatingText('BLINDAGEM! (USE TIMERBOMB)', this.x, this.y - this.radius - 10, '#90caf9');
+              if (window.sound) window.sound.playTimedBeep(0.8);
+            }
+            return false;
+          }
+        }
+
         this.hp -= amount;
         this.flashTimer = 0.25;
         const isRusty = (this.type === 'rusty' || this.type === 'rusty_charger' || this.type === 'rusty_bomber');
@@ -3244,37 +4299,49 @@
 
           if (this.chargeState === 'charge') {
             this.chargeTimer -= dt;
-            const chargeSpeed = isRustyCharger ? 175 : 280; // Enferrujado é mais lento
+            const chargeSpeed = isRustyCharger ? 200 : 300;
             const targetX = this.x + this.chargeDir.dx * chargeSpeed * dt;
             const targetY = this.y + this.chargeDir.dy * chargeSpeed * dt;
 
-            if (window.game && Math.random() < (isRustyCharger ? 0.4 : 0.6)) {
+            if (window.game && Math.random() < 0.6) {
               window.game.spawnSparks(this.x, this.y, isRustyCharger ? '#8d6e63' : '#ffb74d', 2);
             }
 
-            const gridX = Math.floor(targetX / TILE_SIZE);
-            const gridY = Math.floor(targetY / TILE_SIZE);
-            if (gridX >= 0 && gridX < GRID_SIZE && gridY >= 0 && gridY < GRID_SIZE) {
-              if (room.grid[gridY][gridX] === TILE.BREAKABLE) {
-                room.grid[gridY][gridX] = TILE.EMPTY;
-                if (window.sound) window.sound.playImpactExplosion();
-                if (window.game) {
-                  window.game.spawnSparks(gridX * TILE_SIZE + TILE_SIZE/2, gridY * TILE_SIZE + TILE_SIZE/2, '#8d6e63', 12);
-                  window.game.spawnFloatingText('QUEBROU!', targetX, targetY - 14, '#d7ccc8');
+            // Destroi TODOS os obstaculos no caminho da investida (caixas e paredes internas)!
+            const checkRadius = this.radius + 6;
+            const left = Math.floor((targetX - checkRadius) / TILE_SIZE);
+            const right = Math.floor((targetX + checkRadius) / TILE_SIZE);
+            const top = Math.floor((targetY - checkRadius) / TILE_SIZE);
+            const bottom = Math.floor((targetY + checkRadius) / TILE_SIZE);
+
+            for (let ty = top; ty <= bottom; ty++) {
+              for (let tx = left; tx <= right; tx++) {
+                if (tx > 0 && tx < GRID_SIZE - 1 && ty > 0 && ty < GRID_SIZE - 1) {
+                  const tile = room.grid[ty][tx];
+                  if (tile === TILE.BREAKABLE || tile === TILE.WALL) {
+                    room.grid[ty][tx] = TILE.EMPTY;
+                    if (window.sound) window.sound.playImpactExplosion();
+                    if (window.game) {
+                      window.game.spawnSparks(tx * TILE_SIZE + TILE_SIZE/2, ty * TILE_SIZE + TILE_SIZE/2, '#8d6e63', 14);
+                      window.game.spawnDebris(tx * TILE_SIZE + TILE_SIZE/2, ty * TILE_SIZE + TILE_SIZE/2);
+                      window.game.spawnFloatingText('DEMOLIDO!', targetX, targetY - 14, '#ffca28');
+                    }
+                  }
                 }
               }
             }
 
-            const hitWall = this.checkTileCollision(targetX, targetY, room, false);
-            const hitHole = this.checkTileCollisionHolesOnly(targetX, targetY, room);
+            // Verificacao de borda da sala (nao sai do mapa, mas NUNCA fica atordoado!)
+            const hitPerimeter = (targetX - this.radius < TILE_SIZE || targetX + this.radius > WORLD_WIDTH - TILE_SIZE ||
+                                  targetY - this.radius < TILE_SIZE || targetY + this.radius > WORLD_HEIGHT - TILE_SIZE);
 
-            if (hitWall || hitHole) {
-              this.chargeState = 'stunned';
-              this.chargeTimer = isRustyCharger ? 2.2 : 1.5; // Enferrujado fica atordoado por mais tempo!
+            if (hitPerimeter) {
+              // Bateu no limite da sala: interrompe a investida imediatamente SEM ficar atordoado!
+              this.chargeState = 'ready';
+              this.chargeCooldown = isRustyCharger ? 2.0 : 1.2;
               if (window.sound) window.sound.playImpactExplosion();
               if (window.game) {
-                window.game.spawnSparks(this.x, this.y, isRustyCharger ? '#8d6e63' : '#ffeb3b', 16);
-                window.game.spawnFloatingText(isRustyCharger ? 'TRAVOU!' : 'ATORDOADO!', this.x, this.y - 20, isRustyCharger ? '#ffca28' : '#fff59d');
+                window.game.spawnSparks(this.x, this.y, '#ffd54f', 12);
               }
               return;
             } else {
@@ -3284,37 +4351,57 @@
 
             if (this.chargeTimer <= 0) {
               this.chargeState = 'ready';
-              this.chargeCooldown = isRustyCharger ? 4.5 : 4.0;
+              this.chargeCooldown = isRustyCharger ? 2.5 : 1.8;
             }
             return;
           }
         }
 
-        // --- COMPORTAMENTO DO BOMBER (BOMBARDEIRO) ---
+        // --- COMPORTAMENTO DO BOMBER (BOMBARDEIRO ARTILHEIRO) ---
         if (this.type === 'bomber' || this.type === 'rusty_bomber') {
           const isRustyBomber = this.type === 'rusty_bomber';
           if (this.recoilTimer > 0) {
             this.recoilTimer -= dt;
-            return; // Tranco de recuo do morteiro enferrujado
+            return; // Tranco de recuo do morteiro
           }
 
           if (this.shootCooldown > 0) this.shootCooldown -= dt;
 
-          if (this.state === 'chase' && this.shootCooldown <= 0 && dist <= TILE_SIZE * 5.5 && window.game) {
-            const leadX = player.x + (player.facing ? player.facing.dx * 12 : 0);
-            const leadY = player.y + (player.facing ? player.facing.dy * 12 : 0);
+          if (this.state === 'chase' && this.shootCooldown <= 0 && dist <= TILE_SIZE * 6.5 && window.game) {
+            this.attackPhase = this.attackPhase || 0;
 
-            window.game.enemyBombs.push(new EnemyBomb(this.x, this.y, leadX, leadY, isRustyBomber));
-            if (window.sound) window.sound.playThrowWhoosh();
-            if (window.game) {
-              window.game.spawnSparks(this.x, this.y - 12, isRustyBomber ? '#8d6e63' : '#ff7043', 8);
-              window.game.spawnFloatingText(isRustyBomber ? 'DISPARO!' : 'MINA!', this.x, this.y - 18, isRustyBomber ? '#d7ccc8' : '#ff7043');
-            }
-            if (isRustyBomber) {
-              this.shootCooldown = 4.2 + Math.random() * 1.5;
-              this.recoilTimer = 0.5; // Pausa breve para absorver o tranco
+            // Inteligencia tatica de emboscada: alterna entre TimerBomb (reacao em cadeia) e ImpactBomb telegrafada
+            if (this.attackPhase === 0) {
+              // 1. TimerBomb: joga na rota de fuga prevista de Charlotte para emboscar e criar reacao em cadeia
+              const leadDist = 50;
+              const leadX = player.x + (player.facing ? player.facing.dx * leadDist : 0);
+              const leadY = player.y + (player.facing ? player.facing.dy * leadDist : 0);
+              const gx = Math.max(1, Math.min(GRID_SIZE - 2, Math.round(leadX / TILE_SIZE)));
+              const gy = Math.max(1, Math.min(GRID_SIZE - 2, Math.round(leadY / TILE_SIZE)));
+
+              window.game.timedBombs.push(new TimedBomb(gx, gy));
+              if (window.sound) window.sound.playThrowWhoosh();
+              if (window.game) {
+                window.game.spawnSparks(gx * TILE_SIZE + TILE_SIZE/2, gy * TILE_SIZE + TILE_SIZE/2, '#00e5ff', 12);
+                window.game.spawnFloatingText('EMBOSCADA TIMER!', this.x, this.y - 18, '#00e5ff');
+              }
+              this.shootCooldown = isRustyBomber ? 3.5 : 2.5;
+              this.recoilTimer = 0.35;
+              this.attackPhase = 1;
             } else {
-              this.shootCooldown = 2.8 + Math.random() * 1.0;
+              // 2. ImpactBomb: telegrafa com circulo visual vermelho de mira (estilo mini boss) onde o jogador esta
+              const leadX = player.x + (player.facing ? player.facing.dx * 18 : 0);
+              const leadY = player.y + (player.facing ? player.facing.dy * 18 : 0);
+              const telegraphDuration = isRustyBomber ? 2.4 : 1.8;
+
+              window.game.targetMarkers.push(new TargetMarker(leadX, leadY, telegraphDuration, this, BOMB_TYPE.IMPACT));
+              if (window.sound) window.sound.playTimedBeep(1.6);
+              if (window.game) {
+                window.game.spawnFloatingText('MIRA DE IMPACTO!', this.x, this.y - 18, '#ff5252');
+              }
+              this.shootCooldown = isRustyBomber ? 4.0 : 3.0;
+              this.recoilTimer = 0.35;
+              this.attackPhase = 0;
             }
           }
         }
@@ -3361,7 +4448,9 @@
             this.state = 'chase';
           }
         } else if (this.state === 'chase') {
-          if (dist > this.loseRange) {
+          // Em lockdown ou se for scout, o automato nunca para de perseguir Charlotte
+          const isScout = (this.type === 'scout' || this.type === 'rusty');
+          if (!room.isLockdown && !isScout && dist > this.loseRange) {
             this.state = 'idle';
             this.reactionTimer = 0;
           } else {
@@ -3372,11 +4461,11 @@
                 this.stumbleDuration = this.isCrazy ? 0.15 : 0.55;
                 if (window.game && Math.random() < 0.8) {
                   window.game.spawnSparks(this.x, this.y, this.isCrazy ? '#ff1744' : '#8d5b4c', 4);
-                  window.game.spawnFloatingText(this.isCrazy ? '!' : '⚙️', this.x, this.y - this.radius - 10, this.isCrazy ? '#ff5252' : '#bcaaa4');
+                  window.game.spawnFloatingText(this.isCrazy ? '!' : '\u2699\uFE0F', this.x, this.y - this.radius - 10, this.isCrazy ? '#ff5252' : '#bcaaa4');
                 }
                 return;
               }
-              // Comportamento bobo apenas para os não enlouquecidos
+              // Comportamento bobo apenas para os nao enlouquecidos
               if (!this.isCrazy && dist > TILE_SIZE * 3.0 && Math.random() < 0.008) {
                 this.state = 'idle';
                 this.wanderTimer = 1.6;
@@ -3416,6 +4505,48 @@
                 desiredVx = -normY * strafeDir * (this.speed * 0.85);
                 desiredVy = normX * strafeDir * (this.speed * 0.85);
               }
+            } else if (isScout) {
+              // Scout: Perseguicao implacavel com desvio ativo de bombas e obstaculos no caminho
+              let baseVx = (dx / dist) * this.speed;
+              let baseVy = (dy / dist) * this.speed;
+
+              // Desvio dinamico de bombas no chao (TimedBombs e EnemyBombs em fusao)
+              let avoidVx = 0, avoidVy = 0;
+              if (window.game && window.game.timedBombs) {
+                for (const b of window.game.timedBombs) {
+                  const bDist = Math.hypot(this.x - b.x, this.y - b.y);
+                  const dangerRadius = TILE_SIZE * 2.2;
+                  if (bDist < dangerRadius && bDist > 1) {
+                    const rep = (1 - bDist / dangerRadius) * this.speed * 2.0;
+                    avoidVx += ((this.x - b.x) / bDist) * rep;
+                    avoidVy += ((this.y - b.y) / bDist) * rep;
+                  }
+                }
+              }
+              if (window.game && window.game.enemyBombs) {
+                for (const eb of window.game.enemyBombs) {
+                  if (eb.state === 'fusing') {
+                    const ebDist = Math.hypot(this.x - eb.x, this.y - eb.y);
+                    const dangerRadius = TILE_SIZE * 2.0;
+                    if (ebDist < dangerRadius && ebDist > 1) {
+                      const rep = (1 - ebDist / dangerRadius) * this.speed * 1.8;
+                      avoidVx += ((this.x - eb.x) / ebDist) * rep;
+                      avoidVy += ((this.y - eb.y) / ebDist) * rep;
+                    }
+                  }
+                }
+              }
+
+              let totalVx = baseVx + avoidVx;
+              let totalVy = baseVy + avoidVy;
+              const spd = Math.hypot(totalVx, totalVy);
+              if (spd > 0.01) {
+                desiredVx = (totalVx / spd) * this.speed;
+                desiredVy = (totalVy / spd) * this.speed;
+              } else {
+                desiredVx = baseVx;
+                desiredVy = baseVy;
+              }
             } else {
               desiredVx = (dx / dist) * this.speed;
               desiredVy = (dy / dist) * this.speed;
@@ -3427,7 +4558,34 @@
             let hitWall = this.checkTileCollision(nextX, nextY, room);
             let hitHole = this.checkTileCollisionHolesOnly(nextX, nextY, room);
 
-            if (this.depth === 1) {
+            if (isScout && (hitWall || hitHole)) {
+              // Scout desvia ativamente ao redor de paredes, pedras e caixas sem parar de perseguir
+              const baseAngle = Math.atan2(desiredVy, desiredVx);
+              const testOffsets = [Math.PI / 4, -Math.PI / 4, Math.PI / 2, -Math.PI / 2, Math.PI * 0.75, -Math.PI * 0.75];
+              let steered = false;
+              for (const off of testOffsets) {
+                const ang = baseAngle + off;
+                const testX = this.x + Math.cos(ang) * this.speed * dt;
+                const testY = this.y + Math.sin(ang) * this.speed * dt;
+                if (!this.checkTileCollision(testX, testY, room) && !this.checkTileCollisionHolesOnly(testX, testY, room)) {
+                  this.x = testX;
+                  this.y = testY;
+                  steered = true;
+                  break;
+                }
+              }
+              if (!steered) {
+                const altX = this.x + desiredVx * dt;
+                if (!this.checkTileCollision(altX, this.y, room) && !this.checkTileCollisionHolesOnly(altX, this.y, room)) {
+                  this.x = altX;
+                } else {
+                  const altY = this.y + desiredVy * dt;
+                  if (!this.checkTileCollision(this.x, altY, room) && !this.checkTileCollisionHolesOnly(this.x, altY, room)) {
+                    this.y = altY;
+                  }
+                }
+              }
+            } else if (this.depth === 1) {
               if (!hitWall) {
                 this.x = nextX;
                 this.y = nextY;
@@ -3529,22 +4687,16 @@
             if (tx < 0 || tx >= GRID_SIZE || ty < 0 || ty >= GRID_SIZE) return isKnockback ? false : true;
             const tile = room.grid[ty][tx];
             // Buff: Chargers destroem caixas (BREAKABLE)
-            if (tile === TILE.BREAKABLE && (this.type === 'charger' || this.type === 'rusty_charger')) {
-              if (this.chargeState === 'charge') {
-                // Passam reto durante a investida
-                room.grid[ty][tx] = TILE.EMPTY;
-                if (window.sound) window.sound.playImpactExplosion();
-                if (window.game) {
-                  window.game.spawnSparks(tx * TILE_SIZE + TILE_SIZE/2, ty * TILE_SIZE + TILE_SIZE/2, '#8d6e63', 12);
-                  window.game.spawnFloatingText('ESMAGADO!', tx * TILE_SIZE + TILE_SIZE/2, ty * TILE_SIZE, '#d7ccc8');
-                }
-                continue;
-              } else {
-                // Caminhando normal: marca a caixa para quebrar depois de 2 segundos
-                if (!this.hittingBoxThisFrame) {
-                  this.hittingBoxThisFrame = { tx, ty };
-                }
+            // Buff: Chargers destroem todos os obstaculos (caixas e paredes internas) imediatamente!
+            if ((this.type === 'charger' || this.type === 'rusty_charger') && (tile === TILE.BREAKABLE || (tile === TILE.WALL && tx > 0 && tx < GRID_SIZE - 1 && ty > 0 && ty < GRID_SIZE - 1))) {
+              room.grid[ty][tx] = TILE.EMPTY;
+              if (window.sound) window.sound.playImpactExplosion();
+              if (window.game) {
+                window.game.spawnSparks(tx * TILE_SIZE + TILE_SIZE/2, ty * TILE_SIZE + TILE_SIZE/2, '#8d6e63', 14);
+                window.game.spawnDebris(tx * TILE_SIZE + TILE_SIZE/2, ty * TILE_SIZE + TILE_SIZE/2);
+                window.game.spawnFloatingText('ESMAGADO!', tx * TILE_SIZE + TILE_SIZE/2, ty * TILE_SIZE, '#d7ccc8');
               }
+              continue;
             }
 
             if (tile === TILE.WALL || tile === TILE.BREAKABLE || tile === TILE.LOCK_GATE || tile === TILE.BOSS_DOOR || tile === TILE.ARMORY || tile === TILE.CHEST || tile === TILE.INVENTOR_NPC || tile === TILE.SWITCH_TARGET) {
@@ -3968,6 +5120,35 @@
           }
         }
 
+        if (this.hasArmor) {
+          ctx.save();
+          const shieldPulse = (Math.sin(now * 6) + 1) / 2;
+          ctx.strokeStyle = `rgba(255, 215, 0, ${0.7 + shieldPulse * 0.3})`;
+          ctx.lineWidth = 2.5;
+          ctx.beginPath();
+          ctx.arc(renderX, renderY, this.radius + 4, 0, Math.PI * 2);
+          ctx.stroke();
+
+          for (let i = 0; i < 4; i++) {
+            const a = (i * Math.PI / 2) + now * 2;
+            const px = renderX + Math.cos(a) * (this.radius + 4);
+            const py = renderY + Math.sin(a) * (this.radius + 4);
+            ctx.fillStyle = '#ffe082';
+            ctx.beginPath();
+            ctx.arc(px, py, 2.5, 0, Math.PI * 2);
+            ctx.fill();
+          }
+
+          ctx.font = 'bold 8px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillStyle = '#ffca28';
+          ctx.strokeStyle = '#000';
+          ctx.lineWidth = 2;
+          ctx.strokeText('\uD83D\uDEE1\uFE0F BLINDADO', renderX, renderY - this.radius - 12);
+          ctx.fillText('\uD83D\uDEE1\uFE0F BLINDADO', renderX, renderY - this.radius - 12);
+          ctx.restore();
+        }
+
         if (this.type === 'charger') {
           ctx.font = '9px sans-serif';
           ctx.textAlign = 'center';
@@ -4162,8 +5343,13 @@
           this.animState = 'throw';
           this.facingSide = leadX < this.x ? -1 : 1;
 
-          window.game.flyingBombs.push(new FlyingBomb(this.x, this.y, leadX, leadY, this.selectedBomb));
-          if (window.sound) window.sound.playThrowWhoosh();
+          if (this.selectedBomb === BOMB_TYPE.IMPACT) {
+            window.game.targetMarkers.push(new TargetMarker(leadX, leadY, 3.0, this, BOMB_TYPE.IMPACT));
+            if (window.sound) window.sound.playTimedBeep(1.6);
+          } else {
+            window.game.flyingBombs.push(new FlyingBomb(this.x, this.y, leadX, leadY, this.selectedBomb));
+            if (window.sound) window.sound.playThrowWhoosh();
+          }
 
           this.bombCooldown = this.isFinalBoss ? (1.8 + Math.random() * 0.8) : (2.4 + Math.random() * 1.0);
         }
@@ -4192,8 +5378,9 @@
               engine.ccDrops.push(new ChronoCoreDrop(this.x + offX, this.y + offY));
             }
             engine.player.parts = (engine.player.parts || 0) + 5;
-            engine.spawnFloatingText('+5 PEÇAS!', this.x, this.y - 35, '#cfd8dc');
-          }
+            engine.spawnFloatingText('+5 PEAS!', this.x, this.y - 35, '#cfd8dc');
+            if (!this.isFinalBoss) { engine.player.hasSteamPropulsionCore = true; showToast('VOCE ENCONTROU: NUCLEO DE PROPULSAO A VAPOR!'); }
+          } if(window.game) saveGame();
           return true;
         }
         return false;
@@ -4389,6 +5576,87 @@
           ctx.lineWidth = 1.5;
           ctx.strokeRect(-9, -9, 18, 18);
         }
+        ctx.restore();
+      }
+    }
+
+    class TargetMarker {
+      constructor(targetX, targetY, duration, source, bombType = BOMB_TYPE.IMPACT) {
+        this.targetX = targetX;
+        this.targetY = targetY;
+        this.duration = duration;
+        this.timer = duration;
+        this.source = source;
+        this.bombType = bombType;
+        this.radius = 28;
+      }
+
+      update(dt, engine) {
+        this.timer -= dt;
+        if (this.timer <= 0) {
+          if (this.source && engine) {
+            engine.flyingBombs.push(new FlyingBomb(this.source.x, this.source.y, this.targetX, this.targetY, this.bombType));
+            if (window.sound) window.sound.playThrowWhoosh();
+          }
+          return true;
+        }
+        return false;
+      }
+
+      draw(ctx) {
+        const progress = Math.min(1.0, 1 - Math.max(0, this.timer / this.duration));
+        ctx.save();
+        // Círculo preenchido vermelho (marcação no chão para Charlotte esquivar)
+        ctx.fillStyle = `rgba(231, 76, 60, ${0.25 + progress * 0.45})`;
+        ctx.beginPath();
+        ctx.arc(this.targetX, this.targetY, this.radius, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Borda de aviso vermelha
+        ctx.strokeStyle = '#e74c3c';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.arc(this.targetX, this.targetY, this.radius * (0.35 + progress * 0.65), 0, Math.PI * 2);
+        ctx.stroke();
+
+        ctx.restore();
+      }
+    }
+
+    class LorePamphletDrop {
+      constructor(x, y, fragment) {
+        this.x = x;
+        this.y = y;
+        this.baseY = y;
+        this.radius = 16;
+        this.floatTimer = Math.random() * Math.PI * 2;
+        this.pickupDistance = 30;
+        this.fragment = fragment;
+      }
+
+      update(dt, player) {
+        this.floatTimer += dt * 3;
+        const dx = player.x - this.x;
+        const dy = (player.y - 6) - this.y;
+        return Math.hypot(dx, dy) < this.pickupDistance;
+      }
+
+      draw(ctx) {
+        ctx.save();
+        const bounce = Math.sin(this.floatTimer) * 5;
+        ctx.translate(this.x, this.y + bounce);
+        const glow = Math.abs(Math.sin(this.floatTimer * 2));
+        ctx.shadowColor = '#f1c40f';
+        ctx.shadowBlur = 10 + glow * 15;
+        ctx.fillStyle = '#f5deb3';
+        ctx.fillRect(-10, -12, 20, 24);
+        ctx.strokeStyle = '#c59b27';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(-10, -12, 20, 24);
+        ctx.fillStyle = '#e74c3c';
+        ctx.fillRect(-6, -6, 12, 2);
+        ctx.fillRect(-6, -1, 10, 2);
+        ctx.fillRect(-6, 4, 8, 2);
         ctx.restore();
       }
     }
@@ -4635,11 +5903,13 @@
         this.chaoExtraSprite = new Image();
         this.chaoExtraSprite.src = 'Img/chao_mina1-3.png';
 
+        this.loreManager = new window.LoreManager();
         this.ccDrops = [];
         this.floatingTexts = [];
 
         this.timedBombs = [];
         this.flyingBombs = [];
+        this.targetMarkers = [];
         this.enemyBombs = [];
         this.particles = [];
         this.blasts = [];
@@ -4655,6 +5925,7 @@
         window.addEventListener('resize', () => this.resizeCanvas());
         this.updateHUD();
 
+        this.isPaused = true;
         this.loop = this.loop.bind(this);
         requestAnimationFrame(this.loop);
       }
@@ -4683,6 +5954,19 @@
           targetSize = Math.max(300, Math.min(targetSize, 600));
         }
 
+        const mobileControls = document.getElementById('mobile-controls');
+        const desktopGuide = document.getElementById('desktop-guide');
+        const mobileGuide = document.getElementById('mobile-guide');
+        if (isTouch) {
+          if (mobileControls) mobileControls.style.display = 'flex';
+          if (desktopGuide) desktopGuide.style.display = 'none';
+          if (mobileGuide) mobileGuide.style.display = 'block';
+        } else {
+          if (mobileControls) mobileControls.style.display = 'none';
+          if (desktopGuide) desktopGuide.style.display = 'flex';
+          if (mobileGuide) mobileGuide.style.display = 'none';
+        }
+
         this.canvas.style.width = `${Math.floor(targetSize)}px`;
         this.canvas.style.height = `${Math.floor(targetSize)}px`;
       }
@@ -4692,7 +5976,9 @@
           const dt = Math.min((now - this.lastTime) / 1000, 0.05);
           this.lastTime = now;
 
-          this.update(dt);
+          if (!this.isPaused && !this.isItemModalOpen) {
+              this.update(dt);
+          }
           this.render();
         } catch (err) {
           console.error("Loop error:", err);
@@ -4775,7 +6061,20 @@
           }
         }
 
-        // Atualização e coleta de drops de CC (Chrono Cores) e Peças das caixas/inimigos
+        
+        if (room && room.loreDrops) {
+          for (let i = room.loreDrops.length - 1; i >= 0; i--) {
+            const drop = room.loreDrops[i];
+            const canPickup = drop.update(dt, this.player);
+            if (canPickup) {
+              this.loreManager.collect(drop.fragment, sound);
+              this.spawnSparks(drop.x, drop.y, '#d4b886', 15);
+              this.spawnFloatingText('Registro Encontrado', drop.x, drop.y - 15, '#d4b886');
+              room.loreDrops.splice(i, 1);
+            }
+          }
+        }
+
         for (let i = this.ccDrops.length - 1; i >= 0; i--) {
           const drop = this.ccDrops[i];
           const canPickup = drop.update(dt, this.player);
@@ -4805,6 +6104,14 @@
           if (bomb.update(dt)) {
             this.landThrownBomb(bomb);
             this.flyingBombs.splice(i, 1);
+          }
+        }
+
+        // Atualização de Miras Telegrafadas (TargetMarkers de Impacto)
+        for (let i = this.targetMarkers.length - 1; i >= 0; i--) {
+          const tm = this.targetMarkers[i];
+          if (tm.update(dt, this)) {
+            this.targetMarkers.splice(i, 1);
           }
         }
 
@@ -4957,6 +6264,227 @@
               showToast('COFRE QUÂNTICO DESBLOQUEADO!');
             }
           }
+        } else if (room.puzzleType === 'inventor_room' && room.puzzleState.plates) {
+            room.pushables.forEach(p => p.update(dt, room));
+
+            room.puzzleState.plates.forEach(plate => {
+                const isPlayerOnPlate = (pGridX === plate.x && pGridY === plate.y);
+                const isPillarOnPlate = room.pushables.some(p => p.gridX === plate.x && p.gridY === plate.y);
+
+                if (isPlayerOnPlate || isPillarOnPlate) { 
+                  if (plate.activeTimer <= 0) {
+                    sound.playPlateClick();
+                    this.spawnSparks(plate.x * TILE_SIZE + TILE_SIZE / 2, plate.y * TILE_SIZE + TILE_SIZE / 2, '#00e5ff', 12);
+                  }
+                  plate.activeTimer = 0.6;
+                } else if (plate.activeTimer > 0) {
+                  plate.activeTimer -= dt;
+                }
+            });
+
+            if (!room.puzzleState.solved && room.puzzleState.plates.length >= 3) {
+               const allActive = room.puzzleState.plates.every(p => p.activeTimer > 0);
+               if (allActive) {
+                  room.puzzleState.solved = true;
+                  sound.playUpgradeFanfare();
+                  this.spawnSparks(WORLD_WIDTH / 2, WORLD_HEIGHT / 2, '#ffd700', 30);
+                  
+                  // Open cell door
+                  for (let y = 1; y <= 4; y++) {
+                     for (let x = GRID_SIZE - 5; x <= GRID_SIZE - 2; x++) {
+                        if (room.grid[y][x] === TILE.LOCK_GATE) {
+                           room.grid[y][x] = TILE.EMPTY;
+                           this.spawnDebris(x * TILE_SIZE + TILE_SIZE / 2, y * TILE_SIZE + TILE_SIZE / 2);
+                        }
+                     }
+                  }
+                  showToast('INVENTOR: "GRAÇAS ÀS ENGRENAGENS! ESTOU LIVRE!"');
+               }
+            }
+            
+            // Check interaction
+            if (room.puzzleState.solved) {
+               const distToNPC = Math.hypot(this.player.x - (GRID_SIZE - 3) * TILE_SIZE - TILE_SIZE/2, this.player.y - 2 * TILE_SIZE - TILE_SIZE/2);
+               if (distToNPC < TILE_SIZE * 1.5) {
+                   if (!this.player.inventorTalked) {
+                       window.gameState = window.gameState || {};
+                       window.gameState.inventorRescued = true;
+                       this.player.inventorTalked = true;
+                       
+                       let step = 0;
+                       const msgs = [
+                          'INVENTOR: "Muito obrigado por me salvar! Fui preso pelos autômatos!"',
+                          'CHARLOTTE: "Sem problemas. Eu sempre acabo voltando ao início da mina de qualquer jeito..."',
+                          'INVENTOR: "Entendo... Minha cabana fica perto da entrada também."',
+                          'INVENTOR: "Vou voltar pra lá. Se você aparecer, tentarei te ajudar de alguma forma!"'
+                       ];
+                       const showNext = () => {
+                          if (step < msgs.length) {
+                             if (window.showToast) window.showToast(msgs[step]);
+                             step++;
+                             setTimeout(showNext, 4000);
+                          }
+                       };
+                       showNext();
+                   }
+               }
+            } else {
+               const distToNPC = Math.hypot(this.player.x - (GRID_SIZE - 3) * TILE_SIZE - TILE_SIZE/2, this.player.y - 2 * TILE_SIZE - TILE_SIZE/2);
+               if (distToNPC < TILE_SIZE * 2.5) {
+                   if (!this.player.inventorHintTalked) {
+                       showToast('INVENTOR: "Fiquei preso aqui pelos autômatos! Para me libertar, você deve acionar os 3 painéis de peso ao mesmo tempo. Use bombas para empurrar as pilastras!"');
+                       this.player.inventorHintTalked = true;
+                   }
+               } else {
+                   this.player.inventorHintTalked = false; // reset
+               }
+            }
+        } else if (room.puzzleType === 'steam_overload') {
+          const state = room.puzzleState;
+          if (!state) return;
+
+          // 1. Ciclo de Vapor Superaquecido nos Cantos (5s ativo, recarga decrescente por sessao)
+          if (!state.steamActive && !state.meltdownActive) {
+            state.steamTimer += dt;
+            if (state.steamTimer >= state.steamCooldown) {
+              state.steamActive = true;
+              state.steamTimer = state.steamDuration;
+              if (window.sound) window.sound.playPropulsorSteam();
+              showToast('\u26A0\uFE0F VAPOR SUPERAQUECIDO ATIVO NOS CANTOS! (5s)');
+            }
+          } else if (state.steamActive && !state.meltdownActive) {
+            state.steamTimer -= dt;
+            if (state.steamVents) {
+              state.steamVents.forEach(vent => {
+                const vx = ((vent.minX + vent.maxX) / 2) * TILE_SIZE + TILE_SIZE / 2;
+                const vy = ((vent.minY + vent.maxY) / 2) * TILE_SIZE + TILE_SIZE / 2;
+                if (Math.random() < 0.4) {
+                  this.spawnSparks(vx + (Math.random() - 0.5) * TILE_SIZE * 2, vy + (Math.random() - 0.5) * TILE_SIZE * 2, '#eceff1', 2);
+                }
+              });
+            }
+
+            // Dano de vapor quente nos cantos
+            if (this.player.invulnerableTimer <= 0 && state.steamVents) {
+              const inVent = state.steamVents.some(vent => pGridX >= vent.minX && pGridX <= vent.maxX && pGridY >= vent.minY && pGridY <= vent.maxY);
+              if (inVent) {
+                this.spawnFloatingText('QUEIMADURA DE VAPOR!', this.player.x, this.player.y - 20, '#ff7043');
+                if (this.player.takeDamage(1)) {
+                  this.triggerTimeRewind();
+                }
+              }
+            }
+
+            if (state.steamTimer <= 0) {
+              state.steamActive = false;
+              state.steamTimer = 0;
+            }
+          }
+
+          // 2. Progressao das 3 Sessoes de Inimigos
+          // Sessao 1: 2 lava velhas (bobos) -> Sessao 2: 3 enlouquecidos -> Sessao 3: 2 de elite -> Meltdown: 15s
+          if (state.session === 1 && room.enemies.length === 0) {
+            state.session = 2;
+            state.steamCooldown = Math.max(4.0, state.steamCooldown - 2.0); // 10s -> 8s
+            state.steamActive = false;
+            state.steamTimer = 0;
+            sound.playEnemyAlert();
+            showToast('SESS\u00C3O 2: 3 AUT\u00D4MATOS ENLOUQUECIDOS! REC. VAPOR: 8s');
+
+            const mid = Math.floor(GRID_SIZE / 2);
+            const crazy1 = new Automaton(3 * TILE_SIZE, mid * TILE_SIZE, room.depth, 'rusty_charger');
+            const crazy2 = new Automaton((GRID_SIZE - 4) * TILE_SIZE, mid * TILE_SIZE, room.depth, 'rusty_bomber');
+            const crazy3 = new Automaton(mid * TILE_SIZE, 3 * TILE_SIZE, room.depth, 'rusty');
+            [crazy1, crazy2, crazy3].forEach(e => {
+              e.canGoCrazy = true;
+              e.setCrazyState(true);
+              e.state = 'chase';
+              this.spawnSparks(e.x, e.y, '#ff1744', 16);
+            });
+            room.enemies.push(crazy1, crazy2, crazy3);
+          } else if (state.session === 2 && room.enemies.length === 0) {
+            state.session = 3;
+            state.steamCooldown = Math.max(4.0, state.steamCooldown - 2.0); // 8s -> 6s
+            state.steamActive = false;
+            state.steamTimer = 0;
+            sound.playEnemyAlert();
+            showToast('SESS\u00C3O 3: 2 AUT\u00D4MATOS DE ELITE BLINDADOS! REC. VAPOR: 6s');
+
+            const mid = Math.floor(GRID_SIZE / 2);
+            const elite1 = new Automaton(3 * TILE_SIZE, (GRID_SIZE - 4) * TILE_SIZE, room.depth, 'charger');
+            const elite2 = new Automaton((GRID_SIZE - 4) * TILE_SIZE, (GRID_SIZE - 4) * TILE_SIZE, room.depth, 'bomber');
+            [elite1, elite2].forEach(e => {
+              e.state = 'chase';
+              this.spawnSparks(e.x, e.y, '#ffd700', 20);
+            });
+            room.enemies.push(elite1, elite2);
+          } else if (state.session === 3 && room.enemies.length === 0 && !state.meltdownActive && !state.solved) {
+            state.session = 'meltdown';
+            state.meltdownActive = true;
+            state.meltdownTimer = 15.0; // 15 segundos
+            if (window.sound) window.sound.playBossRoar ? window.sound.playBossRoar() : window.sound.playPropulsorSteam();
+            showToast('\u26A0\uFE0F SOBRECARGA! VAPOR INVADINDO! COLOQUE 3 TIMERBOMBS NAS PLACAS!');
+          }
+
+          // 3. Fase de Sobrecarga (Meltdown: Vapor invade de fora pra dentro durando 15s)
+          if (state.meltdownActive && !state.solved) {
+            state.meltdownTimer -= dt;
+
+            // Invasao do vapor de fora para dentro:
+            const elapsed = 15.0 - state.meltdownTimer;
+            const steamRing = Math.min(4, Math.floor(elapsed / 3.75) + 1);
+
+            // Verifica se Charlotte esta na area invadida pelo vapor
+            const distFromEdge = Math.min(pGridX, GRID_SIZE - 1 - pGridX, pGridY, GRID_SIZE - 1 - pGridY);
+            if (distFromEdge <= steamRing && this.player.invulnerableTimer <= 0) {
+              this.spawnFloatingText('VAPOR ASFIXIANTE!', this.player.x, this.player.y - 20, '#ff3d00');
+              if (this.player.takeDamage(1)) {
+                this.triggerTimeRewind();
+              }
+            }
+
+            // Para desativar: 3 TimerBombs nas 3 placas de pressao dos cantos!
+            if (state.plates) {
+              state.plates.forEach(plate => {
+                const hasTimerBomb = this.timedBombs.some(b => b.gridX === plate.x && b.gridY === plate.y);
+                if (hasTimerBomb) {
+                  if (plate.activeTimer <= 0) {
+                    sound.playPlateClick();
+                    this.spawnSparks(plate.x * TILE_SIZE + TILE_SIZE / 2, plate.y * TILE_SIZE + TILE_SIZE / 2, '#00e5ff', 15);
+                  }
+                  plate.activeTimer = 0.6;
+                } else if (plate.activeTimer > 0) {
+                  plate.activeTimer -= dt;
+                }
+              });
+
+              // Verifica se as 3 placas estao com TimerBombs ativas simultaneamente
+              const allThreeActive = state.plates.every(p => p.activeTimer > 0);
+              if (allThreeActive) {
+                state.solved = true;
+                state.meltdownActive = false;
+                state.steamActive = false;
+                sound.playUpgradeFanfare();
+                if (state.barrierPositions) {
+                  state.barrierPositions.forEach(pos => {
+                    room.grid[pos.y][pos.x] = TILE.EMPTY;
+                    this.spawnDebris(pos.x * TILE_SIZE + TILE_SIZE / 2, pos.y * TILE_SIZE + TILE_SIZE / 2);
+                  });
+                }
+                this.spawnSparks(WORLD_WIDTH / 2, WORLD_HEIGHT / 2, '#ffd700', 40);
+                showToast('SOBRECARGA DE VAPOR DESATIVADA! COFRE LIBERADO!');
+              }
+            }
+
+            // Se o tempo acabar antes de desativar: pulso de emergencia e reset da sobrecarga
+            if (state.meltdownTimer <= 0) {
+              if (this.player.takeDamage(1)) {
+                this.triggerTimeRewind();
+              }
+              state.meltdownTimer = 10.0; // Da mais 10s para tentar novamente sem travar o jogo
+              showToast('\u26A0\uFE0F V\u00C1LVULAS EXPELIRAM VAPOR! COLOQUE AS 3 TIMERBOMBS!');
+            }
+          }
         }
       }
 
@@ -5019,7 +6547,6 @@
         // Coloca o slot em cooldown (5 segundos, conforme solicitado)
         availableSlot.cooldown = 5.0;
         this.updateHUD();
-        
         sound.playThrowWhoosh();
         this.player.throwAnimTimer = 0.35;
         const clampedX = Math.max(TILE_SIZE * 0.8, Math.min(WORLD_WIDTH - TILE_SIZE * 0.8, targetX));
@@ -5080,12 +6607,56 @@
               this.spawnSparks(this.player.x, this.player.y, '#ffd700', 45);
               this.spawnSparks(this.player.x, this.player.y, '#00e5ff', 35);
               this.spawnFloatingText(`+${rewardCount} CC & +${partReward} PEÇAS`, this.player.x, this.player.y - 22, '#ffd700');
-              showToast(`COFRE QUÂNTICO ABERTO: +${rewardCount} CC & +${partReward} PEÇAS!`);
+              if ((this.map.currentDepth >= 4 || room.puzzleType === 'steam_overload') && !this.player.hasHydraulicPiston && !this.player.carryingHydraulicPiston) {
+                this.collectHydraulicPiston();
+              } else {
+                showToast(`COFRE QUÂNTICO ABERTO: +${rewardCount} CC`);
+              }
             } else {
+              saveGame();
               showToast('COFRE TRANCADO! RESOLVA O PUZZLE DA SALA');
             }
           }
         }
+      }
+
+      collectHydraulicPiston() {
+        this.player.carryingHydraulicPiston = true;
+        this.spawnSparks(this.player.x, this.player.y, '#ffd700', 50);
+        this.spawnSparks(this.player.x, this.player.y, '#ffca28', 35);
+        if (window.sound) window.sound.playUpgradeFanfare();
+        this.showItemCollectedModal(
+          window.t('item-piston-title') || 'PISTÃO HIDRÁULICO',
+          '🦾',
+          window.t('item-piston-desc') || 'Componente de alta compressão forjado nos fornos a vapor da Mina. Essencial para aprimorar a Manopla Mecânica!',
+          window.t('item-piston-hint') || 'Envie este item ao Baú através de uma GOELA para desbloquear seu uso na Oficina!'
+        );
+        this.updateHUD();
+        saveGame();
+      }
+
+      showItemCollectedModal(title, icon, desc, hint) {
+        const modal = document.getElementById('item-collected-modal');
+        if (!modal) return;
+        const titleEl = document.getElementById('collected-item-title');
+        const iconEl = document.getElementById('collected-item-icon');
+        const descEl = document.getElementById('collected-item-desc');
+        const hintEl = document.getElementById('collected-item-hint');
+        
+        if (titleEl) titleEl.textContent = title;
+        if (iconEl) iconEl.textContent = icon;
+        if (descEl) descEl.textContent = desc;
+        if (hintEl) hintEl.innerHTML = `📦 ${hint}`;
+        
+        modal.style.display = 'flex';
+        this.isItemModalOpen = true;
+      }
+
+      closeItemModal() {
+        const modal = document.getElementById('item-collected-modal');
+        if (modal) modal.style.display = 'none';
+        this.isItemModalOpen = false;
+        this.updateHUD();
       }
 
       getAvailableCC() {
@@ -5201,6 +6772,7 @@
                      this.player.signTalked = Date.now();
                    }
                  } else if (tileHere === TILE.INVENTOR_NPC && room.isStart) {
+                   // Inventor disponível na base — abre loja
                    if (!this.player.inventorShopOpened) {
                      this.player.inventorShopOpened = true;
                      setTimeout(() => { this.player.inventorShopOpened = false; }, 1500);
@@ -5235,6 +6807,7 @@
         if (ccEl) ccEl.textContent = totalCC;
         if (partsEl) partsEl.textContent = totalParts;
 
+        // Impact bomb
         const btnImpact = document.getElementById('btn-inv-impact');
         if (btnImpact) {
           if (this.player.unlockedImpact) {
@@ -5246,6 +6819,7 @@
           }
         }
 
+        // Propulsor bomb
         const btnPropulsor = document.getElementById('btn-inv-propulsor');
         if (btnPropulsor) {
           if (this.player.unlockedPropulsor) {
@@ -5304,6 +6878,54 @@
         this.updateArmoryUI();
       }
 
+      checkChest() {
+        if (!this.map || !this.map.currentRoom || !this.player) return;
+        const room = this.map.currentRoom;
+        const pGridX = Math.floor(this.player.x / TILE_SIZE);
+        const pGridY = Math.floor(this.player.y / TILE_SIZE);
+
+        if (pGridX >= 0 && pGridX < GRID_SIZE && pGridY >= 0 && pGridY < GRID_SIZE) {
+          if (room.grid[pGridY][pGridX] === TILE.CHEST || (pGridY > 0 && room.grid[pGridY-1][pGridX] === TILE.CHEST)) {
+            if (document.getElementById('chest-modal').style.display !== 'none') return;
+            this.openChest();
+          }
+        }
+      }
+
+      openChest() {
+        const modal = document.getElementById('chest-modal');
+        if (!modal) return;
+        
+        const depCC = this.player.depositedCores || 0;
+        const depP = this.player.depositedParts || 0;
+        
+        document.getElementById('chest-resources').innerHTML = `
+          <div style="color:#ffcc00; margin-bottom:4px;">💎 Cristal Coal Guardado: <b>` + depCC + ` CC</b></div>
+          <div style="color:#b0bec5;">⚙️ Peças Guardadas: <b>` + depP + `</b></div>
+        `;
+        
+        let keysHtml = '';
+        if (this.player.hasHydraulicPiston) keysHtml += '<div>🔹 Pistão Hidráulico de Alta Pressão</div>';
+        if (this.player.hasSteamPropulsionCore) keysHtml += '<div>💨 Núcleo de Propulsão a Vapor</div>';
+        if (this.player.hasBossKey) keysHtml += '<div>🔑 Chave do Boss</div>';
+        if (keysHtml === '') keysHtml = '<div style="color:#555;">Nenhum item especial guardado.</div>';
+        document.getElementById('chest-key-items').innerHTML = keysHtml;
+        
+        let upgHtml = '';
+        upgHtml += `<div>Manopla Nível ` + this.player.gauntletLevel + (this.player.gauntletLevel >= 2 ? ` <span style="color:#a5d6a7;">(Pistão Aplicado)</span>` : (this.player.hasHydraulicPiston ? ` <span style="color:#ffca28;">(Pistão Disponível - Use a Oficina)</span>` : ` <span style="color:#ef5350;">(Falta Pistão Hidráulico)</span>`)) + `</div>`;
+        upgHtml += `<div>Botas Propulsoras: ` + (this.player.bootsLevel >= 1 ? `<span style="color:#a5d6a7;">Desbloqueadas</span>` : (this.player.hasSteamPropulsionCore ? `<span style="color:#ffca28;">Prontas para fabricar</span>` : `<span style="color:#ef5350;">Falta Núcleo a Vapor</span>`)) + `</div>`;
+        
+        document.getElementById('chest-upgrades').innerHTML = upgHtml;
+        
+        modal.style.display = 'block';
+      }
+
+      closeChest() {
+        const modal = document.getElementById('chest-modal');
+        if (modal) modal.style.display = 'none';
+        this.player.y += TILE_SIZE * 0.8; // Empurra jogador um pouco pra tras
+      }
+
       closeArmory() {
         document.getElementById('armory-modal').classList.remove('visible');
       }
@@ -5311,23 +6933,28 @@
       updateArmoryUI() {
         const totalCC = this.getAvailableCC();
         const totalParts = this.getAvailableParts();
-        document.getElementById('armory-coins').textContent = `Você tem: ${totalCC} CC | ${totalParts} PEÇAS`;
+        document.getElementById('armory-coins').textContent = `${window.t('armory-youhave')}: ${totalCC} CC | ${totalParts} ${window.t('ingame-parts').toUpperCase()}`;
         
         // Gauntlet
         const btnGauntlet = document.getElementById('btn-buy-gauntlet');
         if (this.player.gauntletLevel >= 3) {
-          btnGauntlet.textContent = 'MÁXIMO';
+          btnGauntlet.textContent = window.t('armory-max');
+          btnGauntlet.disabled = true;
+        } else if (this.player.gauntletLevel === 1 && !this.player.hasHydraulicPiston) {
+          btnGauntlet.textContent = 'Falta Pistão';
           btnGauntlet.disabled = true;
         } else {
+          btnGauntlet.textContent = window.t('armory-upgrade');
           btnGauntlet.disabled = (totalCC < 10 || totalParts < 10);
         }
 
         // Boots
         const btnBoots = document.getElementById('btn-buy-boots');
         if (this.player.bootsLevel >= 1) {
-          btnBoots.textContent = 'COMPRADO';
+          btnBoots.textContent = window.t('armory-bought');
           btnBoots.disabled = true;
         } else {
+          btnBoots.textContent = window.t('armory-buy');
           btnBoots.disabled = (totalCC < 15 || totalParts < 15);
         }
 
@@ -5336,17 +6963,30 @@
         const bagCostEl = document.getElementById('bag-upgrade-cost');
         const bagLvl = this.player.bagLevel || 1;
         if (bagLvl >= 3) {
-          btnBag.textContent = 'MÁXIMO';
+          btnBag.textContent = window.t('armory-max');
           btnBag.disabled = true;
           if (bagCostEl) bagCostEl.textContent = 'Capacidade máxima atingida!';
         } else {
           const nextCap = bagLvl === 1 ? 7 : 10;
           const costCC = bagLvl === 1 ? 15 : 25;
           const costParts = bagLvl === 1 ? 15 : 25;
+          btnBag.textContent = window.t('armory-upgrade');
           btnBag.disabled = (totalCC < costCC || totalParts < costParts);
-          if (bagCostEl) bagCostEl.textContent = `→ ${nextCap} bombas  |  Custo: ${costCC} CC | ${costParts} PEÇAS`;
+          if (bagCostEl) bagCostEl.textContent = '  ' + nextCap + ' bombas  |  Custo: ' + costCC + ' CC | ' + costParts + ' PECAS';
+        }
+
+        var btnTimer = document.getElementById('btn-buy-timerbomb');
+        if (btnTimer) {
+          if (this.player.timerBombLevel >= 2) {
+            btnTimer.textContent = 'Adquirido';
+            btnTimer.disabled = true;
+          } else {
+            btnTimer.textContent = 'Comprar';
+            btnTimer.disabled = (totalCC < 20 || totalParts < 15);
+          }
         }
       }
+
 
       switchArmoryTab(tab) {
         document.getElementById('armory-panel-upgrades').style.display = tab === 'upgrades' ? 'flex' : 'none';
@@ -5377,6 +7017,7 @@
           grid.appendChild(div);
         });
 
+        // Tipos disponíveis
         const typesRow = document.getElementById('bag-types-row');
         if (!typesRow) return;
         typesRow.innerHTML = '';
@@ -5403,7 +7044,24 @@
         
         let curr = order.indexOf(slot.type);
         if (curr === -1) curr = 0;
-        slot.type = order[(curr + 1) % order.length];
+        
+        let nextType = order[(curr + 1) % order.length];
+        
+        // Custo da Impact Bomb: 1 CC (Eliminada exigência de peças)
+        if (nextType === 'impact') {
+          if (this.getAvailableCC() >= 1) {
+            this.consumeCurrency(1, 0); // 1 CC, 0 parts
+            showToast('Bomba de Impacto Fabricada: -1 CC', 1000);
+          } else {
+            showToast('CC Insuficiente para Bomba de Impacto!', 1000);
+            // Pula para a próxima (Propulsor ou volta pro Timed)
+            curr++;
+            nextType = order[(curr + 1) % order.length];
+          }
+        }
+
+        // Custo do Propulsor (Mantendo original ou mudando? Prompt não fala do propulsor, só Impact)
+        slot.type = nextType;
         slot.cooldown = 0;
         this.renderBagPanel();
         this.updateHUD();
@@ -5412,8 +7070,21 @@
 
       buyUpgrade(type) {
         let costCC = 0, costParts = 0;
-        if (type === 'gauntlet') { costCC = 10; costParts = 10; }
-        if (type === 'boots') { costCC = 15; costParts = 15; }
+        if (type === 'gauntlet') {
+          if (this.player.gauntletLevel === 1 && !this.player.hasHydraulicPiston) {
+            showToast('REQUER PISTÃO HIDRÁULICO NO BAÚ!');
+            return;
+          }
+          costCC = 10; costParts = 10;
+        }
+        if (type === 'timerbomb') { costCC = 20; costParts = 15; }
+        if (type === 'boots') {
+          if (!this.player.hasSteamPropulsionCore) {
+            showToast('REQUER NUCLEO DE PROPULSAO A VAPOR!');
+            return;
+          }
+          costCC = 15; costParts = 15;
+        }
         if (type === 'bag') {
           const lvl = this.player.bagLevel || 1;
           if (lvl >= 3) { showToast('BOLSA JÁ ESTÁ NO NÍVEL MÁXIMO!'); return; }
@@ -5429,11 +7100,15 @@
            
            if (type === 'gauntlet') {
              this.player.upgradeGauntlet();
+           } else if (type === 'timerbomb') {
+             this.player.timerBombLevel = 2;
+             showToast('BOMBA-RELOGIO ATUALIZADA (REACAO EM CADEIA)!');
            } else if (type === 'boots') {
              this.player.bootsLevel = 1;
              showToast('BOTAS COMPRADAS! DASH LIBERADO (SHIFT / BOTÃO MOBILE)!');
            } else if (type === 'bag') {
              this.player.bagLevel = (this.player.bagLevel || 1) + 1;
+             // Capacidades: nv1=5, nv2=7, nv3=10
              const caps = [0, 5, 7, 10];
              const newCap = caps[this.player.bagLevel];
              
@@ -5441,11 +7116,13 @@
              while (this.player.bagSlots.length < newCap) {
                this.player.bagSlots.push({ type: 'timed', cooldown: 0 });
              }
+             
              showToast(`BOLSA EXPANDIDA (NV. ${this.player.bagLevel})! Capacidade: ${newCap} bombas!`);
            }
            sound.playCCPickup();
            this.spawnSparks(this.player.x, this.player.y, '#00e5ff', 25);
            this.updateHUD();
+           saveGame();
            this.updateArmoryUI();
         } else {
            showToast(`RECURSOS INSUFICIENTES! Necessário: ${costCC} CC e ${costParts} PEÇAS`);
@@ -5494,7 +7171,8 @@
       checkGoelaDeposit() {
         const room = this.map.currentRoom;
         if (!room.hasGoela) return;
-        if ((this.player.chronoCores || 0) <= 0 && (this.player.parts || 0) <= 0) return;
+        const hasCarryingPiston = !!(this.player && this.player.carryingHydraulicPiston);
+        if ((this.player.chronoCores || 0) <= 0 && (this.player.parts || 0) <= 0 && !hasCarryingPiston) return;
 
         const pGridX = Math.floor(this.player.x / TILE_SIZE);
         const pGridY = Math.floor(this.player.y / TILE_SIZE);
@@ -5507,13 +7185,28 @@
             this.player.parts = 0;
             this.player.depositedCores = (this.player.depositedCores || 0) + depositedCores;
             this.player.depositedParts = (this.player.depositedParts || 0) + depositedParts;
+
+            let pistonDeposited = false;
+            if (this.player.carryingHydraulicPiston) {
+              this.player.carryingHydraulicPiston = false;
+              this.player.hasHydraulicPiston = true;
+              pistonDeposited = true;
+            }
+
             sound.playChuteDeposit();
-            showToast(`ENVIADO: ${depositedCores} CC | ${depositedParts} PEÇAS`);
-            this.spawnSparks(this.player.x, this.player.y, '#4caf50', 30);
-            this.spawnSparks(this.player.x, this.player.y, '#00e5ff', 25);
+            if (pistonDeposited) {
+              sound.playUpgradeFanfare();
+              showToast(window.t('item-piston-deposited') || 'PISTÃO HIDRÁULICO ENVIADO AO BAÚ COM SUCESSO!');
+              this.spawnFloatingText('🦾 PISTÃO ENVIADO AO BAÚ!', this.player.x, this.player.y - 48, '#ffd700');
+            } else {
+              showToast(`ENVIADO: ${depositedCores} CC | ${depositedParts} PEÇAS`);
+            }
+            this.spawnSparks(this.player.x, this.player.y, '#4caf50', 35);
+            this.spawnSparks(this.player.x, this.player.y, '#ffd700', 30);
             if (depositedCores > 0) this.spawnFloatingText(`+${depositedCores} CC`, this.player.x, this.player.y - 18, '#4caf50');
             if (depositedParts > 0) this.spawnFloatingText(`+${depositedParts} PEÇAS`, this.player.x, this.player.y - 32, '#9e9e9e');
             this.updateHUD();
+            saveGame();
           }
         }
       }
@@ -5543,6 +7236,21 @@
           sound.playTimedBeep(1.0);
           this.timedBombs.push(new TimedBomb(gridX, gridY));
         }
+      }
+
+      triggerChainReaction(cx, cy, radius, affectedTiles = null) {
+        if (!this.player || (this.player.timerBombLevel || 1) < 2) return;
+        this.timedBombs.forEach(tb => {
+          if (tb.timer > 0) {
+            if (affectedTiles) {
+              const inTile = affectedTiles.some(t => t.x === tb.gridX && t.y === tb.gridY);
+              if (inTile) tb.timer = 0;
+            } else {
+              const dist = Math.hypot(tb.x - cx, tb.y - cy);
+              if (dist <= radius) tb.timer = 0;
+            }
+          }
+        });
       }
 
       detonateImpact(cx, cy, gridX, gridY) {
@@ -5638,7 +7346,7 @@
           const enemy = room.enemies[i];
           const dist = Math.hypot(enemy.x - cx, enemy.y - cy);
           if (dist <= blastRadius + enemy.radius) {
-            const isDead = enemy.takeDamage(1, this);
+            const isDead = enemy.takeDamage(1, this, 'timed');
             if (isDead) {
               this.spawnEnemyDeath(enemy.x, enemy.y, enemy);
               room.enemies.splice(i, 1);
@@ -5649,6 +7357,8 @@
             }
           }
         }
+        
+        this.triggerChainReaction(cx, cy, blastRadius);
       }
 
       detonatePropulsor(cx, cy) {
@@ -5681,6 +7391,8 @@
             enemy.applyRepulsion(nx, ny, 380);
           }
         });
+        
+        this.triggerChainReaction(cx, cy, TILE_SIZE * 2.2);
       }
 
       detonateTimedBomb(bomb) {
@@ -5729,6 +7441,20 @@
           }
         });
 
+        // Empurra pilares móveis
+        if (room.pushables) {
+          room.pushables.forEach(p => {
+             const hit = affectedTiles.find(t => t.x === p.gridX && t.y === p.gridY);
+             if (hit) {
+                 const dx = p.gridX === bomb.gridX ? 0 : Math.sign(p.gridX - bomb.gridX);
+                 const dy = p.gridY === bomb.gridY ? 0 : Math.sign(p.gridY - bomb.gridY);
+                 if (dx !== 0 || dy !== 0) {
+                     p.push(dx, dy, room);
+                 }
+             }
+          });
+        }
+
         // Se a explosão em cruz atingir o nodo de chão do andar inferior, inicia animação de quebra!
         if (room.secretFloorNode && room.secretFloorNode.state === 'intact') {
           const distToNode = Math.hypot(bx - room.secretFloorNode.x, by - room.secretFloorNode.y);
@@ -5773,7 +7499,7 @@
           }
 
           if (hit) {
-            const isDead = enemy.takeDamage(2, this);
+            const isDead = enemy.takeDamage(2, this, 'impact');
             if (isDead) {
               this.spawnEnemyDeath(enemy.x, enemy.y, enemy);
               room.enemies.splice(i, 1);
@@ -5784,6 +7510,8 @@
             }
           }
         }
+        
+        this.triggerChainReaction(bx, by, 0, affectedTiles);
       }
 
       checkRoomTransitions() {
@@ -5881,7 +7609,8 @@
         sound.playRewindGlitch();
         this.rewindGlitchTimer = 0.5;
         this.player.invulnerableTimer = 1.8;
-        showToast('TEMPO REBOBINADO: NOVO MAPA GERADO!');
+        showToast(window.t('ingame-rewind-long'));
+        saveGame();
 
         this.fadeState = 'out';
         this.pendingTransition = () => {
@@ -5896,8 +7625,10 @@
           this.particles = [];
           this.blasts = [];
 
-          // 3. Reseta CCs não depositados da corrida atual (mantém depositados salvos)
+          // 3. Reseta CCs e Peças não depositados da corrida atual (mantém depositados salvos)
           this.player.chronoCores = 0;
+          this.player.parts = 0;
+          this.player.carryingHydraulicPiston = false;
 
           // 4. Posiciona Charlotte no centro da nova sala inicial
           const mid = Math.floor(GRID_SIZE / 2);
@@ -6249,9 +7980,9 @@
               ctx.fillRect(px + TILE_SIZE / 2 - 8, py + TILE_SIZE / 2 - 4, 16, 5);
               // Texto indicador
               ctx.fillStyle = 'rgba(255,255,255,0.8)';
-              ctx.font = '9px sans-serif';
+              ctx.font = 'bold 12px sans-serif';
               ctx.textAlign = 'center';
-              ctx.fillText('INVENTOR', px + TILE_SIZE / 2, py - 2);
+              ctx.fillText(window.t('ingame-inventor'), px + TILE_SIZE / 2, py - 4);
 
             } else if (tile === TILE.SIGN) {
               // Placa de Aviso (quando o inventor não foi resgatado)
@@ -6263,6 +7994,7 @@
               ctx.font = '16px sans-serif';
               ctx.textAlign = 'center';
               ctx.fillText('🍔', px + TILE_SIZE/2, py + 26);
+
             } else if (tile === TILE.ARMORY) {
               // Mesa de Arsenal para modificações
               ctx.fillStyle = '#4e342e'; // Mesa de madeira escura
@@ -6281,13 +8013,13 @@
               // Texto indicador
               if (window.game && window.game.player) {
                  ctx.fillStyle = 'rgba(255,255,255,0.8)';
-                 ctx.font = '9px sans-serif';
+                 ctx.font = 'bold 12px sans-serif';
                  ctx.textAlign = 'center';
                  if (window.game.player.armoryUnlocked) {
                     ctx.fillStyle = '#4caf50';
-                    ctx.fillText('ARSENAL (LIVRE)', px + TILE_SIZE / 2, py - 2);
+                    ctx.fillText(window.t('ingame-armoryfree'), px + TILE_SIZE / 2, py - 4);
                  } else {
-                    ctx.fillText('CUSTO: 10 CC | 10 PEÇAS', px + TILE_SIZE / 2, py - 2);
+                    ctx.fillText(`${window.t('ingame-cost')} 10 CC | 10 ${window.t('ingame-parts').toUpperCase()}`, px + TILE_SIZE / 2, py - 4);
                  }
               }
             } else if (tile === TILE.LOCK_GATE) {
@@ -6328,9 +8060,9 @@
                 const depCC = window.game.player.depositedCores || 0;
                 const depP = window.game.player.depositedParts || 0;
                 ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-                ctx.font = 'bold 9px sans-serif';
+                ctx.font = 'bold 12px sans-serif';
                 ctx.textAlign = 'center';
-                ctx.fillText(`BAÚ: ${depCC} CC | ${depP} PEÇAS`, px + TILE_SIZE/2, py - 6);
+                ctx.fillText(`${window.t('ingame-chests')} ${depCC} CC | ${depP} ${window.t('ingame-parts').toUpperCase()}`, px + TILE_SIZE/2, py - 6);
               }
             } else if (tile === TILE.HOLE) {
               // Buraco / Abismo aberto (Com Autotiling)
@@ -6393,10 +8125,10 @@
 
               // Ícone ou texto do duto coletor
               ctx.fillStyle = '#81c784';
-              ctx.font = 'bold 10px sans-serif';
+              ctx.font = 'bold 12px sans-serif';
               ctx.textAlign = 'center';
               ctx.textBaseline = 'middle';
-              ctx.fillText('GOELA', px + TILE_SIZE / 2, py + TILE_SIZE / 2);
+              ctx.fillText(window.t('ingame-goela'), px + TILE_SIZE / 2, py + TILE_SIZE / 2);
             } else if (tile === TILE.SECRET_LADDER) {
               // Escada de retorno da sala secreta
               ctx.fillStyle = '#37474f';
@@ -6511,6 +8243,14 @@
               // Miolo da placa
               ctx.fillStyle = isActive ? '#ffffff' : 'rgba(0, 229, 255, 0.3)';
               ctx.fillRect(px + 12, py + 12, TILE_SIZE - 24, TILE_SIZE - 24);
+              if (room.puzzleType === 'steam_overload') {
+                ctx.save();
+                ctx.font = 'bold 7px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillStyle = isActive ? '#00e676' : '#ffd54f';
+                ctx.fillText(isActive ? '\u2705 OK' : '\u23F1\uFE0F TIMER', px + TILE_SIZE / 2, py - 3);
+                ctx.restore();
+              }
             } else if (tile === TILE.SWITCH_TARGET) {
               // Cristal Interruptor Elevado (Puzzle Nível 3+)
               const isHit = room.puzzleState.solved;
@@ -6536,6 +8276,58 @@
               ctx.stroke();
               ctx.restore();
             }
+          }
+        }
+
+        // Renderizacao Especial da Sobrecarga de Vapor (Nivel 4 Puzzle)
+        if (room && room.puzzleType === 'steam_overload' && room.puzzleState) {
+          if (room.puzzleState.steamVents) {
+            room.puzzleState.steamVents.forEach(vent => {
+              const vx = vent.minX * TILE_SIZE;
+              const vy = vent.minY * TILE_SIZE;
+              const vw = (vent.maxX - vent.minX + 1) * TILE_SIZE;
+              const vh = (vent.maxY - vent.minY + 1) * TILE_SIZE;
+              ctx.save();
+              ctx.fillStyle = room.puzzleState.steamActive ? 'rgba(255, 112, 67, 0.28)' : 'rgba(96, 125, 139, 0.12)';
+              ctx.fillRect(vx, vy, vw, vh);
+              ctx.strokeStyle = room.puzzleState.steamActive ? 'rgba(255, 87, 34, 0.7)' : 'rgba(120, 144, 156, 0.35)';
+              ctx.lineWidth = 2;
+              ctx.strokeRect(vx, vy, vw, vh);
+
+              if (room.puzzleState.steamActive) {
+                ctx.fillStyle = 'rgba(236, 239, 241, 0.4)';
+                ctx.beginPath();
+                ctx.arc(vx + vw / 2, vy + vh / 2, vw * 0.45, 0, Math.PI * 2);
+                ctx.fill();
+              }
+              ctx.restore();
+            });
+          }
+
+          // Meltdown: vapor invadindo de fora para dentro e banner com contagem regressiva
+          if (room.puzzleState.meltdownActive && !room.puzzleState.solved) {
+            const elapsed = 15.0 - room.puzzleState.meltdownTimer;
+            const steamRing = Math.min(4, Math.floor(elapsed / 3.75) + 1);
+
+            ctx.save();
+            ctx.fillStyle = 'rgba(255, 87, 34, 0.32)';
+            for (let r = 0; r < steamRing; r++) {
+              ctx.fillRect(r * TILE_SIZE, 0, TILE_SIZE, WORLD_HEIGHT);
+              ctx.fillRect((GRID_SIZE - 1 - r) * TILE_SIZE, 0, TILE_SIZE, WORLD_HEIGHT);
+              ctx.fillRect(0, r * TILE_SIZE, WORLD_WIDTH, TILE_SIZE);
+              ctx.fillRect(0, (GRID_SIZE - 1 - r) * TILE_SIZE, WORLD_WIDTH, TILE_SIZE);
+            }
+
+            const activeCount = room.puzzleState.plates ? room.puzzleState.plates.filter(p => p.activeTimer > 0).length : 0;
+            ctx.font = 'bold 13px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillStyle = '#ff1744';
+            ctx.strokeStyle = '#000000';
+            ctx.lineWidth = 3;
+            const bannerText = `\u26A0\uFE0F SOBRECARGA: ${Math.max(0, room.puzzleState.meltdownTimer).toFixed(1)}s [TIMERBOMBS NAS PLACAS: ${activeCount}/3]`;
+            ctx.strokeText(bannerText, WORLD_WIDTH / 2, 28);
+            ctx.fillText(bannerText, WORLD_WIDTH / 2, 28);
+            ctx.restore();
           }
         }
 
@@ -6568,7 +8360,15 @@
         this.enemyBombs.forEach(eb => eb.render(ctx, now));
 
         // Cristais de Chrono Core (CC) caídos no chão
+        if (room && room.loreDrops) {
+          room.loreDrops.forEach(drop => drop.draw(ctx));
+        }
         this.ccDrops.forEach(drop => drop.draw(ctx));
+
+        // Pushables
+        if (room.pushables) {
+            room.pushables.forEach(p => p.render(ctx));
+        }
 
         // Jogador (Charlotte: Sprite Animado 64x64 com fallback)
         ctx.save();
@@ -6643,6 +8443,9 @@
           ctx.fill();
         }
         ctx.restore();
+
+        // Renderiza Marcadores de Mira no Chão (Telegraph de ImpactBomb)
+        this.targetMarkers.forEach(tm => tm.draw(ctx));
 
         // Renderiza Bombas em Voo (Arremessadas)
         this.flyingBombs.forEach(b => b.draw(ctx));
@@ -6793,6 +8596,7 @@
           ctx.restore();
         }
 
+        
         this.renderMinimap();
       }
 
@@ -6854,19 +8658,19 @@
 
         const depth = this.map.currentDepth || 1;
         if (room.isPuzzleRoom) {
-          coordsEl.textContent = `NÍVEL ${depth} • CÂMARA DE DESAFIO 💎 [${room.rx}, ${room.ry}]`;
+          coordsEl.textContent = `${window.t('ingame-level')} ${depth} • ${window.t('ingame-puzzle')} 💎 [${room.rx}, ${room.ry}]`;
         } else if (room.isMiniBossRoom) {
-          coordsEl.textContent = `NÍVEL ${depth} • ARENA DO RIVAL ⚔️ [${room.rx}, ${room.ry}]`;
+          coordsEl.textContent = `${window.t('ingame-level')} ${depth} • ${window.t('ingame-miniboss')} ⚔️ [${room.rx}, ${room.ry}]`;
         } else if (room.isBossRoom) {
-          coordsEl.textContent = `NÍVEL ${depth} • SALA DO CHEFE 💀 [${room.rx}, ${room.ry}]`;
+          coordsEl.textContent = `${window.t('ingame-level')} ${depth} • ${window.t('ingame-bossroom')} 💀 [${room.rx}, ${room.ry}]`;
         } else if (room.isSecret) {
-          coordsEl.textContent = `ANDAR SECRETO • NÍVEL ${depth}`;
+          coordsEl.textContent = `${window.t('ingame-secret')} • ${window.t('ingame-level')} ${depth}`;
         } else {
-          let extra = this.player.hasBossKey ? '   [CHAVE DO BOSS]' : '';
-          coordsEl.textContent = `NÍVEL ${depth}   SALA [${room.rx}, ${room.ry}]${extra}`;
+          let extra = this.player.hasBossKey ? `   [${window.t('ingame-bosskey')}]` : '';
+          coordsEl.textContent = `${window.t('ingame-level')} ${depth}   ${window.t('ingame-room')} [${room.rx}, ${room.ry}]${extra}`;
         }
 
-        enemyEl.textContent = `INIMIGOS: ${room.enemies.length}`;
+        enemyEl.textContent = `${window.t('ingame-enemies')}: ${room.enemies.length}`;
         if (room.enemies.length > 0) {
           enemyEl.className = 'status-alert';
         } else {
@@ -6875,6 +8679,7 @@
 
         if (room.isLockdown) {
           lockdownBanner.style.display = 'block';
+          lockdownBanner.textContent = window.t('ingame-lockdown');
         } else {
           lockdownBanner.style.display = 'none';
         }
@@ -6906,7 +8711,7 @@
         // Atualiza nível da manopla e cristais
         const gauntletEl = document.getElementById('gauntlet-level');
         if (gauntletEl) {
-          gauntletEl.textContent = this.player.getGauntletTitle();
+          gauntletEl.textContent = `${window.t('ingame-gauntlet-lvl')} ${this.player.gauntletLevel} (${this.player.getThrowRange()}px)`;
         }
 
         const ccEl = document.getElementById('cc-counter');
@@ -6916,21 +8721,27 @@
         
         const partEl = document.getElementById('part-counter');
         if (partEl) {
-          partEl.textContent = `${this.player.parts || 0} PEÇAS`;
+          partEl.textContent = `${this.player.parts || 0} ${window.t('ingame-parts').toUpperCase()}`;
         }
 
-        const rechargeBar = document.getElementById('bomb-recharge-bar');
-        if (this.player.bagSlots && rechargeBar) {
-          const selectedType = this.player.selectedBomb || 'timed';
-          const selectedSlots = this.player.bagSlots.filter(s => s.type === selectedType);
-          const rechargingSlot = selectedSlots.filter(s => s.cooldown > 0).sort((a,b) => a.cooldown - b.cooldown)[0];
-          if (rechargingSlot) {
-             const pct = 1 - (rechargingSlot.cooldown / 5.0);
-             rechargeBar.style.width = (pct * 100) + '%';
-          } else {
-             rechargeBar.style.width = '100%';
-          }
+        // Ícone do Pistão no canto da tela até enviar ao baú pela Goela
+        const pistonBadge = document.getElementById('piston-corner-badge');
+        if (pistonBadge) {
+          const isCarrying = !!(this.player && this.player.carryingHydraulicPiston);
+          pistonBadge.style.display = isCarrying ? 'flex' : 'none';
         }
+        
+        const gauntletBadge = document.querySelector('#gauntlet-badge .hud-badge-label');
+        if (gauntletBadge) gauntletBadge.textContent = window.t('ingame-gauntlet');
+        
+        const ccBadge = document.querySelector('#cc-badge .hud-badge-label');
+        if (ccBadge) ccBadge.textContent = window.t('ingame-cc');
+        
+        const partBadge = document.querySelector('#part-badge .hud-badge-label');
+        if (partBadge) partBadge.textContent = window.t('ingame-parts');
+        
+        const mapBadge = document.querySelector('.minimap-badge-label');
+        if (mapBadge) mapBadge.textContent = window.t('ingame-map');
 
         // Atualiza Botão de Dash Mobile
         const dashBtn = document.getElementById('dash-trigger');
@@ -6953,6 +8764,12 @@
             if (dashOverlay) dashOverlay.style.display = 'none';
           }
         }
+        
+        // Atualiza visibilidade dos atalhos no Desktop Guide
+        const guideBombs = document.getElementById('guide-bombs');
+        if (guideBombs) guideBombs.style.display = (this.player.unlockedImpact || this.player.unlockedPropulsor) ? 'inline-block' : 'none';
+        const guideDash = document.getElementById('guide-dash');
+        if (guideDash) guideDash.style.display = (this.player.bootsLevel >= 1) ? 'inline-block' : 'none';
       }
     }
 
@@ -6970,8 +8787,88 @@
       }, 1600);
     }
 
+    const SAVE_KEY = "ROGUEBOMB_SAVE_DATA_V1";
+
+    function getSaveData() {
+      const p = window.game.player;
+      return {
+        depositedCores: p.depositedCores,
+        depositedParts: p.depositedParts,
+        gauntletLevel: p.gauntletLevel,
+        bootsLevel: p.bootsLevel,
+        bagLevel: p.bagLevel,
+        timerBombLevel: p.timerBombLevel,
+        unlockedImpact: p.unlockedImpact,
+        unlockedPropulsor: p.unlockedPropulsor,
+        hasHydraulicPiston: p.hasHydraulicPiston,
+        carryingHydraulicPiston: p.carryingHydraulicPiston,
+        hasSteamPropulsionCore: p.hasSteamPropulsionCore,
+        lastSaved: Date.now()
+      };
+    }
+
+    function saveGame() {
+      if (!window.game || !window.game.player) return;
+      try {
+        const data = JSON.stringify(getSaveData());
+        localStorage.setItem(SAVE_KEY, data);
+        console.log("Progresso salvo com sucesso!");
+      } catch (err) {
+        console.error("Falha ao salvar no navegador:", err);
+      }
+    }
+
+    function loadGame() {
+      try {
+        const raw = localStorage.getItem(SAVE_KEY);
+        if (!raw) return false;
+
+        const data = JSON.parse(raw);
+        const p = window.game.player;
+        
+        p.depositedCores = data.depositedCores ?? 0;
+        p.depositedParts = data.depositedParts ?? 0;
+        p.gauntletLevel = data.gauntletLevel ?? 1;
+        p.bootsLevel = data.bootsLevel ?? 0;
+        p.bagLevel = data.bagLevel ?? 1;
+        p.timerBombLevel = data.timerBombLevel ?? 1;
+        p.unlockedImpact = data.unlockedImpact ?? false;
+        p.unlockedPropulsor = data.unlockedPropulsor ?? false;
+        p.hasHydraulicPiston = data.hasHydraulicPiston ?? false;
+        p.carryingHydraulicPiston = data.carryingHydraulicPiston ?? false;
+        p.hasSteamPropulsionCore = data.hasSteamPropulsionCore ?? false;
+
+        // Atualizar inventário de bombas de acordo com o nível da bolsa
+        p.bagSlots = [];
+        const caps = [0, 5, 7, 10];
+        const cap = caps[p.bagLevel] || 5;
+        while (p.bagSlots.length < cap) {
+          p.bagSlots.push({ type: 'timed', cooldown: 0 });
+        }
+        p.maxTimerBombs = cap;
+        p.timerBombs = cap;
+
+        return true;
+      } catch (err) {
+        console.error("Erro ao carregar save:", err);
+        return false;
+      }
+    }
+
+    function clearSave() {
+      localStorage.removeItem(SAVE_KEY);
+    }
+    window.GameEngine = GameEngine;
+    window.Automaton = Automaton;
+    window.Room = Room;
+    window.TargetMarker = TargetMarker;
+    window.TILE = TILE;
+    window.TILE_SIZE = TILE_SIZE;
+    window.GRID_SIZE = GRID_SIZE;
+
     window.addEventListener('DOMContentLoaded', () => {
       window.game = new GameEngine();
+      loadGame();
 
       // Botão HUD da Manopla para clique/toque direto de upgrade
       const gauntletBadge = document.getElementById('gauntlet-badge');
@@ -6986,6 +8883,611 @@
           }
         });
       }
+    });
+
+    function isMobileMode() {
+      const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+      const isSmallScreen = window.innerWidth <= 768;
+      const isMobileUA = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      return (isTouch && isSmallScreen) || isMobileUA || (isTouch && !window.matchMedia('(pointer: fine)').matches);
+    }
+
+    let currentTutorialPlatform = 'pc';
+
+    function switchTutorialPlatform(platform) {
+      currentTutorialPlatform = platform;
+      const tabPc = document.getElementById('tut-tab-pc');
+      const tabMobile = document.getElementById('tut-tab-mobile');
+      const contentPc = document.getElementById('tutorial-content-pc');
+      const contentMobile = document.getElementById('tutorial-content-mobile');
+
+      if (platform === 'mobile') {
+        if (tabMobile) tabMobile.classList.add('active');
+        if (tabPc) tabPc.classList.remove('active');
+        if (contentMobile) contentMobile.style.display = 'block';
+        if (contentPc) contentPc.style.display = 'none';
+      } else {
+        if (tabPc) tabPc.classList.add('active');
+        if (tabMobile) tabMobile.classList.remove('active');
+        if (contentPc) contentPc.style.display = 'block';
+        if (contentMobile) contentMobile.style.display = 'none';
+      }
+    }
+
+    function openTutorialModal(forcePlatform) {
+      const modal = document.getElementById('tutorial-modal');
+      if (!modal) return;
+
+      const platform = forcePlatform || (isMobileMode() ? 'mobile' : 'pc');
+      switchTutorialPlatform(platform);
+
+      const dontShow = document.getElementById('tut-dont-show');
+      if (dontShow) {
+        dontShow.checked = localStorage.getItem('roguebomb_tutorial_seen') === 'true';
+      }
+
+      modal.classList.add('visible');
+      modal.classList.remove('hidden');
+      modal.style.display = 'flex';
+
+      if (window.game) {
+        window.game._wasPausedBeforeTutorial = window.game.isPaused;
+        window.game.isPaused = true;
+      }
+    }
+
+    function closeTutorialModal() {
+      const modal = document.getElementById('tutorial-modal');
+      if (!modal) return;
+
+      const dontShow = document.getElementById('tut-dont-show');
+      if (dontShow && dontShow.checked) {
+        localStorage.setItem('roguebomb_tutorial_seen', 'true');
+      }
+
+      modal.classList.remove('visible');
+      modal.classList.add('hidden');
+      modal.style.display = 'none';
+
+      if (window.game && window.game._wasPausedBeforeTutorial !== undefined) {
+        window.game.isPaused = window.game._wasPausedBeforeTutorial;
+      } else if (window.game) {
+        window.game.isPaused = false;
+      }
+    }
+
+    window.openTutorialModal = openTutorialModal;
+    window.closeTutorialModal = closeTutorialModal;
+    window.switchTutorialPlatform = switchTutorialPlatform;
+    window.isMobileMode = isMobileMode;
+
+    function closeLoreGallery() {
+      document.getElementById('gallery-menu').style.display = 'none';
+      document.getElementById('gallery-menu').classList.add('hidden');
+      document.getElementById('options-menu').classList.remove('hidden');
+    }
+
+    function openLoreGallery() {
+      document.getElementById('options-menu').classList.add('hidden');
+      const gm = document.getElementById('gallery-menu');
+      gm.classList.remove('hidden');
+      gm.style.display = 'flex';
+      
+      const list = window.game ? window.game.loreManager.getCollectedList() : new window.LoreManager().getCollectedList();
+      const container = document.getElementById('gallery-list');
+      container.innerHTML = '';
+      
+      if (list.length === 0) {
+        container.innerHTML = '<div style="color: #999; text-align: center; padding: 20px;">Nenhum registro encontrado ainda. Explore os mapas!</div>';
+        return;
+      }
+      
+      list.forEach(frag => {
+        const div = document.createElement('div');
+        div.style.marginBottom = '15px';
+        div.style.padding = '10px';
+        div.style.border = '1px solid #c59b27';
+        div.style.background = '#1e160e';
+        div.style.borderRadius = '4px';
+        
+        div.innerHTML = `
+          <div style="font-family: monospace; font-weight: bold; color: #f39c12; font-size: 14px; border-bottom: 1px solid rgba(197, 155, 39, 0.4); padding-bottom: 6px; margin-bottom: 6px;">REGISTRO (1826)</div>
+          <div style="font-family: serif; font-size: 14px; font-style: italic; color: #b0bec5; line-height: 1.4;">` + frag.officialText + `</div>
+          <div style="font-family: 'Comic Sans MS', cursive, sans-serif; font-size: 16px; font-weight: bold; color: #e74c3c; line-height: 1.3; margin: 8px 0;">` + frag.minerScrawl + `</div>
+          <div style="font-family: sans-serif; font-size: 12px; color: #00e5ff; background: rgba(0, 229, 255, 0.1); padding: 6px; border-radius: 4px; border: 1px solid rgba(0, 229, 255, 0.3);">` + frag.popupTip + `</div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    // Script de Menus
+    const i18n = {
+      'pt': {
+          'menu-start': 'Iniciar Jogo',
+          'menu-continue': 'Continuar',
+          'menu-options': 'Opções',
+          'menu-exit': 'Sair',
+          'opt-title': 'Opções',
+          'opt-music': 'Volume da Música',
+          'opt-sfx': 'Volume dos Efeitos',
+          'opt-shake': 'Vibração de Tela',
+          'opt-full': 'Tela Cheia',
+          'opt-crt': 'Efeito Visual Retrô (CRT)',
+          'opt-fps': 'Mostrar FPS',
+          'opt-aim': 'Sensibilidade da Mira',
+          'opt-lang': 'Idioma',
+          'opt-back': 'Voltar',
+          'opt-cont': 'Continuar',
+          'ingame-room': 'SALA',
+          'ingame-level': 'NÍVEL',
+          'ingame-enemies': 'INIMIGOS',
+          'ingame-gauntlet': 'Manopla',
+          'ingame-gauntlet-lvl': 'NV.',
+          'ingame-cc': 'Cristal Coal',
+          'ingame-parts': 'Peças',
+          'ingame-map': 'MAPA PROCEDURAL',
+          'ingame-lockdown': 'PORTÕES FECHADOS! ELIMINE OS AUTÔMATOS',
+          'ingame-bosskey': 'CHAVE DO BOSS',
+          'ingame-bossroom': 'SALA DO CHEFE',
+          'ingame-miniboss': 'ARENA DO RIVAL',
+          'ingame-puzzle': 'CÂMARA DE DESAFIO',
+          'ingame-secret': 'ANDAR SECRETO',
+          'ingame-inventor': 'INVENTOR',
+          'ingame-armoryfree': 'ARSENAL (LIVRE)',
+          'ingame-cost': 'CUSTO:',
+          'ingame-chests': 'BAÚS:',
+          'ingame-goela': 'GOELA',
+          'ingame-protocol': 'PROTOCOLO DE SEGURANÇA ATIVO!',
+          'ingame-duel': 'DUELO! DERROTE O ENGENHEIRO RIVAL!',
+          'ingame-bossfight': 'CONFRONTO FINAL! CHEFE MESTRE!',
+          'ingame-cleared': 'SALA LIBERADA!',
+          'ingame-rewind-short': 'TEMPO REBOBINADO!',
+          'ingame-rewind-long': 'TEMPO REBOBINADO: NOVO MAPA GERADO!',
+          'loading-title': 'Carregando...',
+          'tip-1': 'Dica: Bombas normais explodem em cruz!',
+          'tip-2': 'Dica: Use o Dash (Botões propulsores) para pular buracos e escapar de explosões!',
+          'tip-3': 'Dica: O Inventor pode aprimorar seu arsenal se você tiver Cristal Coal e Peças suficientes.',
+          'tip-4': 'Dica: O Chefe Mestre só pode ser acessado com a Chave do Boss.',
+          'armory-title': 'Balcão de Arsenal',
+          'armory-youhave': 'Você tem',
+          'armory-buy': 'Comprar',
+          'armory-max': 'MÁXIMO',
+          'armory-bought': 'COMPRADO',
+          'armory-upgrade': 'Melhorar',
+          'armory-close': 'Sair',
+          'armory-gauntlet-name': 'Manopla Mecânica',
+          'armory-gauntlet-desc': 'Aumenta o alcance de arremesso.',
+          'armory-boots-name': 'Botas Propulsoras',
+          'armory-boots-desc': 'Permite dar Dash (Aperte SHIFT ou Botão Mobile). Custo: 1 CC. Superaquece por 5s.',
+          'armory-bag-name': 'Bolsa Expandida',
+          'armory-bag-desc': 'Carrega mais bombas e permite trocar de tipo.',
+          'item-piston-title': 'PISTÃO HIDRÁULICO',
+          'item-piston-desc': 'Componente de alta compressão forjado nos fornos a vapor da Mina. Essencial para aprimorar a Manopla Mecânica!',
+          'item-piston-hint': 'Envie este item ao Baú através de uma GOELA para desbloquear seu uso na Oficina!',
+          'item-piston-deposited': 'PISTÃO HIDRÁULICO ENVIADO AO BAÚ COM SUCESSO!',
+          'menu-tutorial': 'Como Jogar',
+          'tutorial-title': 'COMO LANÇAR BOMBAS',
+          'tutorial-tab-pc': 'Computador',
+          'tutorial-tab-mobile': 'Celular',
+          'tutorial-pc-banner': '<b>Clique com o mouse e solte</b> para lançar a bomba!',
+          'tutorial-pc-s1-title': '1. MIRAR',
+          'tutorial-pc-s1-desc': 'Posicione o cursor do mouse no alvo onde deseja jogar a bomba.',
+          'tutorial-pc-s2-title': '2. SEGURAR',
+          'tutorial-pc-s2-desc': '<b>Clique e segure o botão esquerdo</b>. Veja o arco de trajetória e o limite de alcance.',
+          'tutorial-pc-s3-title': '3. SOLTAR',
+          'tutorial-pc-s3-desc': '<b>Solte o clique</b>! A bomba voará até o alvo e iniciará a contagem regressiva para explodir.',
+          'tutorial-pc-tip-tag': 'Dica Rápida:',
+          'tutorial-pc-tip-desc': 'Você também pode clicar com o <b>Botão Direito</b> para lançar diretamente na posição do cursor sem carregar mira!',
+          'tutorial-mobile-banner': '<b>Utilize o dedo para direcionar</b> a bomba clicando na direção que deseja lançar a bomba e <b>solte para arremessar</b>!',
+          'tutorial-mobile-s1-title': '1. TOCAR',
+          'tutorial-mobile-s1-desc': 'Toque na tela do jogo na direção onde deseja direcionar o ataque.',
+          'tutorial-mobile-s2-title': '2. DIRECIONAR',
+          'tutorial-mobile-s2-desc': '<b>Arraste o dedo</b> para ajustar o arco da bomba até o alvo dentro do alcance.',
+          'tutorial-mobile-s3-title': '3. SOLTAR',
+          'tutorial-mobile-s3-desc': '<b>Retire o dedo da tela</b> para arremessar! A bomba pousará e começará a contagem para explodir.',
+          'tutorial-mobile-tip-tag': 'Controles Touch:',
+          'tutorial-mobile-tip-desc': 'Use o analógico na esquerda para mover Charlotte e os botões na direita para alternar bombas e usar Dash!',
+          'tutorial-dont-show': 'Não mostrar novamente ao iniciar',
+          'tutorial-confirm': 'ENTENDIDO! JOGAR',
+          'hud-help': 'Ajuda',
+          'hud-mobile-guide': '👆 <b>Direcione e Solte</b> para Lançar Bomba'
+      },
+      'en': {
+          'menu-start': 'Start Game',
+          'menu-continue': 'Continue',
+          'menu-options': 'Options',
+          'menu-exit': 'Exit',
+          'opt-title': 'Options',
+          'opt-music': 'Music Volume',
+          'opt-sfx': 'SFX Volume',
+          'opt-shake': 'Screen Shake',
+          'opt-full': 'Fullscreen',
+          'opt-crt': 'CRT Visual Effect',
+          'opt-fps': 'Show FPS',
+          'opt-aim': 'Aim Sensitivity',
+          'opt-lang': 'Language',
+          'opt-back': 'Back',
+          'opt-cont': 'Continue',
+          'ingame-room': 'ROOM',
+          'ingame-level': 'LEVEL',
+          'ingame-enemies': 'ENEMIES',
+          'ingame-gauntlet': 'Gauntlet',
+          'ingame-gauntlet-lvl': 'LVL',
+          'ingame-cc': 'Crystal Coal',
+          'ingame-parts': 'Parts',
+          'ingame-map': 'PROCEDURAL MAP',
+          'ingame-lockdown': 'GATES CLOSED! ELIMINATE AUTOMATONS',
+          'ingame-bosskey': 'BOSS KEY',
+          'ingame-bossroom': 'BOSS ROOM',
+          'ingame-miniboss': 'RIVAL ARENA',
+          'ingame-puzzle': 'CHALLENGE CHAMBER',
+          'ingame-secret': 'SECRET FLOOR',
+          'ingame-inventor': 'INVENTOR',
+          'ingame-armoryfree': 'ARMORY (FREE)',
+          'ingame-cost': 'COST:',
+          'ingame-chests': 'CHESTS:',
+          'ingame-goela': 'GOELA',
+          'ingame-protocol': 'SECURITY PROTOCOL ACTIVE!',
+          'ingame-duel': 'DUEL! DEFEAT THE RIVAL ENGINEER!',
+          'ingame-bossfight': 'FINAL SHOWDOWN! MASTER BOSS!',
+          'ingame-cleared': 'ROOM CLEARED!',
+          'ingame-rewind-short': 'TIME REWOUND!',
+          'ingame-rewind-long': 'TIME REWOUND: NEW MAP GENERATED!',
+          'loading-title': 'Loading...',
+          'tip-1': 'Tip: Normal bombs explode in a cross pattern!',
+          'tip-2': 'Tip: Use Dash (Propulsion Boots) to jump holes and escape explosions!',
+          'tip-3': 'Tip: The Inventor can upgrade your gear if you have enough Crystal Coal and Parts.',
+          'tip-4': 'Tip: The Master Boss can only be accessed with the Boss Key.',
+          'armory-title': 'Armory Desk',
+          'armory-youhave': 'You have',
+          'armory-buy': 'Buy',
+          'armory-max': 'MAX',
+          'armory-bought': 'BOUGHT',
+          'armory-upgrade': 'Upgrade',
+          'armory-close': 'Close',
+          'armory-gauntlet-name': 'Mechanical Gauntlet',
+          'armory-gauntlet-desc': 'Increases throwing range.',
+          'armory-boots-name': 'Propulsion Boots',
+          'armory-boots-desc': 'Allows Dashing (Press SHIFT or Mobile Button). Cost: 1 CC. Overheats for 5s.',
+          'armory-bag-name': 'Expanded Bag',
+          'armory-bag-desc': 'Carry more bombs and swap types.',
+          'item-piston-title': 'HYDRAULIC PISTON',
+          'item-piston-desc': 'High compression component forged in the Mine steam furnaces. Essential to upgrade the Mechanical Gauntlet!',
+          'item-piston-hint': 'Send this item to the Vault via a GOELA chute to unlock its use in the Armory!',
+          'item-piston-deposited': 'HYDRAULIC PISTON SAFELY SENT TO THE VAULT!',
+          'menu-tutorial': 'How to Play',
+          'tutorial-title': 'HOW TO THROW BOMBS',
+          'tutorial-tab-pc': 'Desktop',
+          'tutorial-tab-mobile': 'Mobile',
+          'tutorial-pc-banner': '<b>Click and release mouse</b> to throw the bomb!',
+          'tutorial-pc-s1-title': '1. AIM',
+          'tutorial-pc-s1-desc': 'Move your mouse cursor towards the desired target.',
+          'tutorial-pc-s2-title': '2. HOLD',
+          'tutorial-pc-s2-desc': '<b>Click and hold left click</b>. Watch the trajectory arc and max range boundary.',
+          'tutorial-pc-s3-title': '3. RELEASE',
+          'tutorial-pc-s3-desc': '<b>Release the click</b>! The bomb will fly to the target and start its countdown.',
+          'tutorial-pc-tip-tag': 'Quick Tip:',
+          'tutorial-pc-tip-desc': 'You can also <b>Right Click</b> to throw instantly at cursor position without charging aim!',
+          'tutorial-mobile-banner': '<b>Use your finger to direct</b> the bomb in the desired direction and <b>release to throw</b>!',
+          'tutorial-mobile-s1-title': '1. TOUCH',
+          'tutorial-mobile-s1-desc': 'Touch the game screen in the direction you want to throw.',
+          'tutorial-mobile-s2-title': '2. AIM & DIRECT',
+          'tutorial-mobile-s2-desc': '<b>Drag your finger</b> to adjust the bomb trajectory arc towards your target.',
+          'tutorial-mobile-s3-title': '3. RELEASE',
+          'tutorial-mobile-s3-desc': '<b>Lift your finger from the screen</b> to throw! The bomb lands and starts its timer.',
+          'tutorial-mobile-tip-tag': 'Touch Controls:',
+          'tutorial-mobile-tip-desc': 'Use the virtual joystick on the left to move Charlotte and the right buttons to swap bombs or Dash!',
+          'tutorial-dont-show': "Don't show again on start",
+          'tutorial-confirm': 'GOT IT! PLAY',
+          'hud-help': 'Help',
+          'hud-mobile-guide': '👆 <b>Aim and Release</b> to Throw Bomb'
+      }
+    };
+    let currentLang = 'pt';
+    window.t = function(key) { return i18n[currentLang][key] || key; };
+
+    function updateLanguage(lang) {
+      currentLang = lang;
+      
+      document.getElementById('btn-start').innerText = window.t('menu-start');
+      const btnContinue = document.getElementById('btn-continue');
+      if (btnContinue) btnContinue.innerText = window.t('menu-continue');
+      document.getElementById('btn-options').innerText = window.t('menu-options');
+      const btnExit = document.getElementById('btn-exit');
+      if (btnExit) btnExit.innerText = window.t('menu-exit');
+      
+      const optTitle = document.querySelector('#options-menu .menu-title');
+      if(optTitle) optTitle.innerText = window.t('opt-title');
+      
+      const lblMusic = document.querySelector('label[for="music-vol"]');
+      if(lblMusic) {
+          const val = document.getElementById('music-vol-val').innerText;
+          lblMusic.innerHTML = window.t('opt-music') + ' (<span id="music-vol-val">' + val + '</span>%)';
+      }
+      
+      const lblSfx = document.querySelector('label[for="sfx-vol"]');
+      if(lblSfx) {
+          const val = document.getElementById('sfx-vol-val').innerText;
+          lblSfx.innerHTML = window.t('opt-sfx') + ' (<span id="sfx-vol-val">' + val + '</span>%)';
+      }
+      
+      const lblShake = document.querySelector('label[for="screen-shake"]');
+      if(lblShake) lblShake.innerText = window.t('opt-shake');
+      
+      const lblFull = document.querySelector('label[for="fullscreen-toggle"]');
+      if(lblFull) lblFull.innerText = window.t('opt-full');
+      
+      const lblCrt = document.querySelector('label[for="crt-effect"]');
+      if(lblCrt) lblCrt.innerText = window.t('opt-crt');
+      
+      const lblFps = document.querySelector('label[for="show-fps"]');
+      if(lblFps) lblFps.innerText = window.t('opt-fps');
+      
+      const lblAim = document.querySelector('label[for="aim-sens"]');
+      if(lblAim) {
+          const val = document.getElementById('aim-sens-val').innerText;
+          lblAim.innerHTML = window.t('opt-aim') + ' (<span id="aim-sens-val">' + val + '</span>%)';
+      }
+      
+      const lblLang = document.querySelector('label[for="language-select"]');
+      if(lblLang) lblLang.innerText = window.t('opt-lang');
+      
+      const btnBack = document.getElementById('btn-back-menu');
+      if(btnBack) {
+          if (btnBack.innerText === 'Continuar' || btnBack.innerText === 'Continue') {
+              btnBack.innerText = window.t('opt-cont');
+          } else {
+              btnBack.innerText = window.t('opt-back');
+          }
+      }
+
+      if (window.game) { window.game.updateHUD(); window.game.updateArmoryUI(); }
+      const armoryH2 = document.querySelector('#armory-modal h2');
+      if(armoryH2) armoryH2.innerText = window.t('armory-title');
+      const btnClose = document.querySelector('.btn-close');
+      if(btnClose) btnClose.innerText = window.t('armory-close');
+      const armoryTitles = document.querySelectorAll('.armory-title');
+      if(armoryTitles.length >= 3) {
+          armoryTitles[0].innerText = window.t('armory-gauntlet-name');
+          armoryTitles[1].innerText = window.t('armory-boots-name');
+          armoryTitles[2].innerText = window.t('armory-bag-name');
+      }
+      const armoryDescs = document.querySelectorAll('.armory-desc');
+      if(armoryDescs.length >= 3) {
+          armoryDescs[0].innerText = window.t('armory-gauntlet-desc');
+          armoryDescs[1].innerText = window.t('armory-boots-desc');
+          armoryDescs[2].innerText = window.t('armory-bag-desc');
+      }
+      const armoryCosts = document.querySelectorAll('.armory-cost');
+      if(armoryCosts.length >= 3) {
+          armoryCosts[0].innerText = window.t('ingame-cost') + ' 10 CC | 10 ' + window.t('ingame-parts').toUpperCase();
+          armoryCosts[1].innerText = window.t('ingame-cost') + ' 15 CC | 15 ' + window.t('ingame-parts').toUpperCase();
+          armoryCosts[2].innerText = window.t('ingame-cost') + ' 20 CC | 20 ' + window.t('ingame-parts').toUpperCase();
+      }
+
+      const loadingTitle = document.getElementById('loading-title');
+      if(loadingTitle) loadingTitle.innerText = window.t('loading-title');
+      
+      const loadingTip = document.getElementById('loading-tip');
+      if(loadingTip) {
+          const tipKey = loadingTip.getAttribute('data-tip');
+          if(tipKey) loadingTip.innerText = window.t(tipKey);
+      }
+
+      const btnTut = document.getElementById('btn-tutorial');
+      if (btnTut) btnTut.innerText = window.t('menu-tutorial');
+      const btnOptTut = document.getElementById('btn-options-tutorial');
+      if (btnOptTut) btnOptTut.innerText = window.t('menu-tutorial') + ' (Tutorial)';
+      const hudHelpLabel = document.getElementById('hud-help-label');
+      if (hudHelpLabel) hudHelpLabel.innerText = window.t('hud-help');
+      const mobileGuideText = document.getElementById('mobile-guide-text');
+      if (mobileGuideText) mobileGuideText.innerHTML = window.t('hud-mobile-guide');
+
+      const tutTitle = document.getElementById('tutorial-title-text');
+      if (tutTitle) tutTitle.innerText = window.t('tutorial-title');
+      const tutTabPcText = document.getElementById('tut-tab-pc-text');
+      if (tutTabPcText) tutTabPcText.innerText = window.t('tutorial-tab-pc');
+      const tutTabMobText = document.getElementById('tut-tab-mobile-text');
+      if (tutTabMobText) tutTabMobText.innerText = window.t('tutorial-tab-mobile');
+
+      const tutPcBanner = document.getElementById('tut-pc-banner-text');
+      if (tutPcBanner) tutPcBanner.innerHTML = window.t('tutorial-pc-banner');
+      const tutPcS1T = document.getElementById('tut-pc-s1-title');
+      if (tutPcS1T) tutPcS1T.innerText = window.t('tutorial-pc-s1-title');
+      const tutPcS1D = document.getElementById('tut-pc-s1-desc');
+      if (tutPcS1D) tutPcS1D.innerText = window.t('tutorial-pc-s1-desc');
+      const tutPcS2T = document.getElementById('tut-pc-s2-title');
+      if (tutPcS2T) tutPcS2T.innerText = window.t('tutorial-pc-s2-title');
+      const tutPcS2D = document.getElementById('tut-pc-s2-desc');
+      if (tutPcS2D) tutPcS2D.innerHTML = window.t('tutorial-pc-s2-desc');
+      const tutPcS3T = document.getElementById('tut-pc-s3-title');
+      if (tutPcS3T) tutPcS3T.innerText = window.t('tutorial-pc-s3-title');
+      const tutPcS3D = document.getElementById('tut-pc-s3-desc');
+      if (tutPcS3D) tutPcS3D.innerHTML = window.t('tutorial-pc-s3-desc');
+      const tutPcTipTag = document.getElementById('tut-pc-tip-tag');
+      if (tutPcTipTag) tutPcTipTag.innerText = window.t('tutorial-pc-tip-tag');
+      const tutPcTipDesc = document.getElementById('tut-pc-tip-desc');
+      if (tutPcTipDesc) tutPcTipDesc.innerHTML = window.t('tutorial-pc-tip-desc');
+
+      const tutMobBanner = document.getElementById('tut-mobile-banner-text');
+      if (tutMobBanner) tutMobBanner.innerHTML = window.t('tutorial-mobile-banner');
+      const tutMobS1T = document.getElementById('tut-mob-s1-title');
+      if (tutMobS1T) tutMobS1T.innerText = window.t('tutorial-mobile-s1-title');
+      const tutMobS1D = document.getElementById('tut-mob-s1-desc');
+      if (tutMobS1D) tutMobS1D.innerText = window.t('tutorial-mobile-s1-desc');
+      const tutMobS2T = document.getElementById('tut-mob-s2-title');
+      if (tutMobS2T) tutMobS2T.innerText = window.t('tutorial-mobile-s2-title');
+      const tutMobS2D = document.getElementById('tut-mob-s2-desc');
+      if (tutMobS2D) tutMobS2D.innerHTML = window.t('tutorial-mobile-s2-desc');
+      const tutMobS3T = document.getElementById('tut-mob-s3-title');
+      if (tutMobS3T) tutMobS3T.innerText = window.t('tutorial-mobile-s3-title');
+      const tutMobS3D = document.getElementById('tut-mob-s3-desc');
+      if (tutMobS3D) tutMobS3D.innerHTML = window.t('tutorial-mobile-s3-desc');
+      const tutMobTipTag = document.getElementById('tut-mob-tip-tag');
+      if (tutMobTipTag) tutMobTipTag.innerText = window.t('tutorial-mobile-tip-tag');
+      const tutMobTipDesc = document.getElementById('tut-mob-tip-desc');
+      if (tutMobTipDesc) tutMobTipDesc.innerHTML = window.t('tutorial-mobile-tip-desc');
+
+      const tutDontShow = document.getElementById('tut-dont-show-text');
+      if (tutDontShow) tutDontShow.innerText = window.t('tutorial-dont-show');
+      const tutBtnConf = document.getElementById('tut-btn-confirm-text');
+      if (tutBtnConf) tutBtnConf.innerText = window.t('tutorial-confirm');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const mainMenu = document.getElementById('main-menu');
+      const optionsMenu = document.getElementById('options-menu');
+      const loadingScreen = document.getElementById('loading-screen');
+      const loadingTip = document.getElementById('loading-tip');
+      
+      const btnStart = document.getElementById('btn-start');
+      const btnOptions = document.getElementById('btn-options');
+      const btnBackMenu = document.getElementById('btn-back-menu');
+
+      const musicVol = document.getElementById('music-vol');
+      const musicVolVal = document.getElementById('music-vol-val');
+      const sfxVol = document.getElementById('sfx-vol');
+      const sfxVolVal = document.getElementById('sfx-vol-val');
+      
+      const screenShake = document.getElementById('screen-shake');
+      const fullscreenToggle = document.getElementById('fullscreen-toggle');
+      const crtEffect = document.getElementById('crt-effect');
+      const showFps = document.getElementById('show-fps');
+      const aimSens = document.getElementById('aim-sens');
+      const aimSensVal = document.getElementById('aim-sens-val');
+      const languageSelect = document.getElementById('language-select');
+
+      // Botões de navegação
+      btnStart.addEventListener('click', () => {
+        mainMenu.style.display = 'none';
+        mainMenu.classList.add('hidden');
+        
+        // Transicionar para música de exploração do jogo
+        sound.init('explore');
+        sound.setMusicMode('explore');
+        
+        // Mostrar tela de carregamento
+        const tipIndex = Math.floor(Math.random() * 4) + 1;
+        const tipKey = `tip-${tipIndex}`;
+        if (loadingTip) {
+            loadingTip.setAttribute('data-tip', tipKey);
+            loadingTip.innerText = window.t(tipKey);
+        }
+        const loadingTitle = document.getElementById('loading-title');
+        if (loadingTitle) loadingTitle.innerText = window.t('loading-title');
+        
+        if (loadingScreen) loadingScreen.style.display = 'flex';
+        
+        setTimeout(() => {
+          if (loadingScreen) loadingScreen.style.display = 'none';
+          if(window.game) {
+              window.game.isPaused = false;
+          }
+          if (localStorage.getItem('roguebomb_tutorial_seen') !== 'true') {
+            openTutorialModal();
+          }
+        }, 5000);
+      });
+      
+      const btnContinue = document.getElementById('btn-continue');
+      if (btnContinue) {
+        btnContinue.addEventListener('click', () => {
+          mainMenu.classList.add('hidden');
+          sound.init('explore');
+          sound.setMusicMode('explore');
+          if(window.game) {
+              window.game.isPaused = false;
+          }
+        });
+      }
+
+      btnOptions.addEventListener('click', () => {
+        const btnGallery = document.getElementById('btn-gallery-in-game');
+        if (btnGallery) btnGallery.style.display = 'none';
+        mainMenu.classList.add('hidden');
+        optionsMenu.classList.remove('hidden');
+      });
+
+      btnBackMenu.addEventListener('click', (e) => {
+        if (window.game && window.game.isPaused && btnBackMenu.innerText === "Continuar") {
+          window.game.isPaused = false;
+          optionsMenu.classList.add('hidden');
+          btnBackMenu.innerText = "Voltar";
+        } else {
+          optionsMenu.classList.add('hidden');
+          mainMenu.classList.remove('hidden');
+          sound.setMusicMode('menu');
+        }
+      });
+
+      // Pause com ESC
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          const tutModal = document.getElementById('tutorial-modal');
+          if (tutModal && tutModal.classList.contains('visible')) {
+            closeTutorialModal();
+            return;
+          }
+          if (window.game) {
+            window.game.isPaused = !window.game.isPaused;
+            if (window.game.isPaused) {
+              // Quando pausa, vamos direto pras opções (que tem volume, sensi e shake como pedido)
+              optionsMenu.classList.remove('hidden');
+              mainMenu.classList.add('hidden');
+              // Opcional: mudar texto do botão voltar para continuar
+              btnBackMenu.innerText = "Continuar";
+              const btnGallery = document.getElementById('btn-gallery-in-game');
+              if (btnGallery) btnGallery.style.display = 'block';
+            } else {
+              optionsMenu.classList.add('hidden');
+              mainMenu.classList.add('hidden');
+              btnBackMenu.innerText = "Voltar";
+            }
+          }
+        }
+      });
+
+      // Atualização dos inputs
+      musicVol.addEventListener('input', (e) => {
+        musicVolVal.innerText = e.target.value;
+        sound.setMusicVolume(parseInt(e.target.value, 10) / 100);
+      });
+
+      // Tenta iniciar a música do menu inicial (Turn of the Great Wheel)
+      sound.setMusicMode('menu');
+
+      sfxVol.addEventListener('input', (e) => {
+        sfxVolVal.innerText = e.target.value;
+      });
+
+      aimSens.addEventListener('input', (e) => {
+        aimSensVal.innerText = e.target.value;
+      });
+
+      fullscreenToggle.addEventListener('change', (e) => {
+        if(e.target.checked) {
+          document.documentElement.requestFullscreen().catch(err => {
+            console.warn(`Error attempting to enable fullscreen: ${err.message}`);
+            e.target.checked = false;
+          });
+        } else {
+          if (document.fullscreenElement) {
+            document.exitFullscreen();
+          }
+        }
+      });
+
+      if (languageSelect) {
+        languageSelect.addEventListener('change', (e) => {
+          updateLanguage(e.target.value);
+        });
+      }
+      
+      // Initialize with current language to ensure everything matches the select dropdown
+      if (languageSelect) {
+         updateLanguage(languageSelect.value);
+      }
+      
     });
   </script>
 </body>

@@ -638,6 +638,301 @@
     }
     .btn-close:hover { background: #f85149; }
 
+    /* Modal de Tutorial de Bombas (PC & Mobile) */
+    #tutorial-modal {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(4, 7, 12, 0.88);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      z-index: 2500;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 12px;
+      overflow-y: auto;
+    }
+    #tutorial-modal.visible {
+      display: flex !important;
+    }
+    .tutorial-card {
+      background: radial-gradient(circle at 50% 0%, #1f2735 0%, #0d1117 100%);
+      border: 3px solid #ffca28;
+      border-radius: 14px;
+      box-shadow: 0 0 35px rgba(255, 202, 40, 0.35), inset 0 0 15px rgba(255, 202, 40, 0.12);
+      max-width: 740px;
+      width: 100%;
+      max-height: 94vh;
+      display: flex;
+      flex-direction: column;
+      padding: 18px 22px;
+      color: #fff;
+      box-sizing: border-box;
+      overflow-y: auto;
+      animation: popInItem 0.28s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .tutorial-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      border-bottom: 2px solid rgba(255, 202, 40, 0.3);
+      padding-bottom: 12px;
+      margin-bottom: 12px;
+    }
+    .tutorial-badge-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .tutorial-badge-title h2 {
+      margin: 0;
+      color: #ffca28;
+      font-size: 19px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      font-family: monospace;
+      text-shadow: 0 0 10px rgba(255, 202, 40, 0.5);
+    }
+    .tutorial-tabs {
+      display: flex;
+      background: rgba(0, 0, 0, 0.45);
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      padding: 3px;
+      gap: 4px;
+    }
+    .tut-tab-btn {
+      background: transparent;
+      border: none;
+      color: #8b949e;
+      padding: 6px 14px;
+      font-size: 12px;
+      font-weight: bold;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+    .tut-tab-btn:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.08);
+    }
+    .tut-tab-btn.active {
+      background: #ffca28;
+      color: #111;
+      box-shadow: 0 0 12px rgba(255, 202, 40, 0.4);
+    }
+    .tutorial-instruction-banner {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(255, 202, 40, 0.12);
+      border: 1px solid rgba(255, 202, 40, 0.4);
+      border-radius: 8px;
+      padding: 10px 14px;
+      margin-bottom: 14px;
+      font-size: 14px;
+      color: #ffd54f;
+      line-height: 1.4;
+    }
+    .tutorial-instruction-banner.mobile-banner {
+      background: rgba(0, 229, 255, 0.12);
+      border-color: rgba(0, 229, 255, 0.4);
+      color: #80deea;
+    }
+    .banner-icon {
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+    .tutorial-steps-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .tutorial-step-card {
+      background: rgba(0, 0, 0, 0.45);
+      border: 1px solid #30363d;
+      border-radius: 10px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      position: relative;
+      transition: border-color 0.2s;
+    }
+    .tutorial-step-card:hover {
+      border-color: #ffca28;
+    }
+    .step-num {
+      position: absolute;
+      top: 6px;
+      left: 6px;
+      width: 22px;
+      height: 22px;
+      background: #ffca28;
+      color: #111;
+      font-weight: bold;
+      font-size: 12px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+    }
+    .step-img-box {
+      width: 100%;
+      height: 140px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #11161d;
+      border-radius: 6px;
+      overflow: hidden;
+      margin-bottom: 8px;
+      border: 1px solid #21262d;
+    }
+    .step-img {
+      max-height: 100%;
+      max-width: 100%;
+      object-fit: contain;
+      image-rendering: pixelated;
+    }
+    .step-title {
+      font-size: 13px;
+      font-weight: bold;
+      color: #ffca28;
+      margin-bottom: 4px;
+      letter-spacing: 0.5px;
+    }
+    .step-desc {
+      font-size: 11px;
+      color: #c9d1d9;
+      line-height: 1.4;
+    }
+    .tutorial-tip-box {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px dashed rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 11.5px;
+      color: #8b949e;
+      margin-bottom: 14px;
+      line-height: 1.4;
+    }
+    .tutorial-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      border-top: 1px solid #30363d;
+      padding-top: 12px;
+      margin-top: auto;
+    }
+    .tutorial-dont-show-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: #8b949e;
+      cursor: pointer;
+      user-select: none;
+    }
+    .tutorial-confirm-btn {
+      background: linear-gradient(135deg, #f39c12, #e67e22);
+      border: none;
+      color: #111;
+      padding: 9px 20px;
+      font-size: 13px;
+      font-weight: bold;
+      border-radius: 6px;
+      cursor: pointer;
+      letter-spacing: 0.5px;
+      transition: all 0.2s ease;
+      box-shadow: 0 0 15px rgba(243, 156, 18, 0.4);
+    }
+    .tutorial-confirm-btn:hover {
+      background: linear-gradient(135deg, #f1c40f, #f39c12);
+      transform: translateY(-1px);
+      box-shadow: 0 0 22px rgba(243, 156, 18, 0.7);
+    }
+    #mobile-guide {
+      position: absolute;
+      bottom: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--panel-bg);
+      border: 1px solid var(--border-color);
+      padding: 5px 14px;
+      border-radius: 16px;
+      font-size: 11px;
+      color: #ffca28;
+      display: none;
+      pointer-events: none;
+      z-index: 20;
+      white-space: nowrap;
+      text-shadow: 1px 1px 2px #000;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+    }
+    @media (max-width: 650px) {
+      .tutorial-card {
+        padding: 12px 14px;
+        max-height: 96vh;
+      }
+      .tutorial-badge-title h2 {
+        font-size: 15px;
+      }
+      .tutorial-steps-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+      .tutorial-step-card {
+        flex-direction: row;
+        text-align: left;
+        gap: 12px;
+        padding: 8px;
+      }
+      .step-img-box {
+        width: 76px;
+        height: 76px;
+        flex-shrink: 0;
+        margin-bottom: 0;
+      }
+      .step-title {
+        font-size: 12px;
+      }
+      .step-desc {
+        font-size: 10.5px;
+      }
+      .tutorial-instruction-banner {
+        font-size: 12px;
+        padding: 8px 10px;
+        gap: 8px;
+      }
+      .banner-icon {
+        font-size: 20px;
+      }
+      .tutorial-footer {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .tutorial-confirm-btn {
+        width: 100%;
+        text-align: center;
+      }
+      #mobile-guide {
+        bottom: calc(212px + env(safe-area-inset-bottom, 0px));
+        font-size: 10px;
+        padding: 4px 10px;
+      }
+    }
+
     /* Modal de Coleta de Item Especial (Pistão Hidráulico) */
     #item-collected-modal {
       position: absolute;
@@ -1048,6 +1343,13 @@
         <div class="hud-badge minimap-badge-label" style="padding: 4px 8px; font-size: 11px;">MAPA PROCEDURAL</div>
         <canvas id="minimap-canvas" width="70" height="70"></canvas>
       </div>
+      <div id="hud-help-btn" class="hud-badge" title="Como Jogar / Tutorial de Bombas" onclick="openTutorialModal()" style="cursor: pointer; background: rgba(243, 156, 18, 0.2); border-color: #f39c12; align-self: center;">
+        <span style="font-size: 16px;">❓</span>
+        <div class="hud-badge-info">
+          <div class="hud-badge-label" id="hud-help-label">Ajuda</div>
+          <div class="hud-badge-value" style="color: #ffca28; font-size: 10px;">TUTORIAL</div>
+        </div>
+      </div>
     </div>
 
     <!-- Alerta de Trancamento / Lockdown -->
@@ -1077,9 +1379,14 @@
     <!-- Guia Teclado / Mouse Desktop -->
     <div id="desktop-guide">
       <span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> Mover</span>
-      <span>🖱️ <b>Clique e Arraste</b>: Mirar & Lançar</span>
+      <span id="desktop-guide-throw">🖱️ <b>Clique & Solte</b>: Lançar Bomba</span>
       <span id="guide-bombs" style="display: none;"><kbd>1</kbd> Imp | <kbd>2</kbd> Prop | <kbd>3</kbd> Temp</span>
       <span id="guide-dash" style="display: none;"><kbd>SHIFT</kbd> Dash (1 CC)</span>
+    </div>
+
+    <!-- Guia Mobile Touch -->
+    <div id="mobile-guide" style="display: none;">
+      <span id="mobile-guide-text">👆 <b>Direcione e Solte</b> para Lançar Bomba</span>
     </div>
 
     <!-- Controles Touch Mobile -->
@@ -1162,7 +1469,8 @@
       <h1 class="menu-title">RogueBomb</h1>
       <button class="menu-btn" id="btn-start">Iniciar Jogo</button>
       <button class="menu-btn" id="btn-continue" style="display: none;">Continuar</button>
-            <button class="menu-btn" id="btn-options">Opções</button>
+      <button class="menu-btn" id="btn-tutorial" onclick="openTutorialModal()">Como Jogar</button>
+      <button class="menu-btn" id="btn-options">Opções</button>
       
       <button class="menu-btn" id="btn-exit" style="display: none;">Sair</button>
     </div>
@@ -1223,8 +1531,124 @@
           </select>
         </div>
 
-                <button class="menu-btn" style="width: 100%; margin-top: 16px; display: none;" id="btn-gallery-in-game" onclick="openLoreGallery()">Galeria de Registros</button>
-        <button class="menu-btn" style="width: 100%; margin-top: 16px; background: #e74c3c; border: 2px solid #c0392b;" onclick="if(confirm('Apagar todo o progresso?')) { clearSave(); location.reload(); }">Apagar Save</button>`n        <button class="menu-btn" style="width: 100%; margin-top: 16px;" id="btn-back-menu">Voltar</button>
+        <button class="menu-btn" style="width: 100%; margin-top: 16px;" id="btn-options-tutorial" onclick="openTutorialModal()">Como Jogar (Tutorial)</button>
+        <button class="menu-btn" style="width: 100%; margin-top: 16px; display: none;" id="btn-gallery-in-game" onclick="openLoreGallery()">Galeria de Registros</button>
+        <button class="menu-btn" style="width: 100%; margin-top: 16px; background: #e74c3c; border: 2px solid #c0392b;" onclick="if(confirm('Apagar todo o progresso?')) { clearSave(); location.reload(); }">Apagar Save</button>
+        <button class="menu-btn" style="width: 100%; margin-top: 16px;" id="btn-back-menu">Voltar</button>
+      </div>
+    </div>
+
+    <!-- Modal de Tutorial: Como Jogar Bombas (PC & Mobile) -->
+    <div id="tutorial-modal" class="menu-overlay hidden">
+      <div class="tutorial-card">
+        <div class="tutorial-header">
+          <div class="tutorial-badge-title">
+            <span style="font-size: 24px;">💣</span>
+            <h2 id="tutorial-title-text">COMO LANÇAR BOMBAS</h2>
+          </div>
+          <!-- Seletor de Plataforma (Auto-selecionado, com tabs interativas) -->
+          <div class="tutorial-tabs">
+            <button class="tut-tab-btn active" id="tut-tab-pc" onclick="switchTutorialPlatform('pc')">
+              <span>🖥️</span> <span id="tut-tab-pc-text">Computador</span>
+            </button>
+            <button class="tut-tab-btn" id="tut-tab-mobile" onclick="switchTutorialPlatform('mobile')">
+              <span>📱</span> <span id="tut-tab-mobile-text">Celular</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Conteúdo do Tutorial PC -->
+        <div id="tutorial-content-pc" class="tutorial-platform-content">
+          <div class="tutorial-instruction-banner pc-banner">
+            <span class="banner-icon">🖱️</span>
+            <span id="tut-pc-banner-text"><b>Clique com o mouse e solte</b> para lançar a bomba!</span>
+          </div>
+
+          <div class="tutorial-steps-grid">
+            <div class="tutorial-step-card">
+              <div class="step-num">1</div>
+              <div class="step-img-box">
+                <img src="Img/tutorial_step1.png" alt="Mire com o Mouse" class="step-img" />
+              </div>
+              <div class="step-title" id="tut-pc-s1-title">1. MIRAR</div>
+              <div class="step-desc" id="tut-pc-s1-desc">Posicione o cursor do mouse no alvo onde deseja jogar a bomba.</div>
+            </div>
+
+            <div class="tutorial-step-card">
+              <div class="step-num">2</div>
+              <div class="step-img-box">
+                <img src="Img/tutorial_step2.png" alt="Segure e Mire" class="step-img" />
+              </div>
+              <div class="step-title" id="tut-pc-s2-title">2. SEGURAR</div>
+              <div class="step-desc" id="tut-pc-s2-desc"><b>Clique e segure o botão esquerdo</b>. Veja o arco de trajetória e o limite de alcance.</div>
+            </div>
+
+            <div class="tutorial-step-card">
+              <div class="step-num">3</div>
+              <div class="step-img-box">
+                <img src="Img/tutorial_step3.png" alt="Solte para Lançar" class="step-img" />
+              </div>
+              <div class="step-title" id="tut-pc-s3-title">3. SOLTAR</div>
+              <div class="step-desc" id="tut-pc-s3-desc"><b>Solte o clique</b>! A bomba voará até o alvo e iniciará a contagem regressiva para explodir.</div>
+            </div>
+          </div>
+
+          <div class="tutorial-tip-box">
+            💡 <b id="tut-pc-tip-tag">Dica Rápida:</b> <span id="tut-pc-tip-desc">Você também pode clicar com o <b>Botão Direito</b> para lançar diretamente na posição do cursor sem carregar mira!</span>
+          </div>
+        </div>
+
+        <!-- Conteúdo do Tutorial Mobile -->
+        <div id="tutorial-content-mobile" class="tutorial-platform-content" style="display: none;">
+          <div class="tutorial-instruction-banner mobile-banner">
+            <span class="banner-icon">👆</span>
+            <span id="tut-mobile-banner-text"><b>Utilize o dedo para direcionar</b> a bomba clicando na direção que deseja lançar a bomba e <b>solte para arremessar</b>!</span>
+          </div>
+
+          <div class="tutorial-steps-grid">
+            <div class="tutorial-step-card">
+              <div class="step-num">1</div>
+              <div class="step-img-box">
+                <img src="Img/tutorial_step1.png" alt="Toque na tela" class="step-img" />
+              </div>
+              <div class="step-title" id="tut-mob-s1-title">1. TOCAR</div>
+              <div class="step-desc" id="tut-mob-s1-desc">Toque na tela do jogo na direção onde deseja direcionar o ataque.</div>
+            </div>
+
+            <div class="tutorial-step-card">
+              <div class="step-num">2</div>
+              <div class="step-img-box">
+                <img src="Img/tutorial_step2.png" alt="Direcionar a bomba" class="step-img" />
+              </div>
+              <div class="step-title" id="tut-mob-s2-title">2. DIRECIONAR</div>
+              <div class="step-desc" id="tut-mob-s2-desc"><b>Arraste o dedo</b> para ajustar o arco da bomba até o alvo dentro do alcance.</div>
+            </div>
+
+            <div class="tutorial-step-card">
+              <div class="step-num">3</div>
+              <div class="step-img-box">
+                <img src="Img/tutorial_step3.png" alt="Soltar para arremessar" class="step-img" />
+              </div>
+              <div class="step-title" id="tut-mob-s3-title">3. SOLTAR</div>
+              <div class="step-desc" id="tut-mob-s3-desc"><b>Retire o dedo da tela</b> para arremessar! A bomba pousará e começará a contagem para explodir.</div>
+            </div>
+          </div>
+
+          <div class="tutorial-tip-box">
+            💡 <b id="tut-mob-tip-tag">Controles Touch:</b> <span id="tut-mob-tip-desc">Use o analógico na esquerda para mover Charlotte e os botões na direita para alternar bombas e usar Dash!</span>
+          </div>
+        </div>
+
+        <!-- Rodapé do Modal -->
+        <div class="tutorial-footer">
+          <label class="tutorial-dont-show-label">
+            <input type="checkbox" id="tut-dont-show" />
+            <span id="tut-dont-show-text">Não mostrar novamente ao iniciar</span>
+          </label>
+          <button class="tutorial-confirm-btn" id="btn-close-tutorial" onclick="closeTutorialModal()">
+            <span id="tut-btn-confirm-text">ENTENDIDO! JOGAR</span> ➔
+          </button>
+        </div>
       </div>
     </div>
 
@@ -1352,6 +1776,10 @@
         this.isMuted = false;
 
         // Background Music
+        this.bgmMenu = new Audio('song/Turn_of_the_Great_Wheel.mp3');
+        this.bgmMenu.loop = true;
+        this.bgmMenu.volume = 0.35;
+
         this.bgmExplore = new Audio('song/The_Weight_of_Brass.mp3');
         this.bgmExplore.loop = true;
         this.bgmExplore.volume = 0.35;
@@ -1368,9 +1796,10 @@
 
         this.currentBgm = null;
         this.musicStarted = false;
+        this.musicVolume = 1.0;
       }
 
-      init() {
+      init(initialMode = null) {
         if (!this.ctx) {
           const AudioContextClass = window.AudioContext || window.webkitAudioContext;
           if (AudioContextClass) {
@@ -1382,8 +1811,16 @@
         }
 
         if (!this.musicStarted) {
-          this.musicStarted = true;
-          this.setMusicMode('explore');
+          const mode = initialMode || (window.game && !window.game.isPaused ? 'explore' : 'menu');
+          this.setMusicMode(mode);
+        }
+      }
+
+      setMusicVolume(vol) {
+        this.musicVolume = Math.max(0, Math.min(1, vol));
+        const target = 0.35 * this.musicVolume;
+        if (this.currentBgm) {
+          this.currentBgm.volume = target;
         }
       }
 
@@ -1394,7 +1831,7 @@
         const duration = 1200; // 1.2 segundos
         const steps = 30;
         const stepTime = duration / steps;
-        const maxVol = 0.35;
+        const maxVol = 0.35 * (this.musicVolume !== undefined ? this.musicVolume : 1.0);
         
         let fromStartVol = fromAudio ? fromAudio.volume : 0;
         if (toAudio) {
@@ -1415,21 +1852,31 @@
           if (step >= steps) {
             clearInterval(this.fadeInterval);
             this.fadeInterval = null;
-            if (fromAudio) fromAudio.pause();
+            if (fromAudio && fromAudio !== toAudio) fromAudio.pause();
             if (toAudio) toAudio.volume = maxVol;
           }
         }, stepTime);
       }
 
       setMusicMode(mode) {
-        if (!this.musicStarted) return;
+        this.musicStarted = true;
         
-        if (mode === 'explore') {
-          if (this.currentBgm === this.bgmExplore) return;
+        if (mode === 'menu') {
+          if (this.currentBgm === this.bgmMenu) {
+            if (this.bgmMenu.paused) this.bgmMenu.play().catch(() => {});
+            return;
+          }
+          this.crossfadeMusic(this.currentBgm, this.bgmMenu);
+          this.currentBgm = this.bgmMenu;
+        } else if (mode === 'explore') {
+          if (this.currentBgm === this.bgmExplore) {
+            if (this.bgmExplore.paused) this.bgmExplore.play().catch(() => {});
+            return;
+          }
           this.crossfadeMusic(this.currentBgm, this.bgmExplore);
           this.currentBgm = this.bgmExplore;
         } else if (mode === 'battle') {
-          if (this.currentBgm && this.currentBgm !== this.bgmExplore) return;
+          if (this.currentBgm && this.currentBgm !== this.bgmExplore && this.currentBgm !== this.bgmMenu) return;
           
           let randomTrack = this.bgmBattleList[Math.floor(Math.random() * this.bgmBattleList.length)];
           this.crossfadeMusic(this.currentBgm, randomTrack);
@@ -1785,6 +2232,18 @@
     }
 
     const sound = new SoundEngine();
+    window.sound = sound;
+
+    // Inicialização da música do menu inicial na primeira interação do usuário
+    const triggerMenuAudioOnUserGesture = () => {
+      const mainMenu = document.getElementById('main-menu');
+      if (mainMenu && !mainMenu.classList.contains('hidden') && mainMenu.style.display !== 'none') {
+        sound.init('menu');
+      }
+    };
+    ['pointerdown', 'click', 'keydown', 'touchstart'].forEach(evt => {
+      window.addEventListener(evt, triggerMenuAudioOnUserGesture, { once: true });
+    });
 
     // --------------------------------------------------------------------------
     // 2. CONSTANTES E CONFIGURAÇÕES DO GRID
@@ -5497,12 +5956,15 @@
 
         const mobileControls = document.getElementById('mobile-controls');
         const desktopGuide = document.getElementById('desktop-guide');
+        const mobileGuide = document.getElementById('mobile-guide');
         if (isTouch) {
           if (mobileControls) mobileControls.style.display = 'flex';
           if (desktopGuide) desktopGuide.style.display = 'none';
+          if (mobileGuide) mobileGuide.style.display = 'block';
         } else {
           if (mobileControls) mobileControls.style.display = 'none';
           if (desktopGuide) desktopGuide.style.display = 'flex';
+          if (mobileGuide) mobileGuide.style.display = 'none';
         }
 
         this.canvas.style.width = `${Math.floor(targetSize)}px`;
@@ -8422,6 +8884,83 @@
         });
       }
     });
+
+    function isMobileMode() {
+      const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+      const isSmallScreen = window.innerWidth <= 768;
+      const isMobileUA = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      return (isTouch && isSmallScreen) || isMobileUA || (isTouch && !window.matchMedia('(pointer: fine)').matches);
+    }
+
+    let currentTutorialPlatform = 'pc';
+
+    function switchTutorialPlatform(platform) {
+      currentTutorialPlatform = platform;
+      const tabPc = document.getElementById('tut-tab-pc');
+      const tabMobile = document.getElementById('tut-tab-mobile');
+      const contentPc = document.getElementById('tutorial-content-pc');
+      const contentMobile = document.getElementById('tutorial-content-mobile');
+
+      if (platform === 'mobile') {
+        if (tabMobile) tabMobile.classList.add('active');
+        if (tabPc) tabPc.classList.remove('active');
+        if (contentMobile) contentMobile.style.display = 'block';
+        if (contentPc) contentPc.style.display = 'none';
+      } else {
+        if (tabPc) tabPc.classList.add('active');
+        if (tabMobile) tabMobile.classList.remove('active');
+        if (contentPc) contentPc.style.display = 'block';
+        if (contentMobile) contentMobile.style.display = 'none';
+      }
+    }
+
+    function openTutorialModal(forcePlatform) {
+      const modal = document.getElementById('tutorial-modal');
+      if (!modal) return;
+
+      const platform = forcePlatform || (isMobileMode() ? 'mobile' : 'pc');
+      switchTutorialPlatform(platform);
+
+      const dontShow = document.getElementById('tut-dont-show');
+      if (dontShow) {
+        dontShow.checked = localStorage.getItem('roguebomb_tutorial_seen') === 'true';
+      }
+
+      modal.classList.add('visible');
+      modal.classList.remove('hidden');
+      modal.style.display = 'flex';
+
+      if (window.game) {
+        window.game._wasPausedBeforeTutorial = window.game.isPaused;
+        window.game.isPaused = true;
+      }
+    }
+
+    function closeTutorialModal() {
+      const modal = document.getElementById('tutorial-modal');
+      if (!modal) return;
+
+      const dontShow = document.getElementById('tut-dont-show');
+      if (dontShow && dontShow.checked) {
+        localStorage.setItem('roguebomb_tutorial_seen', 'true');
+      }
+
+      modal.classList.remove('visible');
+      modal.classList.add('hidden');
+      modal.style.display = 'none';
+
+      if (window.game && window.game._wasPausedBeforeTutorial !== undefined) {
+        window.game.isPaused = window.game._wasPausedBeforeTutorial;
+      } else if (window.game) {
+        window.game.isPaused = false;
+      }
+    }
+
+    window.openTutorialModal = openTutorialModal;
+    window.closeTutorialModal = closeTutorialModal;
+    window.switchTutorialPlatform = switchTutorialPlatform;
+    window.isMobileMode = isMobileMode;
+
     function closeLoreGallery() {
       document.getElementById('gallery-menu').style.display = 'none';
       document.getElementById('gallery-menu').classList.add('hidden');
@@ -8525,7 +9064,33 @@
           'item-piston-title': 'PISTÃO HIDRÁULICO',
           'item-piston-desc': 'Componente de alta compressão forjado nos fornos a vapor da Mina. Essencial para aprimorar a Manopla Mecânica!',
           'item-piston-hint': 'Envie este item ao Baú através de uma GOELA para desbloquear seu uso na Oficina!',
-          'item-piston-deposited': 'PISTÃO HIDRÁULICO ENVIADO AO BAÚ COM SUCESSO!'
+          'item-piston-deposited': 'PISTÃO HIDRÁULICO ENVIADO AO BAÚ COM SUCESSO!',
+          'menu-tutorial': 'Como Jogar',
+          'tutorial-title': 'COMO LANÇAR BOMBAS',
+          'tutorial-tab-pc': 'Computador',
+          'tutorial-tab-mobile': 'Celular',
+          'tutorial-pc-banner': '<b>Clique com o mouse e solte</b> para lançar a bomba!',
+          'tutorial-pc-s1-title': '1. MIRAR',
+          'tutorial-pc-s1-desc': 'Posicione o cursor do mouse no alvo onde deseja jogar a bomba.',
+          'tutorial-pc-s2-title': '2. SEGURAR',
+          'tutorial-pc-s2-desc': '<b>Clique e segure o botão esquerdo</b>. Veja o arco de trajetória e o limite de alcance.',
+          'tutorial-pc-s3-title': '3. SOLTAR',
+          'tutorial-pc-s3-desc': '<b>Solte o clique</b>! A bomba voará até o alvo e iniciará a contagem regressiva para explodir.',
+          'tutorial-pc-tip-tag': 'Dica Rápida:',
+          'tutorial-pc-tip-desc': 'Você também pode clicar com o <b>Botão Direito</b> para lançar diretamente na posição do cursor sem carregar mira!',
+          'tutorial-mobile-banner': '<b>Utilize o dedo para direcionar</b> a bomba clicando na direção que deseja lançar a bomba e <b>solte para arremessar</b>!',
+          'tutorial-mobile-s1-title': '1. TOCAR',
+          'tutorial-mobile-s1-desc': 'Toque na tela do jogo na direção onde deseja direcionar o ataque.',
+          'tutorial-mobile-s2-title': '2. DIRECIONAR',
+          'tutorial-mobile-s2-desc': '<b>Arraste o dedo</b> para ajustar o arco da bomba até o alvo dentro do alcance.',
+          'tutorial-mobile-s3-title': '3. SOLTAR',
+          'tutorial-mobile-s3-desc': '<b>Retire o dedo da tela</b> para arremessar! A bomba pousará e começará a contagem para explodir.',
+          'tutorial-mobile-tip-tag': 'Controles Touch:',
+          'tutorial-mobile-tip-desc': 'Use o analógico na esquerda para mover Charlotte e os botões na direita para alternar bombas e usar Dash!',
+          'tutorial-dont-show': 'Não mostrar novamente ao iniciar',
+          'tutorial-confirm': 'ENTENDIDO! JOGAR',
+          'hud-help': 'Ajuda',
+          'hud-mobile-guide': '👆 <b>Direcione e Solte</b> para Lançar Bomba'
       },
       'en': {
           'menu-start': 'Start Game',
@@ -8589,7 +9154,33 @@
           'item-piston-title': 'HYDRAULIC PISTON',
           'item-piston-desc': 'High compression component forged in the Mine steam furnaces. Essential to upgrade the Mechanical Gauntlet!',
           'item-piston-hint': 'Send this item to the Vault via a GOELA chute to unlock its use in the Armory!',
-          'item-piston-deposited': 'HYDRAULIC PISTON SAFELY SENT TO THE VAULT!'
+          'item-piston-deposited': 'HYDRAULIC PISTON SAFELY SENT TO THE VAULT!',
+          'menu-tutorial': 'How to Play',
+          'tutorial-title': 'HOW TO THROW BOMBS',
+          'tutorial-tab-pc': 'Desktop',
+          'tutorial-tab-mobile': 'Mobile',
+          'tutorial-pc-banner': '<b>Click and release mouse</b> to throw the bomb!',
+          'tutorial-pc-s1-title': '1. AIM',
+          'tutorial-pc-s1-desc': 'Move your mouse cursor towards the desired target.',
+          'tutorial-pc-s2-title': '2. HOLD',
+          'tutorial-pc-s2-desc': '<b>Click and hold left click</b>. Watch the trajectory arc and max range boundary.',
+          'tutorial-pc-s3-title': '3. RELEASE',
+          'tutorial-pc-s3-desc': '<b>Release the click</b>! The bomb will fly to the target and start its countdown.',
+          'tutorial-pc-tip-tag': 'Quick Tip:',
+          'tutorial-pc-tip-desc': 'You can also <b>Right Click</b> to throw instantly at cursor position without charging aim!',
+          'tutorial-mobile-banner': '<b>Use your finger to direct</b> the bomb in the desired direction and <b>release to throw</b>!',
+          'tutorial-mobile-s1-title': '1. TOUCH',
+          'tutorial-mobile-s1-desc': 'Touch the game screen in the direction you want to throw.',
+          'tutorial-mobile-s2-title': '2. AIM & DIRECT',
+          'tutorial-mobile-s2-desc': '<b>Drag your finger</b> to adjust the bomb trajectory arc towards your target.',
+          'tutorial-mobile-s3-title': '3. RELEASE',
+          'tutorial-mobile-s3-desc': '<b>Lift your finger from the screen</b> to throw! The bomb lands and starts its timer.',
+          'tutorial-mobile-tip-tag': 'Touch Controls:',
+          'tutorial-mobile-tip-desc': 'Use the virtual joystick on the left to move Charlotte and the right buttons to swap bombs or Dash!',
+          'tutorial-dont-show': "Don't show again on start",
+          'tutorial-confirm': 'GOT IT! PLAY',
+          'hud-help': 'Help',
+          'hud-mobile-guide': '👆 <b>Aim and Release</b> to Throw Bomb'
       }
     };
     let currentLang = 'pt';
@@ -8682,6 +9273,65 @@
           const tipKey = loadingTip.getAttribute('data-tip');
           if(tipKey) loadingTip.innerText = window.t(tipKey);
       }
+
+      const btnTut = document.getElementById('btn-tutorial');
+      if (btnTut) btnTut.innerText = window.t('menu-tutorial');
+      const btnOptTut = document.getElementById('btn-options-tutorial');
+      if (btnOptTut) btnOptTut.innerText = window.t('menu-tutorial') + ' (Tutorial)';
+      const hudHelpLabel = document.getElementById('hud-help-label');
+      if (hudHelpLabel) hudHelpLabel.innerText = window.t('hud-help');
+      const mobileGuideText = document.getElementById('mobile-guide-text');
+      if (mobileGuideText) mobileGuideText.innerHTML = window.t('hud-mobile-guide');
+
+      const tutTitle = document.getElementById('tutorial-title-text');
+      if (tutTitle) tutTitle.innerText = window.t('tutorial-title');
+      const tutTabPcText = document.getElementById('tut-tab-pc-text');
+      if (tutTabPcText) tutTabPcText.innerText = window.t('tutorial-tab-pc');
+      const tutTabMobText = document.getElementById('tut-tab-mobile-text');
+      if (tutTabMobText) tutTabMobText.innerText = window.t('tutorial-tab-mobile');
+
+      const tutPcBanner = document.getElementById('tut-pc-banner-text');
+      if (tutPcBanner) tutPcBanner.innerHTML = window.t('tutorial-pc-banner');
+      const tutPcS1T = document.getElementById('tut-pc-s1-title');
+      if (tutPcS1T) tutPcS1T.innerText = window.t('tutorial-pc-s1-title');
+      const tutPcS1D = document.getElementById('tut-pc-s1-desc');
+      if (tutPcS1D) tutPcS1D.innerText = window.t('tutorial-pc-s1-desc');
+      const tutPcS2T = document.getElementById('tut-pc-s2-title');
+      if (tutPcS2T) tutPcS2T.innerText = window.t('tutorial-pc-s2-title');
+      const tutPcS2D = document.getElementById('tut-pc-s2-desc');
+      if (tutPcS2D) tutPcS2D.innerHTML = window.t('tutorial-pc-s2-desc');
+      const tutPcS3T = document.getElementById('tut-pc-s3-title');
+      if (tutPcS3T) tutPcS3T.innerText = window.t('tutorial-pc-s3-title');
+      const tutPcS3D = document.getElementById('tut-pc-s3-desc');
+      if (tutPcS3D) tutPcS3D.innerHTML = window.t('tutorial-pc-s3-desc');
+      const tutPcTipTag = document.getElementById('tut-pc-tip-tag');
+      if (tutPcTipTag) tutPcTipTag.innerText = window.t('tutorial-pc-tip-tag');
+      const tutPcTipDesc = document.getElementById('tut-pc-tip-desc');
+      if (tutPcTipDesc) tutPcTipDesc.innerHTML = window.t('tutorial-pc-tip-desc');
+
+      const tutMobBanner = document.getElementById('tut-mobile-banner-text');
+      if (tutMobBanner) tutMobBanner.innerHTML = window.t('tutorial-mobile-banner');
+      const tutMobS1T = document.getElementById('tut-mob-s1-title');
+      if (tutMobS1T) tutMobS1T.innerText = window.t('tutorial-mobile-s1-title');
+      const tutMobS1D = document.getElementById('tut-mob-s1-desc');
+      if (tutMobS1D) tutMobS1D.innerText = window.t('tutorial-mobile-s1-desc');
+      const tutMobS2T = document.getElementById('tut-mob-s2-title');
+      if (tutMobS2T) tutMobS2T.innerText = window.t('tutorial-mobile-s2-title');
+      const tutMobS2D = document.getElementById('tut-mob-s2-desc');
+      if (tutMobS2D) tutMobS2D.innerHTML = window.t('tutorial-mobile-s2-desc');
+      const tutMobS3T = document.getElementById('tut-mob-s3-title');
+      if (tutMobS3T) tutMobS3T.innerText = window.t('tutorial-mobile-s3-title');
+      const tutMobS3D = document.getElementById('tut-mob-s3-desc');
+      if (tutMobS3D) tutMobS3D.innerHTML = window.t('tutorial-mobile-s3-desc');
+      const tutMobTipTag = document.getElementById('tut-mob-tip-tag');
+      if (tutMobTipTag) tutMobTipTag.innerText = window.t('tutorial-mobile-tip-tag');
+      const tutMobTipDesc = document.getElementById('tut-mob-tip-desc');
+      if (tutMobTipDesc) tutMobTipDesc.innerHTML = window.t('tutorial-mobile-tip-desc');
+
+      const tutDontShow = document.getElementById('tut-dont-show-text');
+      if (tutDontShow) tutDontShow.innerText = window.t('tutorial-dont-show');
+      const tutBtnConf = document.getElementById('tut-btn-confirm-text');
+      if (tutBtnConf) tutBtnConf.innerText = window.t('tutorial-confirm');
     }
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -8712,6 +9362,10 @@
         mainMenu.style.display = 'none';
         mainMenu.classList.add('hidden');
         
+        // Transicionar para música de exploração do jogo
+        sound.init('explore');
+        sound.setMusicMode('explore');
+        
         // Mostrar tela de carregamento
         const tipIndex = Math.floor(Math.random() * 4) + 1;
         const tipKey = `tip-${tipIndex}`;
@@ -8729,6 +9383,9 @@
           if(window.game) {
               window.game.isPaused = false;
           }
+          if (localStorage.getItem('roguebomb_tutorial_seen') !== 'true') {
+            openTutorialModal();
+          }
         }, 5000);
       });
       
@@ -8736,6 +9393,8 @@
       if (btnContinue) {
         btnContinue.addEventListener('click', () => {
           mainMenu.classList.add('hidden');
+          sound.init('explore');
+          sound.setMusicMode('explore');
           if(window.game) {
               window.game.isPaused = false;
           }
@@ -8757,12 +9416,18 @@
         } else {
           optionsMenu.classList.add('hidden');
           mainMenu.classList.remove('hidden');
+          sound.setMusicMode('menu');
         }
       });
 
       // Pause com ESC
       document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
+          const tutModal = document.getElementById('tutorial-modal');
+          if (tutModal && tutModal.classList.contains('visible')) {
+            closeTutorialModal();
+            return;
+          }
           if (window.game) {
             window.game.isPaused = !window.game.isPaused;
             if (window.game.isPaused) {
@@ -8785,7 +9450,11 @@
       // Atualização dos inputs
       musicVol.addEventListener('input', (e) => {
         musicVolVal.innerText = e.target.value;
+        sound.setMusicVolume(parseInt(e.target.value, 10) / 100);
       });
+
+      // Tenta iniciar a música do menu inicial (Turn of the Great Wheel)
+      sound.setMusicMode('menu');
 
       sfxVol.addEventListener('input', (e) => {
         sfxVolVal.innerText = e.target.value;
