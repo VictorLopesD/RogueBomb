@@ -4141,27 +4141,28 @@
         if (this.hasArmor) {
           if (bombType === 'timed') {
             this.hasArmor = false;
-            this.flashTimer = 0.35;
+            this.flashTimer = 0.4;
             if (engine) {
-              engine.spawnSparks(this.x, this.y, '#ffd54f', 24);
-              engine.spawnSparks(this.x, this.y, '#ff9100', 16);
-              engine.spawnFloatingText('BLINDAGEM DESTRU\u00CDDA!', this.x, this.y - this.radius - 10, '#ffd54f');
+              engine.spawnSparks(this.x, this.y, '#ffd54f', 26);
+              engine.spawnSparks(this.x, this.y, '#ff9100', 18);
+              engine.spawnFloatingText('BLINDAGEM DESTRUÍDA!', this.x, this.y - this.radius - 12, '#ffd54f');
               if (window.sound) window.sound.playImpactExplosion();
             }
-            this.hp -= amount;
-            return this.hp <= 0;
+            // A quebra da blindagem absorve a primeira explosão, deixando o Charger desprotegido
+            return false;
           } else {
-            // ImpactBomb nao afeta a blindagem
+            // ImpactBomb é bloqueada pela blindagem
             this.flashTimer = 0.15;
             if (engine) {
               engine.spawnSparks(this.x, this.y, '#90caf9', 14);
-              engine.spawnFloatingText('BLINDAGEM! (USE TIMERBOMB)', this.x, this.y - this.radius - 10, '#90caf9');
+              engine.spawnFloatingText('BLINDAGEM! (USE TIMER BOMB)', this.x, this.y - this.radius - 10, '#90caf9');
               if (window.sound) window.sound.playTimedBeep(0.8);
             }
             return false;
           }
         }
 
+        // Sem blindagem: recebe qualquer tipo de dano (tanto timer bomb quanto impact bomb)
         this.hp -= amount;
         this.flashTimer = 0.25;
         const isRusty = (this.type === 'rusty' || this.type === 'rusty_charger' || this.type === 'rusty_bomber');
@@ -4169,10 +4170,10 @@
           if (isRusty) {
             engine.spawnSparks(this.x, this.y, '#8d6e63', 18);
             engine.spawnSparks(this.x, this.y, '#d87d4a', 12);
-            engine.spawnFloatingText('ESFACELOU!', this.x, this.y - this.radius - 8, '#d7ccc8');
+            engine.spawnFloatingText(this.hp <= 0 ? 'ESFACELOU!' : `-${amount} HP`, this.x, this.y - this.radius - 8, '#d7ccc8');
           } else {
             engine.spawnSparks(this.x, this.y, this.maxHp > 1 ? '#ffca28' : '#ef5350', 14);
-            engine.spawnFloatingText(`-${amount} HP`, this.x, this.y - this.radius - 8, '#ff5252');
+            engine.spawnFloatingText(this.hp <= 0 ? 'DESTRUÍDO!' : `-${amount} HP`, this.x, this.y - this.radius - 8, '#ff5252');
           }
         }
         return this.hp <= 0;
@@ -7346,7 +7347,7 @@
           const enemy = room.enemies[i];
           const dist = Math.hypot(enemy.x - cx, enemy.y - cy);
           if (dist <= blastRadius + enemy.radius) {
-            const isDead = enemy.takeDamage(1, this, 'timed');
+            const isDead = enemy.takeDamage(1, this, 'impact');
             if (isDead) {
               this.spawnEnemyDeath(enemy.x, enemy.y, enemy);
               room.enemies.splice(i, 1);
@@ -7499,7 +7500,7 @@
           }
 
           if (hit) {
-            const isDead = enemy.takeDamage(2, this, 'impact');
+            const isDead = enemy.takeDamage(2, this, 'timed');
             if (isDead) {
               this.spawnEnemyDeath(enemy.x, enemy.y, enemy);
               room.enemies.splice(i, 1);
