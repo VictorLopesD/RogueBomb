@@ -27,6 +27,20 @@
 - **Efeitos Visuais:** Olhos vermelhos brilhantes e emissão pesada de fumaça preta (diesel) e faíscas.
 - **Buff de Inimigo (Charger):** Durante a fúria, o autômato Charger esmaga caixas de madeira instantaneamente se trombar nelas com sua investida, enquanto em estado normal ele demora 2 segundos triturando a caixa.
 
+### Chefe Final: Autômato Titânico (Nível 5)
+- **Identidade e Robustez:** Um colossal autômato a vapor com chassi blindado pesado, fornalha central e engrenagens móveis. Possui **10 vidas**.
+- **Habilidades Integradas de Todos os Autômatos:**
+  - **Investidas Super-Rápidas:** Telegrafadas com linha de mira a laser vermelha; esmaga obstáculos pelo caminho.
+  - **Blindagem Ativável:** Escudo protetor que bloqueia Bombas de Impacto e só pode ser quebrado com detonação direta de Bomba-Relógio (Timer Bomb).
+  - **Lançamento de Bombas:** Alterna entre Bombas-Relógio (emboscada na rota de fuga) e Bombas de Impacto (mira circular vermelha).
+- **Mecânica Única (Terremoto e Queda de Rochas):** O chefe bate no chão provocando estrondo sísmico que derruba rochas e estalactites do teto da mina. Se uma rocha atingir Charlotte, retira **1 coração e vida**.
+- **Fase 2 (Sobrecarga Enlouquecida - 5 Vidas ou menos):** O chefe entra em fúria desenfreada com fumaça e brasas contínuas, velocidade acelerada, investidas em cadeia para múltiplas direções, e arremesso duplo de bombas com cadência aumentada.
+
+### Sistema de Saúde de Charlotte (3 Vidas / Corações)
+- Charlotte possui **3 Corações** (vidas visíveis no HUD: `❤️❤️❤️`).
+- Ao ser atingida por autômatos, chefes ou rochas em queda, perde **1 coração**, recebe recuo e 1.6s de invulnerabilidade (i-frames piscantes).
+- Perder os 3 corações aciona o **Rebobinar do Tempo (Time Rewind)** para a Safe Room.
+
 ### Música
 - Adicionada a faixa de batalha `The_Clockwork_Siege.mp3` tocando proceduralmente nos duelos ou no lockdown.
 
@@ -281,10 +295,16 @@ A IA dos autÃ´matos Ã© estruturada em 4 estados orgÃ¢nicos:
 3. **`alert` (Alerta com Retardo):** Ao avistar Charlotte dentro de 4.5 blocos, emite balÃ£o de exclamaÃ§Ã£o `!` e som de sirene (`playEnemyAlert`), pausando por 0.65s a 0.38s antes da perseguiÃ§Ã£o.
 4. **`chase` (PerseguiÃ§Ã£o Ativa com Desvio de ObstÃ¡culos):** AvanÃ§a com velocidade calibrada em direÃ§Ã£o a Charlotte, desviando de pilares e paredes indestrutÃ­veis. Se Charlotte se afastar mais de 6 blocos, retorna para `idle`.
 
-### 7.2 Tiers de AutÃ´matos por NÃ­vel de Profundidade
-- **Tier 1 â€” AutÃ´mato de Cobre Comum (NÃ­vel 1):** Vermelho Carmim (`#c62828`), **1 HP** (destruÃ­do por qualquer golpe).
-- **Tier 2 â€” AutÃ´mato Blindado Ametista (NÃ­vel 2):** Roxo metÃ¡lico (`#8e24aa`), **2 HP**, barra de vida segmentada sobre a cabeÃ§a.
-- **Tier 3 â€” TitÃ£ de Obsidiana e Ouro (NÃ­vel 3+):** Grafite com detalhes em ouro (`#263238`), **3 a 6 HP**, carcaÃ§a resistente e perseguiÃ§Ã£o veloz.
+### 7.2 Tiers de Autômatos por Nível de Profundidade
+- **Tier 1 — Autômato de Cobre Comum (Nível 1):** Vermelho Carmim (`#c62828`), **1 HP** (destruído por qualquer golpe).
+- **Tier 2 — Autômato Charger Perfurador (Nível 2):**
+  - **Ataque em Linha Reta:** Trava mira em Charlotte e executa investida veloz destruindo caixas e paredes internas no caminho.
+  - **Sem Blindagem no Nível 2:** Carcaça enferrujada direta de 1 HP (sem escudo protetor).
+  - **Linha Telegráfica de Ataque:** Durante a preparação (windup), projeta uma linha no chão indicando **para onde** vai investir (trajetória e retículo de impacto na parede) e **quando** vai atacar (feixe de energia progressivo e pulsante).
+- **Tier 3 — Charger Blindado e Titãs Mecânicos (Nível 3+):**
+  - **Blindagem Dourada Ativa (`hasArmor`):** A partir do Nível 3, o Charger recebe escudo de blindagem que absorve a primeira explosão de Bomba Temporizada ou bloqueia Bombas de Impacto.
+  - Mantém o ataque em linha reta com a linha telegráfica de aviso.
+- **Tier 4 e 5 — Autômatos de Elite (Níveis 4 e 5):** **2 a 6 HP**, carcaça resistente, velocidade elevada e ataques especializados.
 
 ### 7.3 InteraÃ§Ã£o com o CenÃ¡rio e Dano
 - Ao sofrer dano, pisca em branco por 0.25s e exibe nÃºmeros de dano flutuantes (`-1 HP`, `-2 HP`).
@@ -342,10 +362,15 @@ AlÃ©m dos autÃ´matos a vapor, Charlotte encontra engenheiros humanos rivais 
 - Charlotte descarrega instantaneamente todo o Cristal Coal e PeÃ§as MecÃ¢nicas volÃ¡teis da bolsa ao pisar na Goela.
 - Os recursos sÃ£o transferidos em seguranÃ§a para o inventÃ¡rio do cofre (`depositedCores` e `depositedParts`).
 
-### 8.4 BaÃº da Safe Room (`TILE.CHEST`)
-- Localizado no canto inferior direito da Safe Room do NÃ­vel 1.
-- Exibe em texto flutuante em tempo real o saldo de recursos guardados: `BAÃš: X CC | Y PEÃ‡AS`.
-- Permite que o jogador visualize a poupanÃ§a acumulada entre expediÃ§Ãµes.
+### 8.4 Baú da Safe Room (`TILE.CHEST`)
+- Localizado no canto inferior direito da Safe Room do Nível 1.
+- Exibe em texto flutuante em tempo real o saldo de recursos guardados: `BAÚ: X CC | Y PEÇAS`.
+- **Interação por Proximidade e Grade de Armazenamento (Grid):**
+  - Ao chegar perto do baú, uma interface com grade de inventário (grid) abre automaticamente exibindo tudo o que está guardado: Cristal Coal (CC), Peças Mecânicas, Pistão Hidráulico, Núcleo a Vapor, Cartão de Acesso do Supervisor e Projetos Desbloqueados.
+  - Permite inspecionar cada item em detalhes (nome, categoria, descrição e quantidade).
+  - Inclui botão para descarregar recursos voláteis trazidos da mochila diretamente para o baú.
+  - Ao se afastar do baú ou pressionar <kbd>ESC</kbd> / Botão Fechar, o grid fecha automaticamente.
+- Permite que o jogador visualize a poupança acumulada entre expedições.
 
 ### 8.5 Mesa de Arsenal (`TILE.ARMORY`) e Ãrvore de Upgrades
 Localizada no canto superior direito da Safe Room, permite que Charlotte fabrique melhorias permanentes:

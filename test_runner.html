@@ -1,0 +1,36 @@
+﻿<!DOCTYPE html>
+<html>
+<head></head>
+<body>
+<div id="status">TESTING</div>
+<iframe id="gameFrame" src="index.html" style="width:100px;height:100px;"></iframe>
+<script>
+window.onload = function() {
+  setTimeout(function() {
+    var frame = document.getElementById('gameFrame');
+    var statusDiv = document.getElementById('status');
+    try {
+      var g = frame.contentWindow.game;
+      if (!g) { statusDiv.innerText = "FAIL: no game"; return; }
+      
+      // 1. Simula detonação de TimerBomb (deve criar flyingShards e obstacles)
+      var tb = { x: 300, y: 300, gridX: 7, gridY: 7 };
+      g.detonateTimedBomb(tb);
+      
+      // 2. Simula detonação de VortexBomb (deve criar VortexField)
+      g.detonateVortex(300, 300);
+      
+      // 3. Atualiza 30 frames para simular a física de voo e sucção
+      for (var f = 0; f < 30; f++) {
+        g.update(0.016);
+      }
+      
+      statusDiv.innerText = "GAMEPLAY_SUCCESS: obstacles=" + g.map.currentRoom.obstacles.length + " | vortexes=" + g.vortexFields.length;
+    } catch(e) {
+      statusDiv.innerText = "GAMEPLAY_EXCEPTION: " + e.message + " stack: " + e.stack;
+    }
+  }, 1000);
+};
+</script>
+</body>
+</html>

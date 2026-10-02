@@ -362,7 +362,7 @@
       box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
     }
     .bomb-btn[data-bomb="impact"].selected { border-color: var(--accent-red); box-shadow: 0 0 16px var(--accent-red); }
-    .bomb-btn[data-bomb="propulsor"].selected { border-color: var(--accent-cyan); box-shadow: 0 0 16px var(--accent-cyan); }
+    .bomb-btn[data-bomb="vortex"].selected, .bomb-btn[data-bomb="propulsor"].selected { border-color: var(--accent-cyan); box-shadow: 0 0 16px var(--accent-cyan); }
     .bomb-btn[data-bomb="timed"].selected { border-color: var(--accent-yellow); box-shadow: 0 0 16px var(--accent-yellow); }
 
     .action-btn {
@@ -622,7 +622,7 @@
     }
     .bag-slot.filled { border-color: #ff6f00; background: rgba(255,111,0,0.15); }
     .bag-slot.filled.impact { border-color: #ef5350; background: rgba(239,83,80,0.15); }
-    .bag-slot.filled.propulsor { border-color: #42a5f5; background: rgba(66,165,245,0.15); }
+    .bag-slot.filled.vortex, .bag-slot.filled.propulsor { border-color: #42a5f5; background: rgba(66,165,245,0.15); }
     #bag-types-row {
       display: flex; gap: 8px; justify-content: center;
     }
@@ -1003,6 +1003,264 @@
       background: rgba(255,255,255,0.05); border-radius: 8px; padding: 6px;
     }
 
+    /* Modal do Baú de Armazenamento (Grid de Itens) */
+    #chest-modal {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 480px;
+      max-width: 94%;
+      max-height: 88vh;
+      overflow-y: auto;
+      background: rgba(14, 11, 9, 0.97);
+      border: 3px solid #b87333;
+      box-shadow: 0 0 32px rgba(184, 115, 51, 0.45), inset 0 0 20px rgba(0, 0, 0, 0.85);
+      border-radius: 12px;
+      padding: 16px 18px;
+      display: none;
+      flex-direction: column;
+      gap: 12px;
+      z-index: 520;
+      color: #f0e6d2;
+      box-sizing: border-box;
+      pointer-events: auto;
+      font-family: inherit;
+    }
+    #chest-modal.visible {
+      display: flex;
+    }
+    #chest-modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 2px solid #5d4037;
+      padding-bottom: 8px;
+    }
+    .chest-title-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .chest-icon {
+      font-size: 28px;
+      filter: drop-shadow(0 0 8px rgba(255, 179, 0, 0.6));
+    }
+    #chest-modal-header h2 {
+      margin: 0;
+      color: #ffd54f;
+      font-size: 18px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+    }
+    .chest-subtitle {
+      font-size: 11px;
+      color: #a1887f;
+      margin-top: 2px;
+    }
+    .btn-chest-close {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid #5d4037;
+      color: #d7ccc8;
+      font-size: 16px;
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+    .btn-chest-close:hover {
+      background: #c62828;
+      border-color: #ef5350;
+      color: #fff;
+    }
+    .chest-stats-bar {
+      display: flex;
+      gap: 10px;
+      background: rgba(0, 0, 0, 0.45);
+      border: 1px solid #3e2723;
+      border-radius: 8px;
+      padding: 8px 12px;
+      justify-content: space-around;
+      font-size: 13px;
+      font-weight: bold;
+    }
+    .chest-stat-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .chest-stat-val {
+      color: #ffd54f;
+    }
+    .chest-deposit-banner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(76, 175, 80, 0.12);
+      border: 1px dashed #66bb6a;
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 12px;
+      gap: 8px;
+    }
+    .btn-chest-deposit {
+      background: linear-gradient(180deg, #2e7d32 0%, #1b5e20 100%);
+      color: #fff;
+      border: 1px solid #81c784;
+      border-radius: 6px;
+      padding: 6px 12px;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: bold;
+      transition: 0.2s;
+      white-space: nowrap;
+    }
+    .btn-chest-deposit:hover {
+      background: linear-gradient(180deg, #388e3c 0%, #2e7d32 100%);
+      box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+    }
+    #chest-grid-container {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .chest-grid-header {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #d7ccc8;
+      display: flex;
+      justify-content: space-between;
+    }
+    #chest-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid #4e342e;
+      border-radius: 8px;
+      padding: 10px;
+    }
+    .chest-slot {
+      aspect-ratio: 1;
+      min-height: 70px;
+      background: radial-gradient(circle, rgba(62, 39, 35, 0.45) 0%, rgba(20, 14, 12, 0.85) 100%);
+      border: 2px solid #5d4037;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      cursor: pointer;
+      transition: all 0.15s ease-in-out;
+      user-select: none;
+      padding: 4px;
+      box-sizing: border-box;
+    }
+    .chest-slot.filled {
+      border-color: #8d6e63;
+      background: radial-gradient(circle, rgba(109, 76, 65, 0.55) 0%, rgba(35, 23, 19, 0.9) 100%);
+    }
+    .chest-slot.filled:hover, .chest-slot.filled.selected {
+      border-color: #ffd54f;
+      box-shadow: 0 0 14px rgba(255, 213, 79, 0.4);
+      transform: translateY(-2px);
+      background: radial-gradient(circle, rgba(141, 110, 99, 0.65) 0%, rgba(45, 30, 24, 0.95) 100%);
+    }
+    .chest-slot.empty {
+      border: 1px dashed rgba(141, 110, 99, 0.35);
+      background: rgba(0, 0, 0, 0.2);
+      cursor: default;
+    }
+    .chest-slot.empty .empty-cross {
+      color: rgba(141, 110, 99, 0.25);
+      font-size: 20px;
+    }
+    .slot-icon {
+      font-size: 26px;
+      line-height: 1;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.8));
+    }
+    .slot-label {
+      font-size: 10px;
+      font-weight: bold;
+      color: #e0e0e0;
+      text-align: center;
+      margin-top: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
+    }
+    .slot-badge {
+      position: absolute;
+      top: 3px;
+      right: 4px;
+      background: rgba(0, 0, 0, 0.85);
+      color: #ffd54f;
+      border: 1px solid #8d6e63;
+      border-radius: 4px;
+      font-size: 9px;
+      font-weight: bold;
+      padding: 1px 4px;
+      line-height: 1.1;
+    }
+    #chest-item-info {
+      background: rgba(0, 0, 0, 0.45);
+      border: 1px solid #5d4037;
+      border-radius: 8px;
+      padding: 10px 12px;
+      min-height: 56px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      justify-content: center;
+    }
+    .chest-info-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .chest-info-name {
+      font-size: 13px;
+      font-weight: bold;
+      color: #ffd54f;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .chest-info-tag {
+      font-size: 10px;
+      background: rgba(184, 115, 51, 0.25);
+      border: 1px solid #b87333;
+      color: #ffcc80;
+      padding: 1px 6px;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+    .chest-info-desc {
+      font-size: 11px;
+      color: #bcaaa4;
+      line-height: 1.35;
+    }
+    .chest-info-qty {
+      font-size: 11px;
+      color: #81c784;
+      font-weight: bold;
+      margin-top: 2px;
+    }
+    .chest-hint-footer {
+      font-size: 11px;
+      color: #8d6e63;
+      text-align: center;
+      margin-top: 2px;
+    }
+
     /* Responsividade e Ergonomia Mobile: Portrait e Landscape */
     @media (max-width: 900px), (max-height: 600px), (pointer: coarse) {
       #desktop-guide { display: none !important; }
@@ -1142,7 +1400,7 @@
         width: 54px;
         height: 54px;
       }
-      #armory-modal {
+      #armory-modal, #chest-modal {
         max-height: 85vh;
         overflow-y: auto;
       }
@@ -1314,6 +1572,14 @@
       </div>
 
       <div id="hud-resources">
+        <div id="health-badge" class="hud-badge" title="Vidas de Charlotte">
+          <span class="hud-icon" style="font-size: 16px;">❤️</span>
+          <div class="hud-badge-info">
+            <div class="hud-badge-label">Vidas</div>
+            <div id="health-counter" class="hud-badge-value" style="color: #ff1744; font-size: 12px; letter-spacing: 2px;">❤️❤️❤️</div>
+          </div>
+        </div>
+
         <div id="gauntlet-badge" class="hud-badge" title="Clique ou pressione [U] para aprimorar o alcance da Manopla">
           <span class="hud-icon" style="font-size: 16px;">🥊</span>
           <div class="hud-badge-info">
@@ -1348,6 +1614,13 @@
         <div class="hud-badge-info">
           <div class="hud-badge-label" id="hud-help-label">Ajuda</div>
           <div class="hud-badge-value" style="color: #ffca28; font-size: 10px;">TUTORIAL</div>
+        </div>
+      </div>
+      <div id="hud-boss-btn" class="hud-badge" title="Invocar Chefe Final (Autômato Titânico) [Tecla B]" onclick="window.spawnFinalBoss()" style="cursor: pointer; background: rgba(231, 76, 60, 0.2); border-color: #e74c3c; align-self: center;">
+        <span style="font-size: 16px;">👑</span>
+        <div class="hud-badge-info">
+          <div class="hud-badge-label">Chefe Final</div>
+          <div class="hud-badge-value" style="color: #ff5252; font-size: 10px;">TESTAR [B]</div>
         </div>
       </div>
     </div>
@@ -1411,9 +1684,9 @@
             <span class="icon bomb-icon">💥</span>
             <span class="bomb-name">IMP</span>
           </button>
-          <button class="bomb-btn" data-bomb="propulsor" style="display: none;" title="2: Bomba Propulsora">
-            <span class="icon bomb-icon">🚀</span>
-            <span class="bomb-name">PROP</span>
+          <button class="bomb-btn" data-bomb="vortex" style="display: none;" title="2: Bomba de Vórtice">
+            <span class="icon bomb-icon">🌀</span>
+            <span class="bomb-name">VÓRT</span>
           </button>
           <button class="bomb-btn selected" data-bomb="timed" title="3: Bomba Temporizada">
             <span class="icon bomb-icon">⏱️</span>
@@ -1669,7 +1942,7 @@
           <div class="armory-info">
             <span class="armory-title">Manopla Mecânica</span>
             <span class="armory-desc">Aumenta o alcance de arremesso.</span>
-            <span class="armory-cost">Custo: 10 CC | 10 PEÇAS</span>
+            <span class="armory-cost" id="gauntlet-upgrade-cost">Custo: 35 CC | 25 PEÇAS | 1 PISTÃO HIDRÁULICO</span>
           </div>
           <button class="btn-buy" id="btn-buy-gauntlet" onclick="window.game.buyUpgrade('gauntlet')">Melhorar</button>
         </div>
@@ -1678,7 +1951,7 @@
           <div class="armory-info">
             <span class="armory-title">Botas Propulsoras</span>
             <span class="armory-desc">Permite dar Dash (Aperte SHIFT ou Botão Mobile). Custo: 1 CC. Superaquece por 5s.</span>
-            <span class="armory-cost">Custo: 15 CC | 15 PEÇAS</span>
+            <span class="armory-cost" id="boots-upgrade-cost">Custo: 30 CC | 25 PEÇAS | 1 NÚCLEO A VAPOR</span>
           </div>
           <button class="btn-buy" id="btn-buy-boots" onclick="window.game.buyUpgrade('boots')">Comprar</button>
         </div>
@@ -1687,7 +1960,7 @@
           <div class="armory-info">
             <span class="armory-title">Bolsa Expandida</span>
             <span class="armory-desc">Aumenta a capacidade de bombas. Nv.1: 5 | Nv.2: 7 | Nv.3: 10</span>
-            <span class="armory-cost" id="bag-upgrade-cost">Custo: 20 CC | 20 PEÇAS</span>
+            <span class="armory-cost" id="bag-upgrade-cost">7 Bombas | Custo: 25 CC | 20 PEÇAS</span>
           </div>
           <button class="btn-buy" id="btn-buy-bag" onclick="window.game.buyUpgrade('bag')">Melhorar</button>
         </div>
@@ -1697,7 +1970,7 @@
           <div class="armory-info">
             <span class="armory-title">Bomba-Relógio Nível 2</span>
             <span class="armory-desc">Reação em Cadeia: detonam imediatamente ao sofrer impacto de outras explosões.</span>
-            <span class="armory-cost" id="timerbomb-upgrade-cost">Custo: 20 CC | 15 PEÇAS</span>
+            <span class="armory-cost" id="timerbomb-upgrade-cost">Custo: 20 CC | 18 PEÇAS</span>
           </div>
           <button class="btn-buy" id="btn-buy-timerbomb" onclick="window.game.buyUpgrade('timerbomb')">Comprar</button>
         </div>
@@ -1732,16 +2005,73 @@
         <button class="btn-buy" id="btn-inv-impact" onclick="window.game.buyInventorUpgrade('impact')">Comprar</button>
       </div>
 
-      <div class="armory-item" id="inv-item-propulsor">
+      <div class="armory-item" id="inv-item-vortex">
         <div class="armory-info">
-          <span class="armory-title">🔵 Bomba Propulsora</span>
-          <span class="armory-desc">Empurra Charlotte ao explodir. Requer Bolsa de Impacto. Libera slot Propulsor.</span>
-          <span class="armory-cost" id="inv-cost-propulsor">Custo: 25 CC | 20 PEÇAS</span>
+          <span class="armory-title">🌀 Bomba de Vórtice</span>
+          <span class="armory-desc">Cria sucção gravitacional: atrai autômatos e estilhaços. Esmaga no centro com dano devastador!</span>
+          <span class="armory-cost" id="inv-cost-vortex">Custo: 25 CC | 20 PEÇAS</span>
         </div>
-        <button class="btn-buy" id="btn-inv-propulsor" onclick="window.game.buyInventorUpgrade('propulsor')">Comprar</button>
+        <button class="btn-buy" id="btn-inv-vortex" onclick="window.game.buyInventorUpgrade('vortex')">Comprar</button>
       </div>
 
       <button class="btn-close" onclick="window.game.closeInventorShop()">Sair</button>
+    </div>
+
+    <!-- Modal do Baú de Armazenamento (Grade de Itens Guardados) -->
+    <div id="chest-modal">
+      <div id="chest-modal-header">
+        <div class="chest-title-group">
+          <span class="chest-icon">🧰</span>
+          <div>
+            <h2 id="chest-modal-title">Baú de Armazenamento</h2>
+            <div class="chest-subtitle" id="chest-modal-subtitle">Itens e Recursos Salvos na Safe Room</div>
+          </div>
+        </div>
+        <button class="btn-chest-close" onclick="window.game.closeChest(true)" title="Fechar [ESC]">✕</button>
+      </div>
+
+      <!-- Barra de Resumo de Recursos Guardados -->
+      <div class="chest-stats-bar">
+        <div class="chest-stat-item">
+          <span>💎 Cristal Coal:</span>
+          <span class="chest-stat-val" id="chest-stat-cc">0 CC</span>
+        </div>
+        <div class="chest-stat-item">
+          <span>⚙️ Peças Mecânicas:</span>
+          <span class="chest-stat-val" id="chest-stat-parts">0 Peças</span>
+        </div>
+      </div>
+
+      <!-- Banner para descarregar recursos voláteis da mochila diretamente no baú -->
+      <div class="chest-deposit-banner" id="chest-deposit-banner" style="display: none;">
+        <span id="chest-deposit-text">🎒 Recursos na mochila prontos para guardar!</span>
+        <button class="btn-chest-deposit" onclick="window.game.depositCarriedToChest()">📥 Guardar Tudo</button>
+      </div>
+
+      <!-- Container do Grid de Armazenamento -->
+      <div id="chest-grid-container">
+        <div class="chest-grid-header">
+          <span>Grade de Itens Armazenados</span>
+          <span id="chest-grid-count">0 Itens</span>
+        </div>
+        <div id="chest-grid"></div>
+      </div>
+
+      <!-- Painel de Inspeção do Item Selecionado -->
+      <div id="chest-item-info">
+        <div class="chest-info-header">
+          <div class="chest-info-name" id="chest-info-title">📭 Nenhum item selecionado</div>
+          <span class="chest-info-tag" id="chest-info-type" style="display: none;">Tipo</span>
+        </div>
+        <div class="chest-info-desc" id="chest-info-desc">Passe o cursor ou toque em um item para inspecionar seus detalhes.</div>
+        <div class="chest-info-qty" id="chest-info-qty"></div>
+      </div>
+
+      <button class="btn-close" style="margin-top: 4px;" onclick="window.game.closeChest(true)">Sair / Fechar Baú</button>
+
+      <div class="chest-hint-footer">
+        🚶 Afaste-se do baú para fechar automaticamente ou aperte <kbd>ESC</kbd>
+      </div>
     </div>
   </div>
 
@@ -1943,6 +2273,96 @@
         filter.connect(gain);
         gain.connect(this.ctx.destination);
         noise.start(now);
+      }
+
+      playVortexSuck() {
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+
+        // Som de sucção gravitacional / turbina giratória
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        const filter = this.ctx.createBiquadFilter();
+
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(120, now);
+        osc.frequency.exponentialRampToValueAtTime(440, now + 0.8);
+        osc.frequency.exponentialRampToValueAtTime(80, now + 1.8);
+
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(300, now);
+        filter.frequency.linearRampToValueAtTime(1600, now + 0.9);
+        filter.frequency.linearRampToValueAtTime(200, now + 1.8);
+        filter.Q.value = 6.0;
+
+        gain.gain.setValueAtTime(0.05, now);
+        gain.gain.linearRampToValueAtTime(0.4, now + 0.7);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 1.9);
+
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 1.9);
+      }
+
+      playVortexImplosion() {
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+
+        // Sub-bass thump da implosão
+        const osc = this.ctx.createOscillator();
+        const oscGain = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(180, now);
+        osc.frequency.exponentialRampToValueAtTime(25, now + 0.45);
+        oscGain.gain.setValueAtTime(0.9, now);
+        oscGain.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+        osc.connect(oscGain);
+        oscGain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.45);
+
+        // Crash de metal e estilhaços colidindo
+        const bufferSize = this.ctx.sampleRate * 0.4;
+        const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+
+        const noise = this.ctx.createBufferSource();
+        noise.buffer = buffer;
+        const filter = this.ctx.createBiquadFilter();
+        filter.type = 'highpass';
+        filter.frequency.setValueAtTime(800, now);
+        filter.frequency.exponentialRampToValueAtTime(200, now + 0.35);
+
+        const noiseGain = this.ctx.createGain();
+        noiseGain.gain.setValueAtTime(0.6, now);
+        noiseGain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+
+        noise.connect(filter);
+        filter.connect(noiseGain);
+        noiseGain.connect(this.ctx.destination);
+        noise.start(now);
+      }
+
+      playShardClank() {
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(800 + Math.random() * 300, now);
+        osc.frequency.exponentialRampToValueAtTime(220, now + 0.12);
+        gain.gain.setValueAtTime(0.3, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.12);
       }
 
       playPlateClick() {
@@ -2280,7 +2700,8 @@
     // Tipos de Bomba
     const BOMB_TYPE = {
       IMPACT: 'impact',
-      PROPULSOR: 'propulsor',
+      VORTEX: 'vortex',
+      PROPULSOR: 'vortex', // alias de compatibilidade
       TIMED: 'timed'
     };
 
@@ -2348,7 +2769,7 @@
           const _p = (window.game && window.game.player) ? window.game.player : null;
           if (e.key === '3') this.selectBomb(BOMB_TYPE.TIMED);
           if (e.key === '1' && _p && _p.unlockedImpact) this.selectBomb(BOMB_TYPE.IMPACT);
-          if (e.key === '2' && _p && _p.unlockedPropulsor) this.selectBomb(BOMB_TYPE.PROPULSOR);
+          if (e.key === '2' && _p && (_p.unlockedVortex || _p.unlockedPropulsor)) this.selectBomb(BOMB_TYPE.VORTEX);
 
           // Disparo com Barra de Espaço
           if (e.code === 'Space') {
@@ -2635,7 +3056,7 @@
           const _p2 = (window.game && window.game.player) ? window.game.player : null;
           const order = [];
           if (_p2 && _p2.unlockedImpact) order.push(BOMB_TYPE.IMPACT);
-          if (_p2 && _p2.unlockedPropulsor) order.push(BOMB_TYPE.PROPULSOR);
+          if (_p2 && (_p2.unlockedVortex || _p2.unlockedPropulsor)) order.push(BOMB_TYPE.VORTEX);
           order.push(BOMB_TYPE.TIMED);
           
           let currIdx = order.indexOf(this.selectedBomb);
@@ -2834,6 +3255,7 @@
           barrierPositions: []
         };
         this.pushables = [];
+        this.obstacles = []; // Estilhaços e rochas que bloqueiam caminho
       }
 
       buildPuzzleLayout(depth = 1) {
@@ -3128,8 +3550,7 @@
         }
 
         if (this.isBossRoom) {
-          const pos = this.findSpawnSpot();
-          if (pos) this.enemies.push(new HumanBoss(pos.x, pos.y, this.depth, true));
+          this.buildBossLayout();
         } else if (!this.isStart && !this.isSecret) {
           const baseCount = Math.floor(Math.random() * 2) + 1; // 1 a 2 base
           const depthBonus = Math.min(2, Math.floor((this.depth - 1) * 0.75));
@@ -3201,6 +3622,31 @@
           }
         }
         
+        this.generateRails();
+      }
+
+      buildBossLayout() {
+        const mid = Math.floor(GRID_SIZE / 2);
+        
+        // 4 Pilares estruturais simétricos para cobertura tática contra investidas
+        this.grid[4][4] = TILE.WALL;
+        this.grid[4][GRID_SIZE - 5] = TILE.WALL;
+        this.grid[GRID_SIZE - 5][4] = TILE.WALL;
+        this.grid[GRID_SIZE - 5][GRID_SIZE - 5] = TILE.WALL;
+
+        // Caixas quebráveis nos cantos e corredores
+        this.grid[2][2] = TILE.BREAKABLE;
+        this.grid[2][GRID_SIZE - 3] = TILE.BREAKABLE;
+        this.grid[GRID_SIZE - 3][2] = TILE.BREAKABLE;
+        this.grid[GRID_SIZE - 3][GRID_SIZE - 3] = TILE.BREAKABLE;
+        this.grid[2][mid] = TILE.BREAKABLE;
+        this.grid[GRID_SIZE - 3][mid] = TILE.BREAKABLE;
+
+        // EXCLUSIVO: exatamente UM grande chefe (o Autômato Titânico com 10 vidas)
+        this.enemies = [
+          new FinalBossAutomaton(mid * TILE_SIZE + TILE_SIZE / 2, mid * TILE_SIZE + TILE_SIZE / 2, this.depth)
+        ];
+
         this.generateRails();
       }
 
@@ -3576,7 +4022,7 @@
         this.animTimer = 0;
         this.animState = 'idle';
         this.throwAnimTimer = 0;
-        this.gauntletLevel = 1; // Nível da Manopla Mecânica (1: 140px, 2: 220px, 3: 300px)
+        this.gauntletLevel = 1; // Nível da Manopla Mecânica (1: 140px, 2: 220px, 3: 320px)
         this.bootsLevel = 0;    // 1 para liberar Dash
         this.bagLevel = 1;
         this.timerBombLevel = 1;      // +2 bombas e tipos por nível
@@ -3591,9 +4037,12 @@
         this.bombRechargeTimer = 0;
         this.hasBossKey = false;
         this.unlockedImpact = false;
+        this.unlockedVortex = false;
         this.unlockedPropulsor = false;
         this.carryingHydraulicPiston = false;
         this.hasHydraulicPiston = false;
+        this.maxHp = 3;
+        this.hp = 3;
         this.bagSlots = [];
         const caps = [0, 5, 7, 10];
         const cap = caps[this.bagLevel];
@@ -3602,12 +4051,30 @@
         }
       }
 
+      takeDamage(amount = 1) {
+        if (this.invulnerableTimer > 0 || this.isDashing) return false;
+        this.hp = Math.max(0, Math.round((this.hp - amount) * 10) / 10);
+        this.invulnerableTimer = 1.4;
+        const textDmg = amount === 0.5 ? '-½ ❤️' : `-${amount} ❤️`;
+        if (window.game) {
+          window.game.spawnFloatingText(textDmg, this.x, this.y - 20, '#ff1744');
+          window.game.spawnSparks(this.x, this.y, '#ff1744', 18);
+          window.game.updateHUD();
+        }
+        if (window.sound && window.sound.playDamage) {
+          window.sound.playDamage();
+        } else if (window.sound) {
+          window.sound.playImpactExplosion();
+        }
+        return this.hp <= 0;
+      }
+
       getThrowRange() {
         switch (this.gauntletLevel) {
-          case 1: return 130; // N�vel 1
-          case 2: return 190; // N�vel 2
+          case 1: return 140;
+          case 2: return 220;
           case 3:
-          default: return 250; // N�vel 3
+          default: return 320;
         }
       }
 
@@ -3616,10 +4083,9 @@
           case 1: return 'NV. 1 (140px)';
           case 2: return 'NV. 2 (220px)';
           case 3:
-          default: return 'NV. 3 MAX (300px)';
+          default: return 'NV. 3 MAX (320px)';
         }
       }
-
       upgradeGauntlet() {
         if (this.gauntletLevel < 3) {
           this.gauntletLevel++;
@@ -3843,9 +4309,9 @@
                return false;
             }
             if (isKnockback) {
-              if (tile === TILE.WALL || tile === TILE.BREAKABLE || tile === TILE.LOCK_GATE || tile === TILE.BOSS_DOOR || tile === TILE.ARMORY || tile === TILE.CHEST || tile === TILE.INVENTOR_NPC || tile === TILE.SWITCH_TARGET) return true;
+              if (tile === TILE.WALL || tile === TILE.BREAKABLE || tile === TILE.LOCK_GATE || tile === TILE.BOSS_DOOR || tile === TILE.ARMORY || tile === TILE.INVENTOR_NPC || tile === TILE.SWITCH_TARGET) return true;
             } else {
-              if (tile === TILE.WALL || tile === TILE.BREAKABLE || tile === TILE.LOCK_GATE || tile === TILE.BOSS_DOOR || tile === TILE.ARMORY || tile === TILE.CHEST || tile === TILE.INVENTOR_NPC || tile === TILE.SWITCH_TARGET) {
+              if (tile === TILE.WALL || tile === TILE.BREAKABLE || tile === TILE.LOCK_GATE || tile === TILE.BOSS_DOOR || tile === TILE.ARMORY || tile === TILE.INVENTOR_NPC || tile === TILE.SWITCH_TARGET) {
                 if (tile === TILE.BOSS_DOOR && Math.random() < 0.02) {
                    if (window.showToast) window.showToast('VOCÊ PRECISA DA CHAVE DO BOSS!');
                 }
@@ -3854,6 +4320,19 @@
             }
           }
         }
+
+        // Bloqueio suave por Estilhaços de Pedra/Ferro e Rochas do Boss no chão
+        if (!this.isDashing && room.obstacles && room.obstacles.length > 0) {
+          for (let i = 0; i < room.obstacles.length; i++) {
+            const obs = room.obstacles[i];
+            const dist = Math.hypot(x - obs.x, y - obs.y);
+            const obsHitbox = obs.type === 'boss_rock' ? 12 : 6;
+            if (dist < (this.radius * 0.7 + obsHitbox)) {
+              return true;
+            }
+          }
+        }
+
         return false;
       }
 
@@ -3952,8 +4431,21 @@
           const nx = distToPlayer > 0.001 ? (game.player.x - this.x) / distToPlayer : 1;
           const ny = distToPlayer > 0.001 ? (game.player.y - this.y) / distToPlayer : 0;
           game.player.applyImpulse(nx, ny, 2.2);
-          if (game.player.invulnerableTimer <= 0) {
-            game.spawnFloatingText('CUIDADO!', game.player.x, game.player.y - 20, '#ffca28');
+          if (game.player.takeDamage) {
+            const died = game.player.takeDamage(0.5);
+            if (died) game.triggerTimeRewind();
+          }
+        }
+
+        // Destroi estilhaços no raio da explosão da bomba inimiga
+        if (room.obstacles && room.obstacles.length > 0) {
+          for (let i = room.obstacles.length - 1; i >= 0; i--) {
+            const obs = room.obstacles[i];
+            if (Math.hypot(obs.x - this.x, obs.y - this.y) <= blastRadius + (obs.radius || 12)) {
+              if (obs.takeDamage(1, game, 'bomb')) {
+                room.obstacles.splice(i, 1);
+              }
+            }
           }
         }
         
@@ -4007,6 +4499,7 @@
         ctx.restore();
       }
     }
+    window.EnemyBomb = EnemyBomb;
 
     class Automaton {
       constructor(x, y, depth = 1, type = (depth === 1 ? 'rusty' : 'scout')) {
@@ -4070,6 +4563,7 @@
           if (this.type === 'rusty_charger') {
             this.chargeState = 'ready';
             this.chargeTimer = 0;
+            this.windupDuration = 0.85;
             this.chargeDir = { dx: 0, dy: 0 };
           } else if (this.type === 'rusty_bomber') {
             this.recoilTimer = 0;
@@ -4091,6 +4585,7 @@
             this.patrolSpeed = 34 + speedBonus * 0.3;
             this.chargeState = 'ready';
             this.chargeTimer = 0;
+            this.windupDuration = 0.6;
             this.chargeCooldown = 3.2 + Math.random() * 1.2;
             this.chargeDir = { dx: 0, dy: 0 };
           } else if (this.type === 'bomber') {
@@ -4129,7 +4624,8 @@
         this.alertAnimation = 0;
         this.boxBreakTimer = 0;
         this.targetBox = null;
-        this.hasArmor = (this.type === 'charger' || this.type === 'rusty_charger');
+        // Blindagem do Charger surge a partir do Nível 3 (depth >= 3). Nível 2 não tem blindagem.
+        this.hasArmor = (this.type === 'charger' || this.type === 'rusty_charger') && (this.depth >= 3);
         this.attackPhase = 0;
       }
 
@@ -4308,6 +4804,34 @@
               window.game.spawnSparks(this.x, this.y, isRustyCharger ? '#8d6e63' : '#ffb74d', 2);
             }
 
+            // Colisão contínua da investida contra Charlotte (1 coração de dano)
+            const segDx = targetX - this.x;
+            const segDy = targetY - this.y;
+            const segLenSq = segDx * segDx + segDy * segDy;
+            let t = 0;
+            if (segLenSq > 0.0001) {
+              t = Math.max(0, Math.min(1, ((player.x - this.x) * segDx + (player.y - this.y) * segDy) / segLenSq));
+            }
+            const closestX = this.x + t * segDx;
+            const closestY = this.y + t * segDy;
+            const distToPlayer = Math.hypot(player.x - closestX, player.y - closestY);
+            const hitRadius = this.radius + player.radius + 6;
+
+            if (distToPlayer < hitRadius) {
+              const pushDirX = distToPlayer > 0.001 ? (player.x - closestX) / distToPlayer : this.chargeDir.dx;
+              const pushDirY = distToPlayer > 0.001 ? (player.y - closestY) / distToPlayer : this.chargeDir.dy;
+              if (window.sound) window.sound.playImpactExplosion();
+              if (window.game) {
+                window.game.spawnSparks(player.x, player.y, '#ff1744', 20);
+                window.game.spawnFloatingText('ATROPELADO! -1 ❤️', player.x, player.y - 20, '#ff1744');
+              }
+              const died = player.takeDamage(1.0);
+              player.applyImpulse(pushDirX, pushDirY, 2.8);
+              if (died && window.game) {
+                window.game.triggerTimeRewind();
+              }
+            }
+
             // Destroi TODOS os obstaculos no caminho da investida (caixas e paredes internas)!
             const checkRadius = this.radius + 6;
             const left = Math.floor((targetX - checkRadius) / TILE_SIZE);
@@ -4328,6 +4852,17 @@
                       window.game.spawnFloatingText('DEMOLIDO!', targetX, targetY - 14, '#ffca28');
                     }
                   }
+                }
+              }
+            }
+
+            // Destroi estilhaços e rochas no caminho da investida do Charger!
+            if (room.obstacles && room.obstacles.length > 0) {
+              for (let i = room.obstacles.length - 1; i >= 0; i--) {
+                const obs = room.obstacles[i];
+                if (Math.hypot(targetX - obs.x, targetY - obs.y) < this.radius + (obs.radius || 12) + 4) {
+                  obs.takeDamage(99, window.game, 'charge');
+                  room.obstacles.splice(i, 1);
                 }
               }
             }
@@ -4482,7 +5017,8 @@
               const normX = dx / dist;
               const normY = dy / dist;
               this.chargeState = 'windup';
-              this.chargeTimer = this.type === 'rusty_charger' ? 0.85 : 0.6;
+              this.windupDuration = this.type === 'rusty_charger' ? 0.85 : 0.6;
+              this.chargeTimer = this.windupDuration;
               this.chargeDir = { dx: normX, dy: normY };
               this.facing = { dx: normX, dy: normY };
               if (window.sound) window.sound.playTimedBeep(1.5);
@@ -4705,6 +5241,32 @@
             }
           }
         }
+
+        // Colisão com Estilhaços e Rochas no Chão
+        if (room.obstacles && room.obstacles.length > 0) {
+          for (let i = room.obstacles.length - 1; i >= 0; i--) {
+            const obs = room.obstacles[i];
+            const dist = Math.hypot(x - obs.x, y - obs.y);
+            if (dist < (this.radius + (obs.radius || 12) - 2)) {
+              const isHeavyCharge = this.isFinalBoss || ((this.type === 'charger' || this.type === 'rusty_charger') && this.chargeState === 'charge');
+              const isHighSpeed = Math.hypot(this.vx || 0, this.vy || 0) > 100;
+              if (isHeavyCharge || isHighSpeed) {
+                obs.takeDamage(99, window.game, 'charge');
+                room.obstacles.splice(i, 1);
+              } else if (this.state === 'chase' && obs.type === 'stone') {
+                // Autômato comum avançando em perseguição quebra estilhaço de pedra
+                if (obs.takeDamage(1, window.game, 'charge')) {
+                  room.obstacles.splice(i, 1);
+                } else {
+                  collision = true;
+                }
+              } else {
+                collision = true;
+              }
+            }
+          }
+        }
+
         return collision;
       }
 
@@ -4737,6 +5299,95 @@
         if (this.state === 'alert' || this.isStumbling || this.recoilTimer > 0 || isWindingUp) {
           renderX += (Math.random() - 0.5) * (this.isStumbling || this.recoilTimer > 0 ? 3 : 4);
           renderY += (Math.random() - 0.5) * (this.isStumbling || this.recoilTimer > 0 ? 3 : 4);
+        }
+
+        // Linha indicadora de trajetória e timing do ataque em linha reta (Charger)
+        if (isWindingUp && this.chargeDir && (this.chargeDir.dx !== 0 || this.chargeDir.dy !== 0)) {
+          ctx.save();
+          const totalWindup = this.windupDuration || (this.type === 'rusty_charger' ? 0.85 : 0.6);
+          const progress = Math.min(1, Math.max(0, 1 - (this.chargeTimer / totalWindup)));
+
+          const cdx = this.chargeDir.dx;
+          const cdy = this.chargeDir.dy;
+
+          // Calcula a distância exata até a borda da sala
+          const minB = TILE_SIZE + this.radius;
+          const maxBX = WORLD_WIDTH - TILE_SIZE - this.radius;
+          const maxBY = WORLD_HEIGHT - TILE_SIZE - this.radius;
+
+          let distX = Infinity;
+          let distY = Infinity;
+          if (cdx > 0.001) distX = (maxBX - this.x) / cdx;
+          else if (cdx < -0.001) distX = (minB - this.x) / cdx;
+
+          if (cdy > 0.001) distY = (maxBY - this.y) / cdy;
+          else if (cdy < -0.001) distY = (minB - this.y) / cdy;
+
+          const rayDist = Math.max(20, Math.min(distX, distY, 800));
+          const targetEndX = this.x + cdx * rayDist;
+          const targetEndY = this.y + cdy * rayDist;
+
+          // 1. Faixa de perigo translúcida (Largura da investida / Hitbox do Charger)
+          ctx.lineWidth = this.radius * 2.2;
+          ctx.strokeStyle = `rgba(255, 60, 0, ${0.08 + progress * 0.16})`;
+          ctx.beginPath();
+          ctx.moveTo(this.x, this.y);
+          ctx.lineTo(targetEndX, targetEndY);
+          ctx.stroke();
+
+          // 2. Linha tracejada animada de mira (mostra exatamente PARA ONDE ele vai atacar)
+          ctx.lineWidth = 2.5 + progress * 1.5;
+          ctx.strokeStyle = `rgba(255, 140, 0, ${0.6 + progress * 0.4})`;
+          ctx.setLineDash([10, 6]);
+          ctx.lineDashOffset = -now * 75;
+          ctx.beginPath();
+          ctx.moveTo(this.x, this.y);
+          ctx.lineTo(targetEndX, targetEndY);
+          ctx.stroke();
+
+          // 3. Feixe interno de energia que preenche a linha (mostra QUANDO vai atacar)
+          const fillDist = rayDist * progress;
+          const fillX = this.x + cdx * fillDist;
+          const fillY = this.y + cdy * fillDist;
+          ctx.setLineDash([]);
+          ctx.lineWidth = 2.0;
+          ctx.strokeStyle = progress > 0.75 ? '#ff1744' : '#ffd54f';
+          ctx.beginPath();
+          ctx.moveTo(this.x, this.y);
+          ctx.lineTo(fillX, fillY);
+          ctx.stroke();
+
+          // 4. Retículo / Marcador de impacto no destino
+          ctx.beginPath();
+          const reticleRadius = 6 + Math.sin(now * 16) * 2;
+          ctx.arc(targetEndX, targetEndY, reticleRadius, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(255, 23, 68, ${0.4 + progress * 0.5})`;
+          ctx.fill();
+          ctx.strokeStyle = '#ffffff';
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+
+          // Cruz no ponto de impacto
+          ctx.beginPath();
+          ctx.moveTo(targetEndX - 7, targetEndY);
+          ctx.lineTo(targetEndX + 7, targetEndY);
+          ctx.moveTo(targetEndX, targetEndY - 7);
+          ctx.lineTo(targetEndX, targetEndY + 7);
+          ctx.stroke();
+
+          ctx.restore();
+        }
+
+        // Rastro de velocidade durante a investida ativa
+        if (isCharging && this.chargeDir && (this.chargeDir.dx !== 0 || this.chargeDir.dy !== 0)) {
+          ctx.save();
+          ctx.lineWidth = this.radius * 1.8;
+          ctx.strokeStyle = 'rgba(255, 110, 0, 0.22)';
+          ctx.beginPath();
+          ctx.moveTo(this.x - this.chargeDir.dx * 36, this.y - this.chargeDir.dy * 36);
+          ctx.lineTo(this.x, this.y);
+          ctx.stroke();
+          ctx.restore();
         }
 
         // Sombra nos pés
@@ -5163,6 +5814,7 @@
         ctx.restore();
       }
     }
+    window.Automaton = Automaton;
 
     class HumanBoss extends Automaton {
       constructor(x, y, depth, isFinalBoss = false) {
@@ -5332,7 +5984,7 @@
         this.bombCooldown -= dt;
         if (this.bombCooldown <= 0 && window.game) {
           if (dist <= TILE_SIZE * 2.5) {
-            this.selectedBomb = Math.random() < 0.5 ? BOMB_TYPE.PROPULSOR : BOMB_TYPE.IMPACT;
+            this.selectedBomb = Math.random() < 0.5 ? BOMB_TYPE.VORTEX : BOMB_TYPE.IMPACT;
           } else {
             this.selectedBomb = Math.random() < 0.6 ? BOMB_TYPE.IMPACT : BOMB_TYPE.TIMED;
           }
@@ -5490,6 +6142,672 @@
       }
     }
 
+    class FinalBossAutomaton extends Automaton {
+      constructor(x, y, depth) {
+        super(x, y, depth, 'final_boss');
+        this.isFinalBoss = true;
+        this.radius = 26;
+        this.maxHp = 10;
+        this.hp = 10;
+        this.phase = 1;
+        this.speed = 85;
+
+        this.hasArmor = false;
+        this.armorTimer = 0;
+        this.armorCooldown = 12.0;
+
+        this.chargeState = 'ready'; // ready, windup, charge
+        this.chargeTimer = 0;
+        this.chargeCooldown = 4.5;
+        this.chargeDir = { dx: 0, dy: 1 };
+        this.chargeChainCount = 0;
+        this.chargeMaxChain = 1;
+
+        this.bombCooldown = 2.8;
+        this.slamCooldown = 8.0;
+        this.slamState = 'none'; // none, windup, recover
+        this.slamTimer = 0;
+        this.shockwaveActive = false;
+        this.shockwaveRadius = 0;
+
+        this.animTimer = 0;
+        this.gearAngle = 0;
+        this.facing = { dx: 0, dy: 1 };
+        this.flashTimer = 0;
+        this.invulnerableTimer = 0;
+      }
+
+      update(dt, player, room) {
+        this.animTimer += dt;
+        this.gearAngle += dt * (this.phase === 2 ? 8 : 4);
+        if (this.flashTimer > 0) this.flashTimer -= dt;
+        if (this.invulnerableTimer > 0) this.invulnerableTimer -= dt;
+
+        const dx = player.x - this.x;
+        const dy = player.y - this.y;
+        const dist = Math.hypot(dx, dy) || 1;
+        const normX = dx / dist;
+        const normY = dy / dist;
+
+        // Ativação da Fase 2 (Enlouquecido / Sobrecarga com 5 ou menos vidas)
+        if (this.hp <= 5 && this.phase === 1) {
+          this.phase = 2;
+          this.speed = 125;
+          this.chargeMaxChain = 3;
+          this.chargeCooldown = 1.8;
+          this.bombCooldown = 1.0;
+          this.slamCooldown = 3.5;
+          if (window.game) {
+            window.game.spawnSparks(this.x, this.y, '#ff1744', 40);
+            window.game.spawnSparks(this.x, this.y, '#ff9100', 30);
+            window.game.spawnFloatingText('⚡ SOBRECARGA MECÂNICA! FASE 2! ⚡', this.x, this.y - 38, '#ff1744');
+          }
+          if (window.sound) {
+            if (window.sound.playBossRoar) window.sound.playBossRoar();
+            else window.sound.playBigTimedExplosion();
+          }
+        }
+
+        // Fumaça contínua e brasas na Fase 2
+        if (this.phase === 2 && window.game && Math.random() < 0.65) {
+          window.game.spawnSparks(this.x + (Math.random() - 0.5) * 22, this.y - 18, '#ff3d00', 2);
+          window.game.spawnSparks(this.x + (Math.random() - 0.5) * 22, this.y - 18, '#1a1a1a', 1);
+        }
+
+        // Onda de choque em expansão do Ground Slam (causa dano sísmico de 0.5 coração)
+        if (this.shockwaveActive) {
+          this.shockwaveRadius += dt * 320;
+          if (player && player.alive !== false && player.invulnerableTimer <= 0) {
+            const dist = Math.hypot(player.x - this.x, player.y - this.y);
+            if (Math.abs(dist - this.shockwaveRadius) < 28) {
+              const nx = dist > 0.001 ? (player.x - this.x) / dist : 1;
+              const ny = dist > 0.001 ? (player.y - this.y) / dist : 0;
+              if (window.sound) window.sound.playImpactExplosion();
+              const died = player.takeDamage(0.5);
+              player.applyImpulse(nx, ny, 2.0);
+              if (died && window.game) {
+                window.game.triggerTimeRewind();
+              }
+            }
+          }
+          if (this.shockwaveRadius > 150) {
+            this.shockwaveActive = false;
+            this.shockwaveRadius = 0;
+          }
+        }
+
+        // 1. Execução do Golpe no Chão (Ground Slam & Queda de Rochas)
+        if (this.slamState === 'windup') {
+          this.slamTimer -= dt;
+          if (window.game && Math.random() < 0.5) {
+            window.game.spawnSparks(this.x, this.y, '#ffd54f', 3);
+          }
+          if (this.slamTimer <= 0) {
+            this.executeGroundSlam(player, room);
+            this.slamState = 'recover';
+            this.slamTimer = 0.5;
+          }
+          return;
+        } else if (this.slamState === 'recover') {
+          this.slamTimer -= dt;
+          if (this.slamTimer <= 0) {
+            this.slamState = 'none';
+            this.slamCooldown = this.phase === 2 ? 5.5 : 8.5;
+          }
+          return;
+        }
+
+        // 2. Execução da Investida Rápida (Charge)
+        if (this.chargeState === 'windup') {
+          this.chargeTimer -= dt;
+          if (window.game && Math.random() < 0.5) {
+            window.game.spawnSparks(this.x, this.y, '#ff1744', 3);
+          }
+          if (this.chargeTimer <= 0) {
+            this.chargeState = 'charge';
+            this.chargeTimer = 1.2;
+            if (window.sound) window.sound.playPropulsorSteam();
+            if (window.game) {
+              window.game.spawnFloatingText(this.phase === 2 ? 'INVESTIDA FURIOSA!' : 'INVESTIDA TITÂNICA!', this.x, this.y - 28, '#ff5252');
+            }
+          }
+          return;
+        }
+
+        if (this.chargeState === 'charge') {
+          this.chargeTimer -= dt;
+          const chargeSpeed = this.phase === 2 ? 460 : 380;
+          const nextX = this.x + this.chargeDir.dx * chargeSpeed * dt;
+          const nextY = this.y + this.chargeDir.dy * chargeSpeed * dt;
+
+          if (window.game && Math.random() < 0.6) {
+            window.game.spawnSparks(this.x, this.y, this.phase === 2 ? '#ff1744' : '#ff9100', 3);
+          }
+
+          // Detecção contínua e infalível de colisão da investida contra Charlotte (Segmento de movimento)
+          const segDx = nextX - this.x;
+          const segDy = nextY - this.y;
+          const segLenSq = segDx * segDx + segDy * segDy;
+          let t = 0;
+          if (segLenSq > 0.0001) {
+            t = Math.max(0, Math.min(1, ((player.x - this.x) * segDx + (player.y - this.y) * segDy) / segLenSq));
+          }
+          const closestX = this.x + t * segDx;
+          const closestY = this.y + t * segDy;
+          const distToPlayer = Math.hypot(player.x - closestX, player.y - closestY);
+          const hitRadius = this.radius + player.radius + 8;
+
+          if (distToPlayer < hitRadius) {
+            const pushDirX = distToPlayer > 0.001 ? (player.x - closestX) / distToPlayer : this.chargeDir.dx;
+            const pushDirY = distToPlayer > 0.001 ? (player.y - closestY) / distToPlayer : this.chargeDir.dy;
+            
+            if (window.sound) window.sound.playImpactExplosion();
+            if (window.game) {
+              window.game.spawnSparks(player.x, player.y, '#ff1744', 25);
+            }
+
+            // CRÍTICO: Chamar takeDamage(1.0) ANTES de applyImpulse!
+            const died = player.takeDamage(1.0);
+            player.applyImpulse(pushDirX, pushDirY, 3.2);
+
+            if (died && window.game) {
+              window.game.triggerTimeRewind();
+            }
+          }
+
+          // Destroi caixas de madeira no caminho
+          const checkRadius = this.radius + 6;
+          const left = Math.floor((nextX - checkRadius) / TILE_SIZE);
+          const right = Math.floor((nextX + checkRadius) / TILE_SIZE);
+          const top = Math.floor((nextY - checkRadius) / TILE_SIZE);
+          const bottom = Math.floor((nextY + checkRadius) / TILE_SIZE);
+
+          for (let ty = top; ty <= bottom; ty++) {
+            for (let tx = left; tx <= right; tx++) {
+              if (tx > 0 && tx < GRID_SIZE - 1 && ty > 0 && ty < GRID_SIZE - 1) {
+                const tile = room.grid[ty][tx];
+                if (tile === TILE.BREAKABLE) {
+                  room.grid[ty][tx] = TILE.EMPTY;
+                  if (window.sound) window.sound.playImpactExplosion();
+                  if (window.game) {
+                    window.game.spawnSparks(tx * TILE_SIZE + TILE_SIZE/2, ty * TILE_SIZE + TILE_SIZE/2, '#8d6e63', 14);
+                    window.game.spawnDebris(tx * TILE_SIZE + TILE_SIZE/2, ty * TILE_SIZE + TILE_SIZE/2);
+                  }
+                }
+              }
+            }
+          }
+
+          // Destroi estilhaços e rochas no caminho da investida do Boss!
+          if (room.obstacles && room.obstacles.length > 0) {
+            for (let i = room.obstacles.length - 1; i >= 0; i--) {
+              const obs = room.obstacles[i];
+              if (Math.hypot(nextX - obs.x, nextY - obs.y) < this.radius + (obs.radius || 12) + 6) {
+                obs.takeDamage(99, window.game, 'charge');
+                room.obstacles.splice(i, 1);
+              }
+            }
+          }
+
+          const hitWall = (nextX - this.radius < TILE_SIZE || nextX + this.radius > WORLD_WIDTH - TILE_SIZE ||
+                           nextY - this.radius < TILE_SIZE || nextY + this.radius > WORLD_HEIGHT - TILE_SIZE);
+
+          if (hitWall || this.chargeTimer <= 0) {
+            if (window.sound) window.sound.playImpactExplosion();
+            if (window.game) {
+              window.game.spawnSparks(this.x, this.y, '#ffd54f', 20);
+              window.game.spawnDebris(this.x, this.y);
+            }
+
+            this.chargeChainCount++;
+            if (this.phase === 2 && this.chargeChainCount < this.chargeMaxChain) {
+              // Fase 2: encadeia nova investida em outra direção imediatamente!
+              const cdx = player.x - this.x;
+              const cdy = player.y - this.y;
+              const clen = Math.hypot(cdx, cdy) || 1;
+              this.chargeDir = { dx: cdx / clen, dy: cdy / clen };
+              this.chargeState = 'windup';
+              this.chargeTimer = 0.35;
+              if (window.game) window.game.spawnFloatingText('ENCADEANDO INVESTIDA!', this.x, this.y - 25, '#ff1744');
+              return;
+            } else {
+              this.chargeState = 'ready';
+              this.chargeChainCount = 0;
+              this.chargeCooldown = this.phase === 2 ? 3.0 : 5.0;
+              return;
+            }
+          } else {
+            this.x = nextX;
+            this.y = nextY;
+            return;
+          }
+        }
+
+        // 3. Atualização da Blindagem
+        if (this.hasArmor) {
+          this.armorTimer -= dt;
+          if (this.armorTimer <= 0) {
+            this.hasArmor = false;
+            this.armorCooldown = this.phase === 2 ? 10.0 : 14.0;
+            if (window.game) {
+              window.game.spawnFloatingText('BLINDAGEM DESATIVADA', this.x, this.y - 30, '#90caf9');
+            }
+          }
+        } else {
+          this.armorCooldown -= dt;
+          if (this.armorCooldown <= 0) {
+            this.activateBlindagem();
+          }
+        }
+
+        // 4. Cooldowns
+        if (this.slamCooldown > 0) this.slamCooldown -= dt;
+        if (this.chargeCooldown > 0) this.chargeCooldown -= dt;
+        if (this.bombCooldown > 0) this.bombCooldown -= dt;
+
+        // 5. Decisão de Ação Ofensiva
+        if (this.slamCooldown <= 0 && this.chargeState === 'ready' && !this.shockwaveActive) {
+          this.slamState = 'windup';
+          this.slamTimer = 0.7;
+          if (window.sound) window.sound.playPropulsorSteam();
+          if (window.game) {
+            window.game.spawnFloatingText('IMPACTO SÍSMICO!', this.x, this.y - 32, '#ff9100');
+          }
+          return;
+        }
+
+        if (this.chargeCooldown <= 0 && this.chargeState === 'ready' && this.slamState === 'none') {
+          this.chargeState = 'windup';
+          this.chargeTimer = this.phase === 2 ? 0.6 : 0.85;
+          this.chargeDir = { dx: normX, dy: normY };
+          this.facing = { dx: normX, dy: normY };
+          if (window.sound) window.sound.playTimedBeep(1.5);
+          return;
+        }
+
+        if (this.bombCooldown <= 0 && window.game) {
+          this.launchBombAttack(player);
+          this.bombCooldown = this.phase === 2 ? (1.2 + Math.random() * 0.6) : (2.4 + Math.random() * 0.8);
+        }
+
+        // 6. Deslocamento Normal em Arena
+        this.facing = { dx: normX, dy: normY };
+        let moveVx = 0;
+        let moveVy = 0;
+
+        if (dist < TILE_SIZE * 3.0) {
+          moveVx = -normX * 0.7;
+          moveVy = -normY * 0.7;
+        } else if (dist > TILE_SIZE * 5.0) {
+          moveVx = normX * 0.9;
+          moveVy = normY * 0.9;
+        } else {
+          const weave = Math.sin(this.animTimer * 2.5);
+          moveVx = -normY * weave * 0.7 + normX * 0.3;
+          moveVy = normX * weave * 0.7 + normY * 0.3;
+        }
+
+        const moveMag = Math.hypot(moveVx, moveVy);
+        if (moveMag > 0.001) {
+          moveVx /= moveMag;
+          moveVy /= moveMag;
+          const targetX = this.x + moveVx * this.speed * dt;
+          const targetY = this.y + moveVy * this.speed * dt;
+          this.moveWithCollision(targetX, targetY, room, false);
+        }
+      }
+
+      executeGroundSlam(player, room) {
+        this.shockwaveActive = true;
+        this.shockwaveRadius = 15;
+        if (window.sound) {
+          if (window.sound.playBigTimedExplosion) window.sound.playBigTimedExplosion();
+          else window.sound.playImpactExplosion();
+        }
+        if (window.game) {
+          window.game.spawnSparks(this.x, this.y, '#ffd54f', 32);
+          window.game.spawnSparks(this.x, this.y, '#8d6e63', 25);
+          window.game.spawnDebris(this.x, this.y);
+          window.game.spawnFloatingText('💥 ESTRONDO SÍSMICO!', this.x, this.y - 32, '#ffca28');
+
+          // Esmaga estilhaços e rochas no chão ao redor do epicentro do impacto sísmico!
+          if (room.obstacles && room.obstacles.length > 0) {
+            for (let i = room.obstacles.length - 1; i >= 0; i--) {
+              const obs = room.obstacles[i];
+              if (Math.hypot(this.x - obs.x, this.y - obs.y) <= 90) {
+                obs.takeDamage(99, window.game, 'charge');
+                room.obstacles.splice(i, 1);
+              }
+            }
+          }
+
+          // Queda de rochas do teto da mina
+          const rockCount = this.phase === 2 ? 8 : 5;
+          for (let i = 0; i < rockCount; i++) {
+            let rx, ry;
+            if (i === 0) {
+              rx = player.x + (player.facing ? player.facing.dx * 18 : 0);
+              ry = player.y + (player.facing ? player.facing.dy * 18 : 0);
+            } else if (i === 1 && this.phase === 2) {
+              rx = player.x + (Math.random() - 0.5) * 55;
+              ry = player.y + (Math.random() - 0.5) * 55;
+            } else {
+              const gx = Math.floor(Math.random() * (GRID_SIZE - 4)) + 2;
+              const gy = Math.floor(Math.random() * (GRID_SIZE - 4)) + 2;
+              rx = gx * TILE_SIZE + TILE_SIZE / 2;
+              ry = gy * TILE_SIZE + TILE_SIZE / 2;
+            }
+
+            rx = Math.max(TILE_SIZE * 1.5, Math.min(WORLD_WIDTH - TILE_SIZE * 1.5, rx));
+            ry = Math.max(TILE_SIZE * 1.5, Math.min(WORLD_HEIGHT - TILE_SIZE * 1.5, ry));
+
+            const duration = this.phase === 2 ? (0.95 + Math.random() * 0.35) : (1.25 + Math.random() * 0.45);
+            if (!window.game.fallingRocks) window.game.fallingRocks = [];
+            window.game.fallingRocks.push(new FallingRock(rx, ry, duration));
+          }
+        }
+      }
+
+      launchBombAttack(player) {
+        if (!window.game) return;
+        const isPhase2 = this.phase === 2;
+        const typesToLaunch = [];
+
+        if (isPhase2 && Math.random() < 0.55) {
+          // Fase 2: Salvo duplo
+          typesToLaunch.push(BOMB_TYPE.IMPACT);
+          typesToLaunch.push(BOMB_TYPE.TIMED);
+        } else {
+          typesToLaunch.push(Math.random() < 0.5 ? BOMB_TYPE.IMPACT : BOMB_TYPE.TIMED);
+        }
+
+        typesToLaunch.forEach((type, idx) => {
+          if (type === BOMB_TYPE.IMPACT) {
+            const leadX = player.x + (player.facing ? player.facing.dx * 20 : 0) + (idx * 25);
+            const leadY = player.y + (player.facing ? player.facing.dy * 20 : 0);
+            const dur = isPhase2 ? 1.6 : 2.4;
+            window.game.targetMarkers.push(new TargetMarker(leadX, leadY, dur, this, BOMB_TYPE.IMPACT));
+            if (window.sound) window.sound.playTimedBeep(1.8);
+            if (window.game) window.game.spawnFloatingText('MIRA IMPACTO!', this.x, this.y - 24, '#ff5252');
+          } else {
+            const leadDist = 55;
+            const leadX = player.x + (player.facing ? player.facing.dx * leadDist : 0) - (idx * 25);
+            const leadY = player.y + (player.facing ? player.facing.dy * leadDist : 0);
+            const gx = Math.max(1, Math.min(GRID_SIZE - 2, Math.round(leadX / TILE_SIZE)));
+            const gy = Math.max(1, Math.min(GRID_SIZE - 2, Math.round(leadY / TILE_SIZE)));
+            window.game.timedBombs.push(new TimedBomb(gx, gy));
+            if (window.sound) window.sound.playThrowWhoosh();
+            if (window.game) {
+              window.game.spawnSparks(gx * TILE_SIZE + TILE_SIZE/2, gy * TILE_SIZE + TILE_SIZE/2, '#ffd54f', 12);
+              window.game.spawnFloatingText('MINA TIMER!', this.x, this.y - 24, '#ffd54f');
+            }
+          }
+        });
+      }
+
+      activateBlindagem() {
+        this.hasArmor = true;
+        this.armorTimer = 7.0;
+        if (window.game) {
+          window.game.spawnSparks(this.x, this.y, '#00e5ff', 30);
+          window.game.spawnSparks(this.x, this.y, '#90caf9', 20);
+          window.game.spawnFloatingText('🛡️ BLINDAGEM ATIVADA!', this.x, this.y - 32, '#00e5ff');
+        }
+        if (window.sound) window.sound.playPlateClick();
+      }
+
+      takeDamage(amount, engine, bombType = 'timed') {
+        if (this.hasArmor) {
+          if (bombType === 'timed') {
+            this.hasArmor = false;
+            this.flashTimer = 0.5;
+            this.armorCooldown = this.phase === 2 ? 10.0 : 14.0;
+            if (engine) {
+              engine.spawnSparks(this.x, this.y, '#ffd54f', 32);
+              engine.spawnSparks(this.x, this.y, '#ff9100', 20);
+              engine.spawnFloatingText('BLINDAGEM DESTRUÍDA!', this.x, this.y - 32, '#ffd54f');
+              if (window.sound) window.sound.playImpactExplosion();
+            }
+            return false;
+          } else {
+            this.flashTimer = 0.2;
+            if (engine) {
+              engine.spawnSparks(this.x, this.y, '#90caf9', 15);
+              engine.spawnFloatingText('BLINDAGEM! (USE TIMER BOMB)', this.x, this.y - 32, '#90caf9');
+              if (window.sound) window.sound.playTimedBeep(0.8);
+            }
+            return false;
+          }
+        }
+
+        this.hp = Math.max(0, this.hp - amount);
+        this.flashTimer = 0.35;
+        if (engine) {
+          engine.spawnSparks(this.x, this.y, '#ff1744', 24);
+          engine.spawnFloatingText(`-${amount} HP`, this.x, this.y - 28, '#ff5252');
+        }
+
+        if (this.hp <= 0) {
+          if (engine) {
+            for (let i = 0; i < 15; i++) {
+              const offX = (Math.random() - 0.5) * 60;
+              const offY = (Math.random() - 0.5) * 60;
+              engine.spawnSparks(this.x + offX, this.y + offY, '#ffd700', 10);
+              engine.ccDrops.push(new ChronoCoreDrop(this.x + offX, this.y + offY));
+            }
+            engine.player.parts = (engine.player.parts || 0) + 15;
+            engine.spawnFloatingText('+15 PEÇAS!', this.x, this.y - 45, '#cfd8dc');
+            engine.spawnFloatingText('AUTÔMATO TITÂNICO DESTRUÍDO!', this.x, this.y - 60, '#ffd700');
+            showToast('CHEFE FINAL DERROTADO! A MINA FOI LIBERTADA!');
+          }
+          if (window.game) saveGame();
+          return true;
+        }
+        return false;
+      }
+
+      render(ctx, now) {
+        ctx.save();
+        const isFlashing = this.flashTimer > 0;
+        const isWindup = this.chargeState === 'windup';
+        const isCharging = this.chargeState === 'charge';
+        const isSlamming = this.slamState === 'windup';
+
+        // Linha indicadora de mira a laser da investida
+        if (isWindup && this.chargeDir && (this.chargeDir.dx !== 0 || this.chargeDir.dy !== 0)) {
+          ctx.save();
+          const targetEndX = this.x + this.chargeDir.dx * 600;
+          const targetEndY = this.y + this.chargeDir.dy * 600;
+
+          ctx.lineWidth = this.radius * 2.2;
+          ctx.strokeStyle = 'rgba(255, 23, 68, 0.2)';
+          ctx.beginPath();
+          ctx.moveTo(this.x, this.y);
+          ctx.lineTo(targetEndX, targetEndY);
+          ctx.stroke();
+
+          ctx.lineWidth = 2.5;
+          ctx.strokeStyle = '#ff1744';
+          ctx.setLineDash([8, 6]);
+          ctx.beginPath();
+          ctx.moveTo(this.x, this.y);
+          ctx.lineTo(targetEndX, targetEndY);
+          ctx.stroke();
+          ctx.restore();
+        }
+
+        // Onda de choque no chão
+        if (this.shockwaveActive && this.shockwaveRadius > 0) {
+          ctx.save();
+          const alpha = Math.max(0, 1 - (this.shockwaveRadius / 150));
+          ctx.strokeStyle = `rgba(255, 215, 0, ${alpha})`;
+          ctx.lineWidth = 4.0;
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.shockwaveRadius, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.restore();
+        }
+
+        // Sombra sob os pés
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+        ctx.beginPath();
+        ctx.ellipse(this.x, this.y + this.radius - 2, this.radius * 1.1, 7, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // 4 Pernas mecânicas hidráulicas
+        const walkCycle = this.animTimer * (this.phase === 2 ? 14 : 9);
+        ctx.strokeStyle = isFlashing ? '#ffffff' : '#263238';
+        ctx.lineWidth = 4.0;
+        ctx.lineCap = 'round';
+        for (let i = 0; i < 4; i++) {
+          const side = (i % 2 === 0) ? -1 : 1;
+          const legIdx = Math.floor(i / 2);
+          const phase = walkCycle + legIdx * 1.6 + (side > 0 ? Math.PI : 0);
+          const legOffset = Math.sin(phase) * 6;
+          const legX = this.x + side * (this.radius * 0.9);
+          const legY = this.y - 6 + legIdx * 12;
+          ctx.beginPath();
+          ctx.moveTo(this.x + side * (this.radius * 0.4), legY);
+          ctx.lineTo(legX + side * 4, legY + 8 + legOffset);
+          ctx.stroke();
+        }
+
+        // Chassi Principal Robusto (Ferro Fundido e Bronze Blindado)
+        let baseGrad = ctx.createRadialGradient(this.x - 6, this.y - 6, 4, this.x, this.y, this.radius);
+        if (this.phase === 2) {
+          baseGrad.addColorStop(0, '#5c1d1d');
+          baseGrad.addColorStop(0.7, '#2e1111');
+          baseGrad.addColorStop(1, '#1a0808');
+        } else {
+          baseGrad.addColorStop(0, '#546e7a');
+          baseGrad.addColorStop(0.7, '#37474f');
+          baseGrad.addColorStop(1, '#212121');
+        }
+
+        ctx.fillStyle = isFlashing ? '#ffffff' : baseGrad;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.strokeStyle = this.phase === 2 ? '#ff1744' : '#ffd54f';
+        ctx.lineWidth = 3.0;
+        ctx.stroke();
+
+        // Grande Engrenagem Central Giratória
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.rotate(this.gearAngle);
+        ctx.strokeStyle = '#263238';
+        ctx.lineWidth = 2.0;
+        const cogTeeth = 8;
+        for (let t = 0; t < cogTeeth; t++) {
+          ctx.rotate((Math.PI * 2) / cogTeeth);
+          ctx.fillStyle = '#b08d57';
+          ctx.fillRect(10, -3, 6, 6);
+        }
+        ctx.restore();
+
+        // Fornalha / Núcleo de Energia Central
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, 11, 0, Math.PI * 2);
+        ctx.fillStyle = this.phase === 2 ? '#ff1744' : '#ff9100';
+        ctx.fill();
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        // Visor / Olho Ótico Ciclópico
+        const eyeX = this.x + this.facing.dx * 12;
+        const eyeY = this.y + this.facing.dy * 12;
+        ctx.fillStyle = '#102027';
+        ctx.beginPath();
+        ctx.arc(eyeX, eyeY, 7, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = this.phase === 2 ? '#ff1744' : '#ffd54f';
+        ctx.beginPath();
+        ctx.arc(eyeX, eyeY, 4, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Efeito Visual de Blindagem Ativa (Escudo Hexagonal e Placas)
+        if (this.hasArmor) {
+          ctx.save();
+          const shieldPulse = (Math.sin(now * 8) + 1) / 2;
+          ctx.strokeStyle = `rgba(0, 229, 255, ${0.7 + shieldPulse * 0.3})`;
+          ctx.lineWidth = 3.0;
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.radius + 8 + shieldPulse * 3, 0, Math.PI * 2);
+          ctx.stroke();
+
+          ctx.fillStyle = `rgba(0, 229, 255, ${0.12 + shieldPulse * 0.1})`;
+          ctx.fill();
+
+          ctx.font = 'bold 9px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillStyle = '#00e5ff';
+          ctx.fillText('🛡️ BLINDAGEM ATIVA', this.x, this.y - this.radius - 14);
+          ctx.restore();
+        }
+
+        ctx.restore();
+
+        // Barra de Vida Superior do Chefe Titânico (10 Vidas Segmentadas)
+        const barWidth = 260;
+        const barHeight = 14;
+        const barX = (WORLD_WIDTH - barWidth) / 2;
+        const barY = 32;
+
+        ctx.save();
+        ctx.fillStyle = 'rgba(10, 14, 20, 0.9)';
+        ctx.fillRect(barX - 4, barY - 18, barWidth + 8, barHeight + 24);
+        ctx.strokeStyle = this.phase === 2 ? '#ff1744' : '#ffd54f';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(barX - 4, barY - 18, barWidth + 8, barHeight + 24);
+
+        ctx.font = 'bold 11px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = this.phase === 2 ? '#ff5252' : '#ffca28';
+        const title = this.phase === 2 
+          ? '⚡ AUTÔMATO TITÂNICO - FASE 2: SOBRECARGA ENLOUQUECIDA ⚡'
+          : '👑 AUTÔMATO TITÂNICO - GUARDIÃO DA MINA 👑';
+        ctx.fillText(title, WORLD_WIDTH / 2, barY - 5);
+
+        ctx.fillStyle = '#263238';
+        ctx.fillRect(barX, barY, barWidth, barHeight);
+
+        const hpRatio = Math.max(0, this.hp / this.maxHp);
+        const fillGrad = ctx.createLinearGradient(barX, barY, barX + barWidth, barY);
+        if (this.phase === 2) {
+          fillGrad.addColorStop(0, '#d50000');
+          fillGrad.addColorStop(1, '#ff5252');
+        } else {
+          fillGrad.addColorStop(0, '#e65100');
+          fillGrad.addColorStop(0.5, '#f57c00');
+          fillGrad.addColorStop(1, '#ffd54f');
+        }
+        ctx.fillStyle = fillGrad;
+        ctx.fillRect(barX, barY, barWidth * hpRatio, barHeight);
+
+        // Segmentação em 10 vidas
+        ctx.strokeStyle = '#102027';
+        ctx.lineWidth = 2;
+        for (let s = 1; s < this.maxHp; s++) {
+          const divX = barX + (barWidth / this.maxHp) * s;
+          ctx.beginPath();
+          ctx.moveTo(divX, barY);
+          ctx.lineTo(divX, barY + barHeight);
+          ctx.stroke();
+        }
+
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 10px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(`${this.hp} / 10 VIDAS`, WORLD_WIDTH / 2, barY + barHeight / 2);
+        ctx.restore();
+      }
+    }
+
     class TimedBomb {
       constructor(gridX, gridY) {
         this.gridX = gridX;
@@ -5564,12 +6882,22 @@
           ctx.strokeStyle = '#ffffff';
           ctx.lineWidth = 1.5;
           ctx.strokeRect(-8, -8, 16, 16);
-        } else if (this.type === BOMB_TYPE.PROPULSOR) {
-          ctx.fillStyle = '#00e5ff';
-          ctx.fillRect(-9, -9, 18, 18);
+        } else if (this.type === BOMB_TYPE.VORTEX || this.type === 'vortex' || this.type === BOMB_TYPE.PROPULSOR) {
+          // Esfera de vórtice magnético giratória
+          ctx.fillStyle = '#7c4dff';
+          ctx.beginPath();
+          ctx.arc(0, 0, 9, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.strokeStyle = '#00e5ff';
+          ctx.lineWidth = 2.0;
+          ctx.stroke();
+
+          // Espiral interna
           ctx.strokeStyle = '#ffffff';
           ctx.lineWidth = 1.5;
-          ctx.strokeRect(-9, -9, 18, 18);
+          ctx.beginPath();
+          ctx.arc(0, 0, 5, 0, Math.PI * 1.5);
+          ctx.stroke();
         } else {
           ctx.fillStyle = '#ffca28';
           ctx.fillRect(-9, -9, 18, 18);
@@ -5623,6 +6951,618 @@
         ctx.restore();
       }
     }
+
+    class FallingRock {
+      constructor(targetX, targetY, duration = 1.3) {
+        this.targetX = targetX;
+        this.targetY = targetY;
+        this.duration = duration;
+        this.timer = duration;
+        this.radius = 24;
+        this.landed = false;
+        this.rotation = Math.random() * Math.PI * 2;
+        this.rockRadius = 14 + Math.random() * 4;
+      }
+
+      update(dt, engine) {
+        this.timer -= dt;
+        if (this.timer <= 0 && !this.landed) {
+          this.landed = true;
+          if (engine) {
+            engine.spawnSparks(this.targetX, this.targetY, '#8d6e63', 20);
+            engine.spawnSparks(this.targetX, this.targetY, '#ff9800', 12);
+            engine.spawnDebris(this.targetX, this.targetY);
+            engine.spawnFloatingText('💥 ROCHA!', this.targetX, this.targetY - 14, '#ffca28');
+            if (window.sound) window.sound.playImpactExplosion();
+
+            // Destroi blocos quebráveis sob a rocha
+            const gx = Math.floor(this.targetX / TILE_SIZE);
+            const gy = Math.floor(this.targetY / TILE_SIZE);
+            if (engine.map && engine.map.currentRoom && gx >= 0 && gx < GRID_SIZE && gy >= 0 && gy < GRID_SIZE) {
+              if (engine.map.currentRoom.grid[gy][gx] === TILE.BREAKABLE) {
+                engine.map.currentRoom.grid[gy][gx] = TILE.EMPTY;
+              }
+            }
+
+            // Dano direto em Charlotte: tira 1 coração e vida!
+            const dist = Math.hypot(engine.player.x - this.targetX, engine.player.y - this.targetY);
+            if (dist <= this.radius + engine.player.radius) {
+              const died = engine.player.takeDamage(1);
+              const nx = dist > 0.001 ? (engine.player.x - this.targetX) / dist : 0;
+              const ny = dist > 0.001 ? (engine.player.y - this.targetY) / dist : 1;
+              engine.player.applyImpulse(nx, ny, 1.8);
+              if (died) {
+                engine.triggerTimeRewind();
+              }
+            }
+
+            // Apenas uma rocha ocasional fica na arena como obstáculo (máximo 2 simultâneas)
+            // As demais se fragmentam no impacto para não bloquear a movimentação
+            if (engine.map && engine.map.currentRoom) {
+              if (!engine.map.currentRoom.obstacles) engine.map.currentRoom.obstacles = [];
+              const bossRocks = engine.map.currentRoom.obstacles.filter(o => o.type === 'boss_rock').length;
+              if (bossRocks < 2 && Math.random() < 0.25) {
+                engine.map.currentRoom.obstacles.push(new MapObstacle(this.targetX, this.targetY, 'boss_rock', this.rockRadius));
+              } else {
+                engine.spawnDebris(this.targetX, this.targetY);
+              }
+            }
+          }
+          return true;
+        }
+        return false;
+      }
+
+      draw(ctx) {
+        const progress = Math.min(1.0, 1 - Math.max(0, this.timer / this.duration));
+        const shadowAlpha = 0.2 + progress * 0.55;
+        const shadowScale = 0.4 + progress * 0.6;
+
+        ctx.save();
+        // 1. Sombra / Mira no chão
+        ctx.fillStyle = `rgba(30, 20, 15, ${shadowAlpha})`;
+        ctx.beginPath();
+        ctx.ellipse(this.targetX, this.targetY + 4, this.radius * shadowScale, (this.radius * 0.5) * shadowScale, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Círculo de aviso pulsante
+        ctx.strokeStyle = progress > 0.75 ? '#ff1744' : '#ff9800';
+        ctx.lineWidth = 2.0;
+        ctx.beginPath();
+        ctx.arc(this.targetX, this.targetY, this.radius * (1 - progress * 0.4), 0, Math.PI * 2);
+        ctx.stroke();
+
+        // 2. Rocha caindo do teto da mina em direção ao solo
+        const height = (1 - progress) * 260;
+        const currentY = this.targetY - height;
+
+        ctx.save();
+        ctx.translate(this.targetX, currentY);
+        ctx.rotate(this.rotation + progress * 4);
+
+        ctx.fillStyle = '#6d4c41';
+        ctx.beginPath();
+        const r = this.rockRadius;
+        ctx.moveTo(0, r + 4);
+        ctx.lineTo(r, -r * 0.3);
+        ctx.lineTo(r * 0.6, -r);
+        ctx.lineTo(-r * 0.5, -r * 1.1);
+        ctx.lineTo(-r, -r * 0.2);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.strokeStyle = '#3e2723';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        ctx.strokeStyle = '#8d6e63';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(-2, -r * 0.5);
+        ctx.lineTo(2, 0);
+        ctx.lineTo(-1, r * 0.4);
+        ctx.stroke();
+
+        ctx.restore();
+        ctx.restore();
+      }
+    }
+
+    // --------------------------------------------------------------------------
+    // ENTIDADES DE ESTILHAÇOS, OBSTÁCULOS E VÓRTICE
+    // --------------------------------------------------------------------------
+    class MapObstacle {
+      constructor(x, y, type = 'stone', radius = 12) {
+        this.x = x;
+        this.y = y;
+        this.type = type; // 'stone', 'iron', 'boss_rock'
+        this.radius = radius;
+        this.angle = Math.random() * Math.PI * 2;
+        this.hp = type === 'boss_rock' ? 2 : 1;
+        this.points = [];
+        const numPoints = type === 'iron' ? 6 : (type === 'boss_rock' ? 8 : 7);
+        for (let i = 0; i < numPoints; i++) {
+          const a = (i / numPoints) * Math.PI * 2;
+          const r = this.radius * (0.75 + Math.random() * 0.45);
+          this.points.push({ x: Math.cos(a) * r, y: Math.sin(a) * r });
+        }
+      }
+
+      takeDamage(amount = 1, game, source = 'bomb') {
+        this.hp -= amount;
+        if (this.hp <= 0) {
+          if (game) {
+            game.spawnDebris(this.x, this.y);
+            const sparkColor = this.type === 'iron' ? '#ff9800' : (this.type === 'boss_rock' ? '#8d6e63' : '#b0bec5');
+            game.spawnSparks(this.x, this.y, sparkColor, 14);
+            const label = source === 'charge' ? 'ESMAGADO!' : (this.type === 'boss_rock' ? 'ROCHA DESTRUÍDA!' : 'ESTILHAÇADO!');
+            game.spawnFloatingText(label, this.x, this.y - 14, this.type === 'iron' ? '#ff9800' : '#ffd54f');
+          }
+          if (window.sound) {
+            if (window.sound.playImpactExplosion) window.sound.playImpactExplosion();
+            if (window.sound.playShardClank) window.sound.playShardClank();
+          }
+          return true; // Destruído
+        } else {
+          if (game) {
+            game.spawnSparks(this.x, this.y, this.type === 'iron' ? '#ff9800' : '#b0bec5', 6);
+            game.spawnFloatingText('TRINCOU!', this.x, this.y - 12, '#ffffff');
+          }
+          if (window.sound && window.sound.playShardClank) window.sound.playShardClank();
+          return false;
+        }
+      }
+
+      draw(ctx) {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.rotate(this.angle);
+
+        // Sombra
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.35)';
+        ctx.beginPath();
+        ctx.ellipse(2, 4, this.radius * 0.9, this.radius * 0.55, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Corpo do obstáculo
+        ctx.beginPath();
+        this.points.forEach((pt, idx) => {
+          if (idx === 0) ctx.moveTo(pt.x, pt.y);
+          else ctx.lineTo(pt.x, pt.y);
+        });
+        ctx.closePath();
+
+        if (this.type === 'stone') {
+          ctx.fillStyle = '#78909c';
+          ctx.fill();
+          ctx.strokeStyle = '#37474f';
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+
+          // Fissuras na pedra
+          ctx.strokeStyle = '#b0bec5';
+          ctx.lineWidth = 1.0;
+          ctx.beginPath();
+          ctx.moveTo(-this.radius * 0.3, -this.radius * 0.3);
+          ctx.lineTo(this.radius * 0.2, this.radius * 0.2);
+          ctx.stroke();
+        } else if (this.type === 'iron') {
+          ctx.fillStyle = '#455a64';
+          ctx.fill();
+          ctx.strokeStyle = '#ff7043';
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+
+          // Detalhe metálico / Rebite
+          ctx.fillStyle = '#b0bec5';
+          ctx.fillRect(-3, -3, 6, 6);
+          ctx.strokeStyle = '#263238';
+          ctx.strokeRect(-3, -3, 6, 6);
+        } else {
+          // Boss Rock
+          ctx.fillStyle = '#5d4037';
+          ctx.fill();
+          ctx.strokeStyle = '#271c19';
+          ctx.lineWidth = 2.0;
+          ctx.stroke();
+          ctx.strokeStyle = '#8d6e63';
+          ctx.beginPath();
+          ctx.moveTo(-this.radius * 0.4, -this.radius * 0.4);
+          ctx.lineTo(this.radius * 0.4, this.radius * 0.3);
+          ctx.stroke();
+        }
+        ctx.restore();
+      }
+    }
+
+    class FlyingShard {
+      constructor(startX, startY, targetX, targetY, type = 'stone') {
+        this.startX = startX;
+        this.startY = startY;
+        this.targetX = targetX;
+        this.targetY = targetY;
+        this.type = type; // 'stone' ou 'iron'
+        this.duration = 0.28 + Math.random() * 0.12;
+        this.timer = this.duration;
+        this.arcHeight = 22 + Math.random() * 12;
+        this.rotation = Math.random() * Math.PI * 2;
+        this.rotSpeed = (Math.random() - 0.5) * 16;
+        this.hitPlayer = false;
+        this.hitEnemies = new Set();
+        this.radius = type === 'iron' ? 10 : 12;
+      }
+
+      update(dt, engine) {
+        this.timer -= dt;
+        this.rotation += this.rotSpeed * dt;
+        const p = Math.max(0, Math.min(1.0, 1 - (this.timer / this.duration)));
+        const cx = this.startX + (this.targetX - this.startX) * p;
+        const cy = this.startY + (this.targetY - this.startY) * p;
+        const heightZ = Math.sin(p * Math.PI) * this.arcHeight;
+
+        // Se próximo ao solo, causa dano em quem estiver na rota!
+        if (heightZ < 20 && engine) {
+          // Dano em Charlotte (tira meio coração se atingida)
+          if (!this.hitPlayer && engine.player) {
+            const pDist = Math.hypot(engine.player.x - cx, engine.player.y - cy);
+            if (pDist < engine.player.radius + this.radius) {
+              this.hitPlayer = true;
+              const died = engine.player.takeDamage(0.5);
+              engine.spawnFloatingText('-½ ❤️ ESTILHAÇO', engine.player.x, engine.player.y - 18, '#ff5252');
+              engine.spawnSparks(cx, cy, this.type === 'iron' ? '#ff9800' : '#b0bec5', 8);
+              if (died) engine.triggerTimeRewind();
+            }
+          }
+
+          // Dano em Autômatos
+          if (engine.map && engine.map.currentRoom && engine.map.currentRoom.enemies) {
+            engine.map.currentRoom.enemies.forEach(enemy => {
+              if (!this.hitEnemies.has(enemy)) {
+                const eDist = Math.hypot(enemy.x - cx, enemy.y - cy);
+                if (eDist < enemy.radius + this.radius) {
+                  this.hitEnemies.add(enemy);
+                  enemy.takeDamage(1, engine, 'shard');
+                  engine.spawnFloatingText('-1 ESTILHAÇO', enemy.x, enemy.y - 18, '#ffd54f');
+                  engine.spawnSparks(cx, cy, this.type === 'iron' ? '#ff9800' : '#b0bec5', 10);
+                  if (window.sound && window.sound.playShardClank) window.sound.playShardClank();
+                }
+              }
+            });
+          }
+        }
+
+        if (this.timer <= 0) {
+          // Aterrissou no chão da mina
+          if (engine && engine.map && engine.map.currentRoom) {
+            const room = engine.map.currentRoom;
+            const gx = Math.floor(this.targetX / TILE_SIZE);
+            const gy = Math.floor(this.targetY / TILE_SIZE);
+            let inHoleOrLava = false;
+            if (gx >= 0 && gx < GRID_SIZE && gy >= 0 && gy < GRID_SIZE) {
+              const t = room.grid[gy][gx];
+              if (t === TILE.HOLE || t === TILE.LAVA) inHoleOrLava = true;
+            }
+
+            if (!inHoleOrLava) {
+              if (!room.obstacles) room.obstacles = [];
+              // Apenas parte dos estilhaços finca no chão se a sala não estiver entupida (máximo 3)
+              // Os outros se desintegram em poeira e detritos para não atrapalhar a movimentação
+              const canStick = room.obstacles.length < 3 && Math.random() < 0.50;
+              if (canStick) {
+                room.obstacles.push(new MapObstacle(this.targetX, this.targetY, this.type, this.radius * 0.75));
+                engine.spawnSparks(this.targetX, this.targetY, this.type === 'iron' ? '#ff9800' : '#90a4ae', 6);
+                if (window.sound && window.sound.playShardClank) window.sound.playShardClank();
+              } else {
+                engine.spawnDebris(this.targetX, this.targetY);
+                engine.spawnSparks(this.targetX, this.targetY, this.type === 'iron' ? '#ff9800' : '#b0bec5', 8);
+              }
+            } else {
+              engine.spawnSparks(this.targetX, this.targetY, '#ff5722', 8);
+            }
+          }
+          return true; // remove do array de voo
+        }
+        return false;
+      }
+
+      draw(ctx) {
+        const p = Math.max(0, Math.min(1.0, 1 - (this.timer / this.duration)));
+        const cx = this.startX + (this.targetX - this.startX) * p;
+        const cy = this.startY + (this.targetY - this.startY) * p;
+        const heightZ = Math.sin(p * Math.PI) * this.arcHeight;
+
+        // Sombra projetada
+        ctx.save();
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
+        ctx.beginPath();
+        ctx.ellipse(cx, cy, 7, 4, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Fragmento girando
+        ctx.translate(cx, cy - heightZ);
+        ctx.rotate(this.rotation);
+        if (this.type === 'stone') {
+          ctx.fillStyle = '#78909c';
+          ctx.strokeStyle = '#37474f';
+          ctx.lineWidth = 1.2;
+          ctx.beginPath();
+          ctx.rect(-5, -5, 10, 10);
+          ctx.fill();
+          ctx.stroke();
+        } else {
+          ctx.fillStyle = '#546e7a';
+          ctx.strokeStyle = '#ff9800';
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.rect(-5, -5, 10, 10);
+          ctx.fill();
+          ctx.stroke();
+        }
+        ctx.restore();
+      }
+    }
+
+    class VortexField {
+      constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.duration = 2.0;
+        this.timer = this.duration;
+        this.pullRadius = TILE_SIZE * 4.2;
+        this.coreRadius = 22;
+        this.shardsAbsorbed = 0;
+        this.angle = 0;
+        this.pulse = 0;
+        this.soundTimer = 0;
+      }
+
+      update(dt, engine) {
+        this.timer -= dt;
+        this.angle += dt * 8;
+        this.pulse += dt * 5;
+        this.soundTimer -= dt;
+
+        if (this.soundTimer <= 0) {
+          this.soundTimer = 0.6;
+          if (window.sound && window.sound.playVortexSuck) {
+            window.sound.playVortexSuck();
+          }
+        }
+
+        if (!engine || !engine.map || !engine.map.currentRoom) return this.timer <= 0;
+        const room = engine.map.currentRoom;
+
+        // 1. Puxa autômatos para o centro
+        room.enemies.forEach(enemy => {
+          const dx = this.x - enemy.x;
+          const dy = this.y - enemy.y;
+          const dist = Math.hypot(dx, dy);
+          if (dist > 1 && dist < this.pullRadius) {
+            const force = (1 - dist / this.pullRadius) * 260 + 100;
+            const nx = dx / dist;
+            const ny = dy / dist;
+            enemy.x += nx * force * dt;
+            enemy.y += ny * force * dt;
+
+            // Se for puxado para dentro de abismo ou lava:
+            const egx = Math.floor(enemy.x / TILE_SIZE);
+            const egy = Math.floor(enemy.y / TILE_SIZE);
+            if (egx >= 0 && egx < GRID_SIZE && egy >= 0 && egy < GRID_SIZE) {
+              const tile = room.grid[egy][egx];
+              if (tile === TILE.HOLE || tile === TILE.LAVA) {
+                enemy.takeDamage(999, engine, 'vortex');
+                engine.spawnFloatingText('SUGADO PRO VÁCUO!', enemy.x, enemy.y - 18, '#00e5ff');
+              }
+            }
+          }
+        });
+
+        // 2. Puxa Charlotte sutilmente (se não estiver dashing)
+        if (engine.player && !engine.player.isDashing) {
+          const pdx = this.x - engine.player.x;
+          const pdy = this.y - engine.player.y;
+          const pDist = Math.hypot(pdx, pdy);
+          if (pDist > 1 && pDist < this.pullRadius * 0.75) {
+            const pForce = (1 - pDist / (this.pullRadius * 0.75)) * 140;
+            engine.player.x += (pdx / pDist) * pForce * dt;
+            engine.player.y += (pdy / pDist) * pForce * dt;
+          }
+        }
+
+        // 3. Puxa Cristais de Chrono Core (loot)
+        if (engine.ccDrops) {
+          engine.ccDrops.forEach(drop => {
+            const ddx = this.x - drop.x;
+            const ddy = this.y - drop.y;
+            const dDist = Math.hypot(ddx, ddy);
+            if (dDist > 1 && dDist < this.pullRadius) {
+              drop.x += (ddx / dDist) * 320 * dt;
+              drop.y += (ddy / dDist) * 320 * dt;
+            }
+          });
+        }
+
+        // 4. PUXA ESTILHAÇOS E ROCHAS DO MAPA!
+        if (room.obstacles && room.obstacles.length > 0) {
+          for (let i = room.obstacles.length - 1; i >= 0; i--) {
+            const obs = room.obstacles[i];
+            const odx = this.x - obs.x;
+            const ody = this.y - obs.y;
+            const oDist = Math.hypot(odx, ody);
+            if (oDist > 1 && oDist < this.pullRadius * 1.3) {
+              const oSpeed = 340;
+              obs.x += (odx / oDist) * oSpeed * dt;
+              obs.y += (ody / oDist) * oSpeed * dt;
+              obs.angle += 12 * dt;
+
+              // Absorvido no centro do vórtice!
+              if (oDist <= this.coreRadius) {
+                this.shardsAbsorbed++;
+                room.obstacles.splice(i, 1);
+                engine.spawnSparks(this.x, this.y, '#00e5ff', 12);
+                engine.spawnSparks(this.x, this.y, obs.type === 'iron' ? '#ff9800' : '#b0bec5', 10);
+                engine.spawnFloatingText(`+ESTILHAÇO! (${this.shardsAbsorbed})`, this.x, this.y - 20, '#00e5ff');
+                if (window.sound && window.sound.playShardClank) window.sound.playShardClank();
+              }
+            }
+          }
+        }
+
+        // Partículas giratórias de vórtice
+        if (Math.random() < 0.6) {
+          const spawnAngle = Math.random() * Math.PI * 2;
+          const spawnDist = (0.3 + Math.random() * 0.7) * this.pullRadius;
+          const px = this.x + Math.cos(spawnAngle) * spawnDist;
+          const py = this.y + Math.sin(spawnAngle) * spawnDist;
+          engine.spawnSparks(px, py, Math.random() < 0.5 ? '#00e5ff' : '#7c4dff', 1);
+        }
+
+        // 5. DETONAÇÃO FINAL: IMPLOSÃO DEVASTADORA!
+        if (this.timer <= 0) {
+          this.detonateImplosion(engine, room);
+          return true;
+        }
+
+        return false;
+      }
+
+      detonateImplosion(engine, room) {
+        if (window.sound && window.sound.playVortexImplosion) {
+          window.sound.playVortexImplosion();
+        } else if (window.sound) {
+          window.sound.playImpactExplosion();
+        }
+
+        const blastRadius = TILE_SIZE * 2.2;
+        engine.blasts.push(new ExplosionBlast(this.x, this.y, blastRadius, false));
+        engine.spawnSparks(this.x, this.y, '#00e5ff', 40);
+        engine.spawnSparks(this.x, this.y, '#7c4dff', 25);
+        engine.spawnSparks(this.x, this.y, '#ffffff', 20);
+
+        // DANO ESCALA COM A QUANTIDADE DE ESTILHAÇOS COLETADOS!
+        const baseDamage = 1;
+        const bonusDamage = Math.round(this.shardsAbsorbed * 1.5);
+        const totalDamage = baseDamage + bonusDamage;
+
+        // Dano nos inimigos apanhados no centro
+        for (let i = room.enemies.length - 1; i >= 0; i--) {
+          const enemy = room.enemies[i];
+          const dist = Math.hypot(enemy.x - this.x, enemy.y - this.y);
+          if (dist <= blastRadius + enemy.radius) {
+            const isDead = enemy.takeDamage(totalDamage, engine, 'vortex');
+            if (isDead) {
+              engine.spawnEnemyDeath(enemy.x, enemy.y, enemy);
+              room.enemies.splice(i, 1);
+            } else {
+              const knockX = dist > 0.001 ? (enemy.x - this.x) / dist : 1;
+              const knockY = dist > 0.001 ? (enemy.y - this.y) / dist : 0;
+              enemy.applyRepulsion(knockX, knockY, 320);
+            }
+          }
+        }
+
+        if (this.shardsAbsorbed > 0) {
+          engine.spawnFloatingText(`💥 IMPLOSÃO! -${totalDamage} HP (${this.shardsAbsorbed} Estilhaços)`, this.x, this.y - 24, '#00e5ff');
+        } else {
+          engine.spawnFloatingText(`💥 IMPLOSÃO! -${totalDamage} HP`, this.x, this.y - 24, '#00e5ff');
+        }
+
+        // Se Charlotte estiver no centro exato da implosão sem invulnerabilidade, sofre 1 de dano
+        const pDist = Math.hypot(engine.player.x - this.x, engine.player.y - this.y);
+        if (pDist <= blastRadius * 0.75 && engine.player.invulnerableTimer <= 0 && !engine.player.isDashing) {
+          const died = engine.player.takeDamage(1);
+          const pushX = pDist > 0.001 ? (engine.player.x - this.x) / pDist : 1;
+          const pushY = pDist > 0.001 ? (engine.player.y - this.y) / pDist : 0;
+          engine.player.applyImpulse(pushX, pushY, 2.2);
+          if (died) engine.triggerTimeRewind();
+        }
+
+        // Destrói caixas quebráveis no raio da implosão
+        const gridX = Math.floor(this.x / TILE_SIZE);
+        const gridY = Math.floor(this.y / TILE_SIZE);
+        for (let dy = -1; dy <= 1; dy++) {
+          for (let dx = -1; dx <= 1; dx++) {
+            const tx = gridX + dx;
+            const ty = gridY + dy;
+            if (tx >= 0 && tx < GRID_SIZE && ty >= 0 && ty < GRID_SIZE) {
+              if (room.grid[ty][tx] === TILE.BREAKABLE) {
+                room.grid[ty][tx] = TILE.EMPTY;
+                engine.spawnDebris(tx * TILE_SIZE + TILE_SIZE / 2, ty * TILE_SIZE + TILE_SIZE / 2);
+              }
+            }
+          }
+        }
+
+        // Destrói quaisquer estilhaços restantes no raio da implosão
+        if (room.obstacles && room.obstacles.length > 0) {
+          for (let i = room.obstacles.length - 1; i >= 0; i--) {
+            const obs = room.obstacles[i];
+            if (Math.hypot(obs.x - this.x, obs.y - this.y) <= blastRadius + (obs.radius || 12)) {
+              if (obs.takeDamage(99, engine, 'bomb')) {
+                room.obstacles.splice(i, 1);
+              }
+            }
+          }
+        }
+
+        engine.triggerChainReaction(this.x, this.y, blastRadius);
+      }
+
+      draw(ctx) {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+
+        // 1. Aura circular externa pulsante
+        const pulseR = this.pullRadius * (0.85 + Math.sin(this.pulse) * 0.08);
+        const grad = ctx.createRadialGradient(0, 0, 10, 0, 0, pulseR);
+        grad.addColorStop(0, 'rgba(0, 229, 255, 0.45)');
+        grad.addColorStop(0.5, 'rgba(124, 77, 255, 0.2)');
+        grad.addColorStop(1, 'rgba(0, 229, 255, 0)');
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(0, 0, pulseR, 0, Math.PI * 2);
+        ctx.fill();
+
+        // 2. Braços em espiral rotacionando
+        ctx.rotate(this.angle);
+        ctx.strokeStyle = '#00e5ff';
+        ctx.lineWidth = 2.0;
+        for (let arm = 0; arm < 3; arm++) {
+          ctx.beginPath();
+          for (let a = 0; a < Math.PI * 1.5; a += 0.2) {
+            const r = a * (this.pullRadius * 0.2);
+            const x = Math.cos(a + (arm * Math.PI * 2) / 3) * r;
+            const y = Math.sin(a + (arm * Math.PI * 2) / 3) * r;
+            if (a === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+          }
+          ctx.stroke();
+        }
+
+        // 3. Singularidade central escura
+        ctx.rotate(-this.angle * 1.5);
+        ctx.fillStyle = '#0a0a14';
+        ctx.beginPath();
+        ctx.arc(0, 0, 14, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#7c4dff';
+        ctx.lineWidth = 2.5;
+        ctx.stroke();
+
+        // 4. Contador de estilhaços absorvidos
+        if (this.shardsAbsorbed > 0) {
+          ctx.font = 'bold 11px sans-serif';
+          ctx.fillStyle = '#00e5ff';
+          ctx.textAlign = 'center';
+          ctx.fillText(`+${this.shardsAbsorbed}`, 0, 4);
+        }
+
+        ctx.restore();
+      }
+    }
+    window.MapObstacle = MapObstacle;
+    window.FlyingShard = FlyingShard;
+    window.VortexField = VortexField;
 
     class LorePamphletDrop {
       constructor(x, y, fragment) {
@@ -5911,7 +7851,10 @@
         this.timedBombs = [];
         this.flyingBombs = [];
         this.targetMarkers = [];
+        this.fallingRocks = [];
         this.enemyBombs = [];
+        this.vortexFields = [];
+        this.flyingShards = [];
         this.particles = [];
         this.blasts = [];
 
@@ -6042,6 +7985,7 @@
         this.checkPickups();
         this.checkArmory();
         this.checkSign();
+        this.checkChest();
 
         // 2. Movimentação de Charlotte (WASD / D-Pad)
         this.player.update(dt, this.input, room);
@@ -6116,6 +8060,36 @@
           }
         }
 
+        // Queda de Rochas (Mecânica Única do Chefe Final)
+        if (this.fallingRocks) {
+          for (let i = this.fallingRocks.length - 1; i >= 0; i--) {
+            const rock = this.fallingRocks[i];
+            if (rock.update(dt, this)) {
+              this.fallingRocks.splice(i, 1);
+            }
+          }
+        }
+
+        // Campos de Vórtice Ativos (Sucção e Implosão)
+        if (this.vortexFields) {
+          for (let i = this.vortexFields.length - 1; i >= 0; i--) {
+            const v = this.vortexFields[i];
+            if (v.update(dt, this)) {
+              this.vortexFields.splice(i, 1);
+            }
+          }
+        }
+
+        // Estilhaços em Voo (Efeito Chain da Timer Bomb)
+        if (this.flyingShards) {
+          for (let i = this.flyingShards.length - 1; i >= 0; i--) {
+            const shard = this.flyingShards[i];
+            if (shard.update(dt, this)) {
+              this.flyingShards.splice(i, 1);
+            }
+          }
+        }
+
         // 4. Bombas Temporizadas no Chão
         for (let i = this.timedBombs.length - 1; i >= 0; i--) {
           const bomb = this.timedBombs[i];
@@ -6157,16 +8131,23 @@
           enemy.update(dt, this.player, room);
 
           const distToPlayer = Math.hypot(enemy.x - this.player.x, enemy.y - this.player.y);
-          if (enemy.isHumanBoss) {
-            // Em duelo contra o Mini Boss: colisão física empurra ambos para longe com recuo (não é morte instantânea por toque)
+          if (enemy.isHumanBoss || enemy.isFinalBoss) {
+            // Em duelo contra Chefes: colisão física empurra com recuo e dá dano de meio coração (0.5)
             if (distToPlayer < enemy.radius + this.player.radius) {
               const nx = distToPlayer > 0.001 ? (this.player.x - enemy.x) / distToPlayer : 1;
               const ny = distToPlayer > 0.001 ? (this.player.y - enemy.y) / distToPlayer : 0;
-              this.player.applyImpulse(nx, ny, 1.8);
-              enemy.applyRepulsion(-nx, -ny, 250);
               sound.playImpactExplosion();
-              this.spawnSparks((this.player.x + enemy.x) / 2, (this.player.y + enemy.y) / 2, '#00e5ff', 12);
-              this.spawnFloatingText('AFASTE-SE!', enemy.x, enemy.y - 20, '#ffca28');
+              this.spawnSparks((this.player.x + enemy.x) / 2, (this.player.y + enemy.y) / 2, '#ff1744', 16);
+              
+              // CRÍTICO: Chamar takeDamage ANTES de applyImpulse!
+              const died = this.player.takeDamage(0.5);
+              this.player.applyImpulse(nx, ny, 2.4);
+              enemy.applyRepulsion(-nx, -ny, 250);
+
+              if (died) {
+                this.triggerTimeRewind();
+                break;
+              }
             }
             continue;
           }
@@ -6181,10 +8162,16 @@
             continue;
           }
 
-          // Contato com autômatos hostis ativos = TEMPO REBOBINA
+          // Contato com autômatos hostis ativos = dano de 1 coração (se zerar vidas, tempo rebobina)
           if (enemy.state !== 'dormant' && !isStunned && distToPlayer < enemy.radius + this.player.radius && this.player.invulnerableTimer <= 0) {
-            this.triggerTimeRewind();
-            break;
+            const died = this.player.takeDamage(1);
+            const nx = distToPlayer > 0.001 ? (this.player.x - enemy.x) / distToPlayer : 1;
+            const ny = distToPlayer > 0.001 ? (this.player.y - enemy.y) / distToPlayer : 0;
+            this.player.applyImpulse(nx, ny, 1.8);
+            if (died) {
+              this.triggerTimeRewind();
+              break;
+            }
           }
         }
 
@@ -6608,7 +8595,7 @@
               this.spawnSparks(this.player.x, this.player.y, '#ffd700', 45);
               this.spawnSparks(this.player.x, this.player.y, '#00e5ff', 35);
               this.spawnFloatingText(`+${rewardCount} CC & +${partReward} PEÇAS`, this.player.x, this.player.y - 22, '#ffd700');
-              if ((this.map.currentDepth >= 4 || room.puzzleType === 'steam_overload') && !this.player.hasHydraulicPiston && !this.player.carryingHydraulicPiston) {
+              if ((this.map.currentDepth >= 4 || room.puzzleType === 'steam_overload') && (this.player.gauntletLevel || 1) < 2 && !this.player.hasHydraulicPiston && !this.player.carryingHydraulicPiston) {
                 this.collectHydraulicPiston();
               } else {
                 showToast(`COFRE QUÂNTICO ABERTO: +${rewardCount} CC`);
@@ -6820,20 +8807,21 @@
           }
         }
 
-        // Propulsor bomb
-        const btnPropulsor = document.getElementById('btn-inv-propulsor');
-        if (btnPropulsor) {
-          if (this.player.unlockedPropulsor) {
-            btnPropulsor.textContent = 'Comprado ✓';
-            btnPropulsor.disabled = true;
+        // Vortex bomb
+        const btnVortex = document.getElementById('btn-inv-vortex') || document.getElementById('btn-inv-propulsor');
+        const costVortexEl = document.getElementById('inv-cost-vortex') || document.getElementById('inv-cost-propulsor');
+        if (btnVortex) {
+          if (this.player.unlockedVortex || this.player.unlockedPropulsor) {
+            btnVortex.textContent = 'Comprado ✓';
+            btnVortex.disabled = true;
           } else if (!this.player.unlockedImpact) {
-            btnPropulsor.textContent = 'Bloqueado';
-            btnPropulsor.disabled = true;
-            document.getElementById('inv-cost-propulsor').textContent = 'Requer Bomba de Impacto primeiro!';
+            btnVortex.textContent = 'Bloqueado';
+            btnVortex.disabled = true;
+            if (costVortexEl) costVortexEl.textContent = 'Requer Bomba de Impacto primeiro!';
           } else {
-            btnPropulsor.textContent = 'Comprar';
-            btnPropulsor.disabled = (totalCC < 25 || totalParts < 20);
-            document.getElementById('inv-cost-propulsor').textContent = 'Custo: 25 CC | 20 PEÇAS';
+            btnVortex.textContent = 'Comprar';
+            btnVortex.disabled = (totalCC < 25 || totalParts < 20);
+            if (costVortexEl) costVortexEl.textContent = 'Custo: 25 CC | 20 PEÇAS';
           }
         }
       }
@@ -6844,8 +8832,8 @@
         if (type === 'impact') {
           if (this.player.unlockedImpact) { showToast('INVENTOR: "Você já tem essa bomba!"'); return; }
           costCC = 15; costParts = 10;
-        } else if (type === 'propulsor') {
-          if (this.player.unlockedPropulsor) { showToast('INVENTOR: "Você já tem essa bomba!"'); return; }
+        } else if (type === 'vortex' || type === 'propulsor') {
+          if (this.player.unlockedVortex || this.player.unlockedPropulsor) { showToast('INVENTOR: "Você já tem essa bomba!"'); return; }
           if (!this.player.unlockedImpact) { showToast('INVENTOR: "Compre a Bomba de Impacto primeiro!"'); return; }
           costCC = 25; costParts = 20;
         }
@@ -6860,8 +8848,9 @@
             this.player.unlockedImpact = true;
             showToast('INVENTOR: "Aqui está! Bomba de Impacto instalada na sua bolsa!"');
           } else {
+            this.player.unlockedVortex = true;
             this.player.unlockedPropulsor = true;
-            showToast('INVENTOR: "Cuidado com o recuo! Bomba Propulsora pronta!"');
+            showToast('INVENTOR: "Singularidade calibrada! Bomba de Vórtice pronta!"');
           }
 
           sound.playCCPickup();
@@ -6881,50 +8870,335 @@
 
       checkChest() {
         if (!this.map || !this.map.currentRoom || !this.player) return;
+        if (this.fadeState !== 'none' || this.isPaused) return;
         const room = this.map.currentRoom;
-        const pGridX = Math.floor(this.player.x / TILE_SIZE);
-        const pGridY = Math.floor(this.player.y / TILE_SIZE);
 
-        if (pGridX >= 0 && pGridX < GRID_SIZE && pGridY >= 0 && pGridY < GRID_SIZE) {
-          if (room.grid[pGridY][pGridX] === TILE.CHEST || (pGridY > 0 && room.grid[pGridY-1][pGridX] === TILE.CHEST)) {
-            if (document.getElementById('chest-modal').style.display !== 'none') return;
-            this.openChest();
+        // Procura se há algum baú na sala atual e acha a distância mínima
+        let nearestDist = Infinity;
+        for (let y = 0; y < GRID_SIZE; y++) {
+          for (let x = 0; x < GRID_SIZE; x++) {
+            if (room.grid[y][x] === TILE.CHEST) {
+              const chestCenterX = (x + 0.5) * TILE_SIZE;
+              const chestCenterY = (y + 0.5) * TILE_SIZE;
+              const dist = Math.hypot(this.player.x - chestCenterX, this.player.y - chestCenterY);
+              if (dist < nearestDist) {
+                nearestDist = dist;
+              }
+            }
+          }
+        }
+
+        const modal = document.getElementById('chest-modal');
+        const OPEN_DIST = TILE_SIZE * 1.7; // ~81px de aproximação
+        const CLOSE_DIST = TILE_SIZE * 2.2; // ~105px de afastamento (histerese para não piscar)
+
+        if (nearestDist <= OPEN_DIST) {
+          if (!this.player.chestDismissed) {
+            if (!modal || !modal.classList.contains('visible')) {
+              this.openChest();
+            }
+          }
+        } else if (nearestDist > CLOSE_DIST) {
+          this.player.chestDismissed = false;
+          if (modal && modal.classList.contains('visible')) {
+            this.closeChest(false);
           }
         }
       }
 
       openChest() {
+        if (this.fadeState !== 'none') return;
         const modal = document.getElementById('chest-modal');
         if (!modal) return;
-        
-        const depCC = this.player.depositedCores || 0;
-        const depP = this.player.depositedParts || 0;
-        
-        document.getElementById('chest-resources').innerHTML = `
-          <div style="color:#ffcc00; margin-bottom:4px;">💎 Cristal Coal Guardado: <b>` + depCC + ` CC</b></div>
-          <div style="color:#b0bec5;">⚙️ Peças Guardadas: <b>` + depP + `</b></div>
-        `;
-        
-        let keysHtml = '';
-        if (this.player.hasHydraulicPiston) keysHtml += '<div>🔹 Pistão Hidráulico de Alta Pressão</div>';
-        if (this.player.hasSteamPropulsionCore) keysHtml += '<div>💨 Núcleo de Propulsão a Vapor</div>';
-        if (this.player.hasBossKey) keysHtml += '<div>🔑 Chave do Boss</div>';
-        if (keysHtml === '') keysHtml = '<div style="color:#555;">Nenhum item especial guardado.</div>';
-        document.getElementById('chest-key-items').innerHTML = keysHtml;
-        
-        let upgHtml = '';
-        upgHtml += `<div>Manopla Nível ` + this.player.gauntletLevel + (this.player.gauntletLevel >= 2 ? ` <span style="color:#a5d6a7;">(Pistão Aplicado)</span>` : (this.player.hasHydraulicPiston ? ` <span style="color:#ffca28;">(Pistão Disponível - Use a Oficina)</span>` : ` <span style="color:#ef5350;">(Falta Pistão Hidráulico)</span>`)) + `</div>`;
-        upgHtml += `<div>Botas Propulsoras: ` + (this.player.bootsLevel >= 1 ? `<span style="color:#a5d6a7;">Desbloqueadas</span>` : (this.player.hasSteamPropulsionCore ? `<span style="color:#ffca28;">Prontas para fabricar</span>` : `<span style="color:#ef5350;">Falta Núcleo a Vapor</span>`)) + `</div>`;
-        
-        document.getElementById('chest-upgrades').innerHTML = upgHtml;
-        
-        modal.style.display = 'block';
+
+        if (window.sound && window.sound.playUnlockSound) {
+          window.sound.playUnlockSound();
+        }
+
+        this.selectedChestItemIndex = 0;
+        this.updateChestUI();
+        modal.classList.add('visible');
       }
 
-      closeChest() {
+      closeChest(dismiss = false) {
         const modal = document.getElementById('chest-modal');
-        if (modal) modal.style.display = 'none';
-        this.player.y += TILE_SIZE * 0.8; // Empurra jogador um pouco pra tras
+        if (modal) {
+          modal.classList.remove('visible');
+        }
+        if (this.player && dismiss) {
+          this.player.chestDismissed = true;
+        }
+        if (document.activeElement && document.activeElement.blur) {
+          document.activeElement.blur();
+        }
+      }
+
+      depositCarriedToChest() {
+        if (document.activeElement && document.activeElement.blur) {
+          document.activeElement.blur();
+        }
+        if (!this.player) return;
+        const cCC = this.player.chronoCores || 0;
+        const cParts = this.player.parts || 0;
+        let pistonDeposited = false;
+
+        if (this.player.carryingHydraulicPiston) {
+          this.player.carryingHydraulicPiston = false;
+          this.player.hasHydraulicPiston = true;
+          pistonDeposited = true;
+        }
+
+        if (cCC === 0 && cParts === 0 && !pistonDeposited) {
+          showToast('Nenhum recurso volátil na mochila para depositar!');
+          return;
+        }
+
+        this.player.depositedCores = (this.player.depositedCores || 0) + cCC;
+        this.player.depositedParts = (this.player.depositedParts || 0) + cParts;
+        this.player.chronoCores = 0;
+        this.player.parts = 0;
+
+        if (window.sound && window.sound.playChuteDeposit) {
+          window.sound.playChuteDeposit();
+        }
+        this.spawnSparks(this.player.x, this.player.y, '#ffd54f', 25);
+        showToast(`GUARDADO NO BAÚ: +${cCC} CC | +${cParts} PEÇAS`);
+
+        this.updateHUD();
+        this.updateChestUI();
+        saveGame();
+      }
+
+      selectChestItem(index) {
+        this.selectedChestItemIndex = index;
+        this.renderChestInspector();
+      }
+
+      renderChestInspector() {
+        const items = this.getChestItems();
+        const titleEl = document.getElementById('chest-info-title');
+        const tagEl = document.getElementById('chest-info-type');
+        const descEl = document.getElementById('chest-info-desc');
+        const qtyEl = document.getElementById('chest-info-qty');
+        if (!titleEl || !descEl) return;
+
+        const item = items[this.selectedChestItemIndex || 0];
+        if (item) {
+          titleEl.innerHTML = `${item.icon} ${item.name}`;
+          tagEl.style.display = 'inline-block';
+          tagEl.textContent = item.category;
+          descEl.textContent = item.desc;
+          qtyEl.textContent = `Quantidade: ${item.qty}`;
+        } else {
+          titleEl.innerHTML = '📭 Baú Vazio';
+          tagEl.style.display = 'none';
+          descEl.textContent = 'Nenhum recurso depositado ainda. Pise nas Goelas durante a expedição para enviar recursos ao baú!';
+          qtyEl.textContent = '';
+        }
+
+        const slots = document.querySelectorAll('.chest-slot');
+        slots.forEach((s, idx) => {
+          s.classList.toggle('selected', idx === (this.selectedChestItemIndex || 0));
+        });
+      }
+
+      getChestItems() {
+        if (!this.player) return [];
+        const items = [];
+        const p = this.player;
+
+        // 1. Cristal Coal Permanente
+        if ((p.depositedCores || 0) > 0) {
+          items.push({
+            id: 'cc',
+            name: 'Cristal Coal',
+            icon: '💎',
+            badge: `${p.depositedCores} CC`,
+            category: 'Recurso Permanente',
+            desc: 'Cristal-Carvão de alta densidade enviado pela Goela. Salvo em definitivo no cofre para fabricar melhorias na Oficina e transmutação temporal.',
+            qty: `${p.depositedCores} CC`
+          });
+        }
+
+        // 2. Peças Mecânicas Permanentes
+        if ((p.depositedParts || 0) > 0) {
+          items.push({
+            id: 'parts',
+            name: 'Peças Mecânicas',
+            icon: '⚙️',
+            badge: `${p.depositedParts} un.`,
+            category: 'Material de Sucata',
+            desc: 'Engrenagens, pistões e rebites recuperados de autômatos derrotados. Usados pelo Inventor para forjar e aprimorar equipamentos.',
+            qty: `${p.depositedParts} Peças`
+          });
+        }
+
+        // 3. Pistão Hidráulico
+        if (p.hasHydraulicPiston) {
+          items.push({
+            id: 'piston',
+            name: 'Pistão Hidráulico',
+            icon: '🦾',
+            badge: '1 un.',
+            category: 'Componente Especial',
+            desc: 'Pistão de alta pressão salvo no baú. Necessário para Charlotte forjar a Manopla Mecânica Nível 2 no Arsenal.',
+            qty: '1 un. (Pronto para Ofício)'
+          });
+        }
+
+        // 4. Núcleo de Propulsão a Vapor
+        if (p.hasSteamPropulsionCore) {
+          items.push({
+            id: 'steam_core',
+            name: 'Núcleo a Vapor',
+            icon: '💨',
+            badge: '1 un.',
+            category: 'Artefato Térmico',
+            desc: 'Núcleo propulsor resgatado de chefe mecânico. Usado para confecção das Botas Propulsoras de arrancada (Dash).',
+            qty: '1 un. (Armazenado)'
+          });
+        }
+
+        // 5. Chave / Cartão do Supervisor
+        if (p.hasBossKey) {
+          items.push({
+            id: 'boss_key',
+            name: 'Cartão de Acesso',
+            icon: '🔑',
+            badge: '1 un.',
+            category: 'Credencial Amarela',
+            desc: 'Cartão magnético dourado de supervisor. Permite destravar as comportas blindadas da câmara do Chefe.',
+            qty: '1 un. (Armazenado)'
+          });
+        }
+
+        // 6. Projetos Desbloqueados
+        if (p.unlockedImpact) {
+          items.push({
+            id: 'proj_impact',
+            name: 'Bomba de Impacto',
+            icon: '💥',
+            badge: 'Projeto',
+            category: 'Munição Especial',
+            desc: 'Detonação instantânea ao contato com paredes e autômatos. Slot especial liberado na bolsa.',
+            qty: 'Desbloqueado'
+          });
+        }
+
+        if (p.unlockedVortex || p.unlockedPropulsor) {
+          items.push({
+            id: 'proj_vortex',
+            name: 'Bomba de Vórtice',
+            icon: '🌀',
+            badge: 'Projeto',
+            category: 'Munição Especial',
+            desc: 'Bomba gravitacional de sucção. Puxa autômatos e estilhaços para o epicentro, esmagando-os com dano devastador.',
+            qty: 'Desbloqueado'
+          });
+        }
+
+        // 7. Equipamentos e Upgrades
+        if (p.gauntletLevel > 1) {
+          items.push({
+            id: 'gauntlet',
+            name: 'Manopla Mecânica',
+            icon: '🥊',
+            badge: `Nv. ${p.gauntletLevel}`,
+            category: 'Equipamento Charlotte',
+            desc: `Manopla mecânica aprimorada. Alcance de arremesso ampliado para ${p.getThrowRange()}px.`,
+            qty: `Nível ${p.gauntletLevel} de 3`
+          });
+        }
+
+        if (p.bootsLevel > 0) {
+          items.push({
+            id: 'boots',
+            name: 'Botas Propulsoras',
+            icon: '👢',
+            badge: `Nv. ${p.bootsLevel}`,
+            category: 'Equipamento Charlotte',
+            desc: 'Botas pressurizadas com sistema de propulsão rápida (Dash). Concede invulnerabilidade temporária.',
+            qty: 'Ativo'
+          });
+        }
+
+        if (p.bagLevel > 1) {
+          items.push({
+            id: 'bag',
+            name: 'Bolsa Expandida',
+            icon: '🎒',
+            badge: `Nv. ${p.bagLevel}`,
+            category: 'Equipamento Charlotte',
+            desc: `Bolsa reforçada de ferramentas com capacidade expandida para ${p.maxTimerBombs} bombas simultâneas.`,
+            qty: `${p.maxTimerBombs} slots`
+          });
+        }
+
+        return items;
+      }
+
+      updateChestUI() {
+        if (!this.player) return;
+        const depCC = this.player.depositedCores || 0;
+        const depParts = this.player.depositedParts || 0;
+        const cCC = this.player.chronoCores || 0;
+        const cParts = this.player.parts || 0;
+        const isCarryingPiston = !!this.player.carryingHydraulicPiston;
+
+        const statCC = document.getElementById('chest-stat-cc');
+        const statParts = document.getElementById('chest-stat-parts');
+        if (statCC) statCC.textContent = `${depCC} CC`;
+        if (statParts) statParts.textContent = `${depParts} Peças`;
+
+        // Banner de depósito de itens da bolsa
+        const depositBanner = document.getElementById('chest-deposit-banner');
+        const depositText = document.getElementById('chest-deposit-text');
+        if (depositBanner && depositText) {
+          if (cCC > 0 || cParts > 0 || isCarryingPiston) {
+            depositBanner.style.display = 'flex';
+            let extras = [];
+            if (cCC > 0) extras.push(`${cCC} CC`);
+            if (cParts > 0) extras.push(`${cParts} Peças`);
+            if (isCarryingPiston) extras.push('Pistão');
+            depositText.textContent = `🎒 Na mochila: ${extras.join(' + ')}`;
+          } else {
+            depositBanner.style.display = 'none';
+          }
+        }
+
+        // Itens
+        const items = this.getChestItems();
+        const gridCount = document.getElementById('chest-grid-count');
+        if (gridCount) {
+          gridCount.textContent = `${items.length} ${items.length === 1 ? 'Item' : 'Itens'}`;
+        }
+
+        const grid = document.getElementById('chest-grid');
+        if (grid) {
+          grid.innerHTML = '';
+          const totalSlots = Math.max(8, Math.ceil(items.length / 4) * 4);
+          for (let i = 0; i < totalSlots; i++) {
+            const slot = document.createElement('div');
+            const item = items[i];
+            if (item) {
+              slot.className = 'chest-slot filled' + (i === (this.selectedChestItemIndex || 0) ? ' selected' : '');
+              slot.innerHTML = `
+                <div class="slot-badge">${item.badge}</div>
+                <div class="slot-icon">${item.icon}</div>
+                <div class="slot-label">${item.name}</div>
+              `;
+              slot.title = `${item.name} (${item.qty})`;
+              slot.onclick = () => this.selectChestItem(i);
+              slot.onmouseenter = () => this.selectChestItem(i);
+            } else {
+              slot.className = 'chest-slot empty';
+              slot.innerHTML = `<span class="empty-cross">+</span>`;
+            }
+            grid.appendChild(slot);
+          }
+        }
+
+        this.renderChestInspector();
       }
 
       closeArmory() {
@@ -6932,63 +9206,121 @@
       }
 
       updateArmoryUI() {
+        if (!this.player) return;
         const totalCC = this.getAvailableCC();
         const totalParts = this.getAvailableParts();
-        document.getElementById('armory-coins').textContent = `${window.t('armory-youhave')}: ${totalCC} CC | ${totalParts} ${window.t('ingame-parts').toUpperCase()}`;
+        const coinsEl = document.getElementById('armory-coins');
+        if (coinsEl) {
+          coinsEl.textContent = `${window.t('armory-youhave')}: ${totalCC} CC | ${totalParts} ${window.t('ingame-parts').toUpperCase()}`;
+        }
         
-        // Gauntlet
+        // 1. Manopla Mecânica
         const btnGauntlet = document.getElementById('btn-buy-gauntlet');
-        if (this.player.gauntletLevel >= 3) {
-          btnGauntlet.textContent = window.t('armory-max');
-          btnGauntlet.disabled = true;
-        } else if (this.player.gauntletLevel === 1 && !this.player.hasHydraulicPiston) {
-          btnGauntlet.textContent = 'Falta Pistão';
-          btnGauntlet.disabled = true;
-        } else {
-          btnGauntlet.textContent = window.t('armory-upgrade');
-          btnGauntlet.disabled = (totalCC < 10 || totalParts < 10);
+        const gauntletCostEl = document.getElementById('gauntlet-upgrade-cost');
+        const gauntletLvl = this.player.gauntletLevel || 1;
+        const hasPiston = !!(this.player.hasHydraulicPiston || this.player.carryingHydraulicPiston);
+
+        if (gauntletLvl >= 3) {
+          if (btnGauntlet) {
+            btnGauntlet.textContent = window.t('armory-max');
+            btnGauntlet.disabled = true;
+          }
+          if (gauntletCostEl) gauntletCostEl.textContent = 'Aprimoramento máximo atingido!';
+        } else if (gauntletLvl === 1) {
+          const costCC = 35;
+          const costParts = 25;
+          if (gauntletCostEl) {
+            gauntletCostEl.textContent = `Nv. 2 (220px) | Custo: ${costCC} CC | ${costParts} PEÇAS | 1 PISTÃO HIDRÁULICO`;
+          }
+          if (btnGauntlet) {
+            if (!hasPiston) {
+              btnGauntlet.textContent = 'Falta Pistão';
+              btnGauntlet.disabled = true;
+            } else {
+              btnGauntlet.textContent = window.t('armory-upgrade');
+              btnGauntlet.disabled = (totalCC < costCC || totalParts < costParts);
+            }
+          }
+        } else if (gauntletLvl === 2) {
+          const costCC = 50;
+          const costParts = 40;
+          if (gauntletCostEl) {
+            gauntletCostEl.textContent = `Nv. 3 (320px) | Custo: ${costCC} CC | ${costParts} PEÇAS`;
+          }
+          if (btnGauntlet) {
+            btnGauntlet.textContent = window.t('armory-upgrade');
+            btnGauntlet.disabled = (totalCC < costCC || totalParts < costParts);
+          }
         }
 
-        // Boots
+        // 2. Botas Propulsoras
         const btnBoots = document.getElementById('btn-buy-boots');
+        const bootsCostEl = document.getElementById('boots-upgrade-cost');
+        const costBootsCC = 30;
+        const costBootsParts = 25;
         if (this.player.bootsLevel >= 1) {
-          btnBoots.textContent = window.t('armory-bought');
-          btnBoots.disabled = true;
+          if (btnBoots) {
+            btnBoots.textContent = window.t('armory-bought');
+            btnBoots.disabled = true;
+          }
+          if (bootsCostEl) bootsCostEl.textContent = 'Adquirido (Dash Ativo)';
         } else {
-          btnBoots.textContent = window.t('armory-buy');
-          btnBoots.disabled = (totalCC < 15 || totalParts < 15);
+          if (bootsCostEl) {
+            bootsCostEl.textContent = `Custo: ${costBootsCC} CC | ${costBootsParts} PEÇAS | 1 NÚCLEO A VAPOR`;
+          }
+          if (btnBoots) {
+            if (!this.player.hasSteamPropulsionCore) {
+              btnBoots.textContent = 'Falta Núcleo';
+              btnBoots.disabled = true;
+            } else {
+              btnBoots.textContent = window.t('armory-buy');
+              btnBoots.disabled = (totalCC < costBootsCC || totalParts < costBootsParts);
+            }
+          }
         }
 
-        // Bag — apenas capacidade (nv1=5 nv2=7 nv3=10)
+        // 3. Bolsa Expandida — apenas capacidade (nv1=5 nv2=7 nv3=10)
         const btnBag = document.getElementById('btn-buy-bag');
         const bagCostEl = document.getElementById('bag-upgrade-cost');
         const bagLvl = this.player.bagLevel || 1;
         if (bagLvl >= 3) {
-          btnBag.textContent = window.t('armory-max');
-          btnBag.disabled = true;
+          if (btnBag) {
+            btnBag.textContent = window.t('armory-max');
+            btnBag.disabled = true;
+          }
           if (bagCostEl) bagCostEl.textContent = 'Capacidade máxima atingida!';
         } else {
           const nextCap = bagLvl === 1 ? 7 : 10;
-          const costCC = bagLvl === 1 ? 15 : 25;
-          const costParts = bagLvl === 1 ? 15 : 25;
-          btnBag.textContent = window.t('armory-upgrade');
-          btnBag.disabled = (totalCC < costCC || totalParts < costParts);
-          if (bagCostEl) bagCostEl.textContent = '  ' + nextCap + ' bombas  |  Custo: ' + costCC + ' CC | ' + costParts + ' PECAS';
+          const costCC = bagLvl === 1 ? 25 : 45;
+          const costParts = bagLvl === 1 ? 20 : 40;
+          if (btnBag) {
+            btnBag.textContent = window.t('armory-upgrade');
+            btnBag.disabled = (totalCC < costCC || totalParts < costParts);
+          }
+          if (bagCostEl) {
+            bagCostEl.textContent = `${nextCap} Bombas | Custo: ${costCC} CC | ${costParts} PEÇAS`;
+          }
         }
 
-        var btnTimer = document.getElementById('btn-buy-timerbomb');
+        // 4. Bomba-Relógio Nível 2
+        const btnTimer = document.getElementById('btn-buy-timerbomb');
+        const timerCostEl = document.getElementById('timerbomb-upgrade-cost');
+        const costTimerCC = 20;
+        const costTimerParts = 18;
         if (btnTimer) {
           if (this.player.timerBombLevel >= 2) {
             btnTimer.textContent = 'Adquirido';
             btnTimer.disabled = true;
+            if (timerCostEl) timerCostEl.textContent = 'Adquirido (Reação em Cadeia Ativa)';
           } else {
             btnTimer.textContent = 'Comprar';
-            btnTimer.disabled = (totalCC < 20 || totalParts < 15);
+            btnTimer.disabled = (totalCC < costTimerCC || totalParts < costTimerParts);
+            if (timerCostEl) {
+              timerCostEl.textContent = `Custo: ${costTimerCC} CC | ${costTimerParts} PEÇAS`;
+            }
           }
         }
       }
-
-
       switchArmoryTab(tab) {
         document.getElementById('armory-panel-upgrades').style.display = tab === 'upgrades' ? 'flex' : 'none';
         document.getElementById('armory-panel-bag').style.display = tab === 'bag' ? 'block' : 'none';
@@ -7011,8 +9343,9 @@
 
         this.player.bagSlots.forEach((slot, idx) => {
           const div = document.createElement('div');
-          div.className = 'bag-slot filled ' + (slot.type === 'impact' ? 'impact' : slot.type === 'propulsor' ? 'propulsor' : '');
-          div.textContent = slot.type === 'impact' ? '💥' : slot.type === 'propulsor' ? '🔵' : '🟠';
+          const isVortex = (slot.type === 'vortex' || slot.type === 'propulsor');
+          div.className = 'bag-slot filled ' + (slot.type === 'impact' ? 'impact' : isVortex ? 'vortex' : '');
+          div.textContent = slot.type === 'impact' ? '💥' : isVortex ? '🌀' : '🟠';
           div.style.cursor = 'pointer';
           div.onclick = () => this.cycleBagSlot(idx);
           grid.appendChild(div);
@@ -7025,7 +9358,7 @@
         const types = [
           { key: 'timed', label: '🟠 Temporizador', always: true },
           { key: 'impact', label: '💥 Impacto', req: this.player.unlockedImpact },
-          { key: 'propulsor', label: '🔵 Propulsor', req: this.player.unlockedPropulsor },
+          { key: 'vortex', label: '🌀 Vórtice', req: (this.player.unlockedVortex || this.player.unlockedPropulsor) },
         ];
         types.forEach(t => {
           if (!t.always && !t.req) return;
@@ -7041,21 +9374,21 @@
         const slot = this.player.bagSlots[index];
         const order = ['timed'];
         if (this.player.unlockedImpact) order.push('impact');
-        if (this.player.unlockedPropulsor) order.push('propulsor');
+        if (this.player.unlockedVortex || this.player.unlockedPropulsor) order.push('vortex');
         
+        if (slot.type === 'propulsor') slot.type = 'vortex';
         let curr = order.indexOf(slot.type);
         if (curr === -1) curr = 0;
         
         let nextType = order[(curr + 1) % order.length];
         
-        // Custo da Impact Bomb: 1 CC (Eliminada exigência de peças)
+        // Custo da Impact Bomb: 1 CC
         if (nextType === 'impact') {
           if (this.getAvailableCC() >= 1) {
             this.consumeCurrency(1, 0); // 1 CC, 0 parts
             showToast('Bomba de Impacto Fabricada: -1 CC', 1000);
           } else {
             showToast('CC Insuficiente para Bomba de Impacto!', 1000);
-            // Pula para a próxima (Propulsor ou volta pro Timed)
             curr++;
             nextType = order[(curr + 1) % order.length];
           }
@@ -7071,26 +9404,35 @@
 
       buyUpgrade(type) {
         let costCC = 0, costParts = 0;
+        const hasPiston = !!(this.player.hasHydraulicPiston || this.player.carryingHydraulicPiston);
+
         if (type === 'gauntlet') {
-          if (this.player.gauntletLevel === 1 && !this.player.hasHydraulicPiston) {
-            showToast('REQUER PISTÃO HIDRÁULICO NO BAÚ!');
-            return;
+          const lvl = this.player.gauntletLevel || 1;
+          if (lvl >= 3) { showToast('MANOPLA JÁ ESTÁ NO NÍVEL MÁXIMO!'); return; }
+          if (lvl === 1) {
+            if (!hasPiston) {
+              showToast('REQUER 1 PISTÃO HIDRÁULICO (NO BAÚ OU MOCHILA)!');
+              return;
+            }
+            costCC = 35; costParts = 25;
+          } else if (lvl === 2) {
+            costCC = 50; costParts = 40;
           }
-          costCC = 10; costParts = 10;
-        }
-        if (type === 'timerbomb') { costCC = 20; costParts = 15; }
-        if (type === 'boots') {
+        } else if (type === 'timerbomb') {
+          if (this.player.timerBombLevel >= 2) { showToast('BOMBA-RELÓGIO NV. 2 JÁ ADQUIRIDA!'); return; }
+          costCC = 20; costParts = 18;
+        } else if (type === 'boots') {
+          if (this.player.bootsLevel >= 1) { showToast('BOTAS JÁ FORAM ADQUIRIDAS!'); return; }
           if (!this.player.hasSteamPropulsionCore) {
-            showToast('REQUER NUCLEO DE PROPULSAO A VAPOR!');
+            showToast('REQUER 1 NÚCLEO DE PROPULSÃO A VAPOR!');
             return;
           }
-          costCC = 15; costParts = 15;
-        }
-        if (type === 'bag') {
+          costCC = 30; costParts = 25;
+        } else if (type === 'bag') {
           const lvl = this.player.bagLevel || 1;
           if (lvl >= 3) { showToast('BOLSA JÁ ESTÁ NO NÍVEL MÁXIMO!'); return; }
-          costCC = lvl === 1 ? 15 : 25;
-          costParts = lvl === 1 ? 15 : 25;
+          costCC = lvl === 1 ? 25 : 45;
+          costParts = lvl === 1 ? 20 : 40;
         }
         
         const totalCC = this.getAvailableCC();
@@ -7100,10 +9442,14 @@
            this.consumeCurrency(costCC, costParts);
            
            if (type === 'gauntlet') {
+             if (this.player.gauntletLevel === 1) {
+               this.player.hasHydraulicPiston = false;
+               this.player.carryingHydraulicPiston = false;
+             }
              this.player.upgradeGauntlet();
            } else if (type === 'timerbomb') {
              this.player.timerBombLevel = 2;
-             showToast('BOMBA-RELOGIO ATUALIZADA (REACAO EM CADEIA)!');
+             showToast('BOMBA-RELÓGIO ATUALIZADA (REAÇÃO EM CADEIA)!');
            } else if (type === 'boots') {
              this.player.bootsLevel = 1;
              showToast('BOTAS COMPRADAS! DASH LIBERADO (SHIFT / BOTÃO MOBILE)!');
@@ -7118,7 +9464,9 @@
                this.player.bagSlots.push({ type: 'timed', cooldown: 0 });
              }
              
-             showToast(`BOLSA EXPANDIDA (NV. ${this.player.bagLevel})! Capacidade: ${newCap} bombas!`);
+             showToast(
+"BOLSA EXPANDIDA (NV. " + this.player.bagLevel + ")! Capacidade: " + newCap + " bombas!"
+);
            }
            sound.playCCPickup();
            this.spawnSparks(this.player.x, this.player.y, '#00e5ff', 25);
@@ -7126,10 +9474,9 @@
            saveGame();
            this.updateArmoryUI();
         } else {
-           showToast(`RECURSOS INSUFICIENTES! Necessário: ${costCC} CC e ${costParts} PEÇAS`);
+           showToast('RECURSOS INSUFICIENTES! Necessário: ' + costCC + ' CC e ' + costParts + ' PEÇAS');
         }
       }
-
       descendToSecretFloor(node) {
         if (this.fadeState !== 'none') return;
         this.fadeState = 'out';
@@ -7142,6 +9489,8 @@
           // Limpa bombas e projéteis da transição
           this.timedBombs = [];
           this.flyingBombs = [];
+          this.vortexFields = [];
+          this.flyingShards = [];
           this.ccDrops = [];
           this.floatingTexts = [];
           this.particles = [];
@@ -7230,9 +9579,11 @@
         if (bomb.type === BOMB_TYPE.IMPACT) {
           sound.playImpactExplosion();
           this.detonateImpact(bomb.targetX, bomb.targetY, gridX, gridY);
-        } else if (bomb.type === BOMB_TYPE.PROPULSOR) {
-          sound.playPropulsorSteam();
-          this.detonatePropulsor(bomb.targetX, bomb.targetY);
+        } else if (bomb.type === BOMB_TYPE.VORTEX || bomb.type === 'vortex' || bomb.type === 'propulsor') {
+          if (!this.vortexFields) this.vortexFields = [];
+          this.vortexFields.push(new VortexField(bomb.targetX, bomb.targetY));
+          if (sound.playVortexSuck) sound.playVortexSuck();
+          this.spawnSparks(bomb.targetX, bomb.targetY, '#00e5ff', 25);
         } else if (bomb.type === BOMB_TYPE.TIMED) {
           sound.playTimedBeep(1.0);
           this.timedBombs.push(new TimedBomb(gridX, gridY));
@@ -7273,8 +9624,16 @@
           }
         });
         
-        // Se Charlotte estiver no raio da explosão de impacto, sofre recuo (repulsão) para longe
+        // Se Charlotte estiver no raio da explosão de impacto, sofre dano de meio coração (0.5) e recuo
         const pDist = Math.hypot(this.player.x - cx, this.player.y - cy);
+        if (pDist <= blastRadius + this.player.radius) {
+          if (this.player.invulnerableTimer <= 0) {
+            const died = this.player.takeDamage(0.5);
+            if (died) {
+              this.triggerTimeRewind();
+            }
+          }
+        }
         const playerRepelRadius = TILE_SIZE * 2.2;
         if (pDist < playerRepelRadius) {
           let pushX = this.player.x - cx;
@@ -7358,42 +9717,31 @@
             }
           }
         }
+
+        // Dano e destruição de estilhaços / obstáculos no raio da explosão
+        if (room.obstacles && room.obstacles.length > 0) {
+          for (let i = room.obstacles.length - 1; i >= 0; i--) {
+            const obs = room.obstacles[i];
+            if (Math.hypot(obs.x - cx, obs.y - cy) <= blastRadius + (obs.radius || 12)) {
+              if (obs.takeDamage(1, this, 'bomb')) {
+                room.obstacles.splice(i, 1);
+              }
+            }
+          }
+        }
         
         this.triggerChainReaction(cx, cy, blastRadius);
       }
 
+      detonateVortex(cx, cy) {
+        if (!this.vortexFields) this.vortexFields = [];
+        this.vortexFields.push(new VortexField(cx, cy));
+        if (sound.playVortexSuck) sound.playVortexSuck();
+        this.spawnSparks(cx, cy, '#00e5ff', 25);
+      }
+
       detonatePropulsor(cx, cy) {
-        const room = this.map.currentRoom;
-        this.blasts.push(new ExplosionBlast(cx, cy, TILE_SIZE * 2.2, false));
-        this.spawnSparks(cx, cy, '#00e5ff', 30);
-
-        // Se Charlotte estiver no raio da explosão, sofre recuo (dash) para longe
-        const pDist = Math.hypot(this.player.x - cx, this.player.y - cy);
-        if (pDist < TILE_SIZE * 2.8) {
-          let pushX = this.player.x - cx;
-          let pushY = this.player.y - cy;
-          if (Math.hypot(pushX, pushY) < 0.001) {
-            pushX = -this.player.facing.dx;
-            pushY = -this.player.facing.dy;
-          }
-          const norm = Math.hypot(pushX, pushY) || 1;
-          this.player.applyImpulse(pushX / norm, pushY / norm, 3.0);
-        }
-
-        // Empurra inimigos para longe (não causa dano, apenas repulsão)
-        const repelRadius = TILE_SIZE * 3.5;
-        room.enemies.forEach(enemy => {
-          const dx = enemy.x - cx;
-          const dy = enemy.y - cy;
-          const dist = Math.hypot(dx, dy);
-          if (dist < repelRadius) {
-            const nx = dist > 0.001 ? dx / dist : 1;
-            const ny = dist > 0.001 ? dy / dist : 0;
-            enemy.applyRepulsion(nx, ny, 380);
-          }
-        });
-        
-        this.triggerChainReaction(cx, cy, TILE_SIZE * 2.2);
+        this.detonateVortex(cx, cy);
       }
 
       detonateTimedBomb(bomb) {
@@ -7403,6 +9751,39 @@
         const by = bomb.y;
         const crossRange = 2; // Cruz de 2 blocos
         const depth = this.map.currentDepth || 1;
+
+        // EFEITO CHAIN BALANCEADO: Geração aleatória e moderada para não travar a movimentação
+        if (!this.flyingShards) this.flyingShards = [];
+        const currentObsCount = room.obstacles ? room.obstacles.length : 0;
+        const shouldSpawnShards = Math.random() < 0.45 && currentObsCount < 3;
+
+        if (shouldSpawnShards) {
+          const shardBiome = depth === 1 ? 'stone' : (depth === 2 ? (Math.random() < 0.5 ? 'stone' : 'iron') : 'iron');
+          const shardCount = Math.random() < 0.30 ? 2 : 1; // Apenas 1 a 2 estilhaços ocasionais
+
+          for (let s = 0; s < shardCount; s++) {
+            const angle = Math.random() * Math.PI * 2;
+            const dist = TILE_SIZE * (1.1 + Math.random() * 1.2);
+            let tx = bx + Math.cos(angle) * dist;
+            let ty = by + Math.sin(angle) * dist;
+            tx = Math.max(TILE_SIZE * 1.5, Math.min(WORLD_WIDTH - TILE_SIZE * 1.5, tx));
+            ty = Math.max(TILE_SIZE * 1.5, Math.min(WORLD_HEIGHT - TILE_SIZE * 1.5, ty));
+            this.flyingShards.push(new FlyingShard(bx, by, tx, ty, shardBiome));
+          }
+        }
+
+        // Danifica e destroi estilhaços que já estavam no chão dentro do raio
+        if (room.obstacles && room.obstacles.length > 0) {
+          for (let i = room.obstacles.length - 1; i >= 0; i--) {
+            const obs = room.obstacles[i];
+            const dist = Math.hypot(obs.x - bx, obs.y - by);
+            if (dist <= TILE_SIZE * (crossRange + 0.5)) {
+              if (obs.takeDamage(2, this, 'bomb')) {
+                room.obstacles.splice(i, 1);
+              }
+            }
+          }
+        }
         const dropChance = Math.min(0.85, 0.50 + (depth - 1) * 0.10);
 
         this.blasts.push(new ExplosionBlast(bx, by, TILE_SIZE * (crossRange + 0.5), true));
@@ -7509,6 +9890,26 @@
               const knockY = enemy.y - by !== 0 ? Math.sign(enemy.y - by) : 0;
               enemy.applyRepulsion(knockX, knockY, 280);
             }
+          }
+        }
+        // Causa 1 de dano (1 coração cheio) em Charlotte se for atingida pela explosão da bomba relógio
+        let playerHitByTimed = false;
+        for (const tile of affectedTiles) {
+          const tileCenterX = tile.x * TILE_SIZE + TILE_SIZE / 2;
+          const tileCenterY = tile.y * TILE_SIZE + TILE_SIZE / 2;
+          if (Math.hypot(this.player.x - tileCenterX, this.player.y - tileCenterY) < TILE_SIZE * 0.9) {
+            playerHitByTimed = true;
+            break;
+          }
+        }
+        if (playerHitByTimed) {
+          const pKnockX = this.player.x - bx !== 0 ? Math.sign(this.player.x - bx) : 1;
+          const pKnockY = this.player.y - by !== 0 ? Math.sign(this.player.y - by) : 0;
+          // CRÍTICO: Chamar takeDamage ANTES de applyImpulse!
+          const died = this.player.takeDamage(1.0);
+          this.player.applyImpulse(pKnockX, pKnockY, 2.5);
+          if (died) {
+            this.triggerTimeRewind();
           }
         }
         
@@ -7621,6 +10022,10 @@
           // 2. Limpa bombas em voo, bombas no chão, partículas e drops soltos
           this.timedBombs = [];
           this.flyingBombs = [];
+          this.targetMarkers = [];
+          this.fallingRocks = [];
+          this.vortexFields = [];
+          this.flyingShards = [];
           this.ccDrops = [];
           this.floatingTexts = [];
           this.particles = [];
@@ -7630,6 +10035,7 @@
           this.player.chronoCores = 0;
           this.player.parts = 0;
           this.player.carryingHydraulicPiston = false;
+          this.player.hp = this.player.maxHp || 3;
 
           // 4. Posiciona Charlotte no centro da nova sala inicial
           const mid = Math.floor(GRID_SIZE / 2);
@@ -8371,6 +10777,16 @@
             room.pushables.forEach(p => p.render(ctx));
         }
 
+        // Estilhaços de Pedra/Ferro e Rochas do Boss no chão
+        if (room && room.obstacles) {
+          room.obstacles.forEach(obs => obs.draw(ctx));
+        }
+
+        // Campos de Vórtice no chão
+        if (this.vortexFields) {
+          this.vortexFields.forEach(v => v.draw(ctx));
+        }
+
         // Jogador (Charlotte: Sprite Animado 64x64 com fallback)
         ctx.save();
         if (this.player.invulnerableTimer > 0 && Math.floor(now * 15) % 2 === 0) {
@@ -8448,8 +10864,18 @@
         // Renderiza Marcadores de Mira no Chão (Telegraph de ImpactBomb)
         this.targetMarkers.forEach(tm => tm.draw(ctx));
 
+        // Renderiza Queda de Rochas (Mecânica do Chefe Final)
+        if (this.fallingRocks) {
+          this.fallingRocks.forEach(rock => rock.draw(ctx));
+        }
+
         // Renderiza Bombas em Voo (Arremessadas)
         this.flyingBombs.forEach(b => b.draw(ctx));
+
+        // Renderiza Estilhaços em Voo
+        if (this.flyingShards) {
+          this.flyingShards.forEach(s => s.draw(ctx));
+        }
 
         // Partículas e Efeitos de Explosão
         this.particles.forEach(p => p.draw(ctx));
@@ -8493,7 +10919,7 @@
             ctx.setLineDash([]);
 
             let themeColor = '#ff5252';
-            if (bombType === BOMB_TYPE.PROPULSOR) themeColor = '#00e5ff';
+            if (bombType === BOMB_TYPE.VORTEX || bombType === 'vortex' || bombType === BOMB_TYPE.PROPULSOR) themeColor = '#00e5ff';
             if (bombType === BOMB_TYPE.TIMED) themeColor = '#ffca28';
 
             // Arco parabólico de mira
@@ -8533,10 +10959,17 @@
               ctx.beginPath();
               ctx.arc(tx, ty, 6, 0, Math.PI * 2);
               ctx.fill();
-            } else if (bombType === BOMB_TYPE.PROPULSOR) {
+            } else if (bombType === BOMB_TYPE.VORTEX || bombType === 'vortex' || bombType === BOMB_TYPE.PROPULSOR) {
               ctx.beginPath();
-              ctx.arc(tx, ty, TILE_SIZE * 1.4, 0, Math.PI * 2);
-              ctx.strokeStyle = 'rgba(0, 229, 255, 0.6)';
+              ctx.arc(tx, ty, TILE_SIZE * 1.5, 0, Math.PI * 2);
+              ctx.strokeStyle = 'rgba(0, 229, 255, 0.75)';
+              ctx.stroke();
+
+              // Retículo em espiral sutil
+              ctx.beginPath();
+              ctx.arc(tx, ty, 7, 0, Math.PI * 1.5);
+              ctx.strokeStyle = '#ffffff';
+              ctx.lineWidth = 1.5;
               ctx.stroke();
 
               ctx.beginPath();
@@ -8689,10 +11122,10 @@
         document.querySelectorAll('.bomb-btn').forEach(btn => {
           const type = btn.getAttribute('data-bomb');
           if (type === 'impact') btn.style.display = this.player.unlockedImpact ? 'flex' : 'none';
-          if (type === 'propulsor') btn.style.display = this.player.unlockedPropulsor ? 'flex' : 'none';
+          if (type === 'vortex' || type === 'propulsor') btn.style.display = (this.player.unlockedVortex || this.player.unlockedPropulsor) ? 'flex' : 'none';
           
           if (this.player.bagSlots) {
-             const slotsOfType = this.player.bagSlots.filter(s => s.type === type);
+             const slotsOfType = this.player.bagSlots.filter(s => s.type === type || ((type === 'vortex' || type === 'propulsor') && (s.type === 'vortex' || s.type === 'propulsor')));
              const readyCount = slotsOfType.filter(s => s.cooldown <= 0).length;
              let ammoSpan = btn.querySelector('.ammo-text');
              if (!ammoSpan) {
@@ -8708,6 +11141,27 @@
         // Ocultar o ammo-counter antigo, se existir
         const ammoEl = document.getElementById('ammo-counter');
         if (ammoEl) ammoEl.style.display = 'none';
+
+        // Atualiza vidas de Charlotte
+        const healthEl = document.getElementById('health-counter');
+        if (healthEl && this.player) {
+          const hp = this.player.hp !== undefined ? this.player.hp : 3;
+          const max = this.player.maxHp || 3;
+          let str = '';
+          for (let i = 0; i < max; i++) {
+            if (hp >= i + 1) {
+              str += '❤️';
+            } else if (hp >= i + 0.5) {
+              str += '💔';
+            } else {
+              str += '🖤';
+            }
+          }
+          healthEl.textContent = str;
+        }
+
+        const healthBadge = document.querySelector('#health-badge .hud-badge-label');
+        if (healthBadge) healthBadge.textContent = 'Vidas';
 
         // Atualiza nível da manopla e cristais
         const gauntletEl = document.getElementById('gauntlet-level');
@@ -8768,11 +11222,24 @@
         
         // Atualiza visibilidade dos atalhos no Desktop Guide
         const guideBombs = document.getElementById('guide-bombs');
-        if (guideBombs) guideBombs.style.display = (this.player.unlockedImpact || this.player.unlockedPropulsor) ? 'inline-block' : 'none';
+        if (guideBombs) guideBombs.style.display = (this.player.unlockedImpact || this.player.unlockedVortex || this.player.unlockedPropulsor) ? 'inline-block' : 'none';
         const guideDash = document.getElementById('guide-dash');
         if (guideDash) guideDash.style.display = (this.player.bootsLevel >= 1) ? 'inline-block' : 'none';
       }
     }
+
+    window.spawnFinalBoss = function() {
+      if (!window.game || !window.game.map || !window.game.map.currentRoom) return;
+      const room = window.game.map.currentRoom;
+      const mid = Math.floor(GRID_SIZE / 2);
+      const boss = new FinalBossAutomaton(mid * TILE_SIZE + TILE_SIZE / 2, mid * TILE_SIZE + TILE_SIZE / 2, room.depth || 5);
+      room.enemies.push(boss);
+      room.isBossRoom = true;
+      room.isLockdown = true;
+      if (window.sound) window.sound.setMusicMode('battle');
+      if (window.showToast) window.showToast('⚠️ AUTÔMATO TITÂNICO INVOCADO!');
+      return boss;
+    };
 
     // --------------------------------------------------------------------------
     // TOAST NOTIFIER HELPER
@@ -8800,7 +11267,8 @@
         bagLevel: p.bagLevel,
         timerBombLevel: p.timerBombLevel,
         unlockedImpact: p.unlockedImpact,
-        unlockedPropulsor: p.unlockedPropulsor,
+        unlockedVortex: p.unlockedVortex || p.unlockedPropulsor,
+        unlockedPropulsor: p.unlockedVortex || p.unlockedPropulsor,
         hasHydraulicPiston: p.hasHydraulicPiston,
         carryingHydraulicPiston: p.carryingHydraulicPiston,
         hasSteamPropulsionCore: p.hasSteamPropulsionCore,
@@ -8834,7 +11302,8 @@
         p.bagLevel = data.bagLevel ?? 1;
         p.timerBombLevel = data.timerBombLevel ?? 1;
         p.unlockedImpact = data.unlockedImpact ?? false;
-        p.unlockedPropulsor = data.unlockedPropulsor ?? false;
+        p.unlockedVortex = data.unlockedVortex ?? (data.unlockedPropulsor ?? false);
+        p.unlockedPropulsor = p.unlockedVortex;
         p.hasHydraulicPiston = data.hasHydraulicPiston ?? false;
         p.carryingHydraulicPiston = data.carryingHydraulicPiston ?? false;
         p.hasSteamPropulsionCore = data.hasSteamPropulsionCore ?? false;
@@ -8867,7 +11336,8 @@
     window.TILE_SIZE = TILE_SIZE;
     window.GRID_SIZE = GRID_SIZE;
 
-    window.addEventListener('DOMContentLoaded', () => {
+    function initGame() {
+      if (window.game) return;
       window.game = new GameEngine();
       loadGame();
 
@@ -8884,7 +11354,13 @@
           }
         });
       }
-    });
+    }
+
+    if (document.readyState === 'loading') {
+      window.addEventListener('DOMContentLoaded', initGame);
+    } else {
+      initGame();
+    }
 
     function isMobileMode() {
       const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
@@ -9259,11 +11735,8 @@
           armoryDescs[1].innerText = window.t('armory-boots-desc');
           armoryDescs[2].innerText = window.t('armory-bag-desc');
       }
-      const armoryCosts = document.querySelectorAll('.armory-cost');
-      if(armoryCosts.length >= 3) {
-          armoryCosts[0].innerText = window.t('ingame-cost') + ' 10 CC | 10 ' + window.t('ingame-parts').toUpperCase();
-          armoryCosts[1].innerText = window.t('ingame-cost') + ' 15 CC | 15 ' + window.t('ingame-parts').toUpperCase();
-          armoryCosts[2].innerText = window.t('ingame-cost') + ' 20 CC | 20 ' + window.t('ingame-parts').toUpperCase();
+      if (window.game && typeof window.game.updateArmoryUI === 'function') {
+          window.game.updateArmoryUI();
       }
 
       const loadingTitle = document.getElementById('loading-title');
@@ -9421,12 +11894,24 @@
         }
       });
 
-      // Pause com ESC
+      // Pause com ESC e Tecla B para Invocar Boss Final
       document.addEventListener('keydown', (e) => {
+        if (e.key === 'b' || e.key === 'B') {
+          if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) return;
+          if (window.spawnFinalBoss) {
+            window.spawnFinalBoss();
+            return;
+          }
+        }
         if (e.key === 'Escape') {
           const tutModal = document.getElementById('tutorial-modal');
           if (tutModal && tutModal.classList.contains('visible')) {
             closeTutorialModal();
+            return;
+          }
+          const chestModal = document.getElementById('chest-modal');
+          if (chestModal && chestModal.classList.contains('visible')) {
+            if (window.game) window.game.closeChest(true);
             return;
           }
           if (window.game) {
