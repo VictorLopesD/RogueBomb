@@ -2820,6 +2820,15 @@
               window.game.updateArmoryUI();
             }
           }
+
+          // Hack de Desenvolvedor: Ctrl + I ou Alt + I libera o Inventor (Ctrl + Shift + I libera também as bombas)
+          if ((e.code === 'KeyI' || e.key === 'i' || e.key === 'I') && (e.ctrlKey || e.metaKey || e.altKey)) {
+            e.preventDefault();
+            const unlockBombs = !!e.shiftKey;
+            if (typeof window.unlockInventor === 'function') {
+              window.unlockInventor(unlockBombs);
+            }
+          }
         });
 
         window.addEventListener('keyup', (e) => {
@@ -7308,8 +7317,8 @@
         this.y = y;
         this.duration = 2.0;
         this.timer = this.duration;
-        this.pullRadius = TILE_SIZE * 4.2;
-        this.coreRadius = 22;
+        this.pullRadius = TILE_SIZE * 2.2;
+        this.coreRadius = 18;
         this.shardsAbsorbed = 0;
         this.angle = 0;
         this.pulse = 0;
@@ -7332,13 +7341,13 @@
         if (!engine || !engine.map || !engine.map.currentRoom) return this.timer <= 0;
         const room = engine.map.currentRoom;
 
-        // 1. Puxa autômatos para o centro
+        // 1. Puxa autômatos para o centro com força equilibrada e controlada
         room.enemies.forEach(enemy => {
           const dx = this.x - enemy.x;
           const dy = this.y - enemy.y;
           const dist = Math.hypot(dx, dy);
           if (dist > 1 && dist < this.pullRadius) {
-            const force = (1 - dist / this.pullRadius) * 260 + 100;
+            const force = (1 - dist / this.pullRadius) * 110 + 40;
             const nx = dx / dist;
             const ny = dy / dist;
             enemy.x += nx * force * dt;
@@ -7357,40 +7366,40 @@
           }
         });
 
-        // 2. Puxa Charlotte sutilmente (se não estiver dashing)
+        // 2. Puxa Charlotte sutilmente (se não estiver dashing), permitindo resistir andando
         if (engine.player && !engine.player.isDashing) {
           const pdx = this.x - engine.player.x;
           const pdy = this.y - engine.player.y;
           const pDist = Math.hypot(pdx, pdy);
           if (pDist > 1 && pDist < this.pullRadius * 0.75) {
-            const pForce = (1 - pDist / (this.pullRadius * 0.75)) * 140;
+            const pForce = (1 - pDist / (this.pullRadius * 0.75)) * 60;
             engine.player.x += (pdx / pDist) * pForce * dt;
             engine.player.y += (pdy / pDist) * pForce * dt;
           }
         }
 
-        // 3. Puxa Cristais de Chrono Core (loot)
+        // 3. Puxa Cristais de Chrono Core (loot) de forma fluida
         if (engine.ccDrops) {
           engine.ccDrops.forEach(drop => {
             const ddx = this.x - drop.x;
             const ddy = this.y - drop.y;
             const dDist = Math.hypot(ddx, ddy);
             if (dDist > 1 && dDist < this.pullRadius) {
-              drop.x += (ddx / dDist) * 320 * dt;
-              drop.y += (ddy / dDist) * 320 * dt;
+              drop.x += (ddx / dDist) * 160 * dt;
+              drop.y += (ddy / dDist) * 160 * dt;
             }
           });
         }
 
-        // 4. PUXA ESTILHAÇOS E ROCHAS DO MAPA!
+        // 4. Puxa estilhaços e rochas dentro do raio real do vórtice
         if (room.obstacles && room.obstacles.length > 0) {
           for (let i = room.obstacles.length - 1; i >= 0; i--) {
             const obs = room.obstacles[i];
             const odx = this.x - obs.x;
             const ody = this.y - obs.y;
             const oDist = Math.hypot(odx, ody);
-            if (oDist > 1 && oDist < this.pullRadius * 1.3) {
-              const oSpeed = 340;
+            if (oDist > 1 && oDist < this.pullRadius) {
+              const oSpeed = 150;
               obs.x += (odx / oDist) * oSpeed * dt;
               obs.y += (ody / oDist) * oSpeed * dt;
               obs.angle += 12 * dt;
@@ -7433,7 +7442,7 @@
           window.sound.playImpactExplosion();
         }
 
-        const blastRadius = TILE_SIZE * 2.2;
+        const blastRadius = TILE_SIZE * 1.6;
         engine.blasts.push(new ExplosionBlast(this.x, this.y, blastRadius, false));
         engine.spawnSparks(this.x, this.y, '#00e5ff', 40);
         engine.spawnSparks(this.x, this.y, '#7c4dff', 25);
@@ -7543,7 +7552,7 @@
         ctx.rotate(-this.angle * 1.5);
         ctx.fillStyle = '#0a0a14';
         ctx.beginPath();
-        ctx.arc(0, 0, 14, 0, Math.PI * 2);
+        ctx.arc(0, 0, 11, 0, Math.PI * 2);
         ctx.fill();
         ctx.strokeStyle = '#7c4dff';
         ctx.lineWidth = 2.5;
@@ -8298,6 +8307,7 @@
                        window.gameState = window.gameState || {};
                        window.gameState.inventorRescued = true;
                        this.player.inventorTalked = true;
+                       if (typeof saveGame === 'function') saveGame();
                        
                        let step = 0;
                        const msgs = [
@@ -8857,6 +8867,7 @@
           this.spawnSparks(this.player.x, this.player.y, '#ce93d8', 25);
           this.updateHUD();
           this.updateInventorShopUI();
+          if (typeof saveGame === 'function') saveGame();
         } else {
           showToast(`INVENTOR: "Você precisa de ${costCC} CC e ${costParts} PEÇAS para isso..."`);
         }
@@ -10961,7 +10972,7 @@
               ctx.fill();
             } else if (bombType === BOMB_TYPE.VORTEX || bombType === 'vortex' || bombType === BOMB_TYPE.PROPULSOR) {
               ctx.beginPath();
-              ctx.arc(tx, ty, TILE_SIZE * 1.5, 0, Math.PI * 2);
+              ctx.arc(tx, ty, TILE_SIZE * 2.2, 0, Math.PI * 2);
               ctx.strokeStyle = 'rgba(0, 229, 255, 0.75)';
               ctx.stroke();
 
@@ -11272,6 +11283,7 @@
         hasHydraulicPiston: p.hasHydraulicPiston,
         carryingHydraulicPiston: p.carryingHydraulicPiston,
         hasSteamPropulsionCore: p.hasSteamPropulsionCore,
+        inventorRescued: !!(window.gameState && window.gameState.inventorRescued),
         lastSaved: Date.now()
       };
     }
@@ -11308,6 +11320,21 @@
         p.carryingHydraulicPiston = data.carryingHydraulicPiston ?? false;
         p.hasSteamPropulsionCore = data.hasSteamPropulsionCore ?? false;
 
+        window.gameState = window.gameState || {};
+        if (data.inventorRescued !== undefined) {
+          window.gameState.inventorRescued = !!data.inventorRescued;
+        }
+
+        // Se o inventor já foi resgatado e estamos na Safe Room inicial, garante o tile do NPC
+        if (window.gameState.inventorRescued && window.game && window.game.map && window.game.depth === 1) {
+          const sx = window.game.map.startRoomCoords ? window.game.map.startRoomCoords.x : 2;
+          const sy = window.game.map.startRoomCoords ? window.game.map.startRoomCoords.y : 2;
+          const startRoom = window.game.map.rooms ? window.game.map.rooms.get(`${sx},${sy}`) : null;
+          if (startRoom && startRoom.grid && startRoom.grid[3][3] === TILE.SIGN) {
+            startRoom.grid[3][3] = TILE.INVENTOR_NPC;
+          }
+        }
+
         // Atualizar inventário de bombas de acordo com o nível da bolsa
         p.bagSlots = [];
         const caps = [0, 5, 7, 10];
@@ -11327,7 +11354,88 @@
 
     function clearSave() {
       localStorage.removeItem(SAVE_KEY);
+      if (window.gameState) {
+        window.gameState.inventorRescued = false;
+      }
     }
+
+    // --------------------------------------------------------------------------
+    // HACK DE DESENVOLVEDOR: LIBERAR O INVENTOR
+    // --------------------------------------------------------------------------
+    function unlockInventor(unlockBombs = false) {
+      window.gameState = window.gameState || {};
+      window.gameState.inventorRescued = true;
+
+      const engine = window.game;
+      if (engine) {
+        if (engine.map) {
+          const sx = engine.map.startRoomCoords ? engine.map.startRoomCoords.x : 2;
+          const sy = engine.map.startRoomCoords ? engine.map.startRoomCoords.y : 2;
+          const startRoom = engine.map.rooms ? engine.map.rooms.get(`${sx},${sy}`) : null;
+          if (startRoom && startRoom.grid) {
+            startRoom.grid[3][3] = TILE.INVENTOR_NPC;
+          }
+
+          const currentRoom = engine.map.currentRoom;
+          if (currentRoom) {
+            if (engine.depth === 1 && currentRoom.isStart) {
+              currentRoom.grid[3][3] = TILE.INVENTOR_NPC;
+              if (engine.spawnSparks) {
+                engine.spawnSparks(3 * TILE_SIZE + TILE_SIZE / 2, 3 * TILE_SIZE + TILE_SIZE / 2, '#ce93d8', 40);
+              }
+              if (engine.spawnFloatingText) {
+                engine.spawnFloatingText('INVENTOR LIBERADO!', 3 * TILE_SIZE + TILE_SIZE / 2, 3 * TILE_SIZE, '#ce93d8');
+              }
+            } else if (currentRoom.puzzleType === 'inventor_room') {
+              if (currentRoom.puzzleState) {
+                currentRoom.puzzleState.solved = true;
+              }
+              for (let y = 1; y <= 4; y++) {
+                for (let x = GRID_SIZE - 5; x <= GRID_SIZE - 2; x++) {
+                  if (currentRoom.grid[y][x] === TILE.LOCK_GATE) {
+                    currentRoom.grid[y][x] = TILE.EMPTY;
+                    if (engine.spawnDebris) engine.spawnDebris(x * TILE_SIZE + TILE_SIZE / 2, y * TILE_SIZE + TILE_SIZE / 2);
+                  }
+                }
+              }
+              if (engine.spawnSparks) {
+                engine.spawnSparks(WORLD_WIDTH / 2, WORLD_HEIGHT / 2, '#ffd700', 30);
+              }
+            }
+          }
+        }
+
+        if (engine.player) {
+          engine.player.inventorTalked = true;
+          if (unlockBombs) {
+            engine.player.unlockedImpact = true;
+            engine.player.unlockedVortex = true;
+            engine.player.unlockedPropulsor = true;
+          }
+        }
+
+        if (window.sound && window.sound.playUpgradeFanfare) {
+          window.sound.playUpgradeFanfare();
+        }
+
+        if (unlockBombs) {
+          if (window.showToast) window.showToast('DEV HACK: Inventor e todas as bombas liberados!');
+        } else {
+          if (window.showToast) window.showToast('DEV HACK: Inventor libertado! Ele está disponível na Safe Room.');
+        }
+
+        if (typeof saveGame === 'function') saveGame();
+        if (engine.updateHUD) engine.updateHUD();
+        if (engine.updateInventorShopUI) engine.updateInventorShopUI();
+      } else {
+        if (typeof saveGame === 'function') saveGame();
+        if (window.showToast) window.showToast('DEV HACK: Inventor liberado no save!');
+      }
+
+      console.log('%c[DEV HACK] Inventor desbloqueado com sucesso! (Pressione Ctrl+I ou chame unlockInventor(true) para liberar as bombas)', 'color: #9c27b0; font-size: 13px; font-weight: bold;');
+      return 'Inventor desbloqueado com sucesso!';
+    }
+    window.unlockInventor = unlockInventor;
     window.GameEngine = GameEngine;
     window.Automaton = Automaton;
     window.Room = Room;

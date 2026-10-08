@@ -384,9 +384,16 @@ AlÃ©m dos autÃ´matos a vapor, Charlotte encontra engenheiros humanos rivais 
 Localizada no canto superior direito da Safe Room, permite que Charlotte fabrique melhorias permanentes:
 - **Desbloqueio da Bancada:** Exige **10 CC + 10 PeÃ§as**. Ao pagar, a bancada Ã© destravada permanentemente com faÃ­scas douradas.
 - **Upgrades DisponÃ­veis:**
-  1. **Aprimoramento da Manopla MecÃ¢nica:** (Custo: 10 CC + 10 PeÃ§as) â€” Aumenta o alcance mÃ¡ximo de arremesso de 140px $\to$ 220px $\to$ 300px (NÃ­vel MÃ¡ximo 3).
-  2. **Botas Propulsoras (Dash):** (Custo: 15 CC + 15 PeÃ§as) â€” Destrava a habilidade de Dash com <kbd>Shift</kbd> / BotÃ£o Mobile.
-  3. **Bolsa Expandida de Ferramentas:** (Custo: 20 CC + 20 PeÃ§as) â€” Eleva a capacidade mÃ¡xima de bombas temporizadas de 5 para 7 e 9 unidades.
+  1. **Aprimoramento da Manopla MecÃ¢nica:** Aumenta o alcance mÃ¡ximo de arremesso de 140px $\to$ 220px $\to$ 300px (NÃ­vel MÃ¡ximo 3).
+  2. **Botas Propulsoras (Dash):** Destrava a habilidade de Dash com <kbd>Shift</kbd> / BotÃ£o Mobile.
+  3. **Bolsa Expandida de Ferramentas:** Eleva a capacidade mÃ¡xima de bombas de 5 para 7 e 10 unidades.
+  4. **Bomba-RelÃ³gio NÃ­vel 2:** (Custo: 20 CC + 18 PeÃ§as) â€” Reação em Cadeia (detona ao sofrer impacto de outras explosÃµes).
+  5. **Bomba de Impacto NÃ­vel 2 (ReaÃ§Ã£o CatalÃ­tica):** (Custo: 25 CC + 20 PeÃ§as) â€” Absorve Cristais Coal no raio da explosÃ£o, expandindo o raio em +10% por cristal consumido. Permite arremessar Cristais Coal com <kbd>C</kbd> ou botÃ£o mobile.
+  6. **Bomba de VÃ³rtice NÃ­vel 2 (EjeÃ§Ã£o de Sucata em X):** (Custo: 30 CC + 25 PeÃ§as) â€” Tritura os autÃ´matos sugados e dispara suas carcaÃ§as nas 4 diagonais (em X), atingindo e repelindo autÃ´matos fora do centro.
+- **MecÃ¢nica AlquÃ­mica de Cura do VÃ³rtice (Qualquer NÃ­vel):**
+  - Ao puxar Cristais Coal para o centro da singularidade, a compressÃ£o gravitacional funde o minÃ©rio em Cristais Vitais que recuperam **+0.5 â¤ï¸** ao serem coletados.
+- **Desbloqueio Independente no Inventor:**
+  - Charlotte pode adquirir a Bomba de VÃ³rtice no Inventor assim que possuir 25 CC e 20 PeÃ§as, sem exigir a Bomba de Impacto previamente.
 
 ---
 
