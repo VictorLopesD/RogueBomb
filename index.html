@@ -141,6 +141,59 @@
       box-shadow: 0 0 10px rgba(0, 229, 255, 0.15);
     }
 
+    /* Cura / Injetor Vital HUD Badge */
+    #heal-badge {
+      pointer-events: auto;
+      cursor: pointer;
+      border-color: rgba(0, 230, 118, 0.4);
+      box-shadow: 0 0 10px rgba(0, 230, 118, 0.15);
+      transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+      display: none;
+    }
+    #heal-badge:hover {
+      border-color: #00e676;
+      transform: translateY(-2px);
+      box-shadow: 0 0 14px rgba(0, 230, 118, 0.4);
+    }
+    #heal-badge:active {
+      transform: scale(0.96);
+    }
+    .hud-synth-btn {
+      background: rgba(0, 230, 118, 0.2);
+      border: 1px solid #00e676;
+      color: #00e676;
+      border-radius: 4px;
+      font-weight: bold;
+      font-size: 11px;
+      padding: 2px 7px;
+      cursor: pointer;
+      margin-left: 4px;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+    .hud-synth-btn:hover {
+      background: rgba(0, 230, 118, 0.4);
+      color: #fff;
+    }
+
+    #btn-heal-mobile {
+      background: rgba(0, 230, 118, 0.18);
+      border: 2px solid #00e676;
+      border-radius: 50%;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 60px;
+      height: 60px;
+      cursor: pointer;
+      touch-action: manipulation;
+      transition: transform 0.1s ease, background 0.15s ease;
+    }
+    #btn-heal-mobile:active, #btn-heal-mobile.active {
+      transform: scale(0.92);
+      background: rgba(0, 230, 118, 0.45);
+    }
+
     /* Minimap HUD */
     #minimap-container {
       display: flex;
@@ -1501,7 +1554,190 @@
       border-radius: 6px;
       font-weight: bold;
     }
-      #lore-panel {
+
+    /* ==============================================================
+       Sequência de Fim da Demo (Desabamento, Cliffhanger & Créditos)
+       ============================================================== */
+    #demo-ending-overlay {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: #000000;
+      z-index: 10000;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      font-family: 'Courier New', Courier, monospace;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    #ending-cliffhanger-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 30px;
+      width: 100%;
+      height: 100%;
+      box-sizing: border-box;
+      opacity: 0;
+      transition: opacity 1.8s ease-in-out;
+    }
+
+    .ending-question-text {
+      color: #eceff1;
+      font-size: 2.2rem;
+      font-weight: 500;
+      letter-spacing: 2px;
+      line-height: 1.4;
+      max-width: 820px;
+      margin: 0 0 24px 0;
+      text-shadow: 0 0 18px rgba(255, 255, 255, 0.45);
+    }
+
+    .ending-divider {
+      width: 90px;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, #00e5ff, transparent);
+      margin: 0 auto 30px auto;
+      box-shadow: 0 0 14px #00e5ff;
+    }
+
+    .ending-continue-text {
+      color: #ffca28;
+      font-size: 3.4rem;
+      font-weight: bold;
+      letter-spacing: 6px;
+      text-transform: uppercase;
+      margin: 0;
+      text-shadow: 0 0 24px rgba(255, 202, 40, 0.7);
+      animation: pulseEndingGlow 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes pulseEndingGlow {
+      from {
+        text-shadow: 0 0 16px rgba(255, 202, 40, 0.4);
+        transform: scale(0.98);
+      }
+      to {
+        text-shadow: 0 0 32px rgba(255, 202, 40, 0.9), 0 0 45px rgba(255, 160, 0, 0.6);
+        transform: scale(1.02);
+      }
+    }
+
+    #ending-credits-container {
+      display: none;
+      position: absolute;
+      left: 0;
+      right: 0;
+      width: 100%;
+      text-align: center;
+      pointer-events: none;
+    }
+
+    @keyframes creditsScrollUp {
+      0% {
+        transform: translateY(105vh);
+      }
+      100% {
+        transform: translateY(-105%);
+      }
+    }
+
+    .credits-scroll-active {
+      animation: creditsScrollUp 60s linear forwards !important;
+    }
+
+    .credits-content-block {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 20px 30px 100px 30px;
+      line-height: 1.9;
+      color: #b0bec5;
+    }
+
+    .credits-game-title {
+      font-size: 3.4rem;
+      color: #ffca28;
+      font-weight: 900;
+      letter-spacing: 8px;
+      text-transform: uppercase;
+      margin: 0 0 10px 0;
+      text-shadow: 0 4px 18px rgba(255, 202, 40, 0.5);
+    }
+
+    .credits-badge-tag {
+      font-size: 1.15rem;
+      color: #00e5ff;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      margin-bottom: 50px;
+    }
+
+    .credits-section-header {
+      font-size: 1.25rem;
+      font-weight: bold;
+      color: #ffca28;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-top: 45px;
+      margin-bottom: 8px;
+    }
+
+    .credits-name-highlight {
+      font-size: 1.65rem;
+      font-weight: bold;
+      color: #ffffff;
+      letter-spacing: 2px;
+      margin-bottom: 4px;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+    }
+
+    .credits-description-text {
+      font-size: 0.95rem;
+      color: #90a4ae;
+      line-height: 1.6;
+      margin-bottom: 12px;
+    }
+
+    .credits-steampunk-gear {
+      color: #ffd54f;
+      font-size: 1.2rem;
+      margin: 35px 0;
+      opacity: 0.7;
+    }
+
+    #btn-skip-credits {
+      display: none;
+      position: absolute;
+      bottom: 24px;
+      right: 24px;
+      background: rgba(18, 24, 32, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      color: #90a4ae;
+      font-size: 0.9rem;
+      font-family: inherit;
+      padding: 10px 18px;
+      border-radius: 6px;
+      cursor: pointer;
+      letter-spacing: 1px;
+      transition: all 0.2s ease;
+      z-index: 10001;
+      backdrop-filter: blur(4px);
+    }
+
+    #btn-skip-credits:hover {
+      background: rgba(0, 229, 255, 0.2);
+      border-color: #00e5ff;
+      color: #ffffff;
+      box-shadow: 0 0 14px rgba(0, 229, 255, 0.4);
+      transform: scale(1.04);
+    }
+
+    #lore-panel {
       position: absolute;
       left: 50%;
       top: 50%;
@@ -1580,6 +1816,15 @@
           </div>
         </div>
 
+        <div id="heal-badge" class="hud-badge" style="display: none;" title="Injetor Vital: Clique para Usar Cura [1 ❤️] (Tecla H) ou no '+' para Sintetizar (Tecla V)">
+          <span class="hud-icon" style="font-size: 16px;">💉</span>
+          <div class="hud-badge-info">
+            <div class="hud-badge-label" id="heal-badge-label">Cura [H]</div>
+            <div id="heal-counter" class="hud-badge-value" style="color: #00e676; font-size: 12px; font-weight: bold;">0/2</div>
+          </div>
+          <button id="btn-quick-synth" class="hud-synth-btn" title="Sintetizar Tônico de Cura (2 CC + 1 Peça) [Tecla V]">+</button>
+        </div>
+
         <div id="gauntlet-badge" class="hud-badge" title="Clique ou pressione [U] para aprimorar o alcance da Manopla">
           <span class="hud-icon" style="font-size: 16px;">🥊</span>
           <div class="hud-badge-info">
@@ -1655,6 +1900,8 @@
       <span id="desktop-guide-throw">🖱️ <b>Clique & Solte</b>: Lançar Bomba</span>
       <span id="guide-bombs" style="display: none;"><kbd>1</kbd> Imp | <kbd>2</kbd> Prop | <kbd>3</kbd> Temp</span>
       <span id="guide-dash" style="display: none;"><kbd>SHIFT</kbd> Dash (1 CC)</span>
+      <span id="guide-crystal"><kbd>C</kbd> Armar Cristal (1 CC)</span>
+      <span id="guide-heal" style="display: none;"><kbd>H</kbd> Curar (1 ❤️) | <kbd>V</kbd> Sintetizar</span>
     </div>
 
     <!-- Guia Mobile Touch -->
@@ -1695,6 +1942,18 @@
         </div>
 
         <div class="action-buttons-group">
+          <!-- Botão de Arremessar Cristal Coal Mobile -->
+          <button class="action-btn" id="btn-drop-crystal" title="Arremessar Cristal Coal da Bolsa [Tecla C]" style="background: rgba(0, 229, 255, 0.15); border-color: #00e5ff;">
+            <span style="font-size: 16px;">💎</span>
+            <span style="font-size: 10px;">CRISTAL</span>
+          </button>
+
+          <!-- Botão de Cura Mobile -->
+          <button class="action-btn" id="btn-heal-mobile" title="Usar Cura [1 ❤️] / Sintetizar" style="background: rgba(0, 230, 118, 0.15); border-color: #00e676; display: none;">
+            <span style="font-size: 16px;">💉</span>
+            <span id="mobile-heal-text" style="font-size: 10px; font-weight: bold; color: #00e676;">0/2</span>
+          </button>
+
           <!-- Botão de Dash Mobile -->
           <button class="dash-btn locked" id="dash-trigger" title="Realizar Dash com Botas Propulsoras (Shift)">
             <span class="dash-icon">💨</span>
@@ -1729,6 +1988,90 @@
         </div>
         <button id="btn-close-item-modal" class="menu-btn" style="margin: 0 auto; width: 150px; padding: 10px 18px; font-size: 14px; background: #f39c12; color: #111; font-weight: bold; cursor: pointer; border-radius: 4px;" onclick="window.game.closeItemModal()">CONTINUAR</button>
       </div>
+    </div>
+
+    <!-- ==============================================================
+         Tela de Encerramento da Demo (Cena de Queda e Créditos)
+         ============================================================== -->
+    <div id="demo-ending-overlay">
+      <!-- 1. Pergunta Misteriosa e Continua... -->
+      <div id="ending-cliffhanger-container">
+        <h2 id="ending-question-text" class="ending-question-text">
+          O que será que aconteceu com Charlotte?
+        </h2>
+        <div class="ending-divider"></div>
+        <h1 id="ending-continue-text" class="ending-continue-text">
+          Continua...
+        </h1>
+      </div>
+
+      <!-- 2. Créditos com Rolagem Vertical de 60 Segundos -->
+      <div id="ending-credits-container">
+        <div class="credits-content-block">
+          <div class="credits-game-title">RogueBomb</div>
+          <div class="credits-badge-tag">— DEMO PROTÓTIPO —</div>
+
+          <div class="credits-steampunk-gear">⚙️ ◆ ⚙️ ◆ ⚙️</div>
+
+          <div class="credits-section-header">Criação & Desenvolvimento</div>
+          <div class="credits-name-highlight">Victor Lopes</div>
+          <div class="credits-description-text">Game Design, Roteiro & Arquitetura de Sistemas</div>
+
+          <div class="credits-section-header">Programação & Engenharia</div>
+          <div class="credits-name-highlight">Victor Lopes</div>
+          <div class="credits-description-text">Motor Vanilla Canvas 2D, Física de Bombas & IA Procedural</div>
+
+          <div class="credits-section-header">Arte & Animação</div>
+          <div class="credits-name-highlight">Victor Lopes</div>
+          <div class="credits-description-text">Spritesheet de Charlotte & Bioma de Mineração Steampunk</div>
+
+          <div class="credits-section-header">Trilha Sonora & Áudio</div>
+          <div class="credits-name-highlight">Victor Lopes & Web Audio API</div>
+          <div class="credits-description-text">
+            Faixas Oficiais:<br>
+            • Turn of the Great Wheel<br>
+            • The Weight of Brass<br>
+            • Locked Gears and Steam<br>
+            • The Clockwork Siege<br>
+            Efeitos Sonoros Sintetizados Proceduralmente
+          </div>
+
+          <div class="credits-steampunk-gear">✦ ✦ ✦</div>
+
+          <div class="credits-section-header">Sistemas da Demonstração</div>
+          <div class="credits-description-text">
+            • Salas Modulares & Labirinto Procedural (15x15)<br>
+            • Arsenal Tático & Bolsa de Bombas com Cooldown<br>
+            • Bombas Temporizadas, de Impacto e Vórtice Gravitacional<br>
+            • Reações Catalíticas & Fusão Alquímica com Cristal Coal<br>
+            • Câmaras de Desafio & Puzzles Metroidvania<br>
+            • Duelo Tático 1v1: O Engenheiro Rival<br>
+            • Chefe Mestre: O Autômato Titânico a Vapor<br>
+            • Rebobinar do Tempo (Time Rewind) & Duto da Goela
+          </div>
+
+          <div class="credits-section-header">Agradecimentos Especiais</div>
+          <div class="credits-name-highlight">A Você, Jogador!</div>
+          <div class="credits-description-text">
+            Muito obrigado por explorar as profundezas e testar a demonstração de RogueBomb.<br>
+            Seu feedback e dedicação tornam esta jornada possível!
+          </div>
+
+          <div class="credits-steampunk-gear">⚙️ ◆ ⚙️ ◆ ⚙️</div>
+
+          <div style="margin-top: 55px; font-size: 1.45rem; color: #ffca28; font-weight: bold; letter-spacing: 2px;">
+            O destino de Charlotte será revelado na versão completa...
+          </div>
+          <div style="margin-top: 18px; font-size: 2.3rem; color: #00e5ff; font-weight: bold; letter-spacing: 6px;">
+            CONTINUA...
+          </div>
+        </div>
+      </div>
+
+      <!-- Botão para Pular os Créditos -->
+      <button id="btn-skip-credits" onclick="window.game.skipCreditsToHome()">
+        Pular [ESC] ⏭
+      </button>
     </div>
 
     <!-- Tela de Carregamento -->
@@ -1974,6 +2317,24 @@
           </div>
           <button class="btn-buy" id="btn-buy-timerbomb" onclick="window.game.buyUpgrade('timerbomb')">Comprar</button>
         </div>
+
+        <div class="armory-item" id="armory-item-impactbomb">
+          <div class="armory-info">
+            <span class="armory-title">💥 Bomba de Impacto Nível 2</span>
+            <span class="armory-desc">Reação Catalítica de Carvão: expande a explosão em +10% por cada Cristal Coal consumido no raio. Arremesse Cristais com [C]!</span>
+            <span class="armory-cost" id="impactbomb-upgrade-cost">Custo: 25 CC | 20 PEÇAS</span>
+          </div>
+          <button class="btn-buy" id="btn-buy-impactbomb" onclick="window.game.buyUpgrade('impactbomb')">Comprar</button>
+        </div>
+
+        <div class="armory-item" id="armory-item-vortexbomb">
+          <div class="armory-info">
+            <span class="armory-title">🌀 Bomba de Vórtice Nível 2</span>
+            <span class="armory-desc">Ejeção de Sucata em X: estilhaça os autômatos sugados e ejeta suas peças em X (diagonais), atingindo tudo o que estiver fora do vórtice!</span>
+            <span class="armory-cost" id="vortexbomb-upgrade-cost">Custo: 30 CC | 25 PEÇAS</span>
+          </div>
+          <button class="btn-buy" id="btn-buy-vortexbomb" onclick="window.game.buyUpgrade('vortexbomb')">Comprar</button>
+        </div>
       </div>
 
       <!-- Painel: Bolsa -->
@@ -2012,6 +2373,15 @@
           <span class="armory-cost" id="inv-cost-vortex">Custo: 25 CC | 20 PEÇAS</span>
         </div>
         <button class="btn-buy" id="btn-inv-vortex" onclick="window.game.buyInventorUpgrade('vortex')">Comprar</button>
+      </div>
+
+      <div class="armory-item" id="inv-item-heal">
+        <div class="armory-info">
+          <span class="armory-title">💉 Tônico Vital (Síntese)</span>
+          <span class="armory-desc">Sintetiza 1 frasco de cura (armazena até 2). Cada frasco recupera 1 coração completo [❤️]. Atalhos: [H] Usar | [V] Sintetizar.</span>
+          <span class="armory-cost" id="inv-cost-heal">Estoque: 0/2 | Custo: 2 CC | 1 PEÇA</span>
+        </div>
+        <button class="btn-buy" id="btn-inv-heal" onclick="if (window.game && window.game.player) window.game.player.synthesizeHealingFlask()">Sintetizar</button>
       </div>
 
       <button class="btn-close" onclick="window.game.closeInventorShop()">Sair</button>
@@ -2493,6 +2863,55 @@
         });
       }
 
+      playHeal() {
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const notes = [523.25, 659.25, 783.99, 1046.50];
+        notes.forEach((freq, idx) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, now + idx * 0.07);
+          gain.gain.setValueAtTime(0, now + idx * 0.07);
+          gain.gain.linearRampToValueAtTime(0.28, now + idx * 0.07 + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.07 + 0.28);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now + idx * 0.07);
+          osc.stop(now + idx * 0.07 + 0.3);
+        });
+      }
+
+      playSynthesize() {
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(260, now);
+        osc.frequency.exponentialRampToValueAtTime(620, now + 0.2);
+        osc.frequency.exponentialRampToValueAtTime(880, now + 0.32);
+        gain.gain.setValueAtTime(0.25, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.35);
+
+        const chime = this.ctx.createOscillator();
+        const chimeGain = this.ctx.createGain();
+        chime.type = 'sine';
+        chime.frequency.setValueAtTime(1174.66, now + 0.18);
+        chimeGain.gain.setValueAtTime(0.2, now + 0.18);
+        chimeGain.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+        chime.connect(chimeGain);
+        chimeGain.connect(this.ctx.destination);
+        chime.start(now + 0.18);
+        chime.stop(now + 0.45);
+      }
+
       playRewindGlitch() {
         this.init();
         if (!this.ctx) return;
@@ -2801,6 +3220,27 @@
             }
           }
 
+          // Tecla C: Arremessar Cristal Coal da Bolsa (Armadilha para Impacto/Vórtice)
+          if (e.code === 'KeyC') {
+            if (window.game) {
+              window.game.throwCarriedCrystal();
+            }
+          }
+
+          // Tecla H: Usar Tônico de Cura do Injetor Vital (recupera 1 coração)
+          if (e.code === 'KeyH' || e.key === 'h' || e.key === 'H') {
+            if (window.game && window.game.player) {
+              window.game.player.useHealingFlask();
+            }
+          }
+
+          // Tecla V: Sintetizar Tônico de Cura (2 CC + 1 Peça)
+          if (e.code === 'KeyV' || e.key === 'v' || e.key === 'V') {
+            if (window.game && window.game.player) {
+              window.game.player.synthesizeHealingFlask();
+            }
+          }
+
           // Cheat de Tester: Ctrl + Y dá 10 CC e 10 Peças
           if ((e.code === 'KeyY' || e.key === 'y' || e.key === 'Y') && (e.ctrlKey || e.metaKey)) {
             e.preventDefault();
@@ -2829,7 +3269,31 @@
               window.unlockInventor(unlockBombs);
             }
           }
+
+          // Atalho ESC: se os créditos ou encerramento estiverem ativos, pula para a tela inicial
+          if (e.code === 'Escape') {
+            if (window.game && window.game.demoEndingActive) {
+              e.preventDefault();
+              window.game.skipCreditsToHome();
+              return;
+            }
+          }
+
+          // Atalho de Teste da Sequência de Encerramento da Demo: Ctrl + K (ou window.testDemoEnding())
+          if ((e.code === 'KeyK' || e.key === 'k' || e.key === 'K') && (e.ctrlKey || e.metaKey)) {
+            e.preventDefault();
+            if (window.game && window.game.triggerDemoEndingSequence) {
+              window.game.triggerDemoEndingSequence();
+            }
+          }
         });
+
+        // Exposição global para teste direto via console
+        window.testDemoEnding = () => {
+          if (window.game && window.game.triggerDemoEndingSequence) {
+            window.game.triggerDemoEndingSequence();
+          }
+        };
 
         window.addEventListener('keyup', (e) => {
           this.keys[e.code] = false;
@@ -2890,6 +3354,33 @@
             this.throwTriggered = false;
             this.throwTarget = null;
             setTimeout(() => dashBtn.classList.remove('active'), 120);
+          });
+        }
+
+        // Botão Mobile: Arremessar Cristal Coal
+        const dropCrystalBtn = document.getElementById('btn-drop-crystal');
+        if (dropCrystalBtn) {
+          bindMobileButton(dropCrystalBtn, () => {
+            dropCrystalBtn.classList.add('active');
+            if (window.game) window.game.throwCarriedCrystal();
+            setTimeout(() => dropCrystalBtn.classList.remove('active'), 120);
+          });
+        }
+
+        // Botão Mobile: Injetor de Cura / Síntese
+        const healMobileBtn = document.getElementById('btn-heal-mobile');
+        if (healMobileBtn) {
+          bindMobileButton(healMobileBtn, () => {
+            healMobileBtn.classList.add('active');
+            if (window.game && window.game.player) {
+              const p = window.game.player;
+              if (p.healingFlasks > 0) {
+                p.useHealingFlask();
+              } else {
+                p.synthesizeHealingFlask();
+              }
+            }
+            setTimeout(() => healMobileBtn.classList.remove('active'), 120);
           });
         }
       }
@@ -3798,8 +4289,11 @@
             showToast('RIVAL DERROTADO! ARENA LIBERADA!');
             sound.playUpgradeFanfare();
           } else if (this.isBossRoom) {
-            showToast('CHEFE MESTRE DERROTADO! VITÓRIA!');
+            showToast('CHEFE MESTRE DERROTADO!');
             sound.playUpgradeFanfare();
+            if (window.game && window.game.triggerDemoEndingSequence) {
+              window.game.triggerDemoEndingSequence();
+            }
           } else {
             showToast('SALA LIBERADA!');
           }
@@ -4035,6 +4529,8 @@
         this.bootsLevel = 0;    // 1 para liberar Dash
         this.bagLevel = 1;
         this.timerBombLevel = 1;      // +2 bombas e tipos por nível
+        this.impactBombLevel = 1;     // Nv.2: Reação com Cristal Coal (+10% raio/CC)
+        this.vortexBombLevel = 1;     // Nv.2: Ejeção de sucata dos autômatos em X
         this.dashCooldown = 0;
         this.isDashing = false;
         this.dashTimer = 0;
@@ -4050,6 +4546,9 @@
         this.unlockedPropulsor = false;
         this.carryingHydraulicPiston = false;
         this.hasHydraulicPiston = false;
+        this.hasHealingInjector = false;
+        this.healingFlasks = 0;
+        this.maxHealingFlasks = 2;
         this.maxHp = 3;
         this.hp = 3;
         this.bagSlots = [];
@@ -4058,6 +4557,102 @@
         while (this.bagSlots.length < cap) {
           this.bagSlots.push({ type: 'timed', cooldown: 0 });
         }
+      }
+
+      heal(amount = 0.5) {
+        if (this.hp >= this.maxHp) return false;
+        this.hp = Math.min(this.maxHp, Math.round((this.hp + amount) * 10) / 10);
+        const textHeal = amount === 0.5 ? '+½ ❤️' : `+${amount} ❤️`;
+        if (window.game) {
+          window.game.spawnFloatingText(textHeal, this.x, this.y - 20, '#00e676');
+          window.game.spawnSparks(this.x, this.y, '#00e676', 22);
+          window.game.updateHUD();
+        }
+        if (window.sound && window.sound.playCCPickup) {
+          window.sound.playCCPickup();
+        }
+        return true;
+      }
+
+      synthesizeHealingFlask() {
+        if (!this.hasHealingInjector) {
+          showToast('Você ainda não possui o Injetor Vital do Inventor!');
+          return false;
+        }
+        if (this.healingFlasks >= this.maxHealingFlasks) {
+          showToast(`Capacidade máxima de cura atingida! (${this.healingFlasks}/${this.maxHealingFlasks})`);
+          return false;
+        }
+
+        const costCC = 2;
+        const costParts = 1;
+        const totalCC = window.game ? window.game.getAvailableCC() : (this.chronoCores || 0);
+        const totalParts = window.game ? window.game.getAvailableParts() : (this.parts || 0);
+
+        if (totalCC < costCC || totalParts < costParts) {
+          showToast(`MATERIAIS INSUFICIENTES! Síntese requer ${costCC} CC e ${costParts} PEÇA (Você tem: ${totalCC} CC | ${totalParts} P)`);
+          return false;
+        }
+
+        if (window.game) {
+          window.game.consumeCurrency(costCC, costParts);
+        } else {
+          this.chronoCores = Math.max(0, (this.chronoCores || 0) - costCC);
+          this.parts = Math.max(0, (this.parts || 0) - costParts);
+        }
+
+        this.healingFlasks = Math.min(this.maxHealingFlasks, (this.healingFlasks || 0) + 1);
+
+        if (window.sound) {
+          if (window.sound.playSynthesize) {
+            window.sound.playSynthesize();
+          } else if (window.sound.playCCPickup) {
+            window.sound.playCCPickup();
+          }
+        }
+
+        if (window.game) {
+          window.game.spawnFloatingText(`+1 TÔNICO VITAL [${this.healingFlasks}/${this.maxHealingFlasks}]`, this.x, this.y - 25, '#00e676');
+          window.game.spawnSparks(this.x, this.y, '#00e676', 25);
+          window.game.spawnSparks(this.x, this.y, '#00e5ff', 15);
+          window.game.updateHUD();
+          window.game.updateInventorShopUI();
+        }
+        showToast(`TÔNICO VITAL SINTETIZADO! (${this.healingFlasks}/${this.maxHealingFlasks}) - Pressione [H] para curar 1 ❤️`);
+        if (typeof saveGame === 'function') saveGame();
+        return true;
+      }
+
+      useHealingFlask() {
+        if (!this.hasHealingInjector) {
+          showToast('Você ainda não possui o Injetor Vital do Inventor!');
+          return false;
+        }
+        if (this.healingFlasks <= 0) {
+          showToast('Sem tônicos de cura! Pressione [V] para sintetizar (2 CC + 1 Peça).');
+          return false;
+        }
+        if (this.hp >= this.maxHp) {
+          showToast(`Vida cheia! (${this.hp}/${this.maxHp} ❤️) - Não é necessário curar agora.`);
+          return false;
+        }
+
+        this.healingFlasks--;
+        this.heal(1.0);
+
+        if (window.sound && window.sound.playHeal) {
+          window.sound.playHeal();
+        }
+
+        if (window.game) {
+          window.game.spawnFloatingText('CURA VITAL [1 ❤️]', this.x, this.y - 35, '#00e676');
+          window.game.spawnSparks(this.x, this.y, '#00e676', 30);
+          window.game.updateHUD();
+          window.game.updateInventorShopUI();
+        }
+        showToast(`Tônico Vital utilizado (+1 ❤️)! Restam: ${this.healingFlasks}/${this.maxHealingFlasks}`);
+        if (typeof saveGame === 'function') saveGame();
+        return true;
       }
 
       takeDamage(amount = 1) {
@@ -6041,7 +6636,12 @@
             }
             engine.player.parts = (engine.player.parts || 0) + 5;
             engine.spawnFloatingText('+5 PEAS!', this.x, this.y - 35, '#cfd8dc');
-            if (!this.isFinalBoss) { engine.player.hasSteamPropulsionCore = true; showToast('VOCE ENCONTROU: NUCLEO DE PROPULSAO A VAPOR!'); }
+            if (!this.isFinalBoss) { 
+              engine.player.hasSteamPropulsionCore = true; 
+              showToast('VOCÊ ENCONTROU: NÚCLEO DE PROPULSÃO A VAPOR!'); 
+            } else if (engine.triggerDemoEndingSequence) {
+              engine.triggerDemoEndingSequence();
+            }
           } if(window.game) saveGame();
           return true;
         }
@@ -6607,7 +7207,10 @@
             engine.player.parts = (engine.player.parts || 0) + 15;
             engine.spawnFloatingText('+15 PEÇAS!', this.x, this.y - 45, '#cfd8dc');
             engine.spawnFloatingText('AUTÔMATO TITÂNICO DESTRUÍDO!', this.x, this.y - 60, '#ffd700');
-            showToast('CHEFE FINAL DERROTADO! A MINA FOI LIBERTADA!');
+            showToast('CHEFE FINAL DERROTADO!');
+            if (engine.triggerDemoEndingSequence) {
+              engine.triggerDemoEndingSequence();
+            }
           }
           if (window.game) saveGame();
           return true;
@@ -7197,6 +7800,7 @@
         this.rotation = Math.random() * Math.PI * 2;
         this.rotSpeed = (Math.random() - 0.5) * 16;
         this.hitPlayer = false;
+        this.isPlayerScrap = false; // Sucata arremessada pelo Vórtice Nv. 2
         this.hitEnemies = new Set();
         this.radius = type === 'iron' ? 10 : 12;
       }
@@ -7211,8 +7815,8 @@
 
         // Se próximo ao solo, causa dano em quem estiver na rota!
         if (heightZ < 20 && engine) {
-          // Dano em Charlotte (tira meio coração se atingida)
-          if (!this.hitPlayer && engine.player) {
+          // Dano em Charlotte (apenas para estilhaços de explosões normais, sucata do player é segura!)
+          if (!this.hitPlayer && !this.isPlayerScrap && engine.player) {
             const pDist = Math.hypot(engine.player.x - cx, engine.player.y - cy);
             if (pDist < engine.player.radius + this.radius) {
               this.hitPlayer = true;
@@ -7230,9 +7834,19 @@
                 const eDist = Math.hypot(enemy.x - cx, enemy.y - cy);
                 if (eDist < enemy.radius + this.radius) {
                   this.hitEnemies.add(enemy);
-                  enemy.takeDamage(1, engine, 'shard');
-                  engine.spawnFloatingText('-1 ESTILHAÇO', enemy.x, enemy.y - 18, '#ffd54f');
-                  engine.spawnSparks(cx, cy, this.type === 'iron' ? '#ff9800' : '#b0bec5', 10);
+                  if (this.isPlayerScrap) {
+                    enemy.takeDamage(2, engine, 'scrap');
+                    engine.spawnFloatingText('-2 SUCATA EM X', enemy.x, enemy.y - 18, '#ffd700');
+                    engine.spawnSparks(cx, cy, '#ffd700', 14);
+                    const kdx = cx - this.startX;
+                    const kdy = cy - this.startY;
+                    const kdist = Math.hypot(kdx, kdy) || 1;
+                    enemy.applyRepulsion(kdx / kdist, kdy / kdist, 320);
+                  } else {
+                    enemy.takeDamage(1, engine, 'shard');
+                    engine.spawnFloatingText('-1 ESTILHAÇO', enemy.x, enemy.y - 18, '#ffd54f');
+                    engine.spawnSparks(cx, cy, this.type === 'iron' ? '#ff9800' : '#b0bec5', 10);
+                  }
                   if (window.sound && window.sound.playShardClank) window.sound.playShardClank();
                 }
               }
@@ -7254,9 +7868,8 @@
 
             if (!inHoleOrLava) {
               if (!room.obstacles) room.obstacles = [];
-              // Apenas parte dos estilhaços finca no chão se a sala não estiver entupida (máximo 3)
-              // Os outros se desintegram em poeira e detritos para não atrapalhar a movimentação
-              const canStick = room.obstacles.length < 3 && Math.random() < 0.50;
+              // Sucata do jogador desintegra em fagulhas úteis sem obstruir caminho
+              const canStick = !this.isPlayerScrap && room.obstacles.length < 3 && Math.random() < 0.50;
               if (canStick) {
                 room.obstacles.push(new MapObstacle(this.targetX, this.targetY, this.type, this.radius * 0.75));
                 engine.spawnSparks(this.targetX, this.targetY, this.type === 'iron' ? '#ff9800' : '#90a4ae', 6);
@@ -7317,9 +7930,11 @@
         this.y = y;
         this.duration = 2.0;
         this.timer = this.duration;
-        this.pullRadius = TILE_SIZE * 2.2;
-        this.coreRadius = 18;
+        this.pullRadius = TILE_SIZE * 4.2;
+        this.coreRadius = 22;
         this.shardsAbsorbed = 0;
+        this.crystalsAbsorbed = 0;
+        this.enemiesSucked = 0;
         this.angle = 0;
         this.pulse = 0;
         this.soundTimer = 0;
@@ -7341,13 +7956,13 @@
         if (!engine || !engine.map || !engine.map.currentRoom) return this.timer <= 0;
         const room = engine.map.currentRoom;
 
-        // 1. Puxa autômatos para o centro com força equilibrada e controlada
+        // 1. Puxa autômatos para o centro
         room.enemies.forEach(enemy => {
           const dx = this.x - enemy.x;
           const dy = this.y - enemy.y;
           const dist = Math.hypot(dx, dy);
           if (dist > 1 && dist < this.pullRadius) {
-            const force = (1 - dist / this.pullRadius) * 110 + 40;
+            const force = (1 - dist / this.pullRadius) * 260 + 100;
             const nx = dx / dist;
             const ny = dy / dist;
             enemy.x += nx * force * dt;
@@ -7359,47 +7974,63 @@
             if (egx >= 0 && egx < GRID_SIZE && egy >= 0 && egy < GRID_SIZE) {
               const tile = room.grid[egy][egx];
               if (tile === TILE.HOLE || tile === TILE.LAVA) {
+                this.enemiesSucked = (this.enemiesSucked || 0) + 1;
                 enemy.takeDamage(999, engine, 'vortex');
                 engine.spawnFloatingText('SUGADO PRO VÁCUO!', enemy.x, enemy.y - 18, '#00e5ff');
+              }
+            } else if (dist <= this.coreRadius + 8) {
+              if (!enemy._vortexCounted) {
+                enemy._vortexCounted = true;
+                this.enemiesSucked = (this.enemiesSucked || 0) + 1;
               }
             }
           }
         });
 
-        // 2. Puxa Charlotte sutilmente (se não estiver dashing), permitindo resistir andando
+        // 2. Puxa Charlotte sutilmente (se não estiver dashing)
         if (engine.player && !engine.player.isDashing) {
           const pdx = this.x - engine.player.x;
           const pdy = this.y - engine.player.y;
           const pDist = Math.hypot(pdx, pdy);
           if (pDist > 1 && pDist < this.pullRadius * 0.75) {
-            const pForce = (1 - pDist / (this.pullRadius * 0.75)) * 60;
+            const pForce = (1 - pDist / (this.pullRadius * 0.75)) * 140;
             engine.player.x += (pdx / pDist) * pForce * dt;
             engine.player.y += (pdy / pDist) * pForce * dt;
           }
         }
 
-        // 3. Puxa Cristais de Chrono Core (loot) de forma fluida
+        // 3. Puxa Cristais de Chrono Core (loot) & Fusão Alquímica no Núcleo
         if (engine.ccDrops) {
-          engine.ccDrops.forEach(drop => {
+          for (let i = engine.ccDrops.length - 1; i >= 0; i--) {
+            const drop = engine.ccDrops[i];
             const ddx = this.x - drop.x;
             const ddy = this.y - drop.y;
             const dDist = Math.hypot(ddx, ddy);
             if (dDist > 1 && dDist < this.pullRadius) {
-              drop.x += (ddx / dDist) * 160 * dt;
-              drop.y += (ddy / dDist) * 160 * dt;
+              drop.x += (ddx / dDist) * 320 * dt;
+              drop.y += (ddy / dDist) * 320 * dt;
             }
-          });
+
+            // Fusão de Cristal no Núcleo do Vórtice (Gera Cristal de Cura ao implodir!)
+            if (dDist <= this.coreRadius && drop.type === 'cc') {
+              this.crystalsAbsorbed = (this.crystalsAbsorbed || 0) + 1;
+              engine.ccDrops.splice(i, 1);
+              engine.spawnSparks(this.x, this.y, '#00e676', 18);
+              engine.spawnFloatingText(`+FUSÃO VITAL! (${this.crystalsAbsorbed})`, this.x, this.y - 20, '#00e676');
+              if (window.sound && window.sound.playCCPickup) window.sound.playCCPickup();
+            }
+          }
         }
 
-        // 4. Puxa estilhaços e rochas dentro do raio real do vórtice
+        // 4. PUXA ESTILHAÇOS E ROCHAS DO MAPA!
         if (room.obstacles && room.obstacles.length > 0) {
           for (let i = room.obstacles.length - 1; i >= 0; i--) {
             const obs = room.obstacles[i];
             const odx = this.x - obs.x;
             const ody = this.y - obs.y;
             const oDist = Math.hypot(odx, ody);
-            if (oDist > 1 && oDist < this.pullRadius) {
-              const oSpeed = 150;
+            if (oDist > 1 && oDist < this.pullRadius * 1.3) {
+              const oSpeed = 340;
               obs.x += (odx / oDist) * oSpeed * dt;
               obs.y += (ody / oDist) * oSpeed * dt;
               obs.angle += 12 * dt;
@@ -7442,7 +8073,7 @@
           window.sound.playImpactExplosion();
         }
 
-        const blastRadius = TILE_SIZE * 1.6;
+        const blastRadius = TILE_SIZE * 2.2;
         engine.blasts.push(new ExplosionBlast(this.x, this.y, blastRadius, false));
         engine.spawnSparks(this.x, this.y, '#00e5ff', 40);
         engine.spawnSparks(this.x, this.y, '#7c4dff', 25);
@@ -7454,10 +8085,12 @@
         const totalDamage = baseDamage + bonusDamage;
 
         // Dano nos inimigos apanhados no centro
+        let caughtInCenter = 0;
         for (let i = room.enemies.length - 1; i >= 0; i--) {
           const enemy = room.enemies[i];
           const dist = Math.hypot(enemy.x - this.x, enemy.y - this.y);
           if (dist <= blastRadius + enemy.radius) {
+            caughtInCenter++;
             const isDead = enemy.takeDamage(totalDamage, engine, 'vortex');
             if (isDead) {
               engine.spawnEnemyDeath(enemy.x, enemy.y, enemy);
@@ -7470,10 +8103,61 @@
           }
         }
 
+        // Limpa marcação temporária dos autômatos
+        room.enemies.forEach(e => { e._vortexCounted = false; });
+
         if (this.shardsAbsorbed > 0) {
           engine.spawnFloatingText(`💥 IMPLOSÃO! -${totalDamage} HP (${this.shardsAbsorbed} Estilhaços)`, this.x, this.y - 24, '#00e5ff');
         } else {
           engine.spawnFloatingText(`💥 IMPLOSÃO! -${totalDamage} HP`, this.x, this.y - 24, '#00e5ff');
+        }
+
+        // Cura Alquímica por Compressão de Cristais (Em qualquer Nível de Vórtice!)
+        if (this.crystalsAbsorbed > 0) {
+          for (let k = 0; k < this.crystalsAbsorbed; k++) {
+            const ox = (Math.random() - 0.5) * 20;
+            const oy = (Math.random() - 0.5) * 20;
+            const healDrop = new ChronoCoreDrop(this.x + ox, this.y + oy, 'heal');
+            healDrop.pickupDelay = 0.4;
+            engine.ccDrops.push(healDrop);
+          }
+          engine.spawnFloatingText(`🌿 CRISTAIS VITAIS (+0.5 ❤️)!`, this.x, this.y - 40, '#00e676');
+          engine.spawnSparks(this.x, this.y, '#00e676', 30);
+        }
+
+        // Bomba de Vórtice Nível 2: Ejeção de Sucata dos Autômatos em X (Diagonais)
+        if (engine.player && (engine.player.vortexBombLevel || 1) >= 2) {
+          const totalEnemies = Math.max(1, this.enemiesSucked, caughtInCenter);
+          const diagAngles = [
+            Math.PI / 4,         // 45° (Nordeste)
+            (3 * Math.PI) / 4,   // 135° (Noroeste)
+            (5 * Math.PI) / 4,   // 225° (Sudoeste)
+            (7 * Math.PI) / 4    // 315° (Sudeste)
+          ];
+
+          if (!engine.flyingShards) engine.flyingShards = [];
+
+          const waves = Math.min(4, totalEnemies);
+          diagAngles.forEach(baseAngle => {
+            for (let w = 0; w < waves; w++) {
+              const dist = TILE_SIZE * (2.0 + w * 1.5);
+              const spread = (w - (waves - 1) / 2) * 0.15;
+              const angle = baseAngle + spread;
+              let tx = this.x + Math.cos(angle) * dist;
+              let ty = this.y + Math.sin(angle) * dist;
+              tx = Math.max(TILE_SIZE * 1.2, Math.min(WORLD_WIDTH - TILE_SIZE * 1.2, tx));
+              ty = Math.max(TILE_SIZE * 1.2, Math.min(WORLD_HEIGHT - TILE_SIZE * 1.2, ty));
+
+              const shard = new FlyingShard(this.x, this.y, tx, ty, 'iron');
+              shard.isPlayerScrap = true;
+              shard.hitPlayer = true;
+              engine.flyingShards.push(shard);
+            }
+          });
+
+          engine.spawnFloatingText(`⚙️ EJEÇÃO EM X! (${totalEnemies} Autômatos)`, this.x, this.y - (this.crystalsAbsorbed > 0 ? 56 : 42), '#ffd700');
+          engine.spawnSparks(this.x, this.y, '#ffd700', 35);
+          if (window.sound && window.sound.playShardClank) window.sound.playShardClank();
         }
 
         // Se Charlotte estiver no centro exato da implosão sem invulnerabilidade, sofre 1 de dano
@@ -7552,7 +8236,7 @@
         ctx.rotate(-this.angle * 1.5);
         ctx.fillStyle = '#0a0a14';
         ctx.beginPath();
-        ctx.arc(0, 0, 11, 0, Math.PI * 2);
+        ctx.arc(0, 0, 14, 0, Math.PI * 2);
         ctx.fill();
         ctx.strokeStyle = '#7c4dff';
         ctx.lineWidth = 2.5;
@@ -7622,12 +8306,21 @@
         this.pickupDistance = 22;
         this.speed = 0;
         this.life = 0;
-        this.type = type; // 'cc' or 'part'
+        this.type = type; // 'cc', 'part', ou 'heal'
+        this.pickupDelay = 0; // Delay antes de permitir ímã/coleta (para cristais arremessados)
+        this.isArmed = false;
       }
 
       update(dt, player) {
         this.floatTimer += dt * 4;
         this.life += dt;
+
+        if (this.pickupDelay > 0) {
+          this.pickupDelay -= dt;
+          this.y = this.baseY + Math.sin(this.floatTimer) * 3;
+          return false;
+        }
+        this.isArmed = false;
 
         const dx = player.x - this.x;
         const dy = (player.y - 6) - this.y;
@@ -7660,7 +8353,32 @@
         ctx.ellipse(this.x, this.baseY + 10, 8, 3, 0, 0, Math.PI * 2);
         ctx.fill();
 
-        if (this.type === 'part') {
+        if (this.type === 'heal') {
+          const pulse = (Math.sin(this.floatTimer * 2.5) + 1) / 2;
+          ctx.fillStyle = `rgba(0, 230, 118, ${0.25 + pulse * 0.35})`;
+          ctx.beginPath();
+          ctx.arc(this.x, cy, 14, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.translate(this.x, cy);
+          ctx.fillStyle = '#00e676';
+          ctx.beginPath();
+          ctx.moveTo(0, -10);
+          ctx.lineTo(8, -2);
+          ctx.lineTo(0, 10);
+          ctx.lineTo(-8, -2);
+          ctx.closePath();
+          ctx.fill();
+
+          ctx.strokeStyle = '#b9f6ca';
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+
+          // Símbolo de cruz de cura
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(-1.5, -4.5, 3, 9);
+          ctx.fillRect(-4.5, -1.5, 9, 3);
+        } else if (this.type === 'part') {
           const pulse = (Math.sin(this.floatTimer * 1.5) + 1) / 2;
           ctx.fillStyle = `rgba(150, 150, 150, ${0.2 + pulse * 0.25})`;
           ctx.beginPath();
@@ -7695,6 +8413,14 @@
 
           ctx.strokeStyle = '#ffffff';
           ctx.lineWidth = 1.5;
+          ctx.stroke();
+        }
+
+        if (this.isArmed) {
+          ctx.strokeStyle = 'rgba(0, 229, 255, 0.85)';
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.arc(0, 0, 15 + Math.sin(this.floatTimer * 3) * 3, 0, Math.PI * 2);
           ctx.stroke();
         }
 
@@ -7873,6 +8599,14 @@
 
         this.rewindGlitchTimer = 0;
 
+        // Estados do Encerramento da Demo (Colapso, Queda & Créditos)
+        this.demoEndingActive = false;
+        this.demoEndingTimer = 0;
+        this.demoEndingStage = 'none'; // 'none', 'victory_pause', 'crumbling', 'charlotte_falling', 'black_screen'
+        this._warnedCollapse = false;
+        this.crumbleSoundCooldown = 0;
+        this._endingCreditsTimeout = null;
+
         this.lastTime = performance.now();
         this.resizeCanvas();
         window.addEventListener('resize', () => this.resizeCanvas());
@@ -8034,7 +8768,11 @@
           const canPickup = drop.update(dt, this.player);
           if (canPickup) {
             sound.playCCPickup();
-            if (drop.type === 'part') {
+            if (drop.type === 'heal' || drop.type === 'vital') {
+               this.player.heal(0.5);
+               this.spawnSparks(drop.x, drop.y, '#00e676', 22);
+               this.spawnFloatingText('+½ ❤️ CURA!', drop.x, drop.y - 12, '#00e676');
+            } else if (drop.type === 'part') {
                this.player.parts = (this.player.parts || 0) + 1;
                this.spawnSparks(drop.x, drop.y, '#9e9e9e', 16);
                this.spawnFloatingText('+1 PEÇA', drop.x, drop.y - 12, '#e0e0e0');
@@ -8218,6 +8956,79 @@
           this.rewindGlitchTimer -= dt;
         }
 
+        // -------------------------------------------------------------
+        // Sequência Cinemática de Encerramento da Demo (Colapso e Queda)
+        // -------------------------------------------------------------
+        if (this.demoEndingActive) {
+          this.demoEndingTimer += dt;
+
+          if (this.demoEndingStage === 'victory_pause') {
+            // Passam 3 segundos de pausa/tensão após a destruição do Boss
+            if (this.demoEndingTimer >= 1.5) {
+              this.screenShake = Math.min(6, (this.demoEndingTimer - 1.5) * 4);
+              if (Math.random() < 0.3) {
+                this.spawnDebris(
+                  this.player.x + (Math.random() - 0.5) * 160,
+                  this.player.y + (Math.random() - 0.5) * 160
+                );
+              }
+            }
+            if (this.demoEndingTimer >= 2.2 && !this._warnedCollapse) {
+              this._warnedCollapse = true;
+              if (window.showToast) window.showToast('⚠️ A ESTRUTURA DA MINA ESTÁ CEDENDO!');
+              if (window.sound && window.sound.playFloorCrumble) window.sound.playFloorCrumble();
+            }
+            if (this.demoEndingTimer >= 3.0) {
+              // 3 segundos completos! O chão começa a desabar pelos cantos até chegar no meio!
+              this.demoEndingStage = 'crumbling';
+              this.demoEndingTimer = 0;
+              if (window.sound && window.sound.playBigTimedExplosion) window.sound.playBigTimedExplosion();
+              if (window.showToast) window.showToast('O PISO ESTÁ DESABANDO!');
+            }
+          } else if (this.demoEndingStage === 'crumbling') {
+            this.screenShake = 8;
+            this.crumbleSoundCooldown -= dt;
+            if (this.crumbleSoundCooldown <= 0) {
+              if (window.sound && window.sound.playFloorCrumble) window.sound.playFloorCrumble();
+              this.crumbleSoundCooldown = 0.28;
+            }
+
+            // O colapso avança da borda (anel 7) até o centro (anel 0)
+            const currentTargetDist = Math.max(0, 7 - Math.floor(this.demoEndingTimer / 0.38));
+            const room = this.map ? this.map.currentRoom : null;
+            if (room && room.grid) {
+              for (let ty = 0; ty < GRID_SIZE; ty++) {
+                for (let tx = 0; tx < GRID_SIZE; tx++) {
+                  const distFromCenter = Math.max(Math.abs(tx - 7), Math.abs(ty - 7));
+                  if (distFromCenter >= currentTargetDist && room.grid[ty][tx] !== TILE.HOLE) {
+                    room.grid[ty][tx] = TILE.HOLE;
+                    this.spawnDebris(tx * TILE_SIZE + 20, ty * TILE_SIZE + 20);
+                    this.spawnSparks(tx * TILE_SIZE + 20, ty * TILE_SIZE + 20, '#78909c', 4);
+                  }
+                }
+              }
+            }
+
+            // Checa se o colapso alcançou Charlotte ou chegou no centro
+            const pGridX = Math.floor(this.player.x / TILE_SIZE);
+            const pGridY = Math.floor(this.player.y / TILE_SIZE);
+            const pDist = Math.max(Math.abs(pGridX - 7), Math.abs(pGridY - 7));
+
+            if (pDist >= currentTargetDist || currentTargetDist <= 1 || this.demoEndingTimer >= 3.2) {
+              this.demoEndingStage = 'charlotte_falling';
+              this.demoEndingTimer = 0;
+              this.player.isFallingInAbyss = true;
+              if (window.sound && window.sound.playRewindGlitch) window.sound.playRewindGlitch();
+            }
+          } else if (this.demoEndingStage === 'charlotte_falling') {
+            this.screenShake = 5;
+            if (this.demoEndingTimer >= 1.6) {
+              this.demoEndingStage = 'black_screen';
+              this.showEndingCliffhangerUI();
+            }
+          }
+        }
+
         this.updateHUD();
       }
 
@@ -8307,20 +9118,25 @@
                        window.gameState = window.gameState || {};
                        window.gameState.inventorRescued = true;
                        this.player.inventorTalked = true;
+                       this.player.hasHealingInjector = true;
+                       if ((this.player.healingFlasks || 0) < 1) {
+                         this.player.healingFlasks = 1;
+                       }
+                       this.updateHUD();
                        if (typeof saveGame === 'function') saveGame();
                        
                        let step = 0;
                        const msgs = [
                           'INVENTOR: "Muito obrigado por me salvar! Fui preso pelos autômatos!"',
                           'CHARLOTTE: "Sem problemas. Eu sempre acabo voltando ao início da mina de qualquer jeito..."',
-                          'INVENTOR: "Entendo... Minha cabana fica perto da entrada também."',
-                          'INVENTOR: "Vou voltar pra lá. Se você aparecer, tentarei te ajudar de alguma forma!"'
+                          'INVENTOR: "Como agradecimento, acoplei o Injetor Vital em sua manopla e te dei 1 Tônico!"',
+                          'INVENTOR: "Você pode sintetizar até 2 tônicos (2 CC + 1 Peça). Cada um cura 1 ❤️! Pressione [H] para curar e [V] para sintetizar."'
                        ];
                        const showNext = () => {
                           if (step < msgs.length) {
                              if (window.showToast) window.showToast(msgs[step]);
                              step++;
-                             setTimeout(showNext, 4000);
+                             setTimeout(showNext, 4200);
                           }
                        };
                        showNext();
@@ -8773,6 +9589,17 @@
                    // Inventor disponível na base — abre loja
                    if (!this.player.inventorShopOpened) {
                      this.player.inventorShopOpened = true;
+                     if (!this.player.hasHealingInjector) {
+                       this.player.hasHealingInjector = true;
+                       if ((this.player.healingFlasks || 0) < 1) {
+                         this.player.healingFlasks = 1;
+                       }
+                       showToast('INVENTOR: "Como agradecimento pelo resgate, instalei o Injetor Vital em sua manopla! Use [H] para curar 1 ❤️ e [V] para sintetizar (2 CC + 1 Peça)."');
+                       this.spawnFloatingText('💉 INJETOR VITAL RECEBIDO!', this.player.x, this.player.y - 30, '#00e676');
+                       this.spawnSparks(this.player.x, this.player.y, '#00e676', 30);
+                       this.updateHUD();
+                       if (typeof saveGame === 'function') saveGame();
+                     }
                      setTimeout(() => { this.player.inventorShopOpened = false; }, 1500);
                      if (document.getElementById('inventor-shop-modal') && !document.getElementById('inventor-shop-modal').classList.contains('visible')) {
                        this.openInventorShop();
@@ -8824,19 +9651,38 @@
           if (this.player.unlockedVortex || this.player.unlockedPropulsor) {
             btnVortex.textContent = 'Comprado ✓';
             btnVortex.disabled = true;
-          } else if (!this.player.unlockedImpact) {
-            btnVortex.textContent = 'Bloqueado';
-            btnVortex.disabled = true;
-            if (costVortexEl) costVortexEl.textContent = 'Requer Bomba de Impacto primeiro!';
+            if (costVortexEl) costVortexEl.textContent = 'Bomba de Vórtice Adquirida!';
           } else {
             btnVortex.textContent = 'Comprar';
             btnVortex.disabled = (totalCC < 25 || totalParts < 20);
             if (costVortexEl) costVortexEl.textContent = 'Custo: 25 CC | 20 PEÇAS';
           }
         }
+
+        // Tônico Vital (Cura)
+        const btnHeal = document.getElementById('btn-inv-heal');
+        const costHealEl = document.getElementById('inv-cost-heal');
+        if (btnHeal) {
+          const flasks = this.player.healingFlasks || 0;
+          const maxFlasks = this.player.maxHealingFlasks || 2;
+          if (costHealEl) {
+            costHealEl.textContent = `Estoque: ${flasks}/${maxFlasks} | Custo: 2 CC | 1 PEÇA`;
+          }
+          if (flasks >= maxFlasks) {
+            btnHeal.textContent = 'Cheio (2/2) ✓';
+            btnHeal.disabled = true;
+          } else {
+            btnHeal.textContent = 'Sintetizar';
+            btnHeal.disabled = (totalCC < 2 || totalParts < 1);
+          }
+        }
       }
 
       buyInventorUpgrade(type) {
+        if (type === 'heal') {
+          return this.player.synthesizeHealingFlask();
+        }
+
         let costCC = 0, costParts = 0;
 
         if (type === 'impact') {
@@ -8844,7 +9690,6 @@
           costCC = 15; costParts = 10;
         } else if (type === 'vortex' || type === 'propulsor') {
           if (this.player.unlockedVortex || this.player.unlockedPropulsor) { showToast('INVENTOR: "Você já tem essa bomba!"'); return; }
-          if (!this.player.unlockedImpact) { showToast('INVENTOR: "Compre a Bomba de Impacto primeiro!"'); return; }
           costCC = 25; costParts = 20;
         }
 
@@ -9331,6 +10176,52 @@
             }
           }
         }
+
+        // 5. Bomba de Impacto Nível 2
+        const btnImpact = document.getElementById('btn-buy-impactbomb');
+        const impactCostEl = document.getElementById('impactbomb-upgrade-cost');
+        const costImpactCC = 25;
+        const costImpactParts = 20;
+        if (btnImpact) {
+          if (!this.player.unlockedImpact) {
+            btnImpact.textContent = 'Bloqueado';
+            btnImpact.disabled = true;
+            if (impactCostEl) impactCostEl.textContent = 'Requer desbloquear Bomba de Impacto no Inventor!';
+          } else if ((this.player.impactBombLevel || 1) >= 2) {
+            btnImpact.textContent = 'Adquirido';
+            btnImpact.disabled = true;
+            if (impactCostEl) impactCostEl.textContent = 'Adquirido (Reação Catalítica +10%/CC Ativa)';
+          } else {
+            btnImpact.textContent = 'Comprar';
+            btnImpact.disabled = (totalCC < costImpactCC || totalParts < costImpactParts);
+            if (impactCostEl) {
+              impactCostEl.textContent = `Custo: ${costImpactCC} CC | ${costImpactParts} PEÇAS`;
+            }
+          }
+        }
+
+        // 6. Bomba de Vórtice Nível 2
+        const btnVortex = document.getElementById('btn-buy-vortexbomb');
+        const vortexCostEl = document.getElementById('vortexbomb-upgrade-cost');
+        const costVortexCC = 30;
+        const costVortexParts = 25;
+        if (btnVortex) {
+          if (!this.player.unlockedVortex && !this.player.unlockedPropulsor) {
+            btnVortex.textContent = 'Bloqueado';
+            btnVortex.disabled = true;
+            if (vortexCostEl) vortexCostEl.textContent = 'Requer desbloquear Bomba de Vórtice no Inventor!';
+          } else if ((this.player.vortexBombLevel || 1) >= 2) {
+            btnVortex.textContent = 'Adquirido';
+            btnVortex.disabled = true;
+            if (vortexCostEl) vortexCostEl.textContent = 'Adquirido (Ejeção de Sucata em X Ativa)';
+          } else {
+            btnVortex.textContent = 'Comprar';
+            btnVortex.disabled = (totalCC < costVortexCC || totalParts < costVortexParts);
+            if (vortexCostEl) {
+              vortexCostEl.textContent = `Custo: ${costVortexCC} CC | ${costVortexParts} PEÇAS`;
+            }
+          }
+        }
       }
       switchArmoryTab(tab) {
         document.getElementById('armory-panel-upgrades').style.display = tab === 'upgrades' ? 'flex' : 'none';
@@ -9444,6 +10335,14 @@
           if (lvl >= 3) { showToast('BOLSA JÁ ESTÁ NO NÍVEL MÁXIMO!'); return; }
           costCC = lvl === 1 ? 25 : 45;
           costParts = lvl === 1 ? 20 : 40;
+        } else if (type === 'impactbomb') {
+          if (!this.player.unlockedImpact) { showToast('DESBLOQUEIE A BOMBA DE IMPACTO NO INVENTOR PRIMEIRO!'); return; }
+          if ((this.player.impactBombLevel || 1) >= 2) { showToast('BOMBA DE IMPACTO NV. 2 JÁ ADQUIRIDA!'); return; }
+          costCC = 25; costParts = 20;
+        } else if (type === 'vortexbomb') {
+          if (!this.player.unlockedVortex && !this.player.unlockedPropulsor) { showToast('DESBLOQUEIE A BOMBA DE VÓRTICE NO INVENTOR PRIMEIRO!'); return; }
+          if ((this.player.vortexBombLevel || 1) >= 2) { showToast('BOMBA DE VÓRTICE NV. 2 JÁ ADQUIRIDA!'); return; }
+          costCC = 30; costParts = 25;
         }
         
         const totalCC = this.getAvailableCC();
@@ -9461,6 +10360,12 @@
            } else if (type === 'timerbomb') {
              this.player.timerBombLevel = 2;
              showToast('BOMBA-RELÓGIO ATUALIZADA (REAÇÃO EM CADEIA)!');
+           } else if (type === 'impactbomb') {
+             this.player.impactBombLevel = 2;
+             showToast('BOMBA DE IMPACTO NV. 2 ADQUIRIDA! (+10% RAIO POR CRISTAL COAL)');
+           } else if (type === 'vortexbomb') {
+             this.player.vortexBombLevel = 2;
+             showToast('BOMBA DE VÓRTICE NV. 2 ADQUIRIDA! (EJEÇÃO DE SUCATA EM X)');
            } else if (type === 'boots') {
              this.player.bootsLevel = 1;
              showToast('BOTAS COMPRADAS! DASH LIBERADO (SHIFT / BOTÃO MOBILE)!');
@@ -9616,9 +10521,67 @@
         });
       }
 
+      throwCarriedCrystal() {
+        if (!this.player) return;
+        const totalCC = this.player.chronoCores || 0;
+        if (totalCC <= 0) {
+          showToast('SEM CRISTAL COAL NA BOLSA! (Quebre caixas de minério)');
+          return;
+        }
+        this.player.chronoCores--;
+        this.updateHUD();
+
+        let targetX = this.player.x;
+        let targetY = this.player.y;
+        if (this.player.facing) {
+          targetX += this.player.facing.dx * TILE_SIZE * 1.5;
+          targetY += this.player.facing.dy * TILE_SIZE * 1.5;
+        } else {
+          targetX += TILE_SIZE * 1.5;
+        }
+        targetX = Math.max(TILE_SIZE * 1.2, Math.min(WORLD_WIDTH - TILE_SIZE * 1.2, targetX));
+        targetY = Math.max(TILE_SIZE * 1.2, Math.min(WORLD_HEIGHT - TILE_SIZE * 1.2, targetY));
+
+        const drop = new ChronoCoreDrop(targetX, targetY, 'cc');
+        drop.pickupDelay = 3.0; // 3 segundos de imunidade ao ímã
+        drop.isArmed = true;
+        if (!this.ccDrops) this.ccDrops = [];
+        this.ccDrops.push(drop);
+
+        if (sound.playThrowWhoosh) sound.playThrowWhoosh();
+        this.spawnSparks(targetX, targetY, '#00e5ff', 20);
+        this.spawnFloatingText('-1 CC (ARMADO!)', this.player.x, this.player.y - 20, '#00e5ff');
+        showToast('CRISTAL ARMADO NO CHÃO! ([C] / Detone com Impacto ou Vórtice)');
+      }
+
       detonateImpact(cx, cy, gridX, gridY) {
         const room = this.map.currentRoom;
-        const blastRadius = TILE_SIZE * 1.5;
+        let blastRadius = TILE_SIZE * 1.5;
+
+        // Se Charlotte possuir Bomba de Impacto Nível 2: Reação Catalítica de Carvão!
+        // Expande o raio em +10% por cada Cristal Coal consumido no raio de combustão.
+        let consumedCrystals = 0;
+        if (this.player && (this.player.impactBombLevel || 1) >= 2 && this.ccDrops) {
+          for (let i = this.ccDrops.length - 1; i >= 0; i--) {
+            const drop = this.ccDrops[i];
+            if (drop.type === 'cc') {
+              const dDist = Math.hypot(drop.x - cx, drop.y - cy);
+              if (dDist <= blastRadius + 22) {
+                consumedCrystals++;
+                this.spawnSparks(drop.x, drop.y, '#00e5ff', 24);
+                this.ccDrops.splice(i, 1);
+              }
+            }
+          }
+          if (consumedCrystals > 0) {
+            const expansionMult = 1 + consumedCrystals * 0.10;
+            blastRadius *= expansionMult;
+            const percent = Math.round(consumedCrystals * 10);
+            this.spawnFloatingText(`💥 COMBUSTÃO! +${percent}% RAIO! (${consumedCrystals} CC)`, cx, cy - 26, '#00e5ff');
+            this.spawnSparks(cx, cy, '#00e5ff', 35);
+          }
+        }
+
         this.blasts.push(new ExplosionBlast(cx, cy, blastRadius, false));
         this.spawnSparks(cx, cy, '#ff5252', 25);
 
@@ -9981,7 +10944,7 @@
       }
 
       checkHoleFall() {
-        if (this.fadeState !== 'none' || this.rewindGlitchTimer > 0) return;
+        if (this.fadeState !== 'none' || this.rewindGlitchTimer > 0 || this.demoEndingActive) return;
         const room = this.map.currentRoom;
         if (room.isSecret) return;
 
@@ -10067,6 +11030,166 @@
           // 6. Atualiza o HUD para exibir as novas coordenadas e contadores
           this.updateHUD();
         };
+      }
+
+      // --------------------------------------------------------------------------
+      // Sequência de Encerramento da Demonstração (Boss Defeated -> Colapso -> Créditos)
+      // --------------------------------------------------------------------------
+      triggerDemoEndingSequence() {
+        if (this.demoEndingActive) return;
+        this.demoEndingActive = true;
+        this.demoEndingTimer = 0;
+        this.demoEndingStage = 'victory_pause';
+        this._warnedCollapse = false;
+        this.crumbleSoundCooldown = 0;
+
+        // Trava inputs de arremesso e mira
+        if (this.input) {
+          this.input.isAiming = false;
+          this.input.isQuickThrow = false;
+        }
+
+        // Toca fanfarra triunfal
+        if (window.sound && window.sound.playUpgradeFanfare) {
+          window.sound.playUpgradeFanfare();
+        }
+      }
+
+      showEndingCliffhangerUI() {
+        const overlay = document.getElementById('demo-ending-overlay');
+        const cliffhanger = document.getElementById('ending-cliffhanger-container');
+        const credits = document.getElementById('ending-credits-container');
+        const skipBtn = document.getElementById('btn-skip-credits');
+
+        if (!overlay || !cliffhanger) return;
+
+        // Pausa temporariamente o update normal do canvas
+        this.isPaused = true;
+
+        // Exibe o overlay preto
+        overlay.style.display = 'flex';
+        cliffhanger.style.display = 'flex';
+        cliffhanger.style.opacity = '0';
+        if (credits) credits.style.display = 'none';
+        if (skipBtn) skipBtn.style.display = 'block';
+
+        // Toca música tema do jogo/menu durante os créditos
+        if (window.sound && window.sound.init) {
+          window.sound.init('menu');
+        }
+
+        // 1. Sobe suavemente o texto do mistério de Charlotte
+        setTimeout(() => {
+          cliffhanger.style.opacity = '1';
+        }, 400);
+
+        // 2. Após 5.5 segundos, faz fade out do mistério e inicia os créditos rolantes
+        setTimeout(() => {
+          cliffhanger.style.transition = 'opacity 1.4s ease-in-out';
+          cliffhanger.style.opacity = '0';
+
+          setTimeout(() => {
+            cliffhanger.style.display = 'none';
+            if (credits) {
+              credits.style.display = 'block';
+              credits.classList.remove('credits-scroll-active');
+              void credits.offsetWidth; // Força reflow no navegador
+              credits.classList.add('credits-scroll-active');
+            }
+
+            // 3. Após exatamente 60 segundos de créditos, retorna automaticamente para a tela inicial
+            this._endingCreditsTimeout = setTimeout(() => {
+              this.finishDemoCreditsAndReturnHome();
+            }, 60000);
+          }, 1400);
+        }, 5500);
+      }
+
+      finishDemoCreditsAndReturnHome() {
+        if (this._endingCreditsTimeout) {
+          clearTimeout(this._endingCreditsTimeout);
+          this._endingCreditsTimeout = null;
+        }
+
+        const overlay = document.getElementById('demo-ending-overlay');
+        if (overlay) {
+          overlay.style.display = 'none';
+        }
+        const cliffhanger = document.getElementById('ending-cliffhanger-container');
+        if (cliffhanger) {
+          cliffhanger.style.opacity = '0';
+          cliffhanger.style.display = 'none';
+        }
+        const credits = document.getElementById('ending-credits-container');
+        if (credits) {
+          credits.style.display = 'none';
+          credits.classList.remove('credits-scroll-active');
+        }
+        const skipBtn = document.getElementById('btn-skip-credits');
+        if (skipBtn) {
+          skipBtn.style.display = 'none';
+        }
+
+        // Reseta estados do encerramento da demo
+        this.demoEndingActive = false;
+        this.demoEndingStage = 'none';
+        this.demoEndingTimer = 0;
+        this._warnedCollapse = false;
+
+        if (this.player) {
+          this.player.isFallingInAbyss = false;
+          this.player.hp = this.player.maxHp || 3;
+          this.player.chronoCores = 0;
+          this.player.parts = 0;
+          this.player.isRecoiling = false;
+          this.player.isDashing = false;
+          this.player.dashTimer = 0;
+          this.player.recoilVx = 0;
+          this.player.recoilVy = 0;
+          this.player.animState = 'idle';
+        }
+
+        // Limpa projéteis e entidades voláteis
+        this.timedBombs = [];
+        this.flyingBombs = [];
+        this.targetMarkers = [];
+        this.fallingRocks = [];
+        this.vortexFields = [];
+        this.flyingShards = [];
+        this.ccDrops = [];
+        this.floatingTexts = [];
+        this.particles = [];
+        this.blasts = [];
+
+        // Reseta o mapa para a Safe Room inicial (Nível 1)
+        if (this.map) {
+          this.map.currentDepth = 1;
+          this.map.generateWorld();
+          const mid = Math.floor(GRID_SIZE / 2);
+          this.player.x = mid * TILE_SIZE + TILE_SIZE / 2;
+          this.player.y = mid * TILE_SIZE + TILE_SIZE / 2;
+        }
+
+        this.updateHUD();
+
+        // Volta para a página inicial (Menu Principal)
+        const mainMenu = document.getElementById('main-menu');
+        if (mainMenu) {
+          mainMenu.style.display = 'flex';
+          mainMenu.classList.remove('hidden');
+        }
+
+        this.isPaused = true;
+
+        if (window.sound) {
+          window.sound.init('menu');
+        }
+
+        if (typeof saveGame === 'function') saveGame();
+      }
+
+      skipCreditsToHome() {
+        this.finishDemoCreditsAndReturnHome();
       }
 
       spawnSparks(x, y, color, count) {
@@ -10841,8 +11964,16 @@
 
           ctx.save();
           ctx.translate(this.player.x, this.player.y);
-          // Espelha horizontalmente quando olha para a esquerda
-          if (this.player.facingSide === -1) {
+          
+          // Animação de queda no abismo durante o encerramento da demo
+          if (this.player.isFallingInAbyss) {
+            const fallProgress = Math.min(1, this.demoEndingTimer / 1.5);
+            const fallScale = Math.max(0.01, 1 - fallProgress * 0.95);
+            const fallRot = this.demoEndingTimer * 12;
+            ctx.scale(fallScale, fallScale);
+            ctx.rotate(fallRot);
+          } else if (this.player.facingSide === -1) {
+            // Espelha horizontalmente quando olha para a esquerda
             ctx.scale(-1, 1);
           }
           // Desenha frame 64x64 centrado nos pés (âncora Y=60 na célula -> offset -44)
@@ -10972,7 +12103,7 @@
               ctx.fill();
             } else if (bombType === BOMB_TYPE.VORTEX || bombType === 'vortex' || bombType === BOMB_TYPE.PROPULSOR) {
               ctx.beginPath();
-              ctx.arc(tx, ty, TILE_SIZE * 2.2, 0, Math.PI * 2);
+              ctx.arc(tx, ty, TILE_SIZE * 1.5, 0, Math.PI * 2);
               ctx.strokeStyle = 'rgba(0, 229, 255, 0.75)';
               ctx.stroke();
 
@@ -11041,6 +12172,26 @@
           ctx.restore();
         }
 
+        // Efeito Cinemático de Escuridão do Encerramento da Demo
+        if (this.demoEndingActive) {
+          if (this.demoEndingStage === 'charlotte_falling') {
+            const fallProgress = Math.min(1, this.demoEndingTimer / 1.5);
+            const r = Math.max(15, WORLD_WIDTH * (1 - fallProgress * 0.92));
+            const grad = ctx.createRadialGradient(this.player.x, this.player.y, 8, this.player.x, this.player.y, r);
+            grad.addColorStop(0, 'rgba(0,0,0,0)');
+            grad.addColorStop(0.65, `rgba(0,0,0,${fallProgress * 0.85})`);
+            grad.addColorStop(1, 'rgba(0,0,0,1)');
+            ctx.save();
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
+            ctx.restore();
+          } else if (this.demoEndingStage === 'black_screen') {
+            ctx.save();
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
+            ctx.restore();
+          }
+        }
         
         this.renderMinimap();
       }
@@ -11205,6 +12356,9 @@
         
         const partBadge = document.querySelector('#part-badge .hud-badge-label');
         if (partBadge) partBadge.textContent = window.t('ingame-parts');
+
+        const healBadgeLabel = document.getElementById('heal-badge-label');
+        if (healBadgeLabel) healBadgeLabel.textContent = window.t('ingame-heal');
         
         const mapBadge = document.querySelector('.minimap-badge-label');
         if (mapBadge) mapBadge.textContent = window.t('ingame-map');
@@ -11231,11 +12385,44 @@
           }
         }
         
+        // Atualiza Injetor Vital de Cura (HUD e Mobile)
+        const healBadge = document.getElementById('heal-badge');
+        const healCounter = document.getElementById('heal-counter');
+        const healBtnMobile = document.getElementById('btn-heal-mobile');
+        const healMobileText = document.getElementById('mobile-heal-text');
+        const btnQuickSynth = document.getElementById('btn-quick-synth');
+
+        if (this.player && this.player.hasHealingInjector) {
+          if (healBadge) healBadge.style.display = 'flex';
+          const flasks = this.player.healingFlasks || 0;
+          const maxFlasks = this.player.maxHealingFlasks || 2;
+          if (healCounter) {
+            healCounter.textContent = `${flasks}/${maxFlasks}`;
+            healCounter.style.color = flasks > 0 ? '#00e676' : '#888';
+          }
+          if (btnQuickSynth) {
+            btnQuickSynth.disabled = flasks >= maxFlasks;
+            btnQuickSynth.style.opacity = flasks >= maxFlasks ? '0.4' : '1.0';
+          }
+          if (healBtnMobile) {
+            healBtnMobile.style.display = 'flex';
+            if (healMobileText) {
+              healMobileText.textContent = `${flasks}/${maxFlasks}`;
+              healMobileText.style.color = flasks > 0 ? '#00e676' : '#aaa';
+            }
+          }
+        } else {
+          if (healBadge) healBadge.style.display = 'none';
+          if (healBtnMobile) healBtnMobile.style.display = 'none';
+        }
+
         // Atualiza visibilidade dos atalhos no Desktop Guide
         const guideBombs = document.getElementById('guide-bombs');
         if (guideBombs) guideBombs.style.display = (this.player.unlockedImpact || this.player.unlockedVortex || this.player.unlockedPropulsor) ? 'inline-block' : 'none';
         const guideDash = document.getElementById('guide-dash');
         if (guideDash) guideDash.style.display = (this.player.bootsLevel >= 1) ? 'inline-block' : 'none';
+        const guideHeal = document.getElementById('guide-heal');
+        if (guideHeal) guideHeal.style.display = (this.player && this.player.hasHealingInjector) ? 'inline-block' : 'none';
       }
     }
 
@@ -11277,12 +12464,16 @@
         bootsLevel: p.bootsLevel,
         bagLevel: p.bagLevel,
         timerBombLevel: p.timerBombLevel,
+        impactBombLevel: p.impactBombLevel ?? 1,
+        vortexBombLevel: p.vortexBombLevel ?? 1,
         unlockedImpact: p.unlockedImpact,
         unlockedVortex: p.unlockedVortex || p.unlockedPropulsor,
         unlockedPropulsor: p.unlockedVortex || p.unlockedPropulsor,
         hasHydraulicPiston: p.hasHydraulicPiston,
         carryingHydraulicPiston: p.carryingHydraulicPiston,
         hasSteamPropulsionCore: p.hasSteamPropulsionCore,
+        hasHealingInjector: !!p.hasHealingInjector,
+        healingFlasks: p.healingFlasks ?? 0,
         inventorRescued: !!(window.gameState && window.gameState.inventorRescued),
         lastSaved: Date.now()
       };
@@ -11313,12 +12504,16 @@
         p.bootsLevel = data.bootsLevel ?? 0;
         p.bagLevel = data.bagLevel ?? 1;
         p.timerBombLevel = data.timerBombLevel ?? 1;
+        p.impactBombLevel = data.impactBombLevel ?? 1;
+        p.vortexBombLevel = data.vortexBombLevel ?? 1;
         p.unlockedImpact = data.unlockedImpact ?? false;
         p.unlockedVortex = data.unlockedVortex ?? (data.unlockedPropulsor ?? false);
         p.unlockedPropulsor = p.unlockedVortex;
         p.hasHydraulicPiston = data.hasHydraulicPiston ?? false;
         p.carryingHydraulicPiston = data.carryingHydraulicPiston ?? false;
         p.hasSteamPropulsionCore = data.hasSteamPropulsionCore ?? false;
+        p.hasHealingInjector = data.hasHealingInjector ?? false;
+        p.healingFlasks = Math.min(2, Math.max(0, data.healingFlasks ?? 0));
 
         window.gameState = window.gameState || {};
         if (data.inventorRescued !== undefined) {
@@ -11407,6 +12602,10 @@
 
         if (engine.player) {
           engine.player.inventorTalked = true;
+          engine.player.hasHealingInjector = true;
+          if ((engine.player.healingFlasks || 0) < 1) {
+            engine.player.healingFlasks = 1;
+          }
           if (unlockBombs) {
             engine.player.unlockedImpact = true;
             engine.player.unlockedVortex = true;
@@ -11459,6 +12658,30 @@
             window.game.player.upgradeGauntlet();
             window.game.updateHUD();
             window.game.spawnSparks(window.game.player.x, window.game.player.y, '#ffd700', 30);
+          }
+        });
+      }
+
+      // Botão HUD de Cura / Injetor Vital para clique/toque direto
+      const healBadge = document.getElementById('heal-badge');
+      if (healBadge) {
+        healBadge.addEventListener('click', (e) => {
+          if (e.target && e.target.id === 'btn-quick-synth') return;
+          e.preventDefault();
+          sound.init();
+          if (window.game && window.game.player) {
+            window.game.player.useHealingFlask();
+          }
+        });
+      }
+      const btnQuickSynth = document.getElementById('btn-quick-synth');
+      if (btnQuickSynth) {
+        btnQuickSynth.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          sound.init();
+          if (window.game && window.game.player) {
+            window.game.player.synthesizeHealingFlask();
           }
         });
       }
@@ -11608,6 +12831,8 @@
           'ingame-enemies': 'INIMIGOS',
           'ingame-gauntlet': 'Manopla',
           'ingame-gauntlet-lvl': 'NV.',
+          'ingame-heal': 'Cura [H]',
+          'ingame-synth': 'Sintetizar [V]',
           'ingame-cc': 'Cristal Coal',
           'ingame-parts': 'Peças',
           'ingame-map': 'MAPA PROCEDURAL',
@@ -11675,7 +12900,10 @@
           'tutorial-dont-show': 'Não mostrar novamente ao iniciar',
           'tutorial-confirm': 'ENTENDIDO! JOGAR',
           'hud-help': 'Ajuda',
-          'hud-mobile-guide': '👆 <b>Direcione e Solte</b> para Lançar Bomba'
+          'hud-mobile-guide': '👆 <b>Direcione e Solte</b> para Lançar Bomba',
+          'ending-question': 'O que será que aconteceu com Charlotte?',
+          'ending-continue': 'Continua...',
+          'ending-skip': 'Pular [ESC] ⏭'
       },
       'en': {
           'menu-start': 'Start Game',
@@ -11698,6 +12926,8 @@
           'ingame-enemies': 'ENEMIES',
           'ingame-gauntlet': 'Gauntlet',
           'ingame-gauntlet-lvl': 'LVL',
+          'ingame-heal': 'Heal [H]',
+          'ingame-synth': 'Synthesize [V]',
           'ingame-cc': 'Crystal Coal',
           'ingame-parts': 'Parts',
           'ingame-map': 'PROCEDURAL MAP',
@@ -11765,7 +12995,10 @@
           'tutorial-dont-show': "Don't show again on start",
           'tutorial-confirm': 'GOT IT! PLAY',
           'hud-help': 'Help',
-          'hud-mobile-guide': '👆 <b>Aim and Release</b> to Throw Bomb'
+          'hud-mobile-guide': '👆 <b>Aim and Release</b> to Throw Bomb',
+          'ending-question': 'What could have happened to Charlotte?',
+          'ending-continue': 'To be continued...',
+          'ending-skip': 'Skip [ESC] ⏭'
       }
     };
     let currentLang = 'pt';
@@ -11773,6 +13006,12 @@
 
     function updateLanguage(lang) {
       currentLang = lang;
+      const endQ = document.getElementById('ending-question-text');
+      if (endQ) endQ.innerText = window.t('ending-question');
+      const endC = document.getElementById('ending-continue-text');
+      if (endC) endC.innerText = window.t('ending-continue');
+      const endSkip = document.getElementById('btn-skip-credits');
+      if (endSkip) endSkip.innerText = window.t('ending-skip');
       
       document.getElementById('btn-start').innerText = window.t('menu-start');
       const btnContinue = document.getElementById('btn-continue');

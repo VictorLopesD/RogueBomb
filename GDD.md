@@ -22,6 +22,19 @@
   - Bomba Propulsora (Requer 25 CC, 20 Peças; exige a de Impacto primeiro).
 - **Resgate do Inventor:** Após resolver a Câmara de Desafio (Puzzle) e resgatar o Inventor, a sala dele é substituída por um Cofre Seguro (`TILE.VAULT_CHEST`) nas runs subsequentes. Um ícone de placa (`TILE.SIGN`) indica ausência quando ele não foi resgatado.
 
+### Injetor Vital e Cura Controlada pelo Jogador
+- **Desbloqueio (Agradecimento do Inventor):** Ao resgatar o Inventor na Câmara de Desafio (Nível 2) ou interagir com ele na Safe Room, o Inventor instala o **Injetor Vital** na Manopla de Charlotte em sinal de gratidão pelo resgate, presenteando-a imediatamente com 1 Tônico inicial.
+- **Síntese de Cura:**
+  - O jogador pode sintetizar Tônicos de Cura consumindo recursos da mina: **2 Cristal Coal (CC) + 1 Peça Mecânica**.
+  - **Atalho de Síntese:** Tecla <kbd>V</kbd> no computador, botão `+` no badge do HUD, na Loja do Inventor ou no botão mobile quando com estoque zerado.
+- **Capacidade de Armazenamento:** Charlotte armazena até **2 Frascos/Tônicos Vitais** no máximo (`0/2`, `1/2`, `2/2`).
+- **Controle de Uso pelo Jogador:**
+  - Cada tônico utilizado restaura exatamente **1 coração completo [❤️]** (1.0 HP).
+  - **Atalho de Uso:** Tecla <kbd>H</kbd> no teclado, clique no badge `#heal-badge` do HUD ou botão touch dedicado <kbd>💉</kbd> no celular.
+  - Proteção contra desperdício: não consome o item caso Charlotte já esteja com a vida cheia (3/3 corações).
+  - Feedback audiovisual: síntese mecânica (`playSynthesize`), arpeggio de cura (`playHeal`), faíscas verdes (`#00e676`) e texto flutuante no canvas.
+  - Persistência permanente em save (`hasHealingInjector`, `healingFlasks`).
+
 ### Modo "Enlouquecido" dos Autômatos (Nível 2+)
 - A partir do Nível 2, autômatos sofrem surtos temporários (duração de 3s, com intervalo aleatório entre 5s a 10s).
 - **Efeitos Visuais:** Olhos vermelhos brilhantes e emissão pesada de fumaça preta (diesel) e faíscas.
@@ -40,6 +53,21 @@
 - Charlotte possui **3 Corações** (vidas visíveis no HUD: `❤️❤️❤️`).
 - Ao ser atingida por autômatos, chefes ou rochas em queda, perde **1 coração**, recebe recuo e 1.6s de invulnerabilidade (i-frames piscantes).
 - Perder os 3 corações aciona o **Rebobinar do Tempo (Time Rewind)** para a Safe Room.
+
+### Sequência de Fim da Demo (Nível 5 — Queda, Cliffhanger e Créditos)
+- **Substituição da Tela de Vitória:** Como se trata de uma demonstração (demo), não há tela convencional de vitória.
+- **Estrutura do Colapso (3s pós-derrota):**
+  - Charlotte derrota o Chefe Final (Autômato Titânico).
+  - Após 3 segundos de pausa e tensão com tremores sísmicos crescentes, o piso da mina começa a desabar pelos cantos e bordas perimetrais rumo ao centro (`TILE.HOLE`), acompanhado de detritos e estrondos de desmoronamento.
+  - O colapso alcança Charlotte e ela despenca girando para dentro do abismo profundo.
+- **Tela Preta e Cliffhanger:**
+  - A tela se apaga em escuridão total (black screen).
+  - Surge a pergunta dramática com iluminação ambiente: *"O que será que aconteceu com Charlotte?"*.
+  - Logo abaixo é exibido em destaque: *"Continua..."*.
+- **Créditos Rolantes (60 segundos):**
+  - Sobem os créditos cinematográficos verticais da demo ao som da faixa tema *Turn of the Great Wheel*.
+  - Após exatamente 1 minuto (60 segundos) de créditos, o jogo retorna suavemente para a página inicial (Menu Principal).
+  - Possui botão e atalho de tecla <kbd>ESC</kbd> para pular para o início, além de atalho de teste <kbd>Ctrl</kbd> + <kbd>K</kbd> (ou `window.testDemoEnding()`).
 
 ### Música
 - Adicionada a faixa de batalha `The_Clockwork_Siege.mp3` tocando proceduralmente nos duelos ou no lockdown.
