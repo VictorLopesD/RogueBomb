@@ -612,17 +612,27 @@
       position: absolute;
       top: 50%; left: 50%;
       transform: translate(-50%, -50%);
-      width: 400px;
-      max-width: 90%;
-      background: rgba(13, 17, 23, 0.95);
+      width: 440px;
+      max-width: 92%;
+      max-height: 85vh;
+      overflow-y: auto;
+      background: rgba(13, 17, 23, 0.96);
       border: 3px solid #ffca28;
       border-radius: 12px;
-      padding: 20px;
+      padding: 18px 20px;
       display: none;
       flex-direction: column;
-      gap: 15px;
+      gap: 14px;
       z-index: 500;
-      box-shadow: 0 0 20px rgba(255, 202, 40, 0.3);
+      box-shadow: 0 0 25px rgba(255, 202, 40, 0.35);
+      box-sizing: border-box;
+    }
+    #armory-modal::-webkit-scrollbar {
+      width: 6px;
+    }
+    #armory-modal::-webkit-scrollbar-thumb {
+      background: #30363d;
+      border-radius: 3px;
     }
     #armory-modal.visible {
       display: flex;
@@ -656,8 +666,12 @@
     }
     .armory-tab {
       flex: 1; background: rgba(255,255,255,0.05); border: 1px solid #30363d;
-      color: #8b949e; padding: 7px 0; border-radius: 6px; cursor: pointer;
-      font-weight: bold; font-size: 12px; transition: 0.2s;
+      color: #8b949e; padding: 8px 4px; border-radius: 6px; cursor: pointer;
+      font-weight: bold; font-size: 12px; transition: 0.2s; text-align: center;
+      display: flex; align-items: center; justify-content: center; gap: 4px;
+    }
+    .armory-tab:hover {
+      background: rgba(255, 255, 255, 0.1); color: #c9d1d9;
     }
     .armory-tab.active {
       background: rgba(255, 202, 40, 0.15); border-color: #ffca28; color: #ffca28;
@@ -1816,13 +1830,13 @@
           </div>
         </div>
 
-        <div id="heal-badge" class="hud-badge" style="display: none;" title="Injetor Vital: Clique para Usar Cura [1 ❤️] (Tecla H) ou no '+' para Sintetizar (Tecla V)">
+        <div id="heal-badge" class="hud-badge" style="display: none;" title="Injetor Vital: Clique para Usar Cura [1 ❤️] (Tecla H) ou no '+' para Sintetizar (Tecla V - 30% no campo / 100% no Inventor)">
           <span class="hud-icon" style="font-size: 16px;">💉</span>
           <div class="hud-badge-info">
             <div class="hud-badge-label" id="heal-badge-label">Cura [H]</div>
             <div id="heal-counter" class="hud-badge-value" style="color: #00e676; font-size: 12px; font-weight: bold;">0/2</div>
           </div>
-          <button id="btn-quick-synth" class="hud-synth-btn" title="Sintetizar Tônico de Cura (2 CC + 1 Peça) [Tecla V]">+</button>
+          <button id="btn-quick-synth" class="hud-synth-btn" title="Sintetizar Tônico (2 CC da mochila + 1 Peça) [Tecla V] - 30% chance no campo">+</button>
         </div>
 
         <div id="gauntlet-badge" class="hud-badge" title="Clique ou pressione [U] para aprimorar o alcance da Manopla">
@@ -1901,7 +1915,7 @@
       <span id="guide-bombs" style="display: none;"><kbd>1</kbd> Imp | <kbd>2</kbd> Prop | <kbd>3</kbd> Temp</span>
       <span id="guide-dash" style="display: none;"><kbd>SHIFT</kbd> Dash (1 CC)</span>
       <span id="guide-crystal"><kbd>C</kbd> Armar Cristal (1 CC)</span>
-      <span id="guide-heal" style="display: none;"><kbd>H</kbd> Curar (1 ❤️) | <kbd>V</kbd> Sintetizar</span>
+      <span id="guide-heal" style="display: none;"><kbd>H</kbd> Curar (1 ❤️) | <kbd>V</kbd> Sintetizar (30%)</span>
     </div>
 
     <!-- Guia Mobile Touch -->
@@ -2273,46 +2287,19 @@
       <h2>Balcão de Arsenal</h2>
       <div id="armory-coins" style="text-align: center; font-weight: bold; color: #fff; font-size: 14px;">Você tem: 0 CC | 0 PEÇAS</div>
 
-      <!-- Tabs -->
+      <!-- Tabs: Bomba, Equipamentos, Outros -->
       <div id="armory-tabs">
-        <button class="armory-tab active" id="tab-upgrades" onclick="window.game.switchArmoryTab('upgrades')">Upgrades</button>
-        <button class="armory-tab" id="tab-bag" onclick="window.game.switchArmoryTab('bag')">🎒 Bolsa</button>
+        <button class="armory-tab active" id="tab-bombs" onclick="window.game.switchArmoryTab('bombs')">💣 Bomba</button>
+        <button class="armory-tab" id="tab-equip" onclick="window.game.switchArmoryTab('equip')">⚙️ Equipamentos</button>
+        <button class="armory-tab" id="tab-other" onclick="window.game.switchArmoryTab('other')">🎒 Outros</button>
       </div>
 
-      <!-- Painel: Upgrades -->
-      <div id="armory-panel-upgrades" style="display:flex; flex-direction:column; gap:10px;">
+      <!-- Painel: Bomba -->
+      <div id="armory-panel-bombs" class="armory-panel" style="display:flex; flex-direction:column; gap:10px;">
         <div class="armory-item">
           <div class="armory-info">
-            <span class="armory-title">Manopla Mecânica</span>
-            <span class="armory-desc">Aumenta o alcance de arremesso.</span>
-            <span class="armory-cost" id="gauntlet-upgrade-cost">Custo: 35 CC | 25 PEÇAS | 1 PISTÃO HIDRÁULICO</span>
-          </div>
-          <button class="btn-buy" id="btn-buy-gauntlet" onclick="window.game.buyUpgrade('gauntlet')">Melhorar</button>
-        </div>
-
-        <div class="armory-item">
-          <div class="armory-info">
-            <span class="armory-title">Botas Propulsoras</span>
-            <span class="armory-desc">Permite dar Dash (Aperte SHIFT ou Botão Mobile). Custo: 1 CC. Superaquece por 5s.</span>
-            <span class="armory-cost" id="boots-upgrade-cost">Custo: 30 CC | 25 PEÇAS | 1 NÚCLEO A VAPOR</span>
-          </div>
-          <button class="btn-buy" id="btn-buy-boots" onclick="window.game.buyUpgrade('boots')">Comprar</button>
-        </div>
-
-        <div class="armory-item">
-          <div class="armory-info">
-            <span class="armory-title">Bolsa Expandida</span>
-            <span class="armory-desc">Aumenta a capacidade de bombas. Nv.1: 5 | Nv.2: 7 | Nv.3: 10</span>
-            <span class="armory-cost" id="bag-upgrade-cost">7 Bombas | Custo: 25 CC | 20 PEÇAS</span>
-          </div>
-          <button class="btn-buy" id="btn-buy-bag" onclick="window.game.buyUpgrade('bag')">Melhorar</button>
-        </div>
-
-
-        <div class="armory-item">
-          <div class="armory-info">
-            <span class="armory-title">Bomba-Relógio Nível 2</span>
-            <span class="armory-desc">Reação em Cadeia: detonam imediatamente ao sofrer impacto de outras explosões.</span>
+            <span class="armory-title" id="title-timerbomb">Bomba-Relógio Nível 2</span>
+            <span class="armory-desc" id="desc-timerbomb">Reação em Cadeia: detonam imediatamente ao sofrer impacto de outras explosões.</span>
             <span class="armory-cost" id="timerbomb-upgrade-cost">Custo: 20 CC | 18 PEÇAS</span>
           </div>
           <button class="btn-buy" id="btn-buy-timerbomb" onclick="window.game.buyUpgrade('timerbomb')">Comprar</button>
@@ -2320,8 +2307,8 @@
 
         <div class="armory-item" id="armory-item-impactbomb">
           <div class="armory-info">
-            <span class="armory-title">💥 Bomba de Impacto Nível 2</span>
-            <span class="armory-desc">Reação Catalítica de Carvão: expande a explosão em +10% por cada Cristal Coal consumido no raio. Arremesse Cristais com [C]!</span>
+            <span class="armory-title" id="title-impactbomb">💥 Bomba de Impacto Nível 2</span>
+            <span class="armory-desc" id="desc-impactbomb">Reação Catalítica de Carvão: expande a explosão em +10% por cada Cristal Coal consumido no raio. Arremesse Cristais com [C]!</span>
             <span class="armory-cost" id="impactbomb-upgrade-cost">Custo: 25 CC | 20 PEÇAS</span>
           </div>
           <button class="btn-buy" id="btn-buy-impactbomb" onclick="window.game.buyUpgrade('impactbomb')">Comprar</button>
@@ -2329,20 +2316,52 @@
 
         <div class="armory-item" id="armory-item-vortexbomb">
           <div class="armory-info">
-            <span class="armory-title">🌀 Bomba de Vórtice Nível 2</span>
-            <span class="armory-desc">Ejeção de Sucata em X: estilhaça os autômatos sugados e ejeta suas peças em X (diagonais), atingindo tudo o que estiver fora do vórtice!</span>
+            <span class="armory-title" id="title-vortexbomb">🌀 Bomba de Vórtice Nível 2</span>
+            <span class="armory-desc" id="desc-vortexbomb">Ejeção de Sucata em X: estilhaça os autômatos sugados e ejeta suas peças em X (diagonais), atingindo tudo o que estiver fora do vórtice!</span>
             <span class="armory-cost" id="vortexbomb-upgrade-cost">Custo: 30 CC | 25 PEÇAS</span>
           </div>
           <button class="btn-buy" id="btn-buy-vortexbomb" onclick="window.game.buyUpgrade('vortexbomb')">Comprar</button>
         </div>
       </div>
 
-      <!-- Painel: Bolsa -->
-      <div id="armory-panel-bag" style="display:none;">
-        <div id="bag-slot-label" style="text-align:center; color:#8b949e; font-size:12px; margin-bottom:4px;">Slots de Bomba</div>
-        <div id="bag-grid"></div>
-        <div id="bag-types-label" style="text-align:center; color:#8b949e; font-size:12px; margin: 8px 0 4px 0;">Tipos Disponíveis</div>
-        <div id="bag-types-row"></div>
+      <!-- Painel: Equipamentos -->
+      <div id="armory-panel-equip" class="armory-panel" style="display:none; flex-direction:column; gap:10px;">
+        <div class="armory-item">
+          <div class="armory-info">
+            <span class="armory-title" id="title-gauntlet">Manopla Mecânica</span>
+            <span class="armory-desc" id="desc-gauntlet">Aumenta o alcance de arremesso.</span>
+            <span class="armory-cost" id="gauntlet-upgrade-cost">Nv. 2 (220px) | Custo: 35 CC | 25 PEÇAS | 1 PISTÃO HIDRÁULICO</span>
+          </div>
+          <button class="btn-buy" id="btn-buy-gauntlet" onclick="window.game.buyUpgrade('gauntlet')">Melhorar</button>
+        </div>
+
+        <div class="armory-item">
+          <div class="armory-info">
+            <span class="armory-title" id="title-boots">Botas Propulsoras</span>
+            <span class="armory-desc" id="desc-boots">Permite dar Dash (Aperte SHIFT ou Botão Mobile). Custo: 1 CC. Superaquece por 5s.</span>
+            <span class="armory-cost" id="boots-upgrade-cost">Custo: 30 CC | 25 PEÇAS | 1 NÚCLEO A VAPOR</span>
+          </div>
+          <button class="btn-buy" id="btn-buy-boots" onclick="window.game.buyUpgrade('boots')">Comprar</button>
+        </div>
+      </div>
+
+      <!-- Painel: Outros -->
+      <div id="armory-panel-other" class="armory-panel" style="display:none; flex-direction:column; gap:10px;">
+        <div class="armory-item">
+          <div class="armory-info">
+            <span class="armory-title" id="title-bag">Bolsa Expandida</span>
+            <span class="armory-desc" id="desc-bag">Aumenta a capacidade de bombas. Nv.1: 5 | Nv.2: 7 | Nv.3: 10</span>
+            <span class="armory-cost" id="bag-upgrade-cost">7 Bombas | Custo: 25 CC | 20 PEÇAS</span>
+          </div>
+          <button class="btn-buy" id="btn-buy-bag" onclick="window.game.buyUpgrade('bag')">Melhorar</button>
+        </div>
+
+        <div style="background: rgba(0,0,0,0.25); border: 1px solid #30363d; border-radius: 8px; padding: 10px;">
+          <div id="bag-slot-label" style="text-align:center; color:#8b949e; font-size:12px; margin-bottom:6px;">Slots de Bomba (Clique no slot para alternar)</div>
+          <div id="bag-grid"></div>
+          <div id="bag-types-label" style="text-align:center; color:#8b949e; font-size:12px; margin: 8px 0 4px 0;">Tipos Disponíveis</div>
+          <div id="bag-types-row"></div>
+        </div>
       </div>
 
       <button class="btn-close" onclick="window.game.closeArmory()">Sair</button>
@@ -2378,10 +2397,10 @@
       <div class="armory-item" id="inv-item-heal">
         <div class="armory-info">
           <span class="armory-title">💉 Tônico Vital (Síntese)</span>
-          <span class="armory-desc">Sintetiza 1 frasco de cura (armazena até 2). Cada frasco recupera 1 coração completo [❤️]. Atalhos: [H] Usar | [V] Sintetizar.</span>
-          <span class="armory-cost" id="inv-cost-heal">Estoque: 0/2 | Custo: 2 CC | 1 PEÇA</span>
+          <span class="armory-desc">Sintetiza 1 frasco de cura (armazena até 2). No Inventor a taxa de sucesso é 100% garantida (Charlotte no campo tem 30%). Requer 2 CC na mochila e 1 Peça.</span>
+          <span class="armory-cost" id="inv-cost-heal">Estoque: 0/2 | Custo: 2 CC (Mochila) | 1 PEÇA</span>
         </div>
-        <button class="btn-buy" id="btn-inv-heal" onclick="if (window.game && window.game.player) window.game.player.synthesizeHealingFlask()">Sintetizar</button>
+        <button class="btn-buy" id="btn-inv-heal" onclick="if (window.game) window.game.buyInventorUpgrade('heal')">Sintetizar (100%)</button>
       </div>
 
       <button class="btn-close" onclick="window.game.closeInventorShop()">Sair</button>
@@ -2910,6 +2929,23 @@
         chimeGain.connect(this.ctx.destination);
         chime.start(now + 0.18);
         chime.stop(now + 0.45);
+      }
+
+      playSynthesizeFail() {
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(320, now);
+        osc.frequency.exponentialRampToValueAtTime(110, now + 0.3);
+        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.35);
       }
 
       playRewindGlitch() {
@@ -4537,6 +4573,8 @@
         this.maxDashTime = 0.28;
         this.chronoCores = 0;   // Cristais de Chrono Core coletados das caixas
         this.depositedCores = 0; // Cristais depositados na Goela
+        this.parts = 0;          // Peças coletadas dos autômatos
+        this.depositedParts = 0; // Peças depositadas na Goela
         this.maxTimerBombs = 5;
         this.timerBombs = 5;
         this.bombRechargeTimer = 0;
@@ -4551,6 +4589,7 @@
         this.maxHealingFlasks = 2;
         this.maxHp = 3;
         this.hp = 3;
+        this.armoryUnlocked = false;
         this.bagSlots = [];
         const caps = [0, 5, 7, 10];
         const cap = caps[this.bagLevel];
@@ -4574,7 +4613,7 @@
         return true;
       }
 
-      synthesizeHealingFlask() {
+      synthesizeHealingFlask(fromInventor = false) {
         if (!this.hasHealingInjector) {
           showToast('Você ainda não possui o Injetor Vital do Inventor!');
           return false;
@@ -4586,41 +4625,89 @@
 
         const costCC = 2;
         const costParts = 1;
-        const totalCC = window.game ? window.game.getAvailableCC() : (this.chronoCores || 0);
+
+        // A síntese NUNCA retira Cristal Coal do baú (requer CC carregado na mochila)
+        const carriedCC = this.chronoCores || 0;
         const totalParts = window.game ? window.game.getAvailableParts() : (this.parts || 0);
 
-        if (totalCC < costCC || totalParts < costParts) {
-          showToast(`MATERIAIS INSUFICIENTES! Síntese requer ${costCC} CC e ${costParts} PEÇA (Você tem: ${totalCC} CC | ${totalParts} P)`);
+        if (carriedCC < costCC) {
+          showToast(`CC INSUFICIENTE NA MOCHILA! A síntese requer ${costCC} CC na mochila (não usa do Baú). Você tem: ${carriedCC} CC`);
           return false;
         }
 
-        if (window.game) {
-          window.game.consumeCurrency(costCC, costParts);
-        } else {
-          this.chronoCores = Math.max(0, (this.chronoCores || 0) - costCC);
-          this.parts = Math.max(0, (this.parts || 0) - costParts);
+        if (totalParts < costParts) {
+          showToast(`PEÇAS INSUFICIENTES! Síntese requer ${costParts} PEÇA (Você tem: ${totalParts} P)`);
+          return false;
         }
 
-        this.healingFlasks = Math.min(this.maxHealingFlasks, (this.healingFlasks || 0) + 1);
+        // Consome 2 CC exclusivamente da mochila
+        this.chronoCores = Math.max(0, this.chronoCores - costCC);
 
-        if (window.sound) {
-          if (window.sound.playSynthesize) {
-            window.sound.playSynthesize();
-          } else if (window.sound.playCCPickup) {
-            window.sound.playCCPickup();
+        // Consome 1 peça (da mochila primeiro, depois do baú se necessário)
+        if ((this.parts || 0) >= costParts) {
+          this.parts -= costParts;
+        } else if (this.depositedParts && this.depositedParts >= costParts) {
+          this.depositedParts -= costParts;
+        }
+
+        if (window.game) {
+          window.game.spawnFloatingText(`-${costCC} CC (Mochila)`, this.x, this.y - 18, '#ff5252');
+          window.game.spawnFloatingText(`-${costParts} PEÇA`, this.x, this.y - 32, '#888888');
+        }
+
+        // Taxa de sucesso: No Inventor é 100%, Charlotte no campo tem 30%
+        const isSuccess = fromInventor ? true : (Math.random() < 0.30);
+
+        if (isSuccess) {
+          this.healingFlasks = Math.min(this.maxHealingFlasks, (this.healingFlasks || 0) + 1);
+
+          if (window.sound) {
+            if (window.sound.playSynthesize) {
+              window.sound.playSynthesize();
+            } else if (window.sound.playCCPickup) {
+              window.sound.playCCPickup();
+            }
           }
+
+          if (window.game) {
+            const label = fromInventor
+              ? `+1 TÔNICO VITAL (INVENTOR 100%) [${this.healingFlasks}/${this.maxHealingFlasks}]`
+              : `+1 TÔNICO VITAL (SUCESSO 30%!) [${this.healingFlasks}/${this.maxHealingFlasks}]`;
+            window.game.spawnFloatingText(label, this.x, this.y - 25, '#00e676');
+            window.game.spawnSparks(this.x, this.y, '#00e676', 25);
+            window.game.spawnSparks(this.x, this.y, fromInventor ? '#ce93d8' : '#00e5ff', 18);
+            window.game.updateHUD();
+            window.game.updateInventorShopUI();
+          }
+
+          if (fromInventor) {
+            showToast(`INVENTOR: "Tônico Vital sintetizado com 100% de sucesso! (${this.healingFlasks}/${this.maxHealingFlasks})"`);
+          } else {
+            showToast(`TÔNICO VITAL SINTETIZADO COM SUCESSO! (30% de chance) (${this.healingFlasks}/${this.maxHealingFlasks}) - Pressione [H] para curar 1 ❤️`);
+          }
+        } else {
+          // Falha na síntese de campo de Charlotte (70% de chance)
+          if (window.sound) {
+            if (window.sound.playSynthesizeFail) {
+              window.sound.playSynthesizeFail();
+            } else if (window.sound.playHit) {
+              window.sound.playHit();
+            }
+          }
+
+          if (window.game) {
+            window.game.spawnFloatingText('FALHA NA SÍNTESE! (30% taxa)', this.x, this.y - 25, '#ff5252');
+            window.game.spawnSparks(this.x, this.y, '#888888', 25);
+            window.game.spawnSparks(this.x, this.y, '#ff5252', 18);
+            window.game.updateHUD();
+            window.game.updateInventorShopUI();
+          }
+
+          showToast('FALHA NA SÍNTESE! Os materiais instáveis evaporaram (Taxa de acerto de Charlotte no campo: 30%). No Inventor é 100%!');
         }
 
-        if (window.game) {
-          window.game.spawnFloatingText(`+1 TÔNICO VITAL [${this.healingFlasks}/${this.maxHealingFlasks}]`, this.x, this.y - 25, '#00e676');
-          window.game.spawnSparks(this.x, this.y, '#00e676', 25);
-          window.game.spawnSparks(this.x, this.y, '#00e5ff', 15);
-          window.game.updateHUD();
-          window.game.updateInventorShopUI();
-        }
-        showToast(`TÔNICO VITAL SINTETIZADO! (${this.healingFlasks}/${this.maxHealingFlasks}) - Pressione [H] para curar 1 ❤️`);
         if (typeof saveGame === 'function') saveGame();
-        return true;
+        return isSuccess;
       }
 
       useHealingFlask() {
@@ -9549,6 +9636,7 @@
                   sound.playCCPickup();
                   showToast('ARSENAL DESBLOQUEADO E ABERTO!');
                   this.spawnSparks(this.player.x, this.player.y, '#ffd700', 30);
+                  if (typeof saveGame === 'function') saveGame();
                   
                   this.player.y += TILE_SIZE * 0.8;
                   this.openArmory();
@@ -9665,22 +9753,23 @@
         if (btnHeal) {
           const flasks = this.player.healingFlasks || 0;
           const maxFlasks = this.player.maxHealingFlasks || 2;
+          const carriedCC = this.player.chronoCores || 0;
           if (costHealEl) {
-            costHealEl.textContent = `Estoque: ${flasks}/${maxFlasks} | Custo: 2 CC | 1 PEÇA`;
+            costHealEl.textContent = `Estoque: ${flasks}/${maxFlasks} | Custo: 2 CC (Mochila: ${carriedCC}) | 1 PEÇA`;
           }
           if (flasks >= maxFlasks) {
             btnHeal.textContent = 'Cheio (2/2) ✓';
             btnHeal.disabled = true;
           } else {
-            btnHeal.textContent = 'Sintetizar';
-            btnHeal.disabled = (totalCC < 2 || totalParts < 1);
+            btnHeal.textContent = 'Sintetizar (100%)';
+            btnHeal.disabled = (carriedCC < 2 || totalParts < 1);
           }
         }
       }
 
       buyInventorUpgrade(type) {
         if (type === 'heal') {
-          return this.player.synthesizeHealingFlask();
+          return this.player.synthesizeHealingFlask(true);
         }
 
         let costCC = 0, costParts = 0;
@@ -9721,6 +9810,8 @@
       openArmory() {
         if (this.fadeState !== 'none') return;
         document.getElementById('armory-modal').classList.add('visible');
+        if (!this.currentArmoryTab) this.currentArmoryTab = 'bombs';
+        this.switchArmoryTab(this.currentArmoryTab);
         this.updateArmoryUI();
       }
 
@@ -10059,6 +10150,7 @@
 
       closeArmory() {
         document.getElementById('armory-modal').classList.remove('visible');
+        if (typeof saveGame === 'function') saveGame();
       }
 
       updateArmoryUI() {
@@ -10222,13 +10314,37 @@
             }
           }
         }
+        if (this.currentArmoryTab === 'other' || this.currentArmoryTab === 'outros') {
+          this.renderBagPanel();
+        }
       }
       switchArmoryTab(tab) {
-        document.getElementById('armory-panel-upgrades').style.display = tab === 'upgrades' ? 'flex' : 'none';
-        document.getElementById('armory-panel-bag').style.display = tab === 'bag' ? 'block' : 'none';
-        document.getElementById('tab-upgrades').classList.toggle('active', tab === 'upgrades');
-        document.getElementById('tab-bag').classList.toggle('active', tab === 'bag');
-        if (tab === 'bag') this.renderBagPanel();
+        if (tab === 'upgrades') tab = 'bombs';
+        if (tab === 'bag') tab = 'other';
+        this.currentArmoryTab = tab;
+
+        const isBombs = tab === 'bombs' || tab === 'bomba';
+        const isEquip = tab === 'equip' || tab === 'equipamentos';
+        const isOther = tab === 'other' || tab === 'outros';
+
+        const pBombs = document.getElementById('armory-panel-bombs');
+        const pEquip = document.getElementById('armory-panel-equip');
+        const pOther = document.getElementById('armory-panel-other');
+
+        if (pBombs) pBombs.style.display = isBombs ? 'flex' : 'none';
+        if (pEquip) pEquip.style.display = isEquip ? 'flex' : 'none';
+        if (pOther) pOther.style.display = isOther ? 'flex' : 'none';
+
+        const tBombs = document.getElementById('tab-bombs');
+        const tEquip = document.getElementById('tab-equip');
+        const tOther = document.getElementById('tab-other');
+
+        if (tBombs) tBombs.classList.toggle('active', isBombs);
+        if (tEquip) tEquip.classList.toggle('active', isEquip);
+        if (tOther) tOther.classList.toggle('active', isOther);
+
+        if (isOther) this.renderBagPanel();
+        if (typeof saveGame === 'function') saveGame();
       }
 
       renderBagPanel() {
@@ -10302,6 +10418,7 @@
         this.renderBagPanel();
         this.updateHUD();
         sound.playCCPickup();
+        if (typeof saveGame === 'function') saveGame();
       }
 
       buyUpgrade(type) {
@@ -12475,6 +12592,9 @@
         hasHealingInjector: !!p.hasHealingInjector,
         healingFlasks: p.healingFlasks ?? 0,
         inventorRescued: !!(window.gameState && window.gameState.inventorRescued),
+        armoryUnlocked: !!p.armoryUnlocked,
+        bagSlots: p.bagSlots ? p.bagSlots.map(s => ({ type: s.type })) : null,
+        currentArmoryTab: window.game ? window.game.currentArmoryTab : 'bombs',
         lastSaved: Date.now()
       };
     }
@@ -12515,6 +12635,19 @@
         p.hasHealingInjector = data.hasHealingInjector ?? false;
         p.healingFlasks = Math.min(2, Math.max(0, data.healingFlasks ?? 0));
 
+        // Auto-recuperação: se já tiver armoryUnlocked salvo ou qualquer upgrade do arsenal adquirido
+        const hasPurchasedArmoryUpgrade = (p.gauntletLevel > 1) || 
+                                          (p.bootsLevel > 0) || 
+                                          (p.bagLevel > 1) || 
+                                          (p.timerBombLevel > 1) || 
+                                          (p.impactBombLevel > 1) || 
+                                          (p.vortexBombLevel > 1);
+        p.armoryUnlocked = !!data.armoryUnlocked || hasPurchasedArmoryUpgrade;
+
+        if (data.currentArmoryTab && window.game) {
+          window.game.currentArmoryTab = data.currentArmoryTab;
+        }
+
         window.gameState = window.gameState || {};
         if (data.inventorRescued !== undefined) {
           window.gameState.inventorRescued = !!data.inventorRescued;
@@ -12530,15 +12663,32 @@
           }
         }
 
-        // Atualizar inventário de bombas de acordo com o nível da bolsa
+        // Atualizar inventário de bombas de acordo com o nível da bolsa e slots salvos
         p.bagSlots = [];
         const caps = [0, 5, 7, 10];
         const cap = caps[p.bagLevel] || 5;
-        while (p.bagSlots.length < cap) {
-          p.bagSlots.push({ type: 'timed', cooldown: 0 });
+
+        if (Array.isArray(data.bagSlots) && data.bagSlots.length > 0) {
+          for (let i = 0; i < cap; i++) {
+            const savedSlot = data.bagSlots[i];
+            let type = savedSlot && savedSlot.type ? savedSlot.type : 'timed';
+            if (type === 'impact' && !p.unlockedImpact) type = 'timed';
+            if ((type === 'vortex' || type === 'propulsor') && (!p.unlockedVortex && !p.unlockedPropulsor)) type = 'timed';
+            p.bagSlots.push({ type: type, cooldown: 0 });
+          }
+        } else {
+          while (p.bagSlots.length < cap) {
+            p.bagSlots.push({ type: 'timed', cooldown: 0 });
+          }
         }
         p.maxTimerBombs = cap;
         p.timerBombs = cap;
+
+        if (window.game) {
+          if (typeof window.game.updateHUD === 'function') window.game.updateHUD();
+          if (typeof window.game.updateArmoryUI === 'function') window.game.updateArmoryUI();
+          if (typeof window.game.updateInventorShopUI === 'function') window.game.updateInventorShopUI();
+        }
 
         return true;
       } catch (err) {
@@ -12865,6 +13015,15 @@
           'armory-bought': 'COMPRADO',
           'armory-upgrade': 'Melhorar',
           'armory-close': 'Sair',
+          'armory-tab-bombs': '💣 Bomba',
+          'armory-tab-equip': '⚙️ Equipamentos',
+          'armory-tab-other': '🎒 Outros',
+          'armory-timer-name': 'Bomba-Relógio Nível 2',
+          'armory-timer-desc': 'Reação em Cadeia: detonam imediatamente ao sofrer impacto de outras explosões.',
+          'armory-impact-name': '💥 Bomba de Impacto Nível 2',
+          'armory-impact-desc': 'Reação Catalítica de Carvão: expande a explosão em +10% por cada Cristal Coal consumido no raio. Arremesse Cristais com [C]!',
+          'armory-vortex-name': '🌀 Bomba de Vórtice Nível 2',
+          'armory-vortex-desc': 'Ejeção de Sucata em X: estilhaça os autômatos sugados e ejeta suas peças em X (diagonais), atingindo tudo o que estiver fora do vórtice!',
           'armory-gauntlet-name': 'Manopla Mecânica',
           'armory-gauntlet-desc': 'Aumenta o alcance de arremesso.',
           'armory-boots-name': 'Botas Propulsoras',
@@ -12960,6 +13119,15 @@
           'armory-bought': 'BOUGHT',
           'armory-upgrade': 'Upgrade',
           'armory-close': 'Close',
+          'armory-tab-bombs': '💣 Bombs',
+          'armory-tab-equip': '⚙️ Equipment',
+          'armory-tab-other': '🎒 Other',
+          'armory-timer-name': 'Time Bomb Level 2',
+          'armory-timer-desc': 'Chain Reaction: detonates immediately upon impact from other explosions.',
+          'armory-impact-name': '💥 Impact Bomb Level 2',
+          'armory-impact-desc': 'Coal Catalytic Reaction: expands explosion by +10% for each Coal Crystal in blast. Throw Crystals with [C]!',
+          'armory-vortex-name': '🌀 Vortex Bomb Level 2',
+          'armory-vortex-desc': 'X Scrap Ejection: shatters sucked automatons and flings pieces diagonally in X pattern!',
           'armory-gauntlet-name': 'Mechanical Gauntlet',
           'armory-gauntlet-desc': 'Increases throwing range.',
           'armory-boots-name': 'Propulsion Boots',
@@ -13070,18 +13238,40 @@
       if(armoryH2) armoryH2.innerText = window.t('armory-title');
       const btnClose = document.querySelector('.btn-close');
       if(btnClose) btnClose.innerText = window.t('armory-close');
-      const armoryTitles = document.querySelectorAll('.armory-title');
-      if(armoryTitles.length >= 3) {
-          armoryTitles[0].innerText = window.t('armory-gauntlet-name');
-          armoryTitles[1].innerText = window.t('armory-boots-name');
-          armoryTitles[2].innerText = window.t('armory-bag-name');
-      }
-      const armoryDescs = document.querySelectorAll('.armory-desc');
-      if(armoryDescs.length >= 3) {
-          armoryDescs[0].innerText = window.t('armory-gauntlet-desc');
-          armoryDescs[1].innerText = window.t('armory-boots-desc');
-          armoryDescs[2].innerText = window.t('armory-bag-desc');
-      }
+
+      const tabBombs = document.getElementById('tab-bombs');
+      if (tabBombs) tabBombs.innerText = window.t('armory-tab-bombs');
+      const tabEquip = document.getElementById('tab-equip');
+      if (tabEquip) tabEquip.innerText = window.t('armory-tab-equip');
+      const tabOther = document.getElementById('tab-other');
+      if (tabOther) tabOther.innerText = window.t('armory-tab-other');
+
+      const gauntletTitleEl = document.getElementById('title-gauntlet');
+      if (gauntletTitleEl) gauntletTitleEl.innerText = window.t('armory-gauntlet-name');
+      const bootsTitleEl = document.getElementById('title-boots');
+      if (bootsTitleEl) bootsTitleEl.innerText = window.t('armory-boots-name');
+      const bagTitleEl = document.getElementById('title-bag');
+      if (bagTitleEl) bagTitleEl.innerText = window.t('armory-bag-name');
+      const timerTitleEl = document.getElementById('title-timerbomb');
+      if (timerTitleEl) timerTitleEl.innerText = window.t('armory-timer-name');
+      const impactTitleEl = document.getElementById('title-impactbomb');
+      if (impactTitleEl) impactTitleEl.innerText = window.t('armory-impact-name');
+      const vortexTitleEl = document.getElementById('title-vortexbomb');
+      if (vortexTitleEl) vortexTitleEl.innerText = window.t('armory-vortex-name');
+
+      const gauntletDescEl = document.getElementById('desc-gauntlet');
+      if (gauntletDescEl) gauntletDescEl.innerText = window.t('armory-gauntlet-desc');
+      const bootsDescEl = document.getElementById('desc-boots');
+      if (bootsDescEl) bootsDescEl.innerText = window.t('armory-boots-desc');
+      const bagDescEl = document.getElementById('desc-bag');
+      if (bagDescEl) bagDescEl.innerText = window.t('armory-bag-desc');
+      const timerDescEl = document.getElementById('desc-timerbomb');
+      if (timerDescEl) timerDescEl.innerText = window.t('armory-timer-desc');
+      const impactDescEl = document.getElementById('desc-impactbomb');
+      if (impactDescEl) impactDescEl.innerText = window.t('armory-impact-desc');
+      const vortexDescEl = document.getElementById('desc-vortexbomb');
+      if (vortexDescEl) vortexDescEl.innerText = window.t('armory-vortex-desc');
+
       if (window.game && typeof window.game.updateArmoryUI === 'function') {
           window.game.updateArmoryUI();
       }
