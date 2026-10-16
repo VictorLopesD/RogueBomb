@@ -196,6 +196,132 @@
       background: rgba(0, 230, 118, 0.45);
     }
 
+    /* Alerta Visual de Vida Crítica (Low HP) */
+    #low-hp-vignette {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 24;
+      box-shadow: inset 0 0 65px 25px rgba(231, 76, 60, 0.75);
+      opacity: 0;
+      transition: opacity 0.35s ease;
+    }
+    #low-hp-vignette.active {
+      opacity: 1;
+      animation: lowHpPulse 1.2s infinite ease-in-out alternate;
+    }
+    @keyframes lowHpPulse {
+      0% {
+        box-shadow: inset 0 0 45px 18px rgba(231, 76, 60, 0.45);
+      }
+      100% {
+        box-shadow: inset 0 0 95px 45px rgba(255, 23, 68, 0.95);
+      }
+    }
+    .pulse-heal {
+      animation: healBadgePulse 1s infinite ease-in-out alternate !important;
+      border-color: #00e676 !important;
+    }
+    @keyframes healBadgePulse {
+      0% {
+        box-shadow: 0 0 8px rgba(0, 230, 118, 0.3);
+        transform: scale(1);
+      }
+      100% {
+        box-shadow: 0 0 22px rgba(0, 230, 118, 0.95), inset 0 0 10px rgba(0, 230, 118, 0.5);
+        transform: scale(1.08);
+      }
+    }
+
+    /* Modal de Resumo Pós-Morte (Glitch Time Rewind) */
+    .death-summary-card {
+      background: radial-gradient(circle at center, #1b2838 0%, #0d131a 100%);
+      border: 2px solid #00e5ff;
+      border-radius: 12px;
+      padding: 24px;
+      max-width: 440px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 0 35px rgba(0, 229, 255, 0.4), inset 0 0 15px rgba(0, 229, 255, 0.15);
+      position: relative;
+      animation: deathCardGlitch 0.4s ease-out;
+    }
+    @keyframes deathCardGlitch {
+      0% { transform: scale(0.9) skewX(-4deg); opacity: 0; filter: drop-shadow(-8px 0 #ff1744); }
+      50% { transform: scale(1.02) skewX(2deg); opacity: 0.8; filter: drop-shadow(6px 0 #00e5ff); }
+      100% { transform: scale(1) skewX(0); opacity: 1; filter: none; }
+    }
+    .glitch-banner {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    .glitch-banner h2 {
+      margin: 0;
+      font-size: 22px;
+      letter-spacing: 2px;
+      color: #00e5ff;
+      text-shadow: 0 0 10px #00e5ff, 2px 2px #ff1744;
+      font-weight: 900;
+    }
+    .glitch-icon {
+      font-size: 26px;
+      animation: spinHourglass 2.5s infinite linear;
+    }
+    @keyframes spinHourglass {
+      0% { transform: rotate(0deg); }
+      45% { transform: rotate(180deg); }
+      50% { transform: rotate(180deg); }
+      95% { transform: rotate(360deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .death-summary-sub {
+      color: #b0bec5;
+      font-size: 13px;
+      margin-bottom: 20px;
+      line-height: 1.4;
+    }
+    .death-stats-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .death-stat-box {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: rgba(0, 0, 0, 0.45);
+      border: 1px solid rgba(0, 229, 255, 0.25);
+      border-radius: 8px;
+      padding: 10px 16px;
+      text-align: left;
+    }
+    .death-stat-icon {
+      font-size: 22px;
+    }
+    .death-stat-info {
+      display: flex;
+      flex-direction: column;
+    }
+    .death-stat-label {
+      font-size: 10px;
+      font-weight: bold;
+      color: #90a4ae;
+      letter-spacing: 1px;
+    }
+    .death-stat-val {
+      font-size: 16px;
+      font-weight: 900;
+      color: #ffd700;
+      letter-spacing: 0.5px;
+    }
+
     /* Minimap HUD */
     #minimap-container {
       display: flex;
@@ -1048,6 +1174,8 @@
       transform: translate(-50%, -50%);
       width: 420px;
       max-width: 92%;
+      max-height: 90vh;
+      overflow-y: auto;
       background: rgba(10, 14, 20, 0.97);
       border: 3px solid #7b52ab;
       border-radius: 14px;
@@ -1070,6 +1198,46 @@
     #inventor-shop-coins {
       text-align: center; color: #fff; font-size: 13px; font-weight: bold;
       background: rgba(255,255,255,0.05); border-radius: 8px; padding: 6px;
+    }
+    /* Abas da Loja do Inventor */
+    #inventor-shop-tabs {
+      display: flex;
+      gap: 8px;
+      border-bottom: 1px solid rgba(206, 147, 216, 0.25);
+      padding-bottom: 8px;
+    }
+    .inventor-tab {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid #30363d;
+      color: #8b949e;
+      padding: 8px 6px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 12px;
+      transition: all 0.2s ease;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+    .inventor-tab:hover {
+      background: rgba(206, 147, 216, 0.1);
+      color: #e1bee7;
+      border-color: #ba68c8;
+    }
+    .inventor-tab.active {
+      background: rgba(206, 147, 216, 0.2);
+      border-color: #ce93d8;
+      color: #ce93d8;
+      box-shadow: 0 0 10px rgba(206, 147, 216, 0.3);
+    }
+    .inventor-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
     }
 
     /* Modal do Baú de Armazenamento (Grid de Itens) */
@@ -1882,6 +2050,13 @@
         <div class="hud-badge minimap-badge-label" style="padding: 4px 8px; font-size: 11px;">MAPA PROCEDURAL</div>
         <canvas id="minimap-canvas" width="70" height="70"></canvas>
       </div>
+      <div id="hud-journal-btn" class="hud-badge" title="Diário de Bordo / Panfletos de 1826" onclick="openLoreGallery()" style="cursor: pointer; background: rgba(155, 89, 182, 0.2); border-color: #9b59b6; align-self: center;">
+        <span style="font-size: 16px;">📜</span>
+        <div class="hud-badge-info">
+          <div class="hud-badge-label" id="hud-journal-label">Diário</div>
+          <div class="hud-badge-value" id="hud-journal-count" style="color: #d2b4de; font-size: 10px;">0 / 5</div>
+        </div>
+      </div>
       <div id="hud-help-btn" class="hud-badge" title="Como Jogar / Tutorial de Bombas" onclick="openTutorialModal()" style="cursor: pointer; background: rgba(243, 156, 18, 0.2); border-color: #f39c12; align-self: center;">
         <span style="font-size: 16px;">❓</span>
         <div class="hud-badge-info">
@@ -1904,27 +2079,29 @@
     <!-- Canvas Central do Jogo -->
         <!-- Painel de Lore / Panfleto -->
     <div id="lore-panel">
-      <div class="lore-header">📜 REGISTRO ENCONTRADO (1826)</div>
+      <div id="lore-panel-header" class="lore-header">📜 REGISTRO ENCONTRADO (1826)</div>
       <div id="lore-official" class="lore-official"></div>
       <div id="lore-scrawl" class="lore-scrawl"></div>
       <div id="lore-tip" class="lore-tip"></div>
-      <button style="margin-top: 8px; padding: 6px; background: #333; color: #fff; border: 1px solid #555; cursor: pointer; border-radius: 4px;" onclick="document.getElementById('lore-panel').style.display='none'">Fechar</button>
+      <button id="btn-close-lore" style="margin-top: 8px; padding: 6px; background: #333; color: #fff; border: 1px solid #555; cursor: pointer; border-radius: 4px;" onclick="document.getElementById('lore-panel').style.display='none'">Fechar</button>
     </div>
     <div id="canvas-wrapper">
       <canvas id="game-canvas" width="600" height="600"></canvas>
+      <!-- Alerta Visual de Vida Crítica (Low HP) -->
+      <div id="low-hp-vignette"></div>
       <!-- Badge de Item no Canto da Tela (Pistão Hidráulico aguardando Goela) -->
       <div id="piston-corner-badge" style="display: none; position: absolute; top: 12px; right: 12px; z-index: 80; align-items: center; gap: 8px; background: rgba(22, 14, 6, 0.94); border: 2px solid #ffd700; border-radius: 8px; padding: 6px 12px; box-shadow: 0 0 16px rgba(255, 215, 0, 0.5), inset 0 0 8px rgba(255, 215, 0, 0.25); pointer-events: none; animation: pulsePistonBadge 2s infinite ease-in-out;">
         <span style="font-size: 24px; filter: drop-shadow(0 0 6px #ffd700);">🦾</span>
         <div style="display: flex; flex-direction: column; text-align: left;">
-          <span style="font-size: 11px; font-weight: bold; color: #ffd700; letter-spacing: 0.5px;">PISTÃO HIDRÁULICO</span>
-          <span style="font-size: 10px; color: #00e5ff; font-weight: bold;">LEVE ATÉ A GOELA ➔</span>
+          <span id="piston-badge-title" style="font-size: 11px; font-weight: bold; color: #ffd700; letter-spacing: 0.5px;">PISTÃO HIDRÁULICO</span>
+          <span id="piston-badge-sub" style="font-size: 10px; color: #00e5ff; font-weight: bold;">LEVE ATÉ A GOELA ➔</span>
         </div>
       </div>
     </div>
 
     <!-- Guia Teclado / Mouse Desktop -->
     <div id="desktop-guide">
-      <span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> Mover</span>
+      <span id="guide-move"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> Mover</span>
       <span id="desktop-guide-throw">🖱️ <b>Clique & Solte</b>: Lançar Bomba</span>
       <span id="guide-bombs" style="display: none;"><kbd>1</kbd> Imp | <kbd>2</kbd> Prop | <kbd>3</kbd> Temp</span>
       <span id="guide-dash" style="display: none;"><kbd>SHIFT</kbd> Dash (1 CC)</span>
@@ -1973,7 +2150,7 @@
           <!-- Botão de Arremessar Cristal Coal Mobile -->
           <button class="action-btn" id="btn-drop-crystal" title="Arremessar Cristal Coal da Bolsa [Tecla C]" style="background: rgba(0, 229, 255, 0.15); border-color: #00e5ff;">
             <span style="font-size: 16px;">💎</span>
-            <span style="font-size: 10px;">CRISTAL</span>
+            <span id="btn-drop-crystal-text" style="font-size: 10px;">CRISTAL</span>
           </button>
 
           <!-- Botão de Cura Mobile -->
@@ -2005,7 +2182,7 @@
     <!-- Modal Central de Coleta de Item Especial (ex: Pistão Hidráulico) -->
     <div id="item-collected-modal" style="display: none;">
       <div class="item-card">
-        <div style="font-size: 13px; font-weight: bold; letter-spacing: 2px; color: #ffd700; text-transform: uppercase; margin-bottom: 6px;">★ ITEM RARO COLETADO ★</div>
+        <div id="collected-item-badge" style="font-size: 13px; font-weight: bold; letter-spacing: 2px; color: #ffd700; text-transform: uppercase; margin-bottom: 6px;">★ ITEM RARO COLETADO ★</div>
         <div id="collected-item-icon" style="font-size: 58px; margin: 10px 0; text-shadow: 0 0 20px #ffd700;">🦾</div>
         <h2 id="collected-item-title" style="font-size: 24px; color: #ffca28; margin: 0 0 8px 0; font-family: monospace; text-shadow: 1px 1px 4px #000;">PISTÃO HIDRÁULICO</h2>
         <p id="collected-item-desc" style="font-size: 14px; color: #cfd8dc; line-height: 1.5; margin: 10px 0 16px 0;">
@@ -2127,6 +2304,45 @@
       <button class="menu-btn" onclick="closeLoreGallery()" style="margin-top: 20px;">Voltar</button>
     </div>
 
+    <!-- Modal de Resumo Pós-Morte (Rebobinar do Tempo) -->
+    <div id="death-summary-modal" class="menu-overlay hidden">
+      <div class="death-summary-card">
+        <div class="glitch-banner">
+          <span class="glitch-icon">⏳</span>
+          <h2 id="death-summary-title">TEMPO REBOBINADO</h2>
+        </div>
+        <p id="death-summary-sub" class="death-summary-sub">
+          Charlotte sofreu colapso temporal! O fluxo foi revertido para a Safe Room.
+        </p>
+        <div class="death-stats-grid">
+          <div class="death-stat-box">
+            <span class="death-stat-icon">⏱️</span>
+            <div class="death-stat-info">
+              <span class="death-stat-label" id="lbl-stat-time">TEMPO SOBREVIVIDO</span>
+              <span class="death-stat-val" id="stat-run-time">00:00</span>
+            </div>
+          </div>
+          <div class="death-stat-box">
+            <span class="death-stat-icon">🤖</span>
+            <div class="death-stat-info">
+              <span class="death-stat-label" id="lbl-stat-kills">AUTÔMATOS ELIMINADOS</span>
+              <span class="death-stat-val" id="stat-run-kills">0</span>
+            </div>
+          </div>
+          <div class="death-stat-box">
+            <span class="death-stat-icon">💎</span>
+            <div class="death-stat-info">
+              <span class="death-stat-label" id="lbl-stat-cc">CRISTAL COAL MINERADO</span>
+              <span class="death-stat-val" id="stat-run-cc">0 CC</span>
+            </div>
+          </div>
+        </div>
+        <button id="btn-dismiss-death-summary" class="menu-btn" style="margin-top: 20px; width: 100%; background: linear-gradient(135deg, #00b4db, #0083b0); border: 2px solid #00e5ff; font-weight: bold;">
+          Continuar Linha Temporal [Espaço]
+        </button>
+      </div>
+    </div>
+
     <!-- Tela de Menu de Opções -->
     <div id="options-menu" class="menu-overlay hidden">
       <h1 class="menu-title" style="font-size: 2rem;">Opções</h1>
@@ -2176,7 +2392,7 @@
         </div>
 
         <button class="menu-btn" style="width: 100%; margin-top: 16px;" id="btn-options-tutorial" onclick="openTutorialModal()">Como Jogar (Tutorial)</button>
-        <button class="menu-btn" style="width: 100%; margin-top: 16px; display: none;" id="btn-gallery-in-game" onclick="openLoreGallery()">Galeria de Registros</button>
+        <button class="menu-btn" style="width: 100%; margin-top: 16px; display: none; background: rgba(155, 89, 182, 0.25); border: 2px solid #9b59b6;" id="btn-gallery-in-game" onclick="openLoreGallery()">📜 Diário de Bordo / Panfletos (1826)</button>
         <button class="menu-btn" style="width: 100%; margin-top: 16px; background: #e74c3c; border: 2px solid #c0392b;" onclick="if(confirm('Apagar todo o progresso?')) { clearSave(); location.reload(); }">Apagar Save</button>
         <button class="menu-btn" style="width: 100%; margin-top: 16px;" id="btn-back-menu">Voltar</button>
       </div>
@@ -2385,48 +2601,60 @@
     <div id="inventor-shop-modal">
       <div id="inventor-shop-header">
         <span>⚙️</span>
-        <h2>Loja do Inventor</h2>
+        <h2 id="inv-shop-title">Loja do Inventor</h2>
         <span>⚙️</span>
       </div>
-      <div id="inventor-shop-coins">Você tem: <span id="inv-shop-cc">0</span> CC | <span id="inv-shop-parts">0</span> PEÇAS</div>
+      <div id="inventor-shop-coins"><span id="inv-shop-coins-text">Você tem:</span> <span id="inv-shop-cc">0</span> CC | <span id="inv-shop-parts">0</span> <span id="inv-shop-parts-text">PEÇAS</span></div>
 
-      <div class="armory-item" id="inv-item-impact">
-        <div class="armory-info">
-          <span class="armory-title">💥 Bomba de Impacto</span>
-          <span class="armory-desc">Explode no impacto com paredes ou inimigos. Libera slot de Impacto na bolsa.</span>
-          <span class="armory-cost" id="inv-cost-impact">Custo: 15 CC | 10 PEÇAS</span>
-        </div>
-        <button class="btn-buy" id="btn-inv-impact" onclick="window.game.buyInventorUpgrade('impact')">Comprar</button>
+      <!-- Abas: Bombas e Equipamentos -->
+      <div id="inventor-shop-tabs">
+        <button class="inventor-tab active" id="inv-tab-bombs" onclick="window.game.switchInventorTab('bombs')">💣 Bomba</button>
+        <button class="inventor-tab" id="inv-tab-equip" onclick="window.game.switchInventorTab('equip')">⚙️ Equipamentos</button>
       </div>
 
-      <div class="armory-item" id="inv-item-vortex">
-        <div class="armory-info">
-          <span class="armory-title">🌀 Bomba de Vórtice</span>
-          <span class="armory-desc">Cria sucção gravitacional: atrai autômatos e estilhaços. Esmaga no centro com dano devastador!</span>
-          <span class="armory-cost" id="inv-cost-vortex">Custo: 25 CC | 20 PEÇAS</span>
+      <!-- Painel: Bombas -->
+      <div id="inv-panel-bombs" class="inventor-panel" style="display:flex; flex-direction:column; gap:10px;">
+        <div class="armory-item" id="inv-item-impact">
+          <div class="armory-info">
+            <span class="armory-title" id="inv-title-impact">💥 Bomba de Impacto</span>
+            <span class="armory-desc" id="inv-desc-impact">Explode no impacto com paredes ou inimigos. Libera slot de Impacto na bolsa.</span>
+            <span class="armory-cost" id="inv-cost-impact">Custo: 15 CC | 10 PEÇAS</span>
+          </div>
+          <button class="btn-buy" id="btn-inv-impact" onclick="window.game.buyInventorUpgrade('impact')">Comprar</button>
         </div>
-        <button class="btn-buy" id="btn-inv-vortex" onclick="window.game.buyInventorUpgrade('vortex')">Comprar</button>
+
+        <div class="armory-item" id="inv-item-vortex">
+          <div class="armory-info">
+            <span class="armory-title" id="inv-title-vortex">🌀 Bomba de Vórtice</span>
+            <span class="armory-desc" id="inv-desc-vortex">Cria sucção gravitacional: atrai autômatos e estilhaços. Esmaga no centro com dano devastador!</span>
+            <span class="armory-cost" id="inv-cost-vortex">Custo: 25 CC | 20 PEÇAS</span>
+          </div>
+          <button class="btn-buy" id="btn-inv-vortex" onclick="window.game.buyInventorUpgrade('vortex')">Comprar</button>
+        </div>
       </div>
 
-      <div class="armory-item" id="inv-item-heal">
-        <div class="armory-info">
-          <span class="armory-title">💉 Tônico Vital (Síntese)</span>
-          <span class="armory-desc">Sintetiza 1 frasco de cura (armazena até 2). No Inventor a taxa de sucesso é 100% garantida e utiliza recursos da mochila e do Baú (no campo tem 30% e usa apenas da mochila).</span>
-          <span class="armory-cost" id="inv-cost-heal">Estoque: 0/2 | Custo: 2 CC | 1 PEÇA (Mochila + Baú)</span>
+      <!-- Painel: Equipamentos -->
+      <div id="inv-panel-equip" class="inventor-panel" style="display:none; flex-direction:column; gap:10px;">
+        <div class="armory-item" id="inv-item-heal">
+          <div class="armory-info">
+            <span class="armory-title" id="inv-title-heal">💉 Tônico Vital (Síntese)</span>
+            <span class="armory-desc" id="inv-desc-heal">Sintetiza 1 frasco de cura (armazena até 2). No Inventor a taxa de sucesso é 100% garantida e utiliza recursos da mochila e do Baú (no campo tem 30% e usa apenas da mochila).</span>
+            <span class="armory-cost" id="inv-cost-heal">Estoque: 0/2 | Custo: 2 CC | 1 PEÇA (Mochila + Baú)</span>
+          </div>
+          <button class="btn-buy" id="btn-inv-heal" onclick="if (window.game) window.game.buyInventorUpgrade('heal')">Sintetizar (100%)</button>
         </div>
-        <button class="btn-buy" id="btn-inv-heal" onclick="if (window.game) window.game.buyInventorUpgrade('heal')">Sintetizar (100%)</button>
+
+        <div class="armory-item" id="inv-item-lantern">
+          <div class="armory-info">
+            <span class="armory-title" id="inv-title-lantern">🏮 Lampião de Cristal</span>
+            <span class="armory-desc" id="inv-desc-lantern">Ilumina a escuridão do Nível 3+ (sem ele, a visão fica limitada a 1 bloco). Visão máxima de 10 blocos, reduzindo para 5 blocos em 50% e até 1 bloco quando desliga. Abasteça com CC da mochila [L] (1 CC = +20%).</span>
+            <span class="armory-cost" id="inv-cost-lantern">Custo: 20 CC | 15 PEÇAS</span>
+          </div>
+          <button class="btn-buy" id="btn-inv-lantern" onclick="if (window.game) window.game.buyInventorUpgrade('lantern')">Comprar</button>
+        </div>
       </div>
 
-      <div class="armory-item" id="inv-item-lantern">
-        <div class="armory-info">
-          <span class="armory-title">🏮 Lampião de Cristal</span>
-          <span class="armory-desc">Ilumina a escuridão do Nível 3+ (sem ele, a visão fica limitada a 1 bloco). Visão máxima de 10 blocos, reduzindo para 5 blocos em 50% e até 1 bloco quando desliga. Abasteça com CC da mochila [L] (1 CC = +20%).</span>
-          <span class="armory-cost" id="inv-cost-lantern">Custo: 20 CC | 15 PEÇAS</span>
-        </div>
-        <button class="btn-buy" id="btn-inv-lantern" onclick="if (window.game) window.game.buyInventorUpgrade('lantern')">Comprar</button>
-      </div>
-
-      <button class="btn-close" onclick="window.game.closeInventorShop()">Sair</button>
+      <button class="btn-close" id="btn-close-inv-shop" onclick="window.game.closeInventorShop()">Sair</button>
     </div>
 
     <!-- Modal do Baú de Armazenamento (Grade de Itens Guardados) -->
@@ -2445,11 +2673,11 @@
       <!-- Barra de Resumo de Recursos Guardados -->
       <div class="chest-stats-bar">
         <div class="chest-stat-item">
-          <span>💎 Cristal Coal:</span>
+          <span id="chest-stat-cc-label">💎 Cristal Coal:</span>
           <span class="chest-stat-val" id="chest-stat-cc">0 CC</span>
         </div>
         <div class="chest-stat-item">
-          <span>⚙️ Peças Mecânicas:</span>
+          <span id="chest-stat-parts-label">⚙️ Peças Mecânicas:</span>
           <span class="chest-stat-val" id="chest-stat-parts">0 Peças</span>
         </div>
       </div>
@@ -2457,13 +2685,13 @@
       <!-- Banner para descarregar recursos voláteis da mochila diretamente no baú -->
       <div class="chest-deposit-banner" id="chest-deposit-banner" style="display: none;">
         <span id="chest-deposit-text">🎒 Recursos na mochila prontos para guardar!</span>
-        <button class="btn-chest-deposit" onclick="window.game.depositCarriedToChest()">📥 Guardar Tudo</button>
+        <button class="btn-chest-deposit" id="btn-chest-deposit" onclick="window.game.depositCarriedToChest()">📥 Guardar Tudo</button>
       </div>
 
       <!-- Container do Grid de Armazenamento -->
       <div id="chest-grid-container">
         <div class="chest-grid-header">
-          <span>Grade de Itens Armazenados</span>
+          <span id="chest-grid-title">Grade de Itens Armazenados</span>
           <span id="chest-grid-count">0 Itens</span>
         </div>
         <div id="chest-grid"></div>
@@ -2827,6 +3055,66 @@
         gain.connect(this.ctx.destination);
         osc.start(now);
         osc.stop(now + 0.08);
+      }
+
+      playFootstep() {
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        const filter = this.ctx.createBiquadFilter();
+
+        this._footstepAlt = !this._footstepAlt;
+        const baseFreq = this._footstepAlt ? 175 : 210;
+
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(baseFreq, now);
+        osc.frequency.exponentialRampToValueAtTime(60, now + 0.045);
+
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(750, now);
+
+        gain.gain.setValueAtTime(0.08, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.055);
+      }
+
+      playGearRattle() {
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const count = 3;
+        for (let i = 0; i < count; i++) {
+          const t = now + i * 0.032;
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          const filter = this.ctx.createBiquadFilter();
+
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(800 + Math.random() * 250, t);
+          osc.frequency.exponentialRampToValueAtTime(300, t + 0.024);
+
+          filter.type = 'bandpass';
+          filter.frequency.setValueAtTime(1700, t);
+          filter.Q.setValueAtTime(3.5, t);
+
+          gain.gain.setValueAtTime(0.055, t);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.025);
+
+          osc.connect(filter);
+          filter.connect(gain);
+          gain.connect(this.ctx.destination);
+
+          osc.start(t);
+          osc.stop(t + 0.028);
+        }
       }
 
       playBigTimedExplosion() {
@@ -4368,11 +4656,11 @@
           if (!this.cleared && this.enemies.length > 0) {
             if (!this.unpoweredAlerted) {
               this.unpoweredAlerted = true;
-              showToast('⚡ APAGÃO TOTAL! Sala sem energia — portões destravados.');
+              showToast(window.t('toast-blackout'));
             }
           } else if (!this.cleared && this.enemies.length === 0 && this.unpoweredAlerted) {
             this.cleared = true;
-            showToast('SALA LIBERADA!');
+            showToast(window.t('ingame-cleared'));
           }
           return;
         }
@@ -4388,7 +4676,7 @@
             } else if (this.isBossRoom) {
               showToast(window.t('ingame-bossfight'));
             } else if (this.hasEmergencyLights) {
-              showToast('🚨 LOCKDOWN DE EMERGÊNCIA! Elimine os autômatos!');
+              showToast(window.t('toast-lockdown-emergency'));
             } else {
               showToast(window.t('ingame-protocol'));
             }
@@ -4405,18 +4693,17 @@
           sound.playUnlockSound();
           sound.setMusicMode('explore');
           if (this.isMiniBossRoom) {
-            showToast('RIVAL DERROTADO! ARENA LIBERADA!');
+            showToast(window.t('toast-rival-defeated'));
             sound.playUpgradeFanfare();
           } else if (this.isBossRoom) {
-            showToast('CHEFE MESTRE DERROTADO!');
+            showToast(window.t('toast-boss-defeated'));
             sound.playUpgradeFanfare();
             if (window.game && window.game.triggerDemoEndingSequence) {
               window.game.triggerDemoEndingSequence();
             }
           } else {
-            showToast('SALA LIBERADA!');
+            showToast(window.t('ingame-cleared'));
           }
-
           if (this.doors.north) this.grid[0][mid] = (this.bossDoors && this.bossDoors.north) ? TILE.BOSS_DOOR : TILE.EMPTY;
           if (this.doors.south) this.grid[GRID_SIZE - 1][mid] = (this.bossDoors && this.bossDoors.south) ? TILE.BOSS_DOOR : TILE.EMPTY;
           if (this.doors.west)  this.grid[mid][0] = (this.bossDoors && this.bossDoors.west) ? TILE.BOSS_DOOR : TILE.EMPTY;
@@ -4783,11 +5070,11 @@
 
       synthesizeHealingFlask(fromInventor = false) {
         if (!this.hasHealingInjector) {
-          showToast('Você ainda não possui o Injetor Vital do Inventor!');
+          showToast(window.t('toast-heal-no-injector'));
           return false;
         }
         if (this.healingFlasks >= this.maxHealingFlasks) {
-          showToast(`Capacidade máxima de cura atingida! (${this.healingFlasks}/${this.maxHealingFlasks})`);
+          showToast(window.t('toast-heal-max').replace('{cur}', this.healingFlasks).replace('{max}', this.maxHealingFlasks));
           return false;
         }
 
@@ -4803,12 +5090,12 @@
           const totalParts = window.game ? window.game.getAvailableParts() : (carriedParts + (this.depositedParts || 0));
 
           if (totalCC < costCC) {
-            showToast(`CC INSUFICIENTE! A síntese no Inventor requer ${costCC} CC (Mochila + Baú: ${totalCC} CC)`);
+            showToast(window.t('toast-heal-inv-need-cc').replace('{cost}', costCC).replace('{total}', totalCC));
             return false;
           }
 
           if (totalParts < costParts) {
-            showToast(`PEÇAS INSUFICIENTES! A síntese no Inventor requer ${costParts} PEÇA (Mochila + Baú: ${totalParts} P)`);
+            showToast(window.t('toast-heal-inv-need-parts').replace('{cost}', costParts).replace('{total}', totalParts));
             return false;
           }
 
@@ -4840,12 +5127,12 @@
         } else {
           // No campo: NUNCA retira CC nem Peças do baú (requer ambos carregados na mochila)
           if (carriedCC < costCC) {
-            showToast(`CC INSUFICIENTE NA MOCHILA! No campo, a síntese requer ${costCC} CC na mochila (não usa do Baú). Você tem: ${carriedCC} CC`);
+            showToast(window.t('toast-heal-field-need-cc').replace('{cost}', costCC).replace('{cur}', carriedCC));
             return false;
           }
 
           if (carriedParts < costParts) {
-            showToast(`PEÇAS INSUFICIENTES NA MOCHILA! No campo, a síntese requer ${costParts} PEÇA na mochila (não usa do Baú). Você tem: ${carriedParts} P`);
+            showToast(window.t('toast-heal-field-need-parts').replace('{cost}', costParts).replace('{cur}', carriedParts));
             return false;
           }
 
@@ -4855,8 +5142,11 @@
         }
 
         if (window.game) {
-          const ccLabel = fromInventor ? `-${costCC} CC` : `-${costCC} CC (Mochila)`;
-          const partsLabel = fromInventor ? `-${costParts} PEÇA` : `-${costParts} PEÇA (Mochila)`;
+          const isEn = (typeof currentLang !== 'undefined' && currentLang === 'en');
+          const partWord = isEn ? 'PART' : 'PEÇA';
+          const bagWord = isEn ? 'Backpack' : 'Mochila';
+          const ccLabel = fromInventor ? `-${costCC} CC` : `-${costCC} CC (${bagWord})`;
+          const partsLabel = fromInventor ? `-${costParts} ${partWord}` : `-${costParts} ${partWord} (${bagWord})`;
           window.game.spawnFloatingText(ccLabel, this.x, this.y - 18, '#ff5252');
           window.game.spawnFloatingText(partsLabel, this.x, this.y - 32, '#888888');
         }
@@ -4876,9 +5166,10 @@
           }
 
           if (window.game) {
+            const isEn = (typeof currentLang !== 'undefined' && currentLang === 'en');
             const label = fromInventor
-              ? `+1 TÔNICO VITAL (INVENTOR 100%) [${this.healingFlasks}/${this.maxHealingFlasks}]`
-              : `+1 TÔNICO VITAL (SUCESSO 30%!) [${this.healingFlasks}/${this.maxHealingFlasks}]`;
+              ? (isEn ? `+1 VITAL TONIC (INVENTOR 100%) [${this.healingFlasks}/${this.maxHealingFlasks}]` : `+1 TÔNICO VITAL (INVENTOR 100%) [${this.healingFlasks}/${this.maxHealingFlasks}]`)
+              : (isEn ? `+1 VITAL TONIC (SUCCESS 30%!) [${this.healingFlasks}/${this.maxHealingFlasks}]` : `+1 TÔNICO VITAL (SUCESSO 30%!) [${this.healingFlasks}/${this.maxHealingFlasks}]`);
             window.game.spawnFloatingText(label, this.x, this.y - 25, '#00e676');
             window.game.spawnSparks(this.x, this.y, '#00e676', 25);
             window.game.spawnSparks(this.x, this.y, fromInventor ? '#ce93d8' : '#00e5ff', 18);
@@ -4887,9 +5178,9 @@
           }
 
           if (fromInventor) {
-            showToast(`INVENTOR: "Tônico Vital sintetizado com 100% de sucesso! (${this.healingFlasks}/${this.maxHealingFlasks})"`);
+            showToast(window.t('toast-heal-inv-success').replace('{cur}', this.healingFlasks).replace('{max}', this.maxHealingFlasks));
           } else {
-            showToast(`TÔNICO VITAL SINTETIZADO COM SUCESSO! (30% de chance) (${this.healingFlasks}/${this.maxHealingFlasks}) - Pressione [H] para curar 1 ❤️`);
+            showToast(window.t('toast-heal-field-success').replace('{cur}', this.healingFlasks).replace('{max}', this.maxHealingFlasks));
           }
         } else {
           // Falha na síntese de campo de Charlotte (70% de chance)
@@ -4902,14 +5193,16 @@
           }
 
           if (window.game) {
-            window.game.spawnFloatingText('FALHA NA SÍNTESE! (30% taxa)', this.x, this.y - 25, '#ff5252');
+            const isEn = (typeof currentLang !== 'undefined' && currentLang === 'en');
+            const failLabel = isEn ? 'SYNTHESIS FAILED! (30% rate)' : 'FALHA NA SÍNTESE! (30% taxa)';
+            window.game.spawnFloatingText(failLabel, this.x, this.y - 25, '#ff5252');
             window.game.spawnSparks(this.x, this.y, '#888888', 25);
             window.game.spawnSparks(this.x, this.y, '#ff5252', 18);
             window.game.updateHUD();
             window.game.updateInventorShopUI();
           }
 
-          showToast('FALHA NA SÍNTESE! Os materiais instáveis evaporaram (Taxa de acerto de Charlotte no campo: 30%). No Inventor é 100%!');
+          showToast(window.t('toast-heal-field-fail'));
         }
 
         if (typeof saveGame === 'function') saveGame();
@@ -4918,15 +5211,15 @@
 
       useHealingFlask() {
         if (!this.hasHealingInjector) {
-          showToast('Você ainda não possui o Injetor Vital do Inventor!');
+          showToast(window.t('toast-heal-no-injector'));
           return false;
         }
         if (this.healingFlasks <= 0) {
-          showToast('Sem tônicos de cura! Pressione [V] para sintetizar (2 CC + 1 Peça).');
+          showToast(window.t('toast-heal-no-flasks'));
           return false;
         }
         if (this.hp >= this.maxHp) {
-          showToast(`Vida cheia! (${this.hp}/${this.maxHp} ❤️) - Não é necessário curar agora.`);
+          showToast(window.t('toast-heal-full-hp').replace('{hp}', this.hp).replace('{max}', this.maxHp));
           return false;
         }
 
@@ -4938,16 +5231,16 @@
         }
 
         if (window.game) {
-          window.game.spawnFloatingText('CURA VITAL [1 ❤️]', this.x, this.y - 35, '#00e676');
+          const isEn = (typeof currentLang !== 'undefined' && currentLang === 'en');
+          window.game.spawnFloatingText(isEn ? 'VITAL HEAL [1 ❤️]' : 'CURA VITAL [1 ❤️]', this.x, this.y - 35, '#00e676');
           window.game.spawnSparks(this.x, this.y, '#00e676', 30);
           window.game.updateHUD();
           window.game.updateInventorShopUI();
         }
-        showToast(`Tônico Vital utilizado (+1 ❤️)! Restam: ${this.healingFlasks}/${this.maxHealingFlasks}`);
+        showToast(window.t('toast-heal-used').replace('{cur}', this.healingFlasks).replace('{max}', this.maxHealingFlasks));
         if (typeof saveGame === 'function') saveGame();
         return true;
       }
-
       takeDamage(amount = 1) {
         if (this.invulnerableTimer > 0 || this.isDashing) return false;
         this.hp = Math.max(0, Math.round((this.hp - amount) * 10) / 10);
@@ -5022,7 +5315,7 @@
           if (this.dashCooldown <= 0) {
             this.dashCooldown = 0;
             if (this.bootsLevel > 0 && window.showToast) {
-              window.showToast('BOTAS RESFRIADAS! DASH DISPONÍVEL');
+              window.showToast(window.t('toast-dash-ready'));
             }
           }
         }
@@ -5037,14 +5330,14 @@
           if (this.bootsLevel <= 0) {
             if (!this.dashWarnTimer || Date.now() - this.dashWarnTimer > 800) {
               this.dashWarnTimer = Date.now();
-              if (window.showToast) window.showToast('BOTAS BLOQUEADAS! COMPRE NO ARSENAL');
+              if (window.showToast) window.showToast(window.t('toast-dash-locked'));
               if (window.game) window.game.spawnSparks(this.x, this.y + 12, '#90a4ae', 3);
             }
           } else if (this.dashCooldown > 0) {
             // Em superaquecimento
             if (!this.dashWarnTimer || Date.now() - this.dashWarnTimer > 800) {
               this.dashWarnTimer = Date.now();
-              if (window.showToast) window.showToast(`BOTAS SUPERAQUECIDAS! RESFRIANDO (${this.dashCooldown.toFixed(1)}s)`);
+              if (window.showToast) window.showToast(window.t('toast-dash-overheat').replace('{sec}', this.dashCooldown.toFixed(1)));
               if (window.game) window.game.spawnSparks(this.x, this.y + 12, '#ff5722', 4);
             }
           } else {
@@ -5053,7 +5346,7 @@
             if (availableCC < 1) {
               if (!this.dashWarnTimer || Date.now() - this.dashWarnTimer > 800) {
                 this.dashWarnTimer = Date.now();
-                if (window.showToast) window.showToast('SEM CRISTAL COAL! DASH CUSTA 1 CC');
+                if (window.showToast) window.showToast(window.t('toast-dash-no-cc'));
                 if (window.game) window.game.spawnSparks(this.x, this.y, '#ff1744', 6);
               }
             } else {
@@ -5141,10 +5434,21 @@
 
           this.moveWithCollision(nextX, nextY, currentRoom);
           this.animState = 'walk';
+
+          // Passos mecânicos sutis de Charlotte ao caminhar
+          this.footstepTimer = (this.footstepTimer || 0) + dt;
+          if (this.footstepTimer >= 0.30) {
+            this.footstepTimer = 0;
+            if (window.sound && window.sound.playFootstep) {
+              window.sound.playFootstep();
+            }
+          }
         } else if (this.throwAnimTimer > 0 || input.isAiming) {
           this.animState = 'throw';
+          this.footstepTimer = 0.22;
         } else {
           this.animState = 'idle';
+          this.footstepTimer = 0.22;
         }
 
         // Direcionamento / Mira (Facing):
@@ -6774,8 +7078,9 @@
           ctx.fillStyle = '#ffca28';
           ctx.strokeStyle = '#000';
           ctx.lineWidth = 2;
-          ctx.strokeText('\uD83D\uDEE1\uFE0F BLINDADO', renderX, renderY - this.radius - 12);
-          ctx.fillText('\uD83D\uDEE1\uFE0F BLINDADO', renderX, renderY - this.radius - 12);
+          const armorText = window.t('enemy-armored') || '\uD83D\uDEE1\uFE0F BLINDADO';
+          ctx.strokeText(armorText, renderX, renderY - this.radius - 12);
+          ctx.fillText(armorText, renderX, renderY - this.radius - 12);
           ctx.restore();
         }
 
@@ -7118,7 +7423,7 @@
         ctx.fillStyle = this.isFinalBoss ? '#ff5252' : '#ffca28';
         ctx.strokeStyle = '#000000';
         ctx.lineWidth = 2.5;
-        const bossTitle = this.isFinalBoss ? 'CHEFE MESTRE DA MINA 💀' : 'ENGENHEIRO RIVAL ⚔️';
+        const bossTitle = this.isFinalBoss ? (window.t('boss-master-title') || 'CHEFE MESTRE DA MINA 💀') : (window.t('boss-rival-title') || 'ENGENHEIRO RIVAL ⚔️');
         ctx.strokeText(bossTitle, this.x, barY - 4);
         ctx.fillText(bossTitle, this.x, barY - 4);
         ctx.restore();
@@ -7735,7 +8040,7 @@
           ctx.font = 'bold 9px sans-serif';
           ctx.textAlign = 'center';
           ctx.fillStyle = '#00e5ff';
-          ctx.fillText('🛡️ BLINDAGEM ATIVA', this.x, this.y - this.radius - 14);
+          ctx.fillText(window.t('boss-shield-active') || '🛡️ BLINDAGEM ATIVA', this.x, this.y - this.radius - 14);
           ctx.restore();
         }
 
@@ -7758,8 +8063,8 @@
         ctx.textAlign = 'center';
         ctx.fillStyle = this.phase === 2 ? '#ff5252' : '#ffca28';
         const title = this.phase === 2 
-          ? '⚡ AUTÔMATO TITÂNICO - FASE 2: SOBRECARGA ENLOUQUECIDA ⚡'
-          : '👑 AUTÔMATO TITÂNICO - GUARDIÃO DA MINA 👑';
+          ? (window.t('boss-titanic-phase2') || '⚡ AUTÔMATO TITÂNICO - FASE 2: SOBRECARGA ENLOUQUECIDA ⚡')
+          : (window.t('boss-titanic-phase1') || '👑 AUTÔMATO TITÂNICO - GUARDIÃO DA MINA 👑');
         ctx.fillText(title, WORLD_WIDTH / 2, barY - 5);
 
         ctx.fillStyle = '#263238';
@@ -7793,7 +8098,7 @@
         ctx.font = 'bold 10px sans-serif';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillText(`${this.hp} / 10 VIDAS`, WORLD_WIDTH / 2, barY + barHeight / 2);
+        ctx.fillText(`${this.hp} / 10 ${window.t('hud-lives-upper') || 'VIDAS'}`, WORLD_WIDTH / 2, barY + barHeight / 2);
         ctx.restore();
       }
     }
@@ -9106,6 +9411,131 @@
       }
     }
 
+    class GearDebris {
+      constructor(x, y, isRusty = false) {
+        this.x = x;
+        this.y = y;
+        this.z = 10 + Math.random() * 16;
+        const angle = Math.random() * Math.PI * 2;
+        const speed = 70 + Math.random() * 140;
+        this.vx = Math.cos(angle) * speed;
+        this.vy = Math.sin(angle) * speed;
+        this.vz = 90 + Math.random() * 160;
+        this.gravity = 440;
+        this.bounceFactor = 0.45;
+        this.rotation = Math.random() * Math.PI * 2;
+        this.rotSpeed = (Math.random() - 0.5) * 16;
+        
+        const types = ['gear', 'bolt', 'rivet'];
+        this.type = types[Math.floor(Math.random() * types.length)];
+        this.size = this.type === 'gear' ? (Math.random() * 2 + 5) : (this.type === 'bolt' ? 4 : 3);
+        
+        if (isRusty) {
+          this.color = Math.random() < 0.5 ? '#8d5b4c' : (Math.random() < 0.8 ? '#a1887f' : '#6d4c41');
+        } else {
+          this.color = Math.random() < 0.4 ? '#b0bec5' : (Math.random() < 0.7 ? '#cfd8dc' : '#ffd54f');
+        }
+        this.life = 2.2 + Math.random() * 0.8;
+        this.maxLife = this.life;
+      }
+
+      update(dt) {
+        this.x += this.vx * dt;
+        this.y += this.vy * dt;
+        this.vz -= this.gravity * dt;
+        this.z += this.vz * dt;
+
+        if (this.z <= 0) {
+          this.z = 0;
+          if (Math.abs(this.vz) > 25) {
+            this.vz = -this.vz * this.bounceFactor;
+          } else {
+            this.vz = 0;
+          }
+          this.vx *= 0.86;
+          this.vy *= 0.86;
+          this.rotSpeed *= 0.86;
+        }
+        this.rotation += this.rotSpeed * dt;
+        this.life -= dt;
+      }
+
+      draw(ctx) {
+        const alpha = Math.max(0, Math.min(1, this.life / 0.4));
+        ctx.save();
+        ctx.globalAlpha = alpha;
+
+        // Sombra no chão em (x, y)
+        const shadowScale = Math.max(0.2, 1 - (this.z / 60));
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.35)';
+        ctx.beginPath();
+        ctx.ellipse(this.x, this.y, this.size * shadowScale, this.size * 0.5 * shadowScale, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Peça suspensa em (x, y - z)
+        ctx.translate(this.x, this.y - this.z);
+        ctx.rotate(this.rotation);
+
+        ctx.fillStyle = this.color;
+        ctx.strokeStyle = '#263238';
+        ctx.lineWidth = 1;
+
+        if (this.type === 'gear') {
+          // Engrenagem com 6 dentes
+          const teeth = 6;
+          ctx.beginPath();
+          for (let i = 0; i < teeth; i++) {
+            const a1 = (i / teeth) * Math.PI * 2;
+            const a2 = ((i + 0.5) / teeth) * Math.PI * 2;
+            const rOut = this.size;
+            const rIn = this.size * 0.7;
+            ctx.lineTo(Math.cos(a1) * rOut, Math.sin(a1) * rOut);
+            ctx.lineTo(Math.cos(a2) * rIn, Math.sin(a2) * rIn);
+          }
+          ctx.closePath();
+          ctx.fill();
+          ctx.stroke();
+
+          // Furo central
+          ctx.fillStyle = '#1c212a';
+          ctx.beginPath();
+          ctx.arc(0, 0, this.size * 0.3, 0, Math.PI * 2);
+          ctx.fill();
+        } else if (this.type === 'bolt') {
+          // Parafuso sextavado (hexágono)
+          ctx.beginPath();
+          for (let i = 0; i < 6; i++) {
+            const a = (i / 6) * Math.PI * 2;
+            const hx = Math.cos(a) * this.size;
+            const hy = Math.sin(a) * this.size;
+            if (i === 0) ctx.moveTo(hx, hy);
+            else ctx.lineTo(hx, hy);
+          }
+          ctx.closePath();
+          ctx.fill();
+          ctx.stroke();
+          // Fenda
+          ctx.strokeStyle = 'rgba(0,0,0,0.45)';
+          ctx.beginPath();
+          ctx.moveTo(-this.size * 0.5, 0);
+          ctx.lineTo(this.size * 0.5, 0);
+          ctx.stroke();
+        } else {
+          // Rebite circular com brilho metálico
+          ctx.beginPath();
+          ctx.arc(0, 0, this.size, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.stroke();
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.45)';
+          ctx.beginPath();
+          ctx.arc(-this.size * 0.25, -this.size * 0.25, this.size * 0.3, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        ctx.restore();
+      }
+    }
+
     class ExplosionBlast {
       constructor(x, y, radius, isCross = false) {
         this.x = x;
@@ -9194,6 +9624,13 @@
         this.flyingShards = [];
         this.particles = [];
         this.blasts = [];
+        this.gearDebris = [];
+
+        // Estatísticas da Run Atual (Rebobinar do Tempo)
+        this.runStartTime = Date.now();
+        this.runEnemiesKilled = 0;
+        this.runCCMined = 0;
+        this.automatonRattleTimer = 2.0;
 
         this.fadeAlpha = 0;
         this.fadeState = 'none';
@@ -9400,6 +9837,7 @@
                this.spawnFloatingText('+1 PEÇA', drop.x, drop.y - 12, '#e0e0e0');
             } else {
                this.player.chronoCores = (this.player.chronoCores || 0) + 1;
+               this.runCCMined = (this.runCCMined || 0) + 1;
                this.spawnSparks(drop.x, drop.y, '#00e5ff', 16);
                this.spawnSparks(drop.x, drop.y, '#ffd700', 10);
                this.spawnFloatingText('+1 CC', drop.x, drop.y - 12, '#00e5ff');
@@ -9581,6 +10019,30 @@
           if (this.blasts[i].life <= 0) this.blasts.splice(i, 1);
         }
 
+        // Atualiza Estilhaços e Engrenagens Saltitantes
+        if (this.gearDebris) {
+          for (let i = this.gearDebris.length - 1; i >= 0; i--) {
+            this.gearDebris[i].update(dt);
+            if (this.gearDebris[i].life <= 0) this.gearDebris.splice(i, 1);
+          }
+        }
+
+        // Ambiência Mecânica: ranger sutil de engrenagens quando houver autômatos ativos na sala
+        if (room && room.enemies) {
+          const activeAutomata = room.enemies.filter(e => e.state !== 'dormant');
+          if (activeAutomata.length > 0) {
+            this.automatonRattleTimer = (this.automatonRattleTimer || 0) + dt;
+            if (this.automatonRattleTimer >= 3.2) {
+              this.automatonRattleTimer = Math.random() * 0.9;
+              if (window.sound && window.sound.playGearRattle) {
+                window.sound.playGearRattle();
+              }
+            }
+          } else {
+            this.automatonRattleTimer = 1.5;
+          }
+        }
+
         // Atualiza Textos Flutuantes
         for (let i = this.floatingTexts.length - 1; i >= 0; i--) {
           const ft = this.floatingTexts[i];
@@ -9743,7 +10205,7 @@
                         }
                      }
                   }
-                  showToast('INVENTOR: "GRAÇAS ÀS ENGRENAGENS! ESTOU LIVRE!"');
+                  showToast(window.t('dialog-inventor-freed'));
                }
             }
             
@@ -9764,10 +10226,10 @@
                        
                        let step = 0;
                        const msgs = [
-                          'INVENTOR: "Muito obrigado por me salvar! Fui preso pelos autômatos!"',
-                          'CHARLOTTE: "Sem problemas. Eu sempre acabo voltando ao início da mina de qualquer jeito..."',
-                          'INVENTOR: "Como agradecimento, acoplei o Injetor Vital em sua manopla e te dei 1 Tônico!"',
-                          'INVENTOR: "Você pode sintetizar até 2 tônicos (2 CC + 1 Peça). Cada um cura 1 ❤️! Pressione [H] para curar e [V] para sintetizar."'
+                          window.t('dialog-rescue-1'),
+                          window.t('dialog-rescue-2'),
+                          window.t('dialog-rescue-3'),
+                          window.t('dialog-rescue-4')
                        ];
                        const showNext = () => {
                           if (step < msgs.length) {
@@ -9783,7 +10245,7 @@
                const distToNPC = Math.hypot(this.player.x - (GRID_SIZE - 3) * TILE_SIZE - TILE_SIZE/2, this.player.y - 2 * TILE_SIZE - TILE_SIZE/2);
                if (distToNPC < TILE_SIZE * 2.5) {
                    if (!this.player.inventorHintTalked) {
-                       showToast('INVENTOR: "Fiquei preso aqui pelos autômatos! Para me libertar, você deve acionar os 3 painéis de peso ao mesmo tempo. Use bombas para empurrar as pilastras!"');
+                       showToast(window.t('dialog-inventor-hint'));
                        this.player.inventorHintTalked = true;
                    }
                } else {
@@ -10237,7 +10699,7 @@
                  const tileHere = room.grid[ty][tx];
                  if (tileHere === TILE.SIGN) {
                    if (!this.player.signTalked || Date.now() - this.player.signTalked > 3000) {
-                     showToast('PLACA: "Fui almoçar. Volto logo!"');
+                     showToast(window.t('dialog-sign'));
                      this.player.signTalked = Date.now();
                    }
                  } else if (tileHere === TILE.INVENTOR_NPC && room.isStart) {
@@ -10249,8 +10711,8 @@
                        if ((this.player.healingFlasks || 0) < 1) {
                          this.player.healingFlasks = 1;
                        }
-                       showToast('INVENTOR: "Como agradecimento pelo resgate, instalei o Injetor Vital em sua manopla! Use [H] para curar 1 ❤️ e [V] para sintetizar (2 CC + 1 Peça)."');
-                       this.spawnFloatingText('💉 INJETOR VITAL RECEBIDO!', this.player.x, this.player.y - 30, '#00e676');
+                       showToast(window.t('dialog-inventor-saferoom'));
+                       this.spawnFloatingText(window.t('toast-injector-received'), this.player.x, this.player.y - 30, '#00e676');
                        this.spawnSparks(this.player.x, this.player.y, '#00e676', 30);
                        this.updateHUD();
                        if (typeof saveGame === 'function') saveGame();
@@ -10503,6 +10965,8 @@
 
       openInventorShop() {
         if (this.fadeState !== 'none') return;
+        if (!this.currentInventorTab) this.currentInventorTab = 'bombs';
+        this.switchInventorTab(this.currentInventorTab);
         this.updateInventorShopUI();
         document.getElementById('inventor-shop-modal').classList.add('visible');
       }
@@ -10510,6 +10974,22 @@
       closeInventorShop() {
         document.getElementById('inventor-shop-modal').classList.remove('visible');
         this.player.inventorShopOpened = false;
+      }
+
+      switchInventorTab(tab) {
+        this.currentInventorTab = tab;
+        const isBombs = tab === 'bombs' || tab === 'bomba';
+        const isEquip = tab === 'equip' || tab === 'equipamentos';
+
+        const pBombs = document.getElementById('inv-panel-bombs');
+        const pEquip = document.getElementById('inv-panel-equip');
+        const tBombs = document.getElementById('inv-tab-bombs');
+        const tEquip = document.getElementById('inv-tab-equip');
+
+        if (pBombs) pBombs.style.display = isBombs ? 'flex' : 'none';
+        if (pEquip) pEquip.style.display = isEquip ? 'flex' : 'none';
+        if (tBombs) tBombs.classList.toggle('active', isBombs);
+        if (tEquip) tEquip.classList.toggle('active', isEquip);
       }
 
       updateInventorShopUI() {
@@ -10525,10 +11005,10 @@
         const btnImpact = document.getElementById('btn-inv-impact');
         if (btnImpact) {
           if (this.player.unlockedImpact) {
-            btnImpact.textContent = 'Comprado ✓';
+            btnImpact.textContent = window.t('btn-bought');
             btnImpact.disabled = true;
           } else {
-            btnImpact.textContent = 'Comprar';
+            btnImpact.textContent = window.t('btn-buy');
             btnImpact.disabled = (totalCC < 15 || totalParts < 10);
           }
         }
@@ -10538,13 +11018,13 @@
         const costVortexEl = document.getElementById('inv-cost-vortex') || document.getElementById('inv-cost-propulsor');
         if (btnVortex) {
           if (this.player.unlockedVortex || this.player.unlockedPropulsor) {
-            btnVortex.textContent = 'Comprado ✓';
+            btnVortex.textContent = window.t('btn-bought');
             btnVortex.disabled = true;
-            if (costVortexEl) costVortexEl.textContent = 'Bomba de Vórtice Adquirida!';
+            if (costVortexEl) costVortexEl.textContent = window.t('inv-vortex-acquired');
           } else {
-            btnVortex.textContent = 'Comprar';
+            btnVortex.textContent = window.t('btn-buy');
             btnVortex.disabled = (totalCC < 25 || totalParts < 20);
-            if (costVortexEl) costVortexEl.textContent = 'Custo: 25 CC | 20 PEÇAS';
+            if (costVortexEl) costVortexEl.textContent = window.t('inv-cost-vortex-text');
           }
         }
 
@@ -10555,13 +11035,14 @@
           const flasks = this.player.healingFlasks || 0;
           const maxFlasks = this.player.maxHealingFlasks || 2;
           if (costHealEl) {
-            costHealEl.textContent = `Estoque: ${flasks}/${maxFlasks} | Custo: 2 CC | 1 PEÇA (Mochila + Baú)`;
+            const partWord = (typeof currentLang !== 'undefined' && currentLang === 'en') ? 'PART' : 'PEÇA';
+            costHealEl.textContent = `${window.t('inv-stock-label')}: ${flasks}/${maxFlasks} | ${window.t('inv-cost-label')}: 2 CC | 1 ${partWord} (${window.t('inv-backpack-vault')})`;
           }
           if (flasks >= maxFlasks) {
-            btnHeal.textContent = 'Cheio (2/2) ✓';
+            btnHeal.textContent = window.t('btn-full');
             btnHeal.disabled = true;
           } else {
-            btnHeal.textContent = 'Sintetizar (100%)';
+            btnHeal.textContent = window.t('btn-synthesize');
             btnHeal.disabled = (totalCC < 2 || totalParts < 1);
           }
         }
@@ -10570,10 +11051,10 @@
         const btnLantern = document.getElementById('btn-inv-lantern');
         if (btnLantern) {
           if (this.player.hasLantern) {
-            btnLantern.textContent = 'Comprado ✓';
+            btnLantern.textContent = window.t('btn-bought');
             btnLantern.disabled = true;
           } else {
-            btnLantern.textContent = 'Comprar';
+            btnLantern.textContent = window.t('btn-buy');
             btnLantern.disabled = (totalCC < 20 || totalParts < 15);
           }
         }
@@ -10585,19 +11066,19 @@
         }
 
         if (type === 'lantern') {
-          if (this.player.hasLantern) { showToast('INVENTOR: "Você já tem o Lampião!"'); return; }
+          if (this.player.hasLantern) { showToast(window.t('toast-inv-already-lantern')); return; }
           if (this.getAvailableCC() >= 20 && this.getAvailableParts() >= 15) {
             this.consumeCurrency(20, 15);
             this.player.hasLantern = true;
             this.player.lanternFuel = 100;
-            showToast('INVENTOR: "Lampião de Cristal pronto! Lá embaixo é breu total... Alimente-o com CC da mochila [L]."');
+            showToast(window.t('toast-inv-lantern-bought'));
             sound.playUpgradeFanfare();
             this.spawnSparks(this.player.x, this.player.y, '#ff9800', 30);
             this.updateHUD();
             this.updateInventorShopUI();
             if (typeof saveGame === 'function') saveGame();
           } else {
-            showToast('INVENTOR: "Você precisa de 20 CC e 15 PEÇAS para o Lampião..."');
+            showToast(window.t('toast-inv-need-lantern'));
           }
           return;
         }
@@ -10605,10 +11086,10 @@
         let costCC = 0, costParts = 0;
 
         if (type === 'impact') {
-          if (this.player.unlockedImpact) { showToast('INVENTOR: "Você já tem essa bomba!"'); return; }
+          if (this.player.unlockedImpact) { showToast(window.t('toast-inv-already-bomb')); return; }
           costCC = 15; costParts = 10;
         } else if (type === 'vortex' || type === 'propulsor') {
-          if (this.player.unlockedVortex || this.player.unlockedPropulsor) { showToast('INVENTOR: "Você já tem essa bomba!"'); return; }
+          if (this.player.unlockedVortex || this.player.unlockedPropulsor) { showToast(window.t('toast-inv-already-bomb')); return; }
           costCC = 25; costParts = 20;
         }
 
@@ -10624,7 +11105,7 @@
               const idx = this.player.bagSlots.findIndex(s => s.type === 'timed');
               if (idx !== -1) this.player.bagSlots[idx].type = 'impact';
             }
-            showToast('INVENTOR: "Aqui está! Bomba de Impacto instalada na sua bolsa!"');
+            showToast(window.t('toast-inv-impact-bought'));
           } else {
             this.player.unlockedVortex = true;
             this.player.unlockedPropulsor = true;
@@ -10632,7 +11113,7 @@
               const idx = this.player.bagSlots.findIndex(s => s.type === 'timed');
               if (idx !== -1) this.player.bagSlots[idx].type = 'vortex';
             }
-            showToast('INVENTOR: "Singularidade calibrada! Bomba de Vórtice pronta!"');
+            showToast(window.t('toast-inv-vortex-bought'));
           }
 
           sound.playCCPickup();
@@ -10641,10 +11122,9 @@
           this.updateInventorShopUI();
           if (typeof saveGame === 'function') saveGame();
         } else {
-          showToast(`INVENTOR: "Você precisa de ${costCC} CC e ${costParts} PEÇAS para isso..."`);
+          showToast(window.t('toast-inv-need-currency').replace('{cc}', costCC).replace('{parts}', costParts));
         }
       }
-
       openArmory() {
         if (this.fadeState !== 'none') return;
         document.getElementById('armory-modal').classList.add('visible');
@@ -10754,6 +11234,237 @@
         saveGame();
       }
 
+      selectChestItem(index) {
+        this.selectedChestItemIndex = index;
+        this.renderChestInspector();
+      }
+
+      renderChestInspector() {
+        const items = this.getChestItems();
+        const titleEl = document.getElementById('chest-info-title');
+        const tagEl = document.getElementById('chest-info-type');
+        const descEl = document.getElementById('chest-info-desc');
+        const qtyEl = document.getElementById('chest-info-qty');
+        if (!titleEl || !descEl) return;
+
+        const item = items[this.selectedChestItemIndex || 0];
+        if (item) {
+          titleEl.innerHTML = `${item.icon} ${item.name}`;
+          tagEl.style.display = 'inline-block';
+          tagEl.textContent = item.category;
+          descEl.textContent = item.desc;
+          qtyEl.textContent = `${window.t('vault-qty-label')}: ${item.qty}`;
+        } else {
+          titleEl.innerHTML = window.t('vault-empty-title');
+          tagEl.style.display = 'none';
+          descEl.textContent = window.t('vault-empty-desc');
+          qtyEl.textContent = '';
+        }
+
+        const slots = document.querySelectorAll('.chest-slot');
+        slots.forEach((s, idx) => {
+          s.classList.toggle('selected', idx === (this.selectedChestItemIndex || 0));
+        });
+      }
+
+      getChestItems() {
+        if (!this.player) return [];
+        const items = [];
+        const p = this.player;
+        const isEn = (typeof currentLang !== 'undefined' && currentLang === 'en') || (typeof window.getCurrentLang === 'function' && window.getCurrentLang() === 'en');
+
+        // 1. Cristal Coal Permanente
+        if ((p.depositedCores || 0) > 0) {
+          items.push({
+            id: 'cc',
+            name: isEn ? 'Crystal Coal' : 'Cristal Coal',
+            icon: '💎',
+            badge: `${p.depositedCores} CC`,
+            category: isEn ? 'Permanent Resource' : 'Recurso Permanente',
+            desc: isEn ? 'High-density Crystal Coal sent through the Chute. Safely stored in the vault for Workshop upgrades and temporal transmutation.' : 'Cristal-Carvão de alta densidade enviado pela Goela. Salvo em definitivo no cofre para fabricar melhorias na Oficina e transmutação temporal.',
+            qty: `${p.depositedCores} CC`
+          });
+        }
+
+        // 2. Peças Mecânicas Permanentes
+        if ((p.depositedParts || 0) > 0) {
+          items.push({
+            id: 'parts',
+            name: isEn ? 'Mechanical Parts' : 'Peças Mecânicas',
+            icon: '⚙️',
+            badge: isEn ? `${p.depositedParts} pcs.` : `${p.depositedParts} un.`,
+            category: isEn ? 'Scrap Material' : 'Material de Sucata',
+            desc: isEn ? 'Gears, pistons, and rivets salvaged from defeated automatons. Used by the Inventor to forge and tune gear.' : 'Engrenagens, pistões e rebites recuperados de autômatos derrotados. Usados pelo Inventor para forjar e aprimorar equipamentos.',
+            qty: isEn ? `${p.depositedParts} Parts` : `${p.depositedParts} Peças`
+          });
+        }
+
+        // 3. Pistão Hidráulico
+        if (p.hasHydraulicPiston) {
+          items.push({
+            id: 'piston',
+            name: isEn ? 'Hydraulic Piston' : 'Pistão Hidráulico',
+            icon: '🦾',
+            badge: isEn ? '1 pc.' : '1 un.',
+            category: isEn ? 'Special Component' : 'Componente Especial',
+            desc: isEn ? 'High-pressure piston saved in the vault. Required for Charlotte to craft Gauntlet Level 2 in the Armory.' : 'Pistão de alta pressão salvo no baú. Necessário para Charlotte forjar a Manopla Mecânica Nível 2 no Arsenal.',
+            qty: isEn ? '1 pc. (Ready to Craft)' : '1 un. (Pronto para Ofício)'
+          });
+        }
+
+        // 4. Núcleo de Propulsão a Vapor
+        if (p.hasSteamPropulsionCore) {
+          items.push({
+            id: 'steam_core',
+            name: isEn ? 'Steam Core' : 'Núcleo a Vapor',
+            icon: '💨',
+            badge: isEn ? '1 pc.' : '1 un.',
+            category: isEn ? 'Thermal Artifact' : 'Artefato Térmico',
+            desc: isEn ? 'Propulsion core salvaged from a mechanical boss. Used to craft Propulsion Boots (Dash).' : 'Núcleo propulsor resgatado de chefe mecânico. Usado para confecção das Botas Propulsoras de arrancada (Dash).',
+            qty: isEn ? '1 pc. (Stored)' : '1 un. (Armazenado)'
+          });
+        }
+
+        // 5. Chave / Cartão do Supervisor
+        if (p.hasBossKey) {
+          items.push({
+            id: 'boss_key',
+            name: isEn ? 'Access Keycard' : 'Cartão de Acesso',
+            icon: '🔑',
+            badge: isEn ? '1 pc.' : '1 un.',
+            category: isEn ? 'Yellow Credential' : 'Credencial Amarela',
+            desc: isEn ? 'Golden magnetic supervisor card. Unlocks the blast doors to the Master Boss chamber.' : 'Cartão magnético dourado de supervisor. Permite destravar as comportas blindadas da câmara do Chefe.',
+            qty: isEn ? '1 pc. (Stored)' : '1 un. (Armazenado)'
+          });
+        }
+
+        // 6. Projetos Desbloqueados
+        if (p.unlockedImpact) {
+          items.push({
+            id: 'proj_impact',
+            name: isEn ? 'Impact Bomb' : 'Bomba de Impacto',
+            icon: '💥',
+            badge: isEn ? 'Blueprint' : 'Projeto',
+            category: isEn ? 'Special Ordnance' : 'Munição Especial',
+            desc: isEn ? 'Instant detonation upon contact with walls and automatons. Special pouch slot unlocked.' : 'Detonação instantânea ao contato com paredes e autômatos. Slot especial liberado na bolsa.',
+            qty: isEn ? 'Unlocked' : 'Desbloqueado'
+          });
+        }
+
+        if (p.unlockedVortex || p.unlockedPropulsor) {
+          items.push({
+            id: 'proj_vortex',
+            name: isEn ? 'Vortex Bomb' : 'Bomba de Vórtice',
+            icon: '🌀',
+            badge: isEn ? 'Blueprint' : 'Projeto',
+            category: isEn ? 'Special Ordnance' : 'Munição Especial',
+            desc: isEn ? 'Gravitational suction bomb. Pulls automatons and debris to epicenter, crushing them with devastating damage.' : 'Bomba gravitacional de sucção. Puxa autômatos e estilhaços para o epicentro, esmagando-os com dano devastador.',
+            qty: isEn ? 'Unlocked' : 'Desbloqueado'
+          });
+        }
+
+        // 7. Equipamentos e Upgrades
+        if (p.gauntletLevel > 1) {
+          items.push({
+            id: 'gauntlet',
+            name: isEn ? 'Mechanical Gauntlet' : 'Manopla Mecânica',
+            icon: '🥊',
+            badge: `${isEn ? 'Lvl.' : 'Nv.'} ${p.gauntletLevel}`,
+            category: isEn ? 'Charlotte Gear' : 'Equipamento Charlotte',
+            desc: isEn ? `Upgraded mechanical gauntlet. Bomb throwing range extended to ${p.getThrowRange()}px.` : `Manopla mecânica aprimorada. Alcance de arremesso ampliado para ${p.getThrowRange()}px.`,
+            qty: isEn ? `Level ${p.gauntletLevel} of 3` : `Nível ${p.gauntletLevel} de 3`
+          });
+        }
+
+        if (p.bootsLevel > 0) {
+          items.push({
+            id: 'boots',
+            name: isEn ? 'Propulsion Boots' : 'Botas Propulsoras',
+            icon: '👢',
+            badge: `${isEn ? 'Lvl.' : 'Nv.'} ${p.bootsLevel}`,
+            category: isEn ? 'Charlotte Gear' : 'Equipamento Charlotte',
+            desc: isEn ? 'Pressurized steam boots with rapid dash propulsion. Grants brief invulnerability.' : 'Botas pressurizadas com sistema de propulsão rápida (Dash). Concede invulnerabilidade temporária.',
+            qty: isEn ? 'Active' : 'Ativo'
+          });
+        }
+
+        if (p.bagLevel > 1) {
+          items.push({
+            id: 'bag',
+            name: isEn ? 'Expanded Pouch' : 'Bolsa Expandida',
+            icon: '🎒',
+            badge: `${isEn ? 'Lvl.' : 'Nv.'} ${p.bagLevel}`,
+            category: isEn ? 'Charlotte Gear' : 'Equipamento Charlotte',
+            desc: isEn ? `Reinforced tool pouch with capacity expanded to ${p.maxTimerBombs} simultaneous bombs.` : `Bolsa reforçada de ferramentas com capacidade expandida para ${p.maxTimerBombs} bombas simultâneas.`,
+            qty: `${p.maxTimerBombs} slots`
+          });
+        }
+
+        return items;
+      }
+
+      updateChestUI() {
+        if (!this.player) return;
+        const depCC = this.player.depositedCores || 0;
+        const depParts = this.player.depositedParts || 0;
+        const cCC = this.player.chronoCores || 0;
+        const cParts = this.player.parts || 0;
+        const isCarryingPiston = !!this.player.carryingHydraulicPiston;
+        const isEn = (typeof currentLang !== 'undefined' && currentLang === 'en') || (typeof window.getCurrentLang === 'function' && window.getCurrentLang() === 'en');
+
+        const statCC = document.getElementById('chest-stat-cc');
+        const statParts = document.getElementById('chest-stat-parts');
+        if (statCC) statCC.textContent = `${depCC} CC`;
+        if (statParts) statParts.textContent = `${depParts} ${window.t('vault-parts-unit')}`;
+
+        // Banner de depósito de itens da bolsa
+        const depositBanner = document.getElementById('chest-deposit-banner');
+        const depositText = document.getElementById('chest-deposit-text');
+        if (depositBanner && depositText) {
+          if (cCC > 0 || cParts > 0 || isCarryingPiston) {
+            depositBanner.style.display = 'flex';
+            let extras = [];
+            if (cCC > 0) extras.push(`${cCC} CC`);
+            if (cParts > 0) extras.push(`${cParts} ${window.t('vault-parts-unit')}`);
+            if (isCarryingPiston) extras.push(isEn ? 'Piston' : 'Pistão');
+            depositText.textContent = `🎒 ${window.t('vault-in-backpack')}: ${extras.join(' + ')}`;
+          } else {
+            depositBanner.style.display = 'none';
+          }
+        }
+
+        // Itens
+        const items = this.getChestItems();
+        const gridCount = document.getElementById('chest-grid-count');
+        if (gridCount) {
+          gridCount.textContent = `${items.length} ${items.length === 1 ? window.t('vault-item-singular') : window.t('vault-item-plural')}`;
+        }
+
+        const grid = document.getElementById('chest-grid');
+        if (grid) {
+          grid.innerHTML = '';
+          const totalSlots = Math.max(8, Math.ceil(items.length / 4) * 4);
+          for (let i = 0; i < totalSlots; i++) {
+            const slot = document.createElement('div');
+            const item = items[i];
+            if (item) {
+              slot.className = 'chest-slot filled' + (i === (this.selectedChestItemIndex || 0) ? ' selected' : '');
+              slot.innerHTML = `
+                <div class="slot-badge">${item.badge}</div>
+                <div class="slot-icon">${item.icon}</div>
+                <div class="slot-label">${item.name}</div>
+              `;
+              slot.title = `${item.name} (${item.qty})`;
+              slot.onclick = () => this.selectChestItem(i);
+              slot.onmouseenter = () => this.selectChestItem(i);
+            } else {
+              slot.className = 'chest-slot empty';
+              slot.innerHTML = `<span class="empty-cross">+</span>`;
+            }
+            grid.appendChild(slot);
+          }
+        }
+      }
       selectChestItem(index) {
         this.selectedChestItemIndex = index;
         this.renderChestInspector();
@@ -12049,17 +12760,60 @@
 
       triggerTimeRewind() {
         sound.playRewindGlitch();
-        this.rewindGlitchTimer = 0.5;
-        this.player.invulnerableTimer = 1.8;
+        this.rewindGlitchTimer = 0.6;
+        this.player.invulnerableTimer = 2.5;
         showToast(window.t('ingame-rewind-long'));
         saveGame();
 
+        // Estatísticas pós-morte daquela corrida
+        const elapsedSec = Math.max(1, Math.floor((Date.now() - (this.runStartTime || Date.now())) / 1000));
+        const mins = Math.floor(elapsedSec / 60).toString().padStart(2, '0');
+        const secs = (elapsedSec % 60).toString().padStart(2, '0');
+        const timeFormatted = `${mins}:${secs}`;
+        const kills = this.runEnemiesKilled || 0;
+        const ccMined = this.runCCMined || 0;
+
+        const statTimeEl = document.getElementById('stat-run-time');
+        if (statTimeEl) statTimeEl.textContent = timeFormatted;
+        const statKillsEl = document.getElementById('stat-run-kills');
+        if (statKillsEl) statKillsEl.textContent = `${kills}`;
+        const statCCEl = document.getElementById('stat-run-cc');
+        if (statCCEl) statCCEl.textContent = `${ccMined} CC`;
+
+        const deathModal = document.getElementById('death-summary-modal');
+        if (deathModal) {
+          deathModal.classList.remove('hidden');
+          deathModal.style.display = 'flex';
+        }
+
+        // Auto-continua após 3.2 segundos se o jogador não clicar
+        if (this._deathSummaryAutoTimeout) clearTimeout(this._deathSummaryAutoTimeout);
+        this._deathSummaryAutoTimeout = setTimeout(() => {
+          this.dismissDeathSummary();
+        }, 3200);
+      }
+
+      dismissDeathSummary() {
+        if (this._deathSummaryAutoTimeout) {
+          clearTimeout(this._deathSummaryAutoTimeout);
+          this._deathSummaryAutoTimeout = null;
+        }
+        const deathModal = document.getElementById('death-summary-modal');
+        if (deathModal) {
+          deathModal.classList.add('hidden');
+          deathModal.style.display = 'none';
+        }
+
+        this.executeRewindTransition();
+      }
+
+      executeRewindTransition() {
         this.fadeState = 'out';
         this.pendingTransition = () => {
           // 1. Gera um novo mapa procedural completo
           this.map.generateWorld();
 
-          // 2. Limpa bombas em voo, bombas no chão, partículas e drops soltos
+          // 2. Limpa bombas em voo, bombas no chão, partículas, engrenagens e drops soltos
           this.timedBombs = [];
           this.flyingBombs = [];
           this.targetMarkers = [];
@@ -12070,6 +12824,7 @@
           this.floatingTexts = [];
           this.particles = [];
           this.blasts = [];
+          this.gearDebris = [];
 
           // 3. Reseta CCs e Peças não depositados da corrida atual (mantém depositados salvos)
           this.player.chronoCores = 0;
@@ -12093,7 +12848,12 @@
             this.map.currentRoom.enemies.forEach(e => e.resetActivationGrace(1.2));
           }
 
-          // 6. Atualiza o HUD para exibir as novas coordenadas e contadores
+          // 6. Reseta contadores da nova run
+          this.runStartTime = Date.now();
+          this.runEnemiesKilled = 0;
+          this.runCCMined = 0;
+
+          // 7. Atualiza o HUD para exibir as novas coordenadas e contadores
           this.updateHUD();
         };
       }
@@ -12226,6 +12986,12 @@
         this.floatingTexts = [];
         this.particles = [];
         this.blasts = [];
+        this.gearDebris = [];
+
+        // Reseta estatísticas da run
+        this.runStartTime = Date.now();
+        this.runEnemiesKilled = 0;
+        this.runCCMined = 0;
 
         // Reseta o mapa para a Safe Room inicial (Nível 1)
         if (this.map) {
@@ -12289,7 +13055,15 @@
       }
 
       spawnEnemyDeath(x, y, enemy = null) {
+        this.runEnemiesKilled = (this.runEnemiesKilled || 0) + 1;
         const isRusty = enemy && enemy.type === 'rusty';
+
+        // Explosão de engrenagens, parafusos e rebites mecânicos ricocheteando no chão
+        if (!this.gearDebris) this.gearDebris = [];
+        const debrisCount = isRusty ? (5 + Math.floor(Math.random() * 4)) : (4 + Math.floor(Math.random() * 4));
+        for (let i = 0; i < debrisCount; i++) {
+          this.gearDebris.push(new GearDebris(x, y, isRusty));
+        }
 
         // Estilhaços de ferro oxidado e peças gastas para o enferrujado, ou metais nobres
         const sparkCount = isRusty ? 26 : 22;
@@ -13093,7 +13867,8 @@
           this.flyingShards.forEach(s => s.draw(ctx));
         }
 
-        // Partículas e Efeitos de Explosão
+        // Partículas, Engrenagens e Efeitos de Explosão
+        if (this.gearDebris) this.gearDebris.forEach(g => g.draw(ctx));
         this.particles.forEach(p => p.draw(ctx));
         this.blasts.forEach(b => b.draw(ctx));
 
@@ -13360,7 +14135,7 @@
         const depth = this.map.currentDepth || 1;
         if (room.isBossKeyRoom) {
           let extra = this.player.hasBossKey ? `   [${window.t('ingame-bosskey')}]` : '';
-          coordsEl.textContent = `${window.t('ingame-level')} ${depth} • CÂMARA DO CARTÃO 🔑 [${room.rx}, ${room.ry}]${extra}`;
+          coordsEl.textContent = `${window.t('ingame-level')} ${depth} • ${window.t('ingame-keychamber')} 🔑 [${room.rx}, ${room.ry}]${extra}`;
         } else if (room.isPuzzleRoom) {
           coordsEl.textContent = `${window.t('ingame-level')} ${depth} • ${window.t('ingame-puzzle')} 💎 [${room.rx}, ${room.ry}]`;
         } else if (room.isMiniBossRoom) {
@@ -13428,10 +14203,31 @@
             }
           }
           healthEl.textContent = str;
+
+          // Alerta Visual de Vida Crítica (Low HP <= 1.0)
+          const lowHpVignette = document.getElementById('low-hp-vignette');
+          const isLowHp = (hp <= 1.0 && hp > 0);
+          if (lowHpVignette) {
+            if (isLowHp) {
+              lowHpVignette.classList.add('active');
+            } else {
+              lowHpVignette.classList.remove('active');
+            }
+          }
+        }
+
+        // Atualiza contador do Diário de Bordo / Panfletos
+        const journalCountEl = document.getElementById('hud-journal-count');
+        if (journalCountEl && this.loreManager) {
+          const collected = this.loreManager.getCollectedList().length;
+          const total = (this.loreManager.allFragments && this.loreManager.allFragments.length) || 5;
+          journalCountEl.textContent = `${collected} / ${total}`;
         }
 
         const healthBadge = document.querySelector('#health-badge .hud-badge-label');
-        if (healthBadge) healthBadge.textContent = 'Vidas';
+        if (healthBadge) healthBadge.textContent = window.t('hud-lives');
+        const hbWrap = document.getElementById('health-badge');
+        if (hbWrap) hbWrap.title = window.t('hud-lives-tooltip');
 
         // Atualiza nível da manopla e cristais
         const gauntletEl = document.getElementById('gauntlet-level');
@@ -13455,18 +14251,30 @@
           const isCarrying = !!(this.player && this.player.carryingHydraulicPiston);
           pistonBadge.style.display = isCarrying ? 'flex' : 'none';
         }
+        const pistonTitle = document.getElementById('piston-badge-title');
+        if (pistonTitle) pistonTitle.innerText = window.t('hud-piston-title');
+        const pistonSub = document.getElementById('piston-badge-sub');
+        if (pistonSub) pistonSub.innerText = window.t('hud-piston-sub');
         
         const gauntletBadge = document.querySelector('#gauntlet-badge .hud-badge-label');
         if (gauntletBadge) gauntletBadge.textContent = window.t('ingame-gauntlet');
+        const gbWrap = document.getElementById('gauntlet-badge');
+        if (gbWrap) gbWrap.title = window.t('hud-gauntlet-tooltip');
         
         const ccBadge = document.querySelector('#cc-badge .hud-badge-label');
         if (ccBadge) ccBadge.textContent = window.t('ingame-cc');
+        const cbWrap = document.getElementById('cc-badge');
+        if (cbWrap) cbWrap.title = window.t('hud-cc-tooltip');
         
         const partBadge = document.querySelector('#part-badge .hud-badge-label');
         if (partBadge) partBadge.textContent = window.t('ingame-parts');
+        const pbWrap = document.getElementById('part-badge');
+        if (pbWrap) pbWrap.title = window.t('hud-part-tooltip');
 
         const healBadgeLabel = document.getElementById('heal-badge-label');
         if (healBadgeLabel) healBadgeLabel.textContent = window.t('ingame-heal');
+        const healBadgeWrapper = document.getElementById('heal-badge');
+        if (healBadgeWrapper) healBadgeWrapper.title = window.t('hud-heal-tooltip');
         
         const mapBadge = document.querySelector('.minimap-badge-label');
         if (mapBadge) mapBadge.textContent = window.t('ingame-map');
@@ -13519,16 +14327,37 @@
               healMobileText.style.color = flasks > 0 ? '#00e676' : '#aaa';
             }
           }
+
+          // Quando Charlotte estiver com 1 coração ou menos, o badge de cura [💉] pulsa em verde convidando a usar a cura
+          const hpVal = this.player.hp !== undefined ? this.player.hp : 3;
+          const shouldPulse = (hpVal <= 1.0 && hpVal > 0 && flasks > 0);
+          if (healBadge) {
+            if (shouldPulse) healBadge.classList.add('pulse-heal');
+            else healBadge.classList.remove('pulse-heal');
+          }
+          if (healBtnMobile) {
+            if (shouldPulse) healBtnMobile.classList.add('pulse-heal');
+            else healBtnMobile.classList.remove('pulse-heal');
+          }
         } else {
-          if (healBadge) healBadge.style.display = 'none';
-          if (healBtnMobile) healBtnMobile.style.display = 'none';
+          if (healBadge) {
+            healBadge.style.display = 'none';
+            healBadge.classList.remove('pulse-heal');
+          }
+          if (healBtnMobile) {
+            healBtnMobile.style.display = 'none';
+            healBtnMobile.classList.remove('pulse-heal');
+          }
         }
 
         // Lampião de Cristal (visível a partir do Nível 3)
         const showLantern = !!(this.player && this.player.hasLantern && (this.map.currentDepth || 1) >= 3);
         const lanternBadge = document.getElementById('lantern-badge');
         const lanternMobile = document.getElementById('btn-lantern-mobile');
-        if (lanternBadge) lanternBadge.style.display = showLantern ? 'flex' : 'none';
+        if (lanternBadge) {
+          lanternBadge.style.display = showLantern ? 'flex' : 'none';
+          lanternBadge.title = window.t('hud-lantern-tooltip');
+        }
         if (lanternMobile) lanternMobile.style.display = showLantern ? 'flex' : 'none';
         this.lastLanternPct = -1;
         this.updateLanternBar();
@@ -13552,9 +14381,10 @@
       room.isBossRoom = true;
       room.isLockdown = true;
       if (window.sound) window.sound.setMusicMode('battle');
-      if (window.showToast) window.showToast('⚠️ AUTÔMATO TITÂNICO INVOCADO!');
+      if (window.showToast) window.showToast(window.t('toast-titanic-spawned'));
       return boss;
     };
+
 
     // --------------------------------------------------------------------------
     // TOAST NOTIFIER HELPER
@@ -13924,14 +14754,21 @@
     window.switchTutorialPlatform = switchTutorialPlatform;
     window.isMobileMode = isMobileMode;
 
-    function closeLoreGallery() {
-      document.getElementById('gallery-menu').style.display = 'none';
-      document.getElementById('gallery-menu').classList.add('hidden');
-      document.getElementById('options-menu').classList.remove('hidden');
-    }
+    let _loreOpenedFromOptions = false;
+    let _lorePausedGame = false;
 
     function openLoreGallery() {
-      document.getElementById('options-menu').classList.add('hidden');
+      const optMenu = document.getElementById('options-menu');
+      _loreOpenedFromOptions = optMenu && !optMenu.classList.contains('hidden');
+      if (optMenu) optMenu.classList.add('hidden');
+
+      if (window.game && !window.game.isPaused) {
+        window.game.isPaused = true;
+        _lorePausedGame = true;
+      } else {
+        _lorePausedGame = false;
+      }
+
       const gm = document.getElementById('gallery-menu');
       gm.classList.remove('hidden');
       gm.style.display = 'flex';
@@ -13940,8 +14777,9 @@
       const container = document.getElementById('gallery-list');
       container.innerHTML = '';
       
+      const isEn = (typeof currentLang !== 'undefined' && currentLang === 'en');
       if (list.length === 0) {
-        container.innerHTML = '<div style="color: #999; text-align: center; padding: 20px;">Nenhum registro encontrado ainda. Explore os mapas!</div>';
+        container.innerHTML = `<div style="color: #999; text-align: center; padding: 20px;">${window.t('gallery-empty')}</div>`;
         return;
       }
       
@@ -13953,17 +14791,41 @@
         div.style.background = '#1e160e';
         div.style.borderRadius = '4px';
         
+        const official = (isEn && frag.officialText_en) ? frag.officialText_en : frag.officialText;
+        const scrawl = (isEn && frag.minerScrawl_en) ? frag.minerScrawl_en : frag.minerScrawl;
+        const tip = (isEn && frag.popupTip_en) ? frag.popupTip_en : frag.popupTip;
+        const headerTitle = window.t('gallery-record');
+
         div.innerHTML = `
-          <div style="font-family: monospace; font-weight: bold; color: #f39c12; font-size: 14px; border-bottom: 1px solid rgba(197, 155, 39, 0.4); padding-bottom: 6px; margin-bottom: 6px;">REGISTRO (1826)</div>
-          <div style="font-family: serif; font-size: 14px; font-style: italic; color: #b0bec5; line-height: 1.4;">` + frag.officialText + `</div>
-          <div style="font-family: 'Comic Sans MS', cursive, sans-serif; font-size: 16px; font-weight: bold; color: #e74c3c; line-height: 1.3; margin: 8px 0;">` + frag.minerScrawl + `</div>
-          <div style="font-family: sans-serif; font-size: 12px; color: #00e5ff; background: rgba(0, 229, 255, 0.1); padding: 6px; border-radius: 4px; border: 1px solid rgba(0, 229, 255, 0.3);">` + frag.popupTip + `</div>
+          <div style="font-family: monospace; font-weight: bold; color: #f39c12; font-size: 14px; border-bottom: 1px solid rgba(197, 155, 39, 0.4); padding-bottom: 6px; margin-bottom: 6px;">${headerTitle}</div>
+          <div style="font-family: serif; font-size: 14px; font-style: italic; color: #b0bec5; line-height: 1.4;">${official}</div>
+          <div style="font-family: 'Comic Sans MS', cursive, sans-serif; font-size: 16px; font-weight: bold; color: #e74c3c; line-height: 1.3; margin: 8px 0;">${scrawl}</div>
+          <div style="font-family: sans-serif; font-size: 12px; color: #00e5ff; background: rgba(0, 229, 255, 0.1); padding: 6px; border-radius: 4px; border: 1px solid rgba(0, 229, 255, 0.3);">${tip}</div>
         `;
         container.appendChild(div);
       });
     }
 
-    // Script de Menus
+    function closeLoreGallery() {
+      const gm = document.getElementById('gallery-menu');
+      if (gm) {
+        gm.style.display = 'none';
+        gm.classList.add('hidden');
+      }
+      if (_loreOpenedFromOptions) {
+        const optMenu = document.getElementById('options-menu');
+        if (optMenu) optMenu.classList.remove('hidden');
+      } else {
+        if (_lorePausedGame && window.game) {
+          window.game.isPaused = false;
+        }
+      }
+    }
+
+    window.openLoreGallery = openLoreGallery;
+    window.closeLoreGallery = closeLoreGallery;
+
+    // Script de Menus & Localização (PT / EN)
     const i18n = {
       'pt': {
           'menu-start': 'Iniciar Jogo',
@@ -13996,6 +14858,7 @@
           'ingame-bossroom': 'SALA DO CHEFE',
           'ingame-miniboss': 'ARENA DO RIVAL',
           'ingame-puzzle': 'CÂMARA DE DESAFIO',
+          'ingame-keychamber': 'CÂMARA DO CARTÃO',
           'ingame-secret': 'ANDAR SECRETO',
           'ingame-inventor': 'INVENTOR',
           'ingame-armoryfree': 'ARSENAL (LIVRE)',
@@ -14035,6 +14898,7 @@
           'armory-boots-desc': 'Permite dar Dash (Aperte SHIFT ou Botão Mobile). Custo: 1 CC. Superaquece por 5s.',
           'armory-bag-name': 'Bolsa Expandida',
           'armory-bag-desc': 'Carrega mais bombas e permite trocar de tipo.',
+          'item-rare-badge': '★ ITEM RARO COLETADO ★',
           'item-piston-title': 'PISTÃO HIDRÁULICO',
           'item-piston-desc': 'Componente de alta compressão forjado nos fornos a vapor da Mina. Essencial para aprimorar a Manopla Mecânica!',
           'item-piston-hint': 'Envie este item ao Baú através de uma GOELA para desbloquear seu uso na Oficina!',
@@ -14064,7 +14928,130 @@
           'tutorial-dont-show': 'Não mostrar novamente ao iniciar',
           'tutorial-confirm': 'ENTENDIDO! JOGAR',
           'hud-help': 'Ajuda',
+          'hud-help-tooltip': 'Como Jogar / Tutorial de Bombas',
           'hud-mobile-guide': '👆 <b>Direcione e Solte</b> para Lançar Bomba',
+          'hud-lives': 'Vidas',
+          'hud-lives-upper': 'VIDAS',
+          'hud-lives-tooltip': 'Vidas de Charlotte',
+          'hud-heal-tooltip': 'Injetor Vital: Aperte [H] para curar 1 ❤️ | Aperte [V] para sintetizar frasco (+1 Frasco por 2 CC e 1 Peça)',
+          'hud-lantern-tooltip': 'Lampião de Cristal: dissipa a escuridão profunda. Reabasteça com [L] usando CC da bolsa!',
+          'hud-gauntlet-tooltip': 'Manopla Mecânica: aumenta o alcance de arremesso',
+          'hud-cc-tooltip': 'Cristal Coal coletado na bolsa',
+          'hud-part-tooltip': 'Peças Mecânicas na bolsa',
+          'hud-boss-tooltip': 'Invocar Chefe Final (Autômato Titânico) [Tecla B]',
+          'hud-final-boss': 'Chefe Final',
+          'hud-test-b': 'TESTAR [B]',
+          'hud-piston-title': 'PISTÃO HIDRÁULICO',
+          'hud-piston-sub': 'LEVE ATÉ A GOELA ➔',
+          'hud-guide-move': '<kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> Mover',
+          'hud-guide-throw': '🖱️ <b>Clique & Solte</b>: Lançar Bomba',
+          'hud-guide-bombs': '<kbd>1</kbd> Imp | <kbd>2</kbd> Prop | <kbd>3</kbd> Temp',
+          'hud-guide-dash': '<kbd>SHIFT</kbd> Dash (1 CC)',
+          'hud-guide-crystal': '<kbd>C</kbd> Armar Cristal (1 CC)',
+          'hud-guide-heal': '<kbd>H</kbd> Curar (1 ❤️) | <kbd>V</kbd> Sintetizar (100%)',
+          'btn-crystal': 'CRISTAL',
+          'btn-crystal-tooltip': 'Arremessar Cristal Coal da Bolsa [Tecla C]',
+          'btn-buy': 'Comprar',
+          'btn-bought': 'Comprado ✓',
+          'btn-full': 'Cheio (2/2) ✓',
+          'btn-synthesize': 'Sintetizar (100%)',
+          'btn-close': 'Sair',
+          'btn-back': 'Voltar',
+          'lore-found-header': '📜 REGISTRO ENCONTRADO (1826)',
+          'gallery-title': 'Galeria de Registros',
+          'gallery-empty': 'Nenhum registro encontrado ainda. Explore os mapas!',
+          'gallery-record': 'REGISTRO (1826)',
+          'hud-journal-label': 'Diário',
+          'hud-journal-tooltip': 'Diário de Bordo / Panfletos de 1826',
+          'death-title': 'TEMPO REBOBINADO',
+          'death-sub': 'Charlotte sofreu colapso temporal! O fluxo foi revertido para a Safe Room.',
+          'death-stat-time': 'TEMPO SOBREVIVIDO',
+          'death-stat-kills': 'AUTÔMATOS ELIMINADOS',
+          'death-stat-cc': 'CRISTAL COAL MINERADO',
+          'death-btn-dismiss': 'Continuar Linha Temporal [Espaço]',
+          'btn-gallery-in-game': '📜 Diário de Bordo / Panfletos (1826)',
+          'boss-master-title': 'CHEFE MESTRE',
+          'boss-rival-title': 'ENGENHEIRO RIVAL',
+          'boss-titanic-phase1': 'AUTÔMATO TITÂNICO',
+          'boss-titanic-phase2': 'AUTÔMATO TITÂNICO (FÚRIA)',
+          'boss-shield-active': '🛡️ ESCUDO ATIVO',
+          'enemy-armored': '🛡️ BLINDADO',
+          'dialog-inventor-freed': 'INVENTOR: "Pelos pistões sagrados! Você me salvou dessa jaula eletrostática! Pegue este Pistão Hidráulico como agradecimento... Charlotte, vou me abrigar na Safe Room do Nível 1. Me encontre lá se sobreviver!"',
+          'dialog-rescue-1': 'CHARLOTTE: "Você está livre! O que é essa engenhoca na sua mão?"',
+          'dialog-rescue-2': 'INVENTOR: "É um Pistão Hidráulico de alta pressão! Se você levá-lo até a Goela verde, ele irá para o seu baú seguro."',
+          'dialog-rescue-3': 'CHARLOTTE: "Entendido! E para onde você vai agora?"',
+          'dialog-rescue-4': 'INVENTOR: "Vou recuar para a Safe Room do Nível 1. Quando voltar lá, fale comigo para aprimorar suas bombas e forjar sua manopla!"',
+          'dialog-inventor-hint': 'INVENTOR PRESO: "Socorro! Três fontes de energia alimentam os geradores desta câmara. Destrua-as com suas bombas para desativar o campo!"',
+          'dialog-sign': 'PLACA: "Fui almoçar. Volto logo!"',
+          'dialog-inventor-saferoom': 'INVENTOR: "Como agradecimento pelo resgate, instalei o Injetor Vital em sua manopla! Use [H] para curar 1 ❤️ e [V] para sintetizar (2 CC + 1 Peça)."',
+          'toast-injector-received': '💉 INJETOR VITAL RECEBIDO!',
+          'toast-inv-already-lantern': 'INVENTOR: "Você já tem o Lampião!"',
+          'toast-inv-lantern-bought': 'INVENTOR: "Lampião de Cristal pronto! Lá embaixo é breu total... Alimente-o com CC da mochila [L]."',
+          'toast-inv-need-lantern': 'INVENTOR: "Você precisa de 20 CC e 15 PEÇAS para o Lampião..."',
+          'toast-inv-already-bomb': 'INVENTOR: "Você já tem essa bomba!"',
+          'toast-inv-impact-bought': 'INVENTOR: "Aqui está! Bomba de Impacto instalada na sua bolsa!"',
+          'toast-inv-vortex-bought': 'INVENTOR: "Singularidade calibrada! Bomba de Vórtice pronta!"',
+          'toast-inv-need-currency': 'INVENTOR: "Você precisa de {cc} CC e {parts} PEÇAS para isso..."',
+          'inv-shop-title': 'Loja do Inventor',
+          'inv-shop-coins-text': 'Você tem:',
+          'inv-shop-parts-text': 'PEÇAS',
+          'inv-tab-bombs': '💣 Bomba',
+          'inv-tab-equip': '⚙️ Equipamentos',
+          'inv-title-impact': '💥 Bomba de Impacto',
+          'inv-desc-impact': 'Explode no impacto com paredes ou inimigos. Libera slot de Impacto na bolsa.',
+          'inv-title-vortex': '🌀 Bomba de Vórtice',
+          'inv-desc-vortex': 'Cria sucção gravitacional: atrai autômatos e estilhaços. Esmaga no centro com dano devastador!',
+          'inv-title-heal': '💉 Tônico Vital (Síntese)',
+          'inv-desc-heal': 'Sintetiza 1 frasco de cura (armazena até 2). No Inventor a taxa de sucesso é 100% garantida e utiliza recursos da mochila e do Baú (no campo tem 30% e usa apenas da mochila).',
+          'inv-title-lantern': '🏮 Lampião de Cristal',
+          'inv-desc-lantern': 'Ilumina a escuridão do Nível 3+ (sem ele, a visão fica limitada a 1 bloco). Visão máxima de 10 blocos, reduzindo para 5 blocos em 50% e até 1 bloco quando desliga. Abasteça com CC da mochila [L] (1 CC = +20%).',
+          'inv-vortex-acquired': 'Bomba de Vórtice Adquirida!',
+          'inv-cost-vortex-text': 'Custo: 25 CC | 20 PEÇAS',
+          'inv-cost-impact-text': 'Custo: 15 CC | 10 PEÇAS',
+          'inv-cost-lantern-text': 'Custo: 20 CC | 15 PEÇAS',
+          'inv-stock-label': 'Estoque',
+          'inv-cost-label': 'Custo',
+          'inv-backpack-vault': 'Mochila + Baú',
+          'vault-title': 'Baú de Armazenamento',
+          'vault-subtitle': 'Itens e Recursos Salvos na Safe Room',
+          'vault-cc-label': '💎 Cristal Coal:',
+          'vault-parts-label': '⚙️ Peças Mecânicas:',
+          'vault-store-all': '📥 Guardar Tudo',
+          'vault-grid-title': 'Grade de Itens Armazenados',
+          'vault-item-singular': 'Item',
+          'vault-item-plural': 'Itens',
+          'vault-empty-title': '📭 Baú Vazio',
+          'vault-empty-desc': 'Nenhum recurso depositado ainda. Pise nas Goelas durante a expedição para enviar recursos ao baú!',
+          'vault-inspect-empty': 'Passe o cursor ou toque em um item para inspecionar seus detalhes.',
+          'vault-inspect-none': '📭 Nenhum item selecionado',
+          'vault-qty-label': 'Quantidade',
+          'vault-parts-unit': 'Peças',
+          'vault-in-backpack': 'Na mochila',
+          'toast-blackout': '⚡ APAGÃO TOTAL! Sala sem energia — portões destravados.',
+          'toast-lockdown-emergency': '🚨 LOCKDOWN DE EMERGÊNCIA! Elimine os autômatos!',
+          'toast-rival-defeated': 'RIVAL DERROTADO! ARENA LIBERADA!',
+          'toast-boss-defeated': 'CHEFE MESTRE DERROTADO!',
+          'toast-titanic-spawned': '⚠️ AUTÔMATO TITÂNICO INVOCADO!',
+          'toast-no-lantern-warning': '🏮 Sem Lampião de Cristal... lá embaixo você mal enxergará um palmo à frente!',
+          'toast-keycard-obtained': '🔑 CARTÃO DE ACESSO DO BOSS!',
+          'toast-heal-no-injector': 'Você ainda não possui o Injetor Vital do Inventor!',
+          'toast-heal-max': 'Capacidade máxima de cura atingida! ({cur}/{max})',
+          'toast-heal-inv-need-cc': 'CC INSUFICIENTE! A síntese no Inventor requer {cost} CC (Mochila + Baú: {total} CC)',
+          'toast-heal-inv-need-parts': 'PEÇAS INSUFICIENTES! A síntese no Inventor requer {cost} PEÇA (Mochila + Baú: {total} P)',
+          'toast-heal-field-need-cc': 'CC INSUFICIENTE NA MOCHILA! No campo, a síntese requer {cost} CC na mochila (não usa do Baú). Você tem: {cur} CC',
+          'toast-heal-field-need-parts': 'PEÇAS INSUFICIENTES NA MOCHILA! No campo, a síntese requer {cost} PEÇA na mochila (não usa do Baú). Você tem: {cur} P',
+          'toast-heal-inv-success': 'INVENTOR: "Tônico Vital sintetizado com 100% de sucesso! ({cur}/{max})"',
+          'toast-heal-field-success': 'TÔNICO VITAL SINTETIZADO COM SUCESSO! (30% de chance) ({cur}/{max}) - Pressione [H] para curar 1 ❤️',
+          'toast-heal-field-fail': 'FALHA NA SÍNTESE! Os materiais instáveis evaporaram (Taxa de acerto de Charlotte no campo: 30%). No Inventor é 100%!',
+          'toast-heal-no-flasks': 'Sem tônicos de cura! Pressione [V] para sintetizar (2 CC + 1 Peça).',
+          'toast-heal-full-hp': 'Vida cheia! ({hp}/{max} ❤️) - Não é necessário curar agora.',
+          'toast-heal-used': 'Tônico Vital utilizado (+1 ❤️)! Restam: {cur}/{max}',
+          'toast-dash-ready': 'BOTAS RESFRIADAS! DASH DISPONÍVEL',
+          'toast-dash-locked': 'BOTAS BLOQUEADAS! COMPRE NO ARSENAL',
+          'toast-dash-overheat': 'BOTAS SUPERAQUECIDAS! RESFRIANDO ({sec}s)',
+          'toast-dash-no-cc': 'SEM CRISTAL COAL! DASH CUSTA 1 CC',
+          'toast-crystal-planted': 'CRISTAL ARMADO NO CHÃO! ([C] / Detone com Impacto ou Vórtice)',
+          'toast-no-crystal': 'SEM CRISTAL COAL NA BOLSA! (Quebre caixas de minério)',
           'ending-question': 'O que será que aconteceu com Charlotte?',
           'ending-continue': 'Continua...',
           'ending-skip': 'Pular [ESC] ⏭'
@@ -14100,12 +15087,13 @@
           'ingame-bossroom': 'BOSS ROOM',
           'ingame-miniboss': 'RIVAL ARENA',
           'ingame-puzzle': 'CHALLENGE CHAMBER',
+          'ingame-keychamber': 'KEYCARD CHAMBER',
           'ingame-secret': 'SECRET FLOOR',
           'ingame-inventor': 'INVENTOR',
           'ingame-armoryfree': 'ARMORY (FREE)',
           'ingame-cost': 'COST:',
           'ingame-chests': 'CHESTS:',
-          'ingame-goela': 'GOELA',
+          'ingame-goela': 'CHUTE',
           'ingame-protocol': 'SECURITY PROTOCOL ACTIVE!',
           'ingame-duel': 'DUEL! DEFEAT THE RIVAL ENGINEER!',
           'ingame-bossfight': 'FINAL SHOWDOWN! MASTER BOSS!',
@@ -14139,9 +15127,10 @@
           'armory-boots-desc': 'Allows Dashing (Press SHIFT or Mobile Button). Cost: 1 CC. Overheats for 5s.',
           'armory-bag-name': 'Expanded Bag',
           'armory-bag-desc': 'Carry more bombs and swap types.',
+          'item-rare-badge': '★ RARE ITEM COLLECTED ★',
           'item-piston-title': 'HYDRAULIC PISTON',
           'item-piston-desc': 'High compression component forged in the Mine steam furnaces. Essential to upgrade the Mechanical Gauntlet!',
-          'item-piston-hint': 'Send this item to the Vault via a GOELA chute to unlock its use in the Armory!',
+          'item-piston-hint': 'Send this item to the Vault via a CHUTE to unlock its use in the Armory!',
           'item-piston-deposited': 'HYDRAULIC PISTON SAFELY SENT TO THE VAULT!',
           'menu-tutorial': 'How to Play',
           'tutorial-title': 'HOW TO THROW BOMBS',
@@ -14168,14 +15157,147 @@
           'tutorial-dont-show': "Don't show again on start",
           'tutorial-confirm': 'GOT IT! PLAY',
           'hud-help': 'Help',
+          'hud-help-tooltip': 'How to Play / Bomb Tutorial',
           'hud-mobile-guide': '👆 <b>Aim and Release</b> to Throw Bomb',
+          'hud-lives': 'Lives',
+          'hud-lives-upper': 'LIVES',
+          'hud-lives-tooltip': "Charlotte's Lives",
+          'hud-heal-tooltip': 'Vital Injector: Press [H] to heal 1 ❤️ | Press [V] to synthesize flask (+1 Flask for 2 CC & 1 Part)',
+          'hud-lantern-tooltip': 'Crystal Lantern: dispels deep darkness. Refuel with [L] using CC from bag!',
+          'hud-gauntlet-tooltip': 'Mechanical Gauntlet: increases throwing range',
+          'hud-cc-tooltip': 'Crystal Coal gathered in backpack',
+          'hud-part-tooltip': 'Mechanical Parts in backpack',
+          'hud-boss-tooltip': 'Spawn Final Boss (Titanic Automaton) [Key B]',
+          'hud-final-boss': 'Final Boss',
+          'hud-test-b': 'TEST [B]',
+          'hud-piston-title': 'HYDRAULIC PISTON',
+          'hud-piston-sub': 'DELIVER TO CHUTE ➔',
+          'hud-guide-move': '<kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> Move',
+          'hud-guide-throw': '🖱️ <b>Click & Release</b>: Throw Bomb',
+          'hud-guide-bombs': '<kbd>1</kbd> Imp | <kbd>2</kbd> Vortex | <kbd>3</kbd> Timed',
+          'hud-guide-dash': '<kbd>SHIFT</kbd> Dash (1 CC)',
+          'hud-guide-crystal': '<kbd>C</kbd> Plant Crystal (1 CC)',
+          'hud-guide-heal': '<kbd>H</kbd> Heal (1 ❤️) | <kbd>V</kbd> Synthesize (100%)',
+          'btn-crystal': 'CRYSTAL',
+          'btn-crystal-tooltip': 'Throw Crystal Coal from Bag [Key C]',
+          'btn-buy': 'Buy',
+          'btn-bought': 'Bought ✓',
+          'btn-full': 'Full (2/2) ✓',
+          'btn-synthesize': 'Synthesize (100%)',
+          'btn-close': 'Close',
+          'btn-back': 'Back',
+          'lore-found-header': '📜 FIELD LOG DISCOVERED (1826)',
+          'gallery-title': 'Field Log Gallery',
+          'gallery-empty': 'No lore fragments found yet. Explore the deep mines!',
+          'gallery-record': 'FIELD LOG (1826)',
+          'hud-journal-label': 'Journal',
+          'hud-journal-tooltip': 'Logbook / 1826 Historical Pamphlets',
+          'death-title': 'TIME REWOUND',
+          'death-sub': 'Charlotte suffered a temporal collapse! Time has flowed back to the Safe Room.',
+          'death-stat-time': 'TIME SURVIVED',
+          'death-stat-kills': 'AUTOMATA DESTROYED',
+          'death-stat-cc': 'CRYSTAL COAL MINED',
+          'death-btn-dismiss': 'Continue Timeline [Space]',
+          'btn-gallery-in-game': '📜 Logbook / Field Pamphlets (1826)',
+          'boss-master-title': 'MASTER BOSS',
+          'boss-rival-title': 'RIVAL ENGINEER',
+          'boss-titanic-phase1': 'TITANIC AUTOMATON',
+          'boss-titanic-phase2': 'TITANIC AUTOMATON (ENRAGED)',
+          'boss-shield-active': '🛡️ SHIELD ACTIVE',
+          'enemy-armored': '🛡️ ARMORED',
+          'dialog-inventor-freed': 'INVENTOR: "By the sacred pistons! You saved me from this electrostatic cage! Take this Hydraulic Piston as my gratitude... Charlotte, I will take shelter in the Safe Room at Level 1. Meet me there if you survive!"',
+          'dialog-rescue-1': 'CHARLOTTE: "You are free! What is that contraption in your hand?"',
+          'dialog-rescue-2': 'INVENTOR: "It is a high-pressure Hydraulic Piston! If you carry it to the green Chute, it will be sent to your safe vault."',
+          'dialog-rescue-3': 'CHARLOTTE: "Understood! And where are you heading now?"',
+          'dialog-rescue-4': 'INVENTOR: "I will retreat to the Safe Room at Level 1. When you return there, speak with me to upgrade your bombs and forge your gauntlet!"',
+          'dialog-inventor-hint': 'TRAPPED INVENTOR: "Help! Three power sources feed the generators of this chamber. Destroy them with your bombs to disable the field!"',
+          'dialog-sign': 'SIGN: "Out to lunch. Back soon!"',
+          'dialog-inventor-saferoom': 'INVENTOR: "As thanks for the rescue, I installed the Vital Injector into your gauntlet! Use [H] to heal 1 ❤️ and [V] to synthesize (2 CC + 1 Part)."',
+          'toast-injector-received': '💉 VITAL INJECTOR RECEIVED!',
+          'toast-inv-already-lantern': 'INVENTOR: "You already have the Lantern!"',
+          'toast-inv-lantern-bought': 'INVENTOR: "Crystal Lantern ready! It is pitch black down there... Refuel it with CC from your bag [L]."',
+          'toast-inv-need-lantern': 'INVENTOR: "You need 20 CC and 15 PARTS for the Lantern..."',
+          'toast-inv-already-bomb': 'INVENTOR: "You already have that bomb!"',
+          'toast-inv-impact-bought': 'INVENTOR: "Here you go! Impact Bomb fitted into your pouch!"',
+          'toast-inv-vortex-bought': 'INVENTOR: "Singularity calibrated! Vortex Bomb ready!"',
+          'toast-inv-need-currency': 'INVENTOR: "You need {cc} CC and {parts} PARTS for that..."',
+          'inv-shop-title': "Inventor's Workshop",
+          'inv-shop-coins-text': 'You have:',
+          'inv-shop-parts-text': 'PARTS',
+          'inv-tab-bombs': '💣 Bombs',
+          'inv-tab-equip': '⚙️ Equipment',
+          'inv-title-impact': '💥 Impact Bomb',
+          'inv-desc-impact': 'Detonates instantly upon impact with walls or enemies. Unlocks Impact slot in bag.',
+          'inv-title-vortex': '🌀 Vortex Bomb',
+          'inv-desc-vortex': 'Creates gravitational suction: pulls automatons and debris to epicenter. Crushes them with devastating force!',
+          'inv-title-heal': '💉 Vital Tonic (Synthesis)',
+          'inv-desc-heal': 'Synthesizes 1 healing flask (holds up to 2). At the Inventor success is 100% guaranteed using resources from backpack and Vault (in the field it has 30% and uses only backpack).',
+          'inv-title-lantern': '🏮 Crystal Lantern',
+          'inv-desc-lantern': 'Illuminates Level 3+ darkness (without it, visibility is limited to 1 tile). Max vision of 10 tiles, dropping to 5 at 50% and 1 when unlit. Refuel with bag CC [L] (1 CC = +20%).',
+          'inv-vortex-acquired': 'Vortex Bomb Acquired!',
+          'inv-cost-vortex-text': 'Cost: 25 CC | 20 PARTS',
+          'inv-cost-impact-text': 'Cost: 15 CC | 10 PARTS',
+          'inv-cost-lantern-text': 'Cost: 20 CC | 15 PARTS',
+          'inv-stock-label': 'Stock',
+          'inv-cost-label': 'Cost',
+          'inv-backpack-vault': 'Backpack + Vault',
+          'vault-title': 'Storage Vault',
+          'vault-subtitle': 'Items & Resources Stored in Safe Room',
+          'vault-cc-label': '💎 Crystal Coal:',
+          'vault-parts-label': '⚙️ Mechanical Parts:',
+          'vault-store-all': '📥 Store All',
+          'vault-grid-title': 'Stored Items Vault',
+          'vault-item-singular': 'Item',
+          'vault-item-plural': 'Items',
+          'vault-empty-title': '📭 Empty Vault',
+          'vault-empty-desc': 'No resources deposited yet. Step on Chutes during the expedition to send items to the vault!',
+          'vault-inspect-empty': 'Hover or tap an item to inspect its details.',
+          'vault-inspect-none': '📭 No item selected',
+          'vault-qty-label': 'Quantity',
+          'vault-parts-unit': 'Parts',
+          'vault-in-backpack': 'In backpack',
+          'toast-blackout': '⚡ TOTAL BLACKOUT! Room depowered — gates unlocked.',
+          'toast-lockdown-emergency': '🚨 EMERGENCY LOCKDOWN! Eliminate the automatons!',
+          'toast-rival-defeated': 'RIVAL DEFEATED! ARENA CLEARED!',
+          'toast-boss-defeated': 'MASTER BOSS DEFEATED!',
+          'toast-titanic-spawned': '⚠️ TITANIC AUTOMATON SUMMONED!',
+          'toast-no-lantern-warning': '🏮 Without a Crystal Lantern... you will barely see a single tile ahead down there!',
+          'toast-keycard-obtained': '🔑 BOSS ACCESS KEYCARD!',
+          'toast-heal-no-injector': 'You do not have the Inventor\'s Vital Injector yet!',
+          'toast-heal-max': 'Maximum healing capacity reached! ({cur}/{max})',
+          'toast-heal-inv-need-cc': 'INSUFFICIENT CC! Synthesizing at the Inventor requires {cost} CC (Backpack + Vault: {total} CC)',
+          'toast-heal-inv-need-parts': 'INSUFFICIENT PARTS! Synthesizing at the Inventor requires {cost} PART (Backpack + Vault: {total} P)',
+          'toast-heal-field-need-cc': 'INSUFFICIENT CC IN BACKPACK! In the field, synthesis requires {cost} CC in bag (does not use Vault). You have: {cur} CC',
+          'toast-heal-field-need-parts': 'INSUFFICIENT PARTS IN BACKPACK! In the field, synthesis requires {cost} PART in bag (does not use Vault). You have: {cur} P',
+          'toast-heal-inv-success': 'INVENTOR: "Vital Tonic synthesized with 100% success! ({cur}/{max})"',
+          'toast-heal-field-success': 'VITAL TONIC SYNTHESIZED SUCCESSFULLY! (30% chance) ({cur}/{max}) - Press [H] to heal 1 ❤️',
+          'toast-heal-field-fail': 'SYNTHESIS FAILED! Volatile materials evaporated (Charlotte field rate: 30%). At Inventor it is 100%!',
+          'toast-heal-no-flasks': 'Out of healing tonics! Press [V] to synthesize (2 CC + 1 Part).',
+          'toast-heal-full-hp': 'Full health! ({hp}/{max} ❤️) - No need to heal now.',
+          'toast-heal-used': 'Vital Tonic used (+1 ❤️)! Remaining: {cur}/{max}',
+          'toast-dash-ready': 'BOOTS COOLED! DASH READY',
+          'toast-dash-locked': 'BOOTS LOCKED! PURCHASE AT ARMORY',
+          'toast-dash-overheat': 'BOOTS OVERHEATING! COOLING DOWN ({sec}s)',
+          'toast-dash-no-cc': 'NO CRYSTAL COAL! DASH COSTS 1 CC',
+          'toast-crystal-planted': 'CRYSTAL PLANTED ON GROUND! ([C] / Detonate with Impact or Vortex)',
+          'toast-no-crystal': 'NO CRYSTAL COAL IN BAG! (Break ore crates)',
           'ending-question': 'What could have happened to Charlotte?',
           'ending-continue': 'To be continued...',
           'ending-skip': 'Skip [ESC] ⏭'
       }
     };
+
     let currentLang = 'pt';
-    window.t = function(key) { return i18n[currentLang][key] || key; };
+    window.getCurrentLang = function() { return currentLang; };
+    window.t = function(key) {
+      if (i18n[currentLang] && i18n[currentLang][key] !== undefined) {
+        return i18n[currentLang][key];
+      }
+      if (i18n['pt'] && i18n['pt'][key] !== undefined) {
+        return i18n['pt'][key];
+      }
+      return key;
+    };
 
     function updateLanguage(lang) {
       currentLang = lang;
@@ -14186,51 +15308,56 @@
       const endSkip = document.getElementById('btn-skip-credits');
       if (endSkip) endSkip.innerText = window.t('ending-skip');
       
-      document.getElementById('btn-start').innerText = window.t('menu-start');
+      const btnStart = document.getElementById('btn-start');
+      if (btnStart) btnStart.innerText = window.t('menu-start');
       const btnContinue = document.getElementById('btn-continue');
       if (btnContinue) btnContinue.innerText = window.t('menu-continue');
-      document.getElementById('btn-options').innerText = window.t('menu-options');
+      const btnOptions = document.getElementById('btn-options');
+      if (btnOptions) btnOptions.innerText = window.t('menu-options');
       const btnExit = document.getElementById('btn-exit');
       if (btnExit) btnExit.innerText = window.t('menu-exit');
       
       const optTitle = document.querySelector('#options-menu .menu-title');
-      if(optTitle) optTitle.innerText = window.t('opt-title');
+      if (optTitle) optTitle.innerText = window.t('opt-title');
       
       const lblMusic = document.querySelector('label[for="music-vol"]');
-      if(lblMusic) {
-          const val = document.getElementById('music-vol-val').innerText;
+      if (lblMusic) {
+          const valEl = document.getElementById('music-vol-val');
+          const val = valEl ? valEl.innerText : '100';
           lblMusic.innerHTML = window.t('opt-music') + ' (<span id="music-vol-val">' + val + '</span>%)';
       }
       
       const lblSfx = document.querySelector('label[for="sfx-vol"]');
-      if(lblSfx) {
-          const val = document.getElementById('sfx-vol-val').innerText;
+      if (lblSfx) {
+          const valEl = document.getElementById('sfx-vol-val');
+          const val = valEl ? valEl.innerText : '100';
           lblSfx.innerHTML = window.t('opt-sfx') + ' (<span id="sfx-vol-val">' + val + '</span>%)';
       }
       
       const lblShake = document.querySelector('label[for="screen-shake"]');
-      if(lblShake) lblShake.innerText = window.t('opt-shake');
+      if (lblShake) lblShake.innerText = window.t('opt-shake');
       
       const lblFull = document.querySelector('label[for="fullscreen-toggle"]');
-      if(lblFull) lblFull.innerText = window.t('opt-full');
+      if (lblFull) lblFull.innerText = window.t('opt-full');
       
       const lblCrt = document.querySelector('label[for="crt-effect"]');
-      if(lblCrt) lblCrt.innerText = window.t('opt-crt');
+      if (lblCrt) lblCrt.innerText = window.t('opt-crt');
       
       const lblFps = document.querySelector('label[for="show-fps"]');
-      if(lblFps) lblFps.innerText = window.t('opt-fps');
+      if (lblFps) lblFps.innerText = window.t('opt-fps');
       
       const lblAim = document.querySelector('label[for="aim-sens"]');
-      if(lblAim) {
-          const val = document.getElementById('aim-sens-val').innerText;
+      if (lblAim) {
+          const valEl = document.getElementById('aim-sens-val');
+          const val = valEl ? valEl.innerText : '50';
           lblAim.innerHTML = window.t('opt-aim') + ' (<span id="aim-sens-val">' + val + '</span>%)';
       }
       
       const lblLang = document.querySelector('label[for="language-select"]');
-      if(lblLang) lblLang.innerText = window.t('opt-lang');
+      if (lblLang) lblLang.innerText = window.t('opt-lang');
       
       const btnBack = document.getElementById('btn-back-menu');
-      if(btnBack) {
+      if (btnBack) {
           if (btnBack.innerText === 'Continuar' || btnBack.innerText === 'Continue') {
               btnBack.innerText = window.t('opt-cont');
           } else {
@@ -14238,11 +15365,153 @@
           }
       }
 
-      if (window.game) { window.game.updateHUD(); window.game.updateArmoryUI(); }
+      // Galeria e Lore Header
+      const galleryTitle = document.querySelector('#gallery-menu .menu-title');
+      if (galleryTitle) galleryTitle.innerText = window.t('gallery-title');
+      const galleryBackBtn = document.querySelector('#gallery-menu .menu-btn');
+      if (galleryBackBtn) galleryBackBtn.innerText = window.t('btn-back');
+      const lorePanelHeader = document.getElementById('lore-panel-header');
+      if (lorePanelHeader) lorePanelHeader.innerText = window.t('lore-found-header');
+      const btnCloseLore = document.getElementById('btn-close-lore');
+      if (btnCloseLore) btnCloseLore.innerText = window.t('btn-close');
+
+      // HUD Badges Tooltips & Elements
+      const healthBadge = document.querySelector('#health-badge .hud-badge-label');
+      if (healthBadge) healthBadge.textContent = window.t('hud-lives');
+      const healthBadgeWrapper = document.getElementById('health-badge');
+      if (healthBadgeWrapper) healthBadgeWrapper.title = window.t('hud-lives-tooltip');
+
+      const gauntletBadge = document.querySelector('#gauntlet-badge .hud-badge-label');
+      if (gauntletBadge) gauntletBadge.textContent = window.t('ingame-gauntlet');
+      const gauntletBadgeWrapper = document.getElementById('gauntlet-badge');
+      if (gauntletBadgeWrapper) gauntletBadgeWrapper.title = window.t('hud-gauntlet-tooltip');
+
+      const healBadgeLabel = document.getElementById('heal-badge-label');
+      if (healBadgeLabel) healBadgeLabel.textContent = window.t('ingame-heal');
+      const healBadgeWrapper = document.getElementById('heal-badge');
+      if (healBadgeWrapper) healBadgeWrapper.title = window.t('hud-heal-tooltip');
+
+      const lanternBadge = document.getElementById('lantern-badge');
+      if (lanternBadge) lanternBadge.title = window.t('hud-lantern-tooltip');
+
+      const ccBadge = document.querySelector('#cc-badge .hud-badge-label');
+      if (ccBadge) ccBadge.textContent = window.t('ingame-cc');
+      const ccBadgeWrapper = document.getElementById('cc-badge');
+      if (ccBadgeWrapper) ccBadgeWrapper.title = window.t('hud-cc-tooltip');
+
+      const partBadge = document.querySelector('#part-badge .hud-badge-label');
+      if (partBadge) partBadge.textContent = window.t('ingame-parts');
+      const partBadgeWrapper = document.getElementById('part-badge');
+      if (partBadgeWrapper) partBadgeWrapper.title = window.t('hud-part-tooltip');
+
+      const pistonTitle = document.getElementById('piston-badge-title');
+      if (pistonTitle) pistonTitle.innerText = window.t('hud-piston-title');
+      const pistonSub = document.getElementById('piston-badge-sub');
+      if (pistonSub) pistonSub.innerText = window.t('hud-piston-sub');
+
+      const mapBadge = document.querySelector('.minimap-badge-label');
+      if (mapBadge) mapBadge.textContent = window.t('ingame-map');
+
+      // Desktop Guide Keys
+      const guideMove = document.getElementById('guide-move');
+      if (guideMove) guideMove.innerHTML = window.t('hud-guide-move');
+      const guideThrow = document.getElementById('desktop-guide-throw');
+      if (guideThrow) guideThrow.innerHTML = window.t('hud-guide-throw');
+      const guideBombs = document.getElementById('guide-bombs');
+      if (guideBombs) guideBombs.innerHTML = window.t('hud-guide-bombs');
+      const guideDash = document.getElementById('guide-dash');
+      if (guideDash) guideDash.innerHTML = window.t('hud-guide-dash');
+      const guideCrystal = document.getElementById('guide-crystal');
+      if (guideCrystal) guideCrystal.innerHTML = window.t('hud-guide-crystal');
+      const guideHeal = document.getElementById('guide-heal');
+      if (guideHeal) guideHeal.innerHTML = window.t('hud-guide-heal');
+
+      // Mobile Buttons
+      const btnDropCrystalText = document.getElementById('btn-drop-crystal-text');
+      if (btnDropCrystalText) btnDropCrystalText.innerText = window.t('btn-crystal');
+      const btnDropCrystal = document.getElementById('btn-drop-crystal');
+      if (btnDropCrystal) btnDropCrystal.title = window.t('btn-crystal-tooltip');
+
+      const hudHelpBtn = document.getElementById('hud-help-btn');
+      if (hudHelpBtn) hudHelpBtn.title = window.t('hud-help-tooltip');
+      const hudHelpLabel = document.getElementById('hud-help-label');
+      if (hudHelpLabel) hudHelpLabel.innerText = window.t('hud-help');
+
+      const hudBossBtn = document.getElementById('hud-boss-btn');
+      if (hudBossBtn) {
+        hudBossBtn.title = window.t('hud-boss-tooltip');
+        const bLabel = hudBossBtn.querySelector('.hud-badge-label');
+        if (bLabel) bLabel.innerText = window.t('hud-final-boss');
+        const bVal = hudBossBtn.querySelector('.hud-badge-value');
+        if (bVal) bVal.innerText = window.t('hud-test-b');
+      }
+
+      // Item Collected Modal
+      const colBadge = document.getElementById('collected-item-badge');
+      if (colBadge) colBadge.innerText = window.t('item-rare-badge');
+      const colTitle = document.getElementById('collected-item-title');
+      if (colTitle) colTitle.innerText = window.t('item-piston-title');
+      const colDesc = document.getElementById('collected-item-desc');
+      if (colDesc) colDesc.innerText = window.t('item-piston-desc');
+      const colHint = document.getElementById('collected-item-hint');
+      if (colHint) colHint.innerHTML = '📦 ' + window.t('item-piston-hint');
+      const colBtn = document.getElementById('btn-close-item-modal');
+      if (colBtn) colBtn.innerText = window.t('menu-continue');
+
+      // Inventor Shop Modal
+      const invTitle = document.getElementById('inv-shop-title');
+      if (invTitle) invTitle.innerText = window.t('inv-shop-title');
+      const invCoinsText = document.getElementById('inv-shop-coins-text');
+      if (invCoinsText) invCoinsText.innerText = window.t('inv-shop-coins-text');
+      const invPartsText = document.getElementById('inv-shop-parts-text');
+      if (invPartsText) invPartsText.innerText = window.t('inv-shop-parts-text');
+      const invTabBombs = document.getElementById('inv-tab-bombs');
+      if (invTabBombs) invTabBombs.innerText = window.t('inv-tab-bombs');
+      const invTabEquip = document.getElementById('inv-tab-equip');
+      if (invTabEquip) invTabEquip.innerText = window.t('inv-tab-equip');
+
+      const invTitleImp = document.getElementById('inv-title-impact');
+      if (invTitleImp) invTitleImp.innerText = window.t('inv-title-impact');
+      const invDescImp = document.getElementById('inv-desc-impact');
+      if (invDescImp) invDescImp.innerText = window.t('inv-desc-impact');
+
+      const invTitleVort = document.getElementById('inv-title-vortex');
+      if (invTitleVort) invTitleVort.innerText = window.t('inv-title-vortex');
+      const invDescVort = document.getElementById('inv-desc-vortex');
+      if (invDescVort) invDescVort.innerText = window.t('inv-desc-vortex');
+
+      const invTitleHeal = document.getElementById('inv-title-heal');
+      if (invTitleHeal) invTitleHeal.innerText = window.t('inv-title-heal');
+      const invDescHeal = document.getElementById('inv-desc-heal');
+      if (invDescHeal) invDescHeal.innerText = window.t('inv-desc-heal');
+
+      const invTitleLan = document.getElementById('inv-title-lantern');
+      if (invTitleLan) invTitleLan.innerText = window.t('inv-title-lantern');
+      const invDescLan = document.getElementById('inv-desc-lantern');
+      if (invDescLan) invDescLan.innerText = window.t('inv-desc-lantern');
+
+      const btnCloseInv = document.getElementById('btn-close-inv-shop');
+      if (btnCloseInv) btnCloseInv.innerText = window.t('btn-close');
+
+      // Storage Vault Modal
+      const chestTitle = document.getElementById('chest-modal-title');
+      if (chestTitle) chestTitle.innerText = window.t('vault-title');
+      const chestSub = document.getElementById('chest-modal-subtitle');
+      if (chestSub) chestSub.innerText = window.t('vault-subtitle');
+      const chestCCLbl = document.getElementById('chest-stat-cc-label');
+      if (chestCCLbl) chestCCLbl.innerText = window.t('vault-cc-label');
+      const chestPartsLbl = document.getElementById('chest-stat-parts-label');
+      if (chestPartsLbl) chestPartsLbl.innerText = window.t('vault-parts-label');
+      const btnChestDep = document.getElementById('btn-chest-deposit');
+      if (btnChestDep) btnChestDep.innerText = window.t('vault-store-all');
+      const chestGridTitle = document.getElementById('chest-grid-title');
+      if (chestGridTitle) chestGridTitle.innerText = window.t('vault-grid-title');
+
+      // Armory Modal
       const armoryH2 = document.querySelector('#armory-modal h2');
-      if(armoryH2) armoryH2.innerText = window.t('armory-title');
-      const btnClose = document.querySelector('.btn-close');
-      if(btnClose) btnClose.innerText = window.t('armory-close');
+      if (armoryH2) armoryH2.innerText = window.t('armory-title');
+      const btnCloseArmory = document.querySelector('#armory-modal .btn-close');
+      if (btnCloseArmory) btnCloseArmory.innerText = window.t('armory-close');
 
       const tabBombs = document.getElementById('tab-bombs');
       if (tabBombs) tabBombs.innerText = window.t('armory-tab-bombs');
@@ -14277,25 +15546,20 @@
       const vortexDescEl = document.getElementById('desc-vortexbomb');
       if (vortexDescEl) vortexDescEl.innerText = window.t('armory-vortex-desc');
 
-      if (window.game && typeof window.game.updateArmoryUI === 'function') {
-          window.game.updateArmoryUI();
-      }
-
+      // Loading Screen
       const loadingTitle = document.getElementById('loading-title');
-      if(loadingTitle) loadingTitle.innerText = window.t('loading-title');
-      
+      if (loadingTitle) loadingTitle.innerText = window.t('loading-title');
       const loadingTip = document.getElementById('loading-tip');
-      if(loadingTip) {
+      if (loadingTip) {
           const tipKey = loadingTip.getAttribute('data-tip');
-          if(tipKey) loadingTip.innerText = window.t(tipKey);
+          if (tipKey) loadingTip.innerText = window.t(tipKey);
       }
 
+      // Tutorial Modal Elements
       const btnTut = document.getElementById('btn-tutorial');
       if (btnTut) btnTut.innerText = window.t('menu-tutorial');
       const btnOptTut = document.getElementById('btn-options-tutorial');
       if (btnOptTut) btnOptTut.innerText = window.t('menu-tutorial') + ' (Tutorial)';
-      const hudHelpLabel = document.getElementById('hud-help-label');
-      if (hudHelpLabel) hudHelpLabel.innerText = window.t('hud-help');
       const mobileGuideText = document.getElementById('mobile-guide-text');
       if (mobileGuideText) mobileGuideText.innerHTML = window.t('hud-mobile-guide');
 
@@ -14348,9 +15612,37 @@
       if (tutDontShow) tutDontShow.innerText = window.t('tutorial-dont-show');
       const tutBtnConf = document.getElementById('tut-btn-confirm-text');
       if (tutBtnConf) tutBtnConf.innerText = window.t('tutorial-confirm');
+
+      // Elementos do Diário e Resumo Pós-Morte
+      const hudJournalBtn = document.getElementById('hud-journal-btn');
+      if (hudJournalBtn) hudJournalBtn.title = window.t('hud-journal-tooltip');
+      const hudJournalLabel = document.getElementById('hud-journal-label');
+      if (hudJournalLabel) hudJournalLabel.innerText = window.t('hud-journal-label');
+
+      const deathTitle = document.getElementById('death-summary-title');
+      if (deathTitle) deathTitle.innerText = window.t('death-title');
+      const deathSub = document.getElementById('death-summary-sub');
+      if (deathSub) deathSub.innerText = window.t('death-sub');
+      const lblStatTime = document.getElementById('lbl-stat-time');
+      if (lblStatTime) lblStatTime.innerText = window.t('death-stat-time');
+      const lblStatKills = document.getElementById('lbl-stat-kills');
+      if (lblStatKills) lblStatKills.innerText = window.t('death-stat-kills');
+      const lblStatCC = document.getElementById('lbl-stat-cc');
+      if (lblStatCC) lblStatCC.innerText = window.t('death-stat-cc');
+      const btnDismissDeath = document.getElementById('btn-dismiss-death-summary');
+      if (btnDismissDeath) btnDismissDeath.innerText = window.t('death-btn-dismiss');
+      const btnGalleryInGame = document.getElementById('btn-gallery-in-game');
+      if (btnGalleryInGame) btnGalleryInGame.innerText = window.t('btn-gallery-in-game');
+
+      if (window.game) {
+        if (typeof window.game.updateHUD === 'function') window.game.updateHUD();
+        if (typeof window.game.updateArmoryUI === 'function') window.game.updateArmoryUI();
+        if (typeof window.game.updateInventorShopUI === 'function') window.game.updateInventorShopUI();
+        if (typeof window.game.updateChestUI === 'function') window.game.updateChestUI();
+      }
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', () => {
       const mainMenu = document.getElementById('main-menu');
       const optionsMenu = document.getElementById('options-menu');
       const loadingScreen = document.getElementById('loading-screen');
@@ -14436,8 +15728,34 @@
         }
       });
 
+      // Botão de continuar do Resumo Pós-Morte
+      const btnDismissDeath = document.getElementById('btn-dismiss-death-summary');
+      if (btnDismissDeath) {
+        btnDismissDeath.addEventListener('click', () => {
+          if (window.game && window.game.dismissDeathSummary) {
+            window.game.dismissDeathSummary();
+          }
+        });
+      }
+
       // Pause com ESC e Tecla B para Invocar Boss Final
       document.addEventListener('keydown', (e) => {
+        const deathModal = document.getElementById('death-summary-modal');
+        if (deathModal && !deathModal.classList.contains('hidden') && deathModal.style.display !== 'none') {
+          if (e.key === ' ' || e.key === 'Enter' || e.key === 'Escape') {
+            if (window.game && window.game.dismissDeathSummary) {
+              window.game.dismissDeathSummary();
+              return;
+            }
+          }
+        }
+        const galleryModal = document.getElementById('gallery-menu');
+        if (galleryModal && !galleryModal.classList.contains('hidden') && galleryModal.style.display !== 'none') {
+          if (e.key === 'Escape') {
+            closeLoreGallery();
+            return;
+          }
+        }
         if (e.key === 'b' || e.key === 'B') {
           if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) return;
           if (window.spawnFinalBoss) {
@@ -14454,6 +15772,16 @@
           const chestModal = document.getElementById('chest-modal');
           if (chestModal && chestModal.classList.contains('visible')) {
             if (window.game) window.game.closeChest(true);
+            return;
+          }
+          const invModal = document.getElementById('inventor-shop-modal');
+          if (invModal && invModal.classList.contains('visible')) {
+            if (window.game) window.game.closeInventorShop();
+            return;
+          }
+          const armoryModal = document.getElementById('armory-modal');
+          if (armoryModal && armoryModal.classList.contains('visible')) {
+            if (window.game) window.game.closeArmory();
             return;
           }
           if (window.game) {
@@ -14506,14 +15834,19 @@
       });
 
       if (languageSelect) {
+        try {
+          const savedLang = localStorage.getItem('roguebomb_lang');
+          if (savedLang && (savedLang === 'pt' || savedLang === 'en')) {
+            languageSelect.value = savedLang;
+          }
+        } catch(e) {}
+
         languageSelect.addEventListener('change', (e) => {
+          try { localStorage.setItem('roguebomb_lang', e.target.value); } catch(err) {}
           updateLanguage(e.target.value);
         });
-      }
-      
-      // Initialize with current language to ensure everything matches the select dropdown
-      if (languageSelect) {
-         updateLanguage(languageSelect.value);
+
+        updateLanguage(languageSelect.value);
       }
       
     });
