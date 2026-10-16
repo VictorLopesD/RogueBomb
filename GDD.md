@@ -147,13 +147,20 @@
 - **Conexões Garantidas:** O gerador verifica vizinhos ortogonais imediatos e conecta portas bidirecionalmente entre salas adjacentes existentes.
 
 ### 2.3 Tipos de Sala
-1. **Sala Inicial (Safe Room / Ponto de Partida):**
+1. **Sala Inicial (Safe Room / Câmara de Chegada dos Andares):**
    - Nunca contém inimigos e nunca entra em Lockdown.
-   - Ponto de respawn de Charlotte.
-   - Contém o **NPC Inventor** (`TILE.INVENTOR_NPC` - tile com óculos de proteção).
-   - Contém a **Mesa de Arsenal** (`TILE.ARMORY` - bancada de modificações de equipamentos).
-   - Contém o **Baú de Armazenamento** (`TILE.CHEST` - armazena permanentemente CC e Peças depositadas na Goela).
-   - Apenas no Nível 1 é uma Safe Room temática desobstruída; em andares subsequentes funciona como ponto de chegada.
+   - Ponto de respawn e aterrissagem de Charlotte sobre uma **Grelha de Ventilação Central** (`Landing Hatch`) de ferro e latão com efeito de vapor e faíscas.
+   - **Nível 1 (Safe Room Central / Refúgio):**
+     - Iluminação acolhedora com halo âmbar/dourado e tapete de trabalho de couro/madeira sob a oficina.
+     - Contém o **NPC Inventor** (`TILE.INVENTOR_NPC`) com falas/murmúrios ambientais contextuais e loja de bombas.
+     - Contém a **Mesa de Arsenal** (`TILE.ARMORY` - bancada de modificações de equipamentos).
+     - Contém o **Baú de Armazenamento** (`TILE.CHEST`) alimentado visualmente por um **Duto Pneumático de Latão** descendo da parede com manômetro funcional.
+     - Placa e estêncil temático: `⚙️ OFICINA CENTRAL • POÇO Nº 4 [REFÚGIO SEGURO] ⚙️`.
+   - **Níveis 2+ (Câmara de Chegada e Descompressão Subterrânea):**
+     - Faixa industrial de advertência no topo da sala com o nome, profundidade e perigos do setor (ex: `SETOR 2: FENDAS TÉRMICAS • -120m`).
+     - Luminária de anteparo de emergência em gaiola metálica pulsando suavemente.
+     - Carcaça de autômato inativo e enferrujado caída no canto inferior esquerdo.
+     - Estoques de suprimentos corporativos (`CC CORP`) organizados nos cantos externos da sala, mantendo o centro de aterrissagem 100% desobstruído.
 
 2. **Salas Regulares de Exploração e Combate:**
    - Cercadas por paredes indestrutíveis perimetrais (`TILE.WALL`).
@@ -470,8 +477,10 @@ No universo de RogueBomb, Charlotte não morre: seu maquinário temporal de bols
 ## 10. Design de Áudio (Web Audio API e BGM Adaptativa)
 
 ### 10.1 Trilha Sonora Adaptativa (BGM)
-- **Modo Exploração:** `song/The_Weight_of_Brass.mp3` — Trilha misteriosa com metais e percussão de engrenagens para exploração livre.
-- **Modo Combate (Lockdown):** `song/Locked_Gears_and_Steam.mp3` — Ritmo mecânico acelerado e opressivo para momentos de trancamento.
+- **Menu Principal:** `song/Turn_of_the_Great_Wheel.mp3` — Clima solene e vitoriano de engrenagens em movimento.
+- **Modo Exploração Geral (Níveis 1, 2, 4, 5):** `song/The_Weight_of_Brass.mp3` (70%) e `song/Under_the_Iron_Piston.mp3` (30%) — Atmosfera pesada de vapor, metais e exploração.
+- **Modo Exploração do Nível 3 (Oficinas & Caldeiras):** `song/Before_the_Gears_Lock.mp3` — **Trilha Principal do Nível 3** (alta prioridade / 75% de chance), tocando imediatamente ao aterrissar no setor e acompanhada por variações secundárias.
+- **Modo Combate (Lockdown):** `song/Locked_Gears_and_Steam.mp3` e `song/The_Clockwork_Siege.mp3` (com adição de `Before_the_Gears_Lock.mp3` no Nível 3) — Ritmo mecânico acelerado e opressivo para momentos de trancamento.
 - **Crossfade Suave:** Transição matemática contínua entre as faixas em 1.2 segundos (30 passos lineares de atenuação/ganho).
 
 ### 10.2 Efeitos Sonoros Sintetizados Proceduralmente (Web Audio API)

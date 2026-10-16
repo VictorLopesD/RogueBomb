@@ -2753,6 +2753,16 @@
         this.bgmExplore = new Audio('song/The_Weight_of_Brass.mp3');
         this.bgmExplore.loop = true;
         this.bgmExplore.volume = 0.35;
+
+        // Trilha Principal do Nível 3 (Before the Gears Lock)
+        this.bgmLevel3 = new Audio('song/Before_the_Gears_Lock.mp3');
+        this.bgmLevel3.loop = true;
+        this.bgmLevel3.volume = 0.35;
+
+        // Trilha Oficial de Batalha contra o Chefe (Under the Iron Piston)
+        this.bgmBoss = new Audio('song/Under_the_Iron_Piston.mp3');
+        this.bgmBoss.loop = true;
+        this.bgmBoss.volume = 0.35;
         
         let battle1 = new Audio('song/Locked_Gears_and_Steam.mp3');
         battle1.loop = true;
@@ -2789,9 +2799,8 @@
       setMusicVolume(vol) {
         this.musicVolume = Math.max(0, Math.min(1, vol));
         const target = 0.35 * this.musicVolume;
-        if (this.currentBgm) {
-          this.currentBgm.volume = target;
-        }
+        const all = [this.bgmMenu, this.bgmExplore, this.bgmLevel3, this.bgmBoss, ...this.bgmBattleList];
+        all.forEach(a => { if (a) a.volume = target; });
       }
 
       crossfadeMusic(fromAudio, toAudio) {
@@ -2828,9 +2837,12 @@
         }, stepTime);
       }
 
-      setMusicMode(mode) {
+      setMusicMode(mode, forceTrack = null) {
         this.musicStarted = true;
-        
+        const depth = (window.game && window.game.map && window.game.map.currentDepth) ? window.game.map.currentDepth : 1;
+        const room = (window.game && window.game.map) ? window.game.map.currentRoom : null;
+        const isBossFight = (mode === 'boss') || (room && (room.isBossRoom || room.isMiniBossRoom || (room.enemies && room.enemies.some(e => e.isHumanBoss || e.isFinalBoss))));
+
         if (mode === 'menu') {
           if (this.currentBgm === this.bgmMenu) {
             if (this.bgmMenu.paused) this.bgmMenu.play().catch(() => {});
@@ -2838,15 +2850,69 @@
           }
           this.crossfadeMusic(this.currentBgm, this.bgmMenu);
           this.currentBgm = this.bgmMenu;
-        } else if (mode === 'explore') {
-          if (this.currentBgm === this.bgmExplore) {
-            if (this.bgmExplore.paused) this.bgmExplore.play().catch(() => {});
+        } else if (isBossFight && mode !== 'explore') {
+          // Batalha contra o Chefe / Mini-Boss: Toca 'Under the Iron Piston' em loop!
+          if (this.currentBgm === this.bgmBoss) {
+            if (this.bgmBoss.paused) this.bgmBoss.play().catch(() => {});
             return;
           }
-          this.crossfadeMusic(this.currentBgm, this.bgmExplore);
-          this.currentBgm = this.bgmExplore;
+          this.crossfadeMusic(this.currentBgm, this.bgmBoss);
+          this.currentBgm = this.bgmBoss;
+        } else if (mode === 'explore') {
+          // Se ainda estiver na sala do chefe com o chefe vivo, não interrompe a música
+          if (isBossFight && room && !room.cleared && room.enemies && room.enemies.length > 0) {
+            if (this.currentBgm === this.bgmBoss) {
+              if (this.bgmBoss.paused) this.bgmBoss.play().catch(() => {});
+              return;
+            }
+          }
+
+          let targetTrack = this.bgmExplore;
+
+          if (depth === 3) {
+            // No Nível 3: 'Before the Gears Lock' é a música PRINCIPAL (alta prioridade / 75%)
+            if (forceTrack) {
+              targetTrack = forceTrack;
+            } else {
+              const roll = Math.random();
+              if (roll < 0.75) {
+                targetTrack = this.bgmLevel3;
+              } else {
+                targetTrack = this.bgmExplore;
+              }
+            }
+          } else {
+            // Outros andares comuns: The Weight of Brass
+            targetTrack = this.bgmExplore;
+          }
+
+          // Se já está tocando uma música de exploração válida e compatível, evita recortes
+          if (this.currentBgm) {
+            const isExploreActive = (
+              this.currentBgm === this.bgmExplore ||
+              this.currentBgm === this.bgmLevel3
+            );
+            if (isExploreActive) {
+              if (depth === 3 && this.currentBgm === this.bgmLevel3) {
+                if (this.bgmLevel3.paused) this.bgmLevel3.play().catch(() => {});
+                return;
+              }
+              if (depth !== 3 && this.currentBgm === this.bgmExplore) {
+                if (this.currentBgm.paused) this.currentBgm.play().catch(() => {});
+                return;
+              }
+            }
+          }
+
+          if (this.currentBgm === targetTrack) {
+            if (targetTrack.paused) targetTrack.play().catch(() => {});
+            return;
+          }
+          this.crossfadeMusic(this.currentBgm, targetTrack);
+          this.currentBgm = targetTrack;
         } else if (mode === 'battle') {
-          if (this.currentBgm && this.currentBgm !== this.bgmExplore && this.currentBgm !== this.bgmMenu) return;
+          const isBattleActive = this.bgmBattleList.includes(this.currentBgm);
+          if (this.currentBgm && isBattleActive) return;
           
           let randomTrack = this.bgmBattleList[Math.floor(Math.random() * this.bgmBattleList.length)];
           this.crossfadeMusic(this.currentBgm, randomTrack);
@@ -4581,13 +4647,24 @@
           // Baú de armazenamento de CC e Peças enviadas pela Goela (Safe Room) - canto inferior direito
           this.grid[GRID_SIZE - 4][GRID_SIZE - 4] = TILE.CHEST;
         } else {
-          // O resto da sala fica vazio, exceto a partir do nível 2 no centro
-          for (let y = 5; y < GRID_SIZE - 5; y++) {
-            for (let x = 5; x < GRID_SIZE - 5; x++) {
-              if (Math.random() < 0.4) {
-                this.grid[y][x] = TILE.BREAKABLE;
-              }
+          // Nos andares mais profundos (Nível 2+), a sala inicial funciona como zona de chegada/descompressão.
+          // O centro onde Charlotte aterrissa fica totalmente livre e seguro.
+          // Pequenos estoques de caixas de suprimentos são organizados nos cantos externos da sala:
+          const supplyCorners = [
+            [2, 2], [2, 3], [3, 2],
+            [GRID_SIZE - 3, 2], [GRID_SIZE - 4, 2], [GRID_SIZE - 3, 3]
+          ];
+          supplyCorners.forEach(([cx, cy]) => {
+            if (Math.random() < 0.5) {
+              this.grid[cy][cx] = TILE.BREAKABLE;
             }
+          });
+        }
+
+        // Garante 100% de certeza que a zona de aterrissagem central (3x3 ao redor de mid, mid) NUNCA terá caixas ou bloqueios
+        for (let dy = -1; dy <= 1; dy++) {
+          for (let dx = -1; dx <= 1; dx++) {
+            this.grid[mid + dy][mid + dx] = TILE.EMPTY;
           }
         }
         
@@ -9768,6 +9845,7 @@
         this.checkArmory();
         this.checkSign();
         this.checkChest();
+        this.updateSpawnRoomAmbience(dt);
 
         // 2. Movimentação de Charlotte (WASD / D-Pad)
         this.player.update(dt, this.input, room);
@@ -11171,6 +11249,56 @@
         }
       }
 
+      updateSpawnRoomAmbience(dt) {
+        const room = this.map ? this.map.currentRoom : null;
+        if (!room || !room.isStart) return;
+
+        // C - Safe Room (Nível 1)
+        if ((this.map.currentDepth || 1) === 1) {
+          // Partícula sutil de vapor no Duto Pneumático da Goela (conectado ao baú)
+          this.safeRoomSmokeTimer = (this.safeRoomSmokeTimer || 0) + dt;
+          if (this.safeRoomSmokeTimer > 2.8) {
+            this.safeRoomSmokeTimer = 0;
+            const chestPx = (GRID_SIZE - 4) * TILE_SIZE + 20;
+            const chestPy = (GRID_SIZE - 4) * TILE_SIZE + 8;
+            if (this.spawnSparks && Math.random() < 0.75) {
+              this.spawnSparks(chestPx, chestPy - 12, 'rgba(255, 224, 130, 0.6)', 3);
+            }
+          }
+
+          // Murmúrios e falas de ambientação do Inventor quando Charlotte está próxima
+          const invPx = 3 * TILE_SIZE + 20;
+          const invPy = 3 * TILE_SIZE + 20;
+          const distToInv = Math.hypot(this.player.x - invPx, this.player.y - invPy);
+
+          this.inventorAmbientTimer = (this.inventorAmbientTimer || 0) + dt;
+          if (distToInv < 115 && this.inventorAmbientTimer > 11) {
+            this.inventorAmbientTimer = 0;
+            const quotes = [
+              'Cuidado lá embaixo, Charlotte... a pressão dos dutos está instável.',
+              'Se recolher peças nas carcaças, passe na bancada para calibrar sua manopla.',
+              'A Goela pneumática envia o minério direto para o baú. Despeje antes de cair!',
+              'O Supervisor trancou os níveis mais fundos... procure o cartão amarelo nos autômatos.',
+              'As caldeiras antigas do Nível 3 estão apagadas. Mantenha seu lampião abastecido!'
+            ];
+            const text = quotes[Math.floor(Math.random() * quotes.length)];
+            this.spawnFloatingText(text, invPx, invPy - 24, '#ce93d8');
+          }
+        } else {
+          // D - Andares Subterrâneos (Níveis 2+)
+          // Faísca esporádica e estalos na carcaça de autômato inativo (x=2, y=GRID_SIZE-3)
+          this.inactiveBotSparkTimer = (this.inactiveBotSparkTimer || 0) + dt;
+          if (this.inactiveBotSparkTimer > 4.2) {
+            this.inactiveBotSparkTimer = 0;
+            const botX = 2 * TILE_SIZE + 20;
+            const botY = (GRID_SIZE - 3) * TILE_SIZE + 20;
+            if (this.spawnSparks && Math.random() < 0.65) {
+              this.spawnSparks(botX, botY, '#ff7043', 2);
+            }
+          }
+        }
+      }
+
       openChest() {
         if (this.fadeState !== 'none') return;
         const modal = document.getElementById('chest-modal');
@@ -12097,6 +12225,20 @@
           this.player.recoilVy = 0;
           this.player.animState = 'idle';
 
+          // Efeito de vapor e aterrissagem na nova câmara
+          this.spawnSparks(this.player.x, this.player.y, '#e0f7fa', 26);
+          this.spawnSparks(this.player.x, this.player.y, '#00e5ff', 16);
+          this.spawnFloatingText(`SETOR ${nextDepth} ALCANÇADO`, this.player.x, this.player.y - 28, '#00e5ff');
+          if (window.sound && window.sound.playUnlockSound) window.sound.playUnlockSound();
+
+          if (window.sound) {
+            if (nextDepth === 3) {
+              window.sound.setMusicMode('explore', window.sound.bgmLevel3);
+            } else {
+              window.sound.setMusicMode('explore');
+            }
+          }
+
           this.updateHUD();
         };
       }
@@ -12843,6 +12985,14 @@
           this.player.recoilVy = 0;
           this.player.animState = 'idle';
 
+          // Efeito de retorno acolhedor à Safe Room
+          this.spawnSparks(this.player.x, this.player.y, '#ffd54f', 24);
+          this.spawnFloatingText('RETORNO AO REFÚGIO', this.player.x, this.player.y - 28, '#ffd54f');
+
+          if (window.sound) {
+            window.sound.setMusicMode('explore');
+          }
+
           // 5. Inimigos da sala inicial (se houver) recebem carência de ativação
           if (this.map.currentRoom && this.map.currentRoom.enemies) {
             this.map.currentRoom.enemies.forEach(e => e.resetActivationGrace(1.2));
@@ -13296,6 +13446,154 @@
           }
         }
 
+        // ----------------------------------------------------------------------
+        // NARRATIVA & AMBIENTAÇÃO DAS ÁREAS DE SPAWN (Safe Room C & Andares Profundos D)
+        // ----------------------------------------------------------------------
+        if (room && room.isStart) {
+          const mid = Math.floor(GRID_SIZE / 2);
+          const depth = (this.map && this.map.currentDepth) ? this.map.currentDepth : 1;
+
+          // 1. Grelha de Chegada / Aterrissagem Central (onde Charlotte aterrissa)
+          const hatchX = (mid + 0.5) * TILE_SIZE;
+          const hatchY = (mid + 0.5) * TILE_SIZE;
+          ctx.save();
+          // Chapa base circular de ferro
+          ctx.fillStyle = '#1c212a';
+          ctx.beginPath();
+          ctx.arc(hatchX, hatchY, 19, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.strokeStyle = '#455a64';
+          ctx.lineWidth = 2;
+          ctx.stroke();
+
+          // Aletas radiais da grelha de descompressão
+          ctx.strokeStyle = '#263238';
+          ctx.lineWidth = 2;
+          for (let offset = -12; offset <= 12; offset += 5) {
+            const chord = Math.sqrt(Math.max(0, 16 * 16 - offset * offset));
+            ctx.beginPath();
+            ctx.moveTo(hatchX - chord, hatchY + offset);
+            ctx.lineTo(hatchX + chord, hatchY + offset);
+            ctx.stroke();
+          }
+
+          // Aro de latão com rebites industriais
+          ctx.strokeStyle = '#c59b27';
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.arc(hatchX, hatchY, 17, 0, Math.PI * 2);
+          ctx.stroke();
+
+          for (let a = 0; a < Math.PI * 2; a += Math.PI / 4) {
+            const rx = hatchX + Math.cos(a) * 15;
+            const ry = hatchY + Math.sin(a) * 15;
+            ctx.fillStyle = '#ffd54f';
+            ctx.fillRect(rx - 1.5, ry - 1.5, 3, 3);
+          }
+          ctx.restore();
+
+          // 2. C: SAFE ROOM (Nível 1) - Atmosfera Acolhedora da Oficina
+          if (depth === 1) {
+            ctx.save();
+            // Halo de luz quente âmbar / dourada sobre a oficina e o refúgio
+            const warmGrad = ctx.createRadialGradient(mid * TILE_SIZE + 20, mid * TILE_SIZE + 20, 30, mid * TILE_SIZE + 20, mid * TILE_SIZE + 20, 260);
+            warmGrad.addColorStop(0, 'rgba(255, 183, 77, 0.18)');
+            warmGrad.addColorStop(0.5, 'rgba(255, 143, 0, 0.08)');
+            warmGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+            ctx.fillStyle = warmGrad;
+            ctx.fillRect(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
+
+            // Tapete de trabalho sob a oficina do Inventor (x=2..4, y=2..4)
+            ctx.fillStyle = 'rgba(62, 39, 35, 0.55)';
+            ctx.fillRect(2 * TILE_SIZE + 4, 2 * TILE_SIZE + 4, 3 * TILE_SIZE - 8, 3 * TILE_SIZE - 8);
+            ctx.strokeStyle = 'rgba(141, 110, 99, 0.65)';
+            ctx.lineWidth = 1.5;
+            ctx.strokeRect(2 * TILE_SIZE + 4, 2 * TILE_SIZE + 4, 3 * TILE_SIZE - 8, 3 * TILE_SIZE - 8);
+
+            // Estêncil industrial na parede superior
+            ctx.fillStyle = '#ffd54f';
+            ctx.font = 'bold 11px monospace';
+            ctx.textAlign = 'center';
+            ctx.shadowColor = 'rgba(255, 213, 79, 0.45)';
+            ctx.shadowBlur = 6;
+            ctx.fillText('⚙️ OFICINA CENTRAL • POÇO Nº 4 [REFÚGIO SEGURO] ⚙️', mid * TILE_SIZE + 20, 24);
+            ctx.restore();
+          }
+
+          // 3. D: ANDARES SUBTERRÂNEOS (Níveis 2+) - Narrativa de Setor Abandonado
+          if (depth >= 2) {
+            ctx.save();
+            let sectorLabel = `⚠️ SETOR 2: FENDAS TÉRMICAS • -120m [CÂMARA DE DESCOMPRESSÃO]`;
+            if (depth === 3) sectorLabel = `⚠️ SETOR 3: CALDEIRAS DESATIVADAS • -280m [ALERTA: APAGÃO]`;
+            else if (depth === 4) sectorLabel = `⚠️ SETOR 4: CONDUTOS PROFUNDOS • -450m [VAPOR INSTÁVEL]`;
+            else if (depth >= 5) sectorLabel = `⚠️ SETOR 5: CÂMARA DO TITÃ MECÂNICO • -650m [ACESSO RESTRITO]`;
+
+            // Faixa de advertência industrial no topo da sala
+            ctx.fillStyle = 'rgba(28, 35, 45, 0.9)';
+            ctx.fillRect(TILE_SIZE * 2, 8, WORLD_WIDTH - TILE_SIZE * 4, 20);
+            ctx.strokeStyle = '#ffd600';
+            ctx.lineWidth = 1.5;
+            ctx.strokeRect(TILE_SIZE * 2, 8, WORLD_WIDTH - TILE_SIZE * 4, 20);
+
+            // Listras zebradas nas pontas
+            for (let i = 0; i < 4; i++) {
+              ctx.fillStyle = '#ffd600';
+              ctx.fillRect(TILE_SIZE * 2 + i * 10, 8, 5, 20);
+              ctx.fillRect(WORLD_WIDTH - TILE_SIZE * 2 - (i + 1) * 10, 8, 5, 20);
+            }
+
+            ctx.fillStyle = '#ffd600';
+            ctx.font = 'bold 10px monospace';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(sectorLabel, WORLD_WIDTH / 2, 18);
+
+            // Luz de emergência piscando na parede norte (acima da câmara)
+            const pulse = (Math.sin(now * 3.5) + 1) / 2;
+            const lampX = mid * TILE_SIZE + 20;
+            const lampY = 32;
+            ctx.fillStyle = `rgba(255, 171, 0, ${0.4 + pulse * 0.6})`;
+            ctx.beginPath();
+            ctx.arc(lampX, lampY, 5 + pulse * 2, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = '#37474f';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(lampX - 6, lampY - 6, 12, 12);
+
+            // Carcaça de Autômato Inativa no canto inferior esquerdo (x=2, y=GRID_SIZE-3)
+            const botX = 2 * TILE_SIZE + 20;
+            const botY = (GRID_SIZE - 3) * TILE_SIZE + 20;
+            // Sombra da carcaça
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
+            ctx.beginPath();
+            ctx.ellipse(botX, botY + 12, 14, 6, 0, 0, Math.PI * 2);
+            ctx.fill();
+            // Chassi enferrujado torto
+            ctx.fillStyle = '#4e342e'; // Ferrugem escura
+            ctx.fillRect(botX - 10, botY - 12, 20, 20);
+            ctx.strokeStyle = '#271c19';
+            ctx.lineWidth = 1.5;
+            ctx.strokeRect(botX - 10, botY - 12, 20, 20);
+            // Broca quebrada caída ao lado
+            ctx.fillStyle = '#78909c';
+            ctx.beginPath();
+            ctx.moveTo(botX + 8, botY + 4);
+            ctx.lineTo(botX + 16, botY + 12);
+            ctx.lineTo(botX + 10, botY + 14);
+            ctx.closePath();
+            ctx.fill();
+            // Olho mecânico rachado / faísca moribunda
+            const eyePulse = (Math.sin(now * 2) + 1) / 2;
+            ctx.fillStyle = (eyePulse > 0.85) ? '#ff5722' : '#263238';
+            ctx.fillRect(botX - 5, botY - 8, 4, 3);
+            ctx.fillStyle = '#78909c';
+            ctx.font = 'bold 9px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText('INATIVO', botX, botY + 22);
+            ctx.restore();
+          }
+        }
+
         // Renderização de Elementos do Grid (Paredes, Caixas Quebráveis, Portas, Goela)
         for (let y = 0; y < GRID_SIZE; y++) {
           for (let x = 0; x < GRID_SIZE; x++) {
@@ -13344,12 +13642,22 @@
               ctx.fillRect(px + 2, py + TILE_SIZE - 8, 6, 6);
               ctx.fillRect(px + TILE_SIZE - 8, py + TILE_SIZE - 8, 6, 6);
 
-              // Brilho interno azulado sutil indicando possibilidade de Chrono Core
-              const crateGlow = (Math.sin(now * 3 + x * 2 + y * 3) + 1) / 2;
-              ctx.fillStyle = `rgba(0, 229, 255, ${0.2 + crateGlow * 0.35})`;
-              ctx.beginPath();
-              ctx.arc(px + TILE_SIZE / 2, py + TILE_SIZE / 2, 4, 0, Math.PI * 2);
-              ctx.fill();
+              // Carimbo corporativo se for caixa de suprimento da câmara de chegada (Níveis 2+)
+              if (room.isStart && (this.map.currentDepth || 1) >= 2) {
+                ctx.fillStyle = 'rgba(255, 214, 0, 0.88)';
+                ctx.fillRect(px + 4, py + TILE_SIZE / 2 - 4, TILE_SIZE - 8, 8);
+                ctx.fillStyle = '#000000';
+                ctx.font = 'bold 7px monospace';
+                ctx.textAlign = 'center';
+                ctx.fillText('CC CORP', px + TILE_SIZE / 2, py + TILE_SIZE / 2 + 2);
+              } else {
+                // Brilho interno azulado sutil indicando possibilidade de Chrono Core
+                const crateGlow = (Math.sin(now * 3 + x * 2 + y * 3) + 1) / 2;
+                ctx.fillStyle = `rgba(0, 229, 255, ${0.2 + crateGlow * 0.35})`;
+                ctx.beginPath();
+                ctx.arc(px + TILE_SIZE / 2, py + TILE_SIZE / 2, 4, 0, Math.PI * 2);
+                ctx.fill();
+              }
             } else if (tile === TILE.INVENTOR_NPC) {
               // Inventor NPC (Representação simples)
               ctx.fillStyle = '#9c27b0';
@@ -13428,6 +13736,42 @@
               ctx.arc(px + TILE_SIZE/2, py + TILE_SIZE/2, 8, 0, Math.PI*2);
               ctx.fill();
             } else if (tile === TILE.CHEST) {
+              // Duto Pneumático da Goela (Safe Room - Nível 1)
+              if (room.isStart && (this.map.currentDepth || 1) === 1) {
+                ctx.save();
+                // Tubo vertical de latão/cobre descendo da parede até a tampa do baú
+                ctx.fillStyle = '#b87333'; // Cobre
+                ctx.fillRect(px + TILE_SIZE / 2 - 5, py - 20, 10, 28);
+                ctx.strokeStyle = '#8d5524';
+                ctx.lineWidth = 1.5;
+                ctx.strokeRect(px + TILE_SIZE / 2 - 5, py - 20, 10, 28);
+                // Flanges e anéis reforçados do cano
+                ctx.fillStyle = '#d4af37'; // Latão
+                ctx.fillRect(px + TILE_SIZE / 2 - 7, py - 18, 14, 4);
+                ctx.fillRect(px + TILE_SIZE / 2 - 7, py - 4, 14, 4);
+                // Manômetro de pressão pneumática ao lado do cano
+                ctx.fillStyle = '#eceff1';
+                ctx.beginPath();
+                ctx.arc(px + TILE_SIZE / 2 + 10, py - 11, 5, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = '#37474f';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+                // Ponteiro do manômetro oscilando sutilmente
+                const needleAngle = Math.sin(now * 3) * 0.45 - 0.2;
+                ctx.strokeStyle = '#d32f2f';
+                ctx.beginPath();
+                ctx.moveTo(px + TILE_SIZE / 2 + 10, py - 11);
+                ctx.lineTo(px + TILE_SIZE / 2 + 10 + Math.cos(needleAngle) * 4, py - 11 + Math.sin(needleAngle) * 4);
+                ctx.stroke();
+                // Plaquinha indicativa
+                ctx.fillStyle = '#ffd54f';
+                ctx.font = 'bold 8px monospace';
+                ctx.textAlign = 'center';
+                ctx.fillText('GOELA ➔', px + TILE_SIZE / 2, py - 23);
+                ctx.restore();
+              }
+
               // Baú
               ctx.fillStyle = '#6d4c41';
               ctx.fillRect(px + 4, py + 8, TILE_SIZE - 8, TILE_SIZE - 16);
