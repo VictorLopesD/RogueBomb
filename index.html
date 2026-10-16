@@ -175,6 +175,8 @@
       color: #fff;
     }
 
+    .lantern-critical { animation: lanternBlink 0.6s infinite alternate; }
+    @keyframes lanternBlink { from { opacity: 1; } to { opacity: 0.3; } }
     #btn-heal-mobile {
       background: rgba(0, 230, 118, 0.18);
       border: 2px solid #00e676;
@@ -1836,7 +1838,19 @@
             <div class="hud-badge-label" id="heal-badge-label">Cura [H]</div>
             <div id="heal-counter" class="hud-badge-value" style="color: #00e676; font-size: 12px; font-weight: bold;">0/2</div>
           </div>
-          <button id="btn-quick-synth" class="hud-synth-btn" title="Sintetizar Tônico (2 CC da mochila + 1 Peça) [Tecla V] - 30% chance no campo">+</button>
+          <button id="btn-quick-synth" class="hud-synth-btn" title="Sintetizar Tônico (2 CC + 1 Peça da mochila) [Tecla V] - 30% chance no campo">+</button>
+        </div>
+
+        <div id="lantern-badge" class="hud-badge" style="display: none;" title="Lampião de Cristal: [L] ou '+' para abastecer (1 CC da mochila = +20%)">
+          <span class="hud-icon" style="font-size: 16px;">🏮</span>
+          <div class="hud-badge-info">
+            <div class="hud-badge-label">Lampião [L]</div>
+            <div style="width: 64px; height: 7px; background: #1a1a1a; border: 1px solid #555; border-radius: 4px; overflow: hidden; margin: 2px 0;">
+              <div id="lantern-fuel-bar" style="height: 100%; width: 100%; background: #ff9800; transition: width 0.25s, background 0.25s;"></div>
+            </div>
+            <div id="lantern-fuel-text" class="hud-badge-value" style="font-size: 10px; color: #ff9800; font-weight: bold;">100%</div>
+          </div>
+          <button id="btn-lantern-refuel" class="hud-synth-btn" title="Abastecer: 1 CC da mochila = +20% [L]" onclick="event.stopPropagation(); if (window.game) window.game.refuelLantern();">+</button>
         </div>
 
         <div id="gauntlet-badge" class="hud-badge" title="Clique ou pressione [U] para aprimorar o alcance da Manopla">
@@ -1968,18 +1982,18 @@
             <span id="mobile-heal-text" style="font-size: 10px; font-weight: bold; color: #00e676;">0/2</span>
           </button>
 
+          <!-- Botão do Lampião Mobile (abastecer com 1 CC) -->
+          <button class="action-btn" id="btn-lantern-mobile" title="Abastecer Lampião (1 CC = +20%)" style="background: rgba(255, 152, 0, 0.15); border-color: #ff9800; display: none;">
+            <span style="font-size: 16px;">🏮</span>
+            <span id="mobile-lantern-text" style="font-size: 10px; font-weight: bold; color: #ff9800;">100%</span>
+          </button>
+
           <!-- Botão de Dash Mobile -->
           <button class="dash-btn locked" id="dash-trigger" title="Realizar Dash com Botas Propulsoras (Shift)">
             <span class="dash-icon">💨</span>
             <span class="dash-label">DASH</span>
             <span class="dash-cost">1 CC</span>
             <div class="dash-cooldown-overlay" id="dash-cooldown-overlay">5.0s</div>
-          </button>
-
-          <!-- Botão de Ação / Lançar Bomba -->
-          <button class="action-btn" id="action-trigger" title="Plantar / Ativar Bomba">
-            <span style="font-size: 20px;">💣</span>
-            <span>AÇÃO</span>
           </button>
         </div>
       </div>
@@ -2397,10 +2411,19 @@
       <div class="armory-item" id="inv-item-heal">
         <div class="armory-info">
           <span class="armory-title">💉 Tônico Vital (Síntese)</span>
-          <span class="armory-desc">Sintetiza 1 frasco de cura (armazena até 2). No Inventor a taxa de sucesso é 100% garantida (Charlotte no campo tem 30%). Requer 2 CC na mochila e 1 Peça.</span>
-          <span class="armory-cost" id="inv-cost-heal">Estoque: 0/2 | Custo: 2 CC (Mochila) | 1 PEÇA</span>
+          <span class="armory-desc">Sintetiza 1 frasco de cura (armazena até 2). No Inventor a taxa de sucesso é 100% garantida e utiliza recursos da mochila e do Baú (no campo tem 30% e usa apenas da mochila).</span>
+          <span class="armory-cost" id="inv-cost-heal">Estoque: 0/2 | Custo: 2 CC | 1 PEÇA (Mochila + Baú)</span>
         </div>
         <button class="btn-buy" id="btn-inv-heal" onclick="if (window.game) window.game.buyInventorUpgrade('heal')">Sintetizar (100%)</button>
+      </div>
+
+      <div class="armory-item" id="inv-item-lantern">
+        <div class="armory-info">
+          <span class="armory-title">🏮 Lampião de Cristal</span>
+          <span class="armory-desc">Ilumina a escuridão do Nível 3+ (sem ele, a visão fica limitada a 1 bloco). Visão máxima de 10 blocos, reduzindo para 5 blocos em 50% e até 1 bloco quando desliga. Abasteça com CC da mochila [L] (1 CC = +20%).</span>
+          <span class="armory-cost" id="inv-cost-lantern">Custo: 20 CC | 15 PEÇAS</span>
+        </div>
+        <button class="btn-buy" id="btn-inv-lantern" onclick="if (window.game) window.game.buyInventorUpgrade('lantern')">Comprar</button>
       </div>
 
       <button class="btn-close" onclick="window.game.closeInventorShop()">Sair</button>
@@ -3263,6 +3286,11 @@
             }
           }
 
+          // Tecla L: Abastecer o Lampião de Cristal (1 CC da mochila = +20%)
+          if (e.code === 'KeyL' && !e.ctrlKey && !e.metaKey) {
+            if (window.game) window.game.refuelLantern();
+          }
+
           // Tecla H: Usar Tônico de Cura do Injetor Vital (recupera 1 coração)
           if (e.code === 'KeyH' || e.key === 'h' || e.key === 'H') {
             if (window.game && window.game.player) {
@@ -3273,7 +3301,9 @@
           // Tecla V: Sintetizar Tônico de Cura (2 CC + 1 Peça)
           if (e.code === 'KeyV' || e.key === 'v' || e.key === 'V') {
             if (window.game && window.game.player) {
-              window.game.player.synthesizeHealingFlask();
+              const invModal = document.getElementById('inventor-shop-modal');
+              const inInventor = !!(invModal && invModal.classList.contains('visible'));
+              window.game.player.synthesizeHealingFlask(inInventor);
             }
           }
 
@@ -3367,19 +3397,6 @@
           });
         });
 
-        // Botão de Ação Mobile (Plantar/Lançar rápido)
-        const actionBtn = document.getElementById('action-trigger');
-        if (actionBtn) {
-          bindMobileButton(actionBtn, () => {
-            actionBtn.classList.add('active');
-            this.actionTriggered = true;
-            this.isAiming = false;
-            this.throwTriggered = false;
-            this.throwTarget = null;
-            setTimeout(() => actionBtn.classList.remove('active'), 120);
-          });
-        }
-
         // Botão de Dash Mobile
         const dashBtn = document.getElementById('dash-trigger');
         if (dashBtn) {
@@ -3413,10 +3430,22 @@
               if (p.healingFlasks > 0) {
                 p.useHealingFlask();
               } else {
-                p.synthesizeHealingFlask();
+                const invModal = document.getElementById('inventor-shop-modal');
+                const inInventor = !!(invModal && invModal.classList.contains('visible'));
+                p.synthesizeHealingFlask(inInventor);
               }
             }
             setTimeout(() => healMobileBtn.classList.remove('active'), 120);
+          });
+        }
+
+        // Botão Mobile: Abastecer Lampião de Cristal
+        const lanternMobileBtn = document.getElementById('btn-lantern-mobile');
+        if (lanternMobileBtn) {
+          bindMobileButton(lanternMobileBtn, () => {
+            lanternMobileBtn.classList.add('active');
+            if (window.game) window.game.refuelLantern();
+            setTimeout(() => lanternMobileBtn.classList.remove('active'), 120);
           });
         }
       }
@@ -3778,7 +3807,10 @@
         this.loreDrops = [];
         this.isBossRoom = false;
         this.isMiniBossRoom = false;
+        this.isBossKeyRoom = false;
         this.hasBossKey = false;
+        this.bossKeyDrop = null;
+        this.bossDoors = { north: false, south: false, east: false, west: false };
         this.blackHoles = [];
         this.secretFloorNode = null; // Nodo integrado ao chão que dá acesso ao andar inferior (raro, 1 por nível)
         this.isPuzzleRoom = false;
@@ -4006,6 +4038,11 @@
           return;
         }
 
+        if (this.isBossKeyRoom) {
+          this.buildBossKeyLayout();
+          return;
+        }
+
         // Pilares internos e blocos quebráveis (marrom)
         for (let y = 2; y < GRID_SIZE - 2; y++) {
           for (let x = 2; x < GRID_SIZE - 2; x++) {
@@ -4078,11 +4115,6 @@
           const gx = mid;
           const gy = mid;
           this.grid[gy][gx] = TILE.GOELA;
-        }
-
-        if (this.hasBossKey) {
-          const pos = this.findSpawnSpot();
-          if (pos) this.grid[Math.floor(pos.y/TILE_SIZE)][Math.floor(pos.x/TILE_SIZE)] = TILE.BOSS_KEY;
         }
 
         if (this.isBossRoom) {
@@ -4184,6 +4216,41 @@
         ];
 
         this.generateRails();
+      }
+
+      buildBossKeyLayout() {
+        const mid = Math.floor(GRID_SIZE / 2);
+        this.enemies = [];
+        this.cleared = true;
+
+        // Passarela segura externa e fosso abissal intransponível (5..9)
+        // isolando o pedestal central (mid, mid) onde repousa o Cartão de Acesso do Boss
+        for (let y = 5; y <= GRID_SIZE - 6; y++) {
+          for (let x = 5; x <= GRID_SIZE - 6; x++) {
+            if (x === mid && y === mid) {
+              this.grid[y][x] = TILE.EMPTY; // Ilha/pedestal central 1x1
+            } else {
+              this.grid[y][x] = TILE.HOLE;  // Fosso abissal ao redor do pedestal
+            }
+          }
+        }
+
+        // Pilares de contenção nos 4 cantos da passarela ao redor do abismo
+        this.grid[4][4] = TILE.WALL;
+        this.grid[4][GRID_SIZE - 5] = TILE.WALL;
+        this.grid[GRID_SIZE - 5][4] = TILE.WALL;
+        this.grid[GRID_SIZE - 5][GRID_SIZE - 5] = TILE.WALL;
+
+        // Caixas de suprimentos nos cantos externos
+        this.grid[2][2] = TILE.BREAKABLE;
+        this.grid[2][GRID_SIZE - 3] = TILE.BREAKABLE;
+        this.grid[GRID_SIZE - 3][2] = TILE.BREAKABLE;
+        this.grid[GRID_SIZE - 3][GRID_SIZE - 3] = TILE.BREAKABLE;
+
+        // Entidade física do Cartão de Acesso no pedestal central
+        const centerPx = mid * TILE_SIZE + TILE_SIZE / 2;
+        const centerPy = mid * TILE_SIZE + TILE_SIZE / 2;
+        this.bossKeyDrop = new BossKeyDrop(centerPx, centerPy);
       }
 
       buildMiniBossLayout() {
@@ -4296,6 +4363,20 @@
       updateLockdownState() {
         const mid = Math.floor(GRID_SIZE / 2);
 
+        // Sala sem energia (blackout): os portões de lockdown não funcionam
+        if (this.unpowered && !this.isMiniBossRoom && !this.isBossRoom) {
+          if (!this.cleared && this.enemies.length > 0) {
+            if (!this.unpoweredAlerted) {
+              this.unpoweredAlerted = true;
+              showToast('⚡ APAGÃO TOTAL! Sala sem energia — portões destravados.');
+            }
+          } else if (!this.cleared && this.enemies.length === 0 && this.unpoweredAlerted) {
+            this.cleared = true;
+            showToast('SALA LIBERADA!');
+          }
+          return;
+        }
+
         // Se tem inimigos vivos e a sala ainda não foi liberada
         if (!this.cleared && this.enemies.length > 0) {
           if (!this.isLockdown) {
@@ -4306,6 +4387,8 @@
               showToast(window.t('ingame-duel'));
             } else if (this.isBossRoom) {
               showToast(window.t('ingame-bossfight'));
+            } else if (this.hasEmergencyLights) {
+              showToast('🚨 LOCKDOWN DE EMERGÊNCIA! Elimine os autômatos!');
             } else {
               showToast(window.t('ingame-protocol'));
             }
@@ -4334,10 +4417,10 @@
             showToast('SALA LIBERADA!');
           }
 
-          if (this.doors.north) this.grid[0][mid] = TILE.EMPTY;
-          if (this.doors.south) this.grid[GRID_SIZE - 1][mid] = TILE.EMPTY;
-          if (this.doors.west)  this.grid[mid][0] = TILE.EMPTY;
-          if (this.doors.east)  this.grid[mid][GRID_SIZE - 1] = TILE.EMPTY;
+          if (this.doors.north) this.grid[0][mid] = (this.bossDoors && this.bossDoors.north) ? TILE.BOSS_DOOR : TILE.EMPTY;
+          if (this.doors.south) this.grid[GRID_SIZE - 1][mid] = (this.bossDoors && this.bossDoors.south) ? TILE.BOSS_DOOR : TILE.EMPTY;
+          if (this.doors.west)  this.grid[mid][0] = (this.bossDoors && this.bossDoors.west) ? TILE.BOSS_DOOR : TILE.EMPTY;
+          if (this.doors.east)  this.grid[mid][GRID_SIZE - 1] = (this.bossDoors && this.bossDoors.east) ? TILE.BOSS_DOOR : TILE.EMPTY;
         }
       }
     }
@@ -4408,24 +4491,45 @@
           checkNeighbor(-1, 0, 'west', 'east');
         });
 
-        // Se depth >= 5, define Sala do Boss e Sala da Chave
+        // Se depth >= 5, define Sala do Boss e Sala Especial do Cartão (separado por abismo)
+        let bossRoomTarget = null;
         if (this.currentDepth >= 5) {
           let deadEnds = roomArray.filter(r => !r.isStart && (r.doors.north + r.doors.south + r.doors.east + r.doors.west === 1));
           if (deadEnds.length === 0) deadEnds = roomArray.filter(r => !r.isStart);
-          const bossRoomTarget = deadEnds[0];
+          bossRoomTarget = deadEnds[0];
           if (bossRoomTarget) {
             bossRoomTarget.isBossRoom = true;
-            // Tranca a porta de entrada da sala do boss
-            const mid = Math.floor(GRID_SIZE / 2);
-            if (bossRoomTarget.doors.north) bossRoomTarget.grid[0][mid] = TILE.BOSS_DOOR;
-            if (bossRoomTarget.doors.south) bossRoomTarget.grid[GRID_SIZE - 1][mid] = TILE.BOSS_DOOR;
-            if (bossRoomTarget.doors.east) bossRoomTarget.grid[mid][GRID_SIZE - 1] = TILE.BOSS_DOOR;
-            if (bossRoomTarget.doors.west) bossRoomTarget.grid[mid][0] = TILE.BOSS_DOOR;
-            
-            // Sala da Chave
-            const keyCandidates = roomArray.filter(r => !r.isStart && r !== bossRoomTarget);
-            if (keyCandidates.length > 0) {
-               keyCandidates[Math.floor(Math.random() * keyCandidates.length)].hasBossKey = true;
+
+            // Garante que a Sala Especial do Cartão seja alcançável a partir do início SEM precisar passar pela Sala do Boss
+            const reachableWithoutBoss = new Set();
+            const bfs = [this.rooms.get(`${sx},${sy}`)];
+            while (bfs.length > 0) {
+              const currR = bfs.shift();
+              if (!currR || currR === bossRoomTarget || reachableWithoutBoss.has(currR)) continue;
+              reachableWithoutBoss.add(currR);
+              const neighbors = [
+                currR.doors.north ? this.rooms.get(`${currR.rx},${currR.ry - 1}`) : null,
+                currR.doors.south ? this.rooms.get(`${currR.rx},${currR.ry + 1}`) : null,
+                currR.doors.east  ? this.rooms.get(`${currR.rx + 1},${currR.ry}`) : null,
+                currR.doors.west  ? this.rooms.get(`${currR.rx - 1},${currR.ry}`) : null
+              ];
+              neighbors.forEach(nb => {
+                if (nb && nb !== bossRoomTarget && !reachableWithoutBoss.has(nb)) bfs.push(nb);
+              });
+            }
+
+            let keyCandidates = roomArray.filter(r => !r.isStart && r !== bossRoomTarget && reachableWithoutBoss.has(r));
+            if (keyCandidates.length === 0) {
+              keyCandidates = roomArray.filter(r => !r.isStart && r !== bossRoomTarget);
+            }
+            const keyDeadEnds = keyCandidates.filter(r => (r.doors.north + r.doors.south + r.doors.east + r.doors.west === 1));
+            const keyRoomTarget = keyDeadEnds.length > 0
+              ? keyDeadEnds[Math.floor(Math.random() * keyDeadEnds.length)]
+              : keyCandidates[Math.floor(Math.random() * keyCandidates.length)];
+
+            if (keyRoomTarget) {
+              keyRoomTarget.isBossKeyRoom = true;
+              keyRoomTarget.hasBossKey = true;
             }
           }
         }
@@ -4435,17 +4539,17 @@
         const targetGoelas = Math.max(1, Math.ceil(roomArray.length / 3));
         roomArray.sort(() => Math.random() - 0.5);
         for (const r of roomArray) {
-          if (!r.isStart && goelaCount < targetGoelas) {
+          if (!r.isStart && !r.isBossRoom && !r.isBossKeyRoom && goelaCount < targetGoelas) {
             r.hasGoela = true;
             goelaCount++;
           }
         }
 
         // Define exatamente UMA sala de desafio Metroidvania por andar (com grandes recompensas de CC)
-        const puzzleCandidates = roomArray.filter(r => !r.isStart && !r.hasGoela && !r.isBossRoom);
+        const puzzleCandidates = roomArray.filter(r => !r.isStart && !r.hasGoela && !r.isBossRoom && !r.isBossKeyRoom);
         const puzzleRoomTarget = puzzleCandidates.length > 0
           ? puzzleCandidates[Math.floor(Math.random() * puzzleCandidates.length)]
-          : roomArray.find(r => !r.isStart && !r.hasGoela && !r.isBossRoom) || roomArray.find(r => !r.isStart && !r.isBossRoom);
+          : roomArray.find(r => !r.isStart && !r.hasGoela && !r.isBossRoom && !r.isBossKeyRoom) || roomArray.find(r => !r.isStart && !r.isBossRoom && !r.isBossKeyRoom);
 
         if (puzzleRoomTarget) {
           puzzleRoomTarget.isPuzzleRoom = true;
@@ -4456,14 +4560,14 @@
 
         // Define Sala Isolada exclusiva para o Mini-Boss (no nível 3 e 4)
         if (this.currentDepth === 3 || this.currentDepth === 4) {
-          const mbCandidates = roomArray.filter(r => !r.isStart && !r.hasGoela && !r.isBossRoom && !r.isPuzzleRoom);
+          const mbCandidates = roomArray.filter(r => !r.isStart && !r.hasGoela && !r.isBossRoom && !r.isBossKeyRoom && !r.isPuzzleRoom);
           let deadEnds = mbCandidates.filter(r => (r.doors.north + r.doors.south + r.doors.east + r.doors.west === 1));
           const miniBossTarget = deadEnds.length > 0 ? deadEnds[0] : mbCandidates[0];
           if (miniBossTarget) {
             miniBossTarget.isMiniBossRoom = true;
           }
         } else if (this.currentDepth === 2) {
-          const invCandidates = roomArray.filter(r => !r.isStart && !r.hasGoela && !r.isBossRoom && !r.isPuzzleRoom);
+          const invCandidates = roomArray.filter(r => !r.isStart && !r.hasGoela && !r.isBossRoom && !r.isBossKeyRoom && !r.isPuzzleRoom);
           let deadEnds = invCandidates.filter(r => (r.doors.north + r.doors.south + r.doors.east + r.doors.west === 1));
           const inventorTarget = deadEnds.length > 0 ? deadEnds[0] : invCandidates[0];
           if (inventorTarget) {
@@ -4481,11 +4585,73 @@
           }
         });
 
+        // Tranca as portas que dão acesso à Sala do Boss (APÓS buildLayout para não ser sobrescrito!)
+        if (bossRoomTarget) {
+          const mid = Math.floor(GRID_SIZE / 2);
+          const lockConnection = (dx, dy, bossDir, neighborOppDir, bossDoorCoord, neighborDoorCoord) => {
+            if (!bossRoomTarget.doors[bossDir]) return;
+            bossRoomTarget.bossDoors[bossDir] = true;
+            bossRoomTarget.grid[bossDoorCoord.y][bossDoorCoord.x] = TILE.BOSS_DOOR;
+            const nb = this.rooms.get(`${bossRoomTarget.rx + dx},${bossRoomTarget.ry + dy}`);
+            if (nb) {
+              nb.bossDoors[neighborOppDir] = true;
+              nb.grid[neighborDoorCoord.y][neighborDoorCoord.x] = TILE.BOSS_DOOR;
+            }
+          };
+          lockConnection(0, -1, 'north', 'south', { x: mid, y: 0 }, { x: mid, y: GRID_SIZE - 1 });
+          lockConnection(0, 1,  'south', 'north', { x: mid, y: GRID_SIZE - 1 }, { x: mid, y: 0 });
+          lockConnection(1, 0,  'east',  'west',  { x: GRID_SIZE - 1, y: mid }, { x: 0, y: mid });
+          lockConnection(-1, 0, 'west',  'east',  { x: 0, y: mid }, { x: GRID_SIZE - 1, y: mid });
+        }
+
+        // Distribuição de Energia (Nível 3+):
+        // - Poucas salas têm energia completa ('powered' ~18% das comuns + Desafio/Chefes).
+        // - Algumas salas têm apenas Luz de Emergência ('emergency'): sala escura, mas TRANCAM em lockdown (piscando vermelho em lockdown -> amarela quando os inimigos são derrotados).
+        // - O restante está sem energia alguma ('blackout', unpowered = true): escuridão total e sem lockdown.
+        if (this.currentDepth >= 3) {
+          const regularRooms = [];
+          roomArray.forEach(r => {
+            if (r.isBossRoom || r.isMiniBossRoom || r.isPuzzleRoom || r.isBossKeyRoom) {
+              r.powerState = 'powered';
+              r.unpowered = false;
+              r.hasEmergencyLights = false;
+            } else if (r.isStart) {
+              // Sala de chegada no Nível 3+ (sem inimigos -> luzes de emergência já amarelas nas portas)
+              r.powerState = 'emergency';
+              r.unpowered = false;
+              r.hasEmergencyLights = true;
+            } else {
+              regularRooms.push(r);
+            }
+          });
+
+          const shuffledReg = [...regularRooms].sort(() => Math.random() - 0.5);
+          const poweredCount = Math.max(1, Math.floor(shuffledReg.length * 0.18)); // Poucas salas com energia normal
+          const emergencyCount = Math.max(2, Math.round(shuffledReg.length * 0.40)); // Salas apenas com luz de emergência (trancam!)
+          shuffledReg.forEach((r, idx) => {
+            if (idx < poweredCount) {
+              r.powerState = 'powered';
+              r.unpowered = false;
+              r.hasEmergencyLights = false;
+            } else if (idx < poweredCount + emergencyCount) {
+              // Apenas luz de emergência em cima das portas: tranca em lockdown (vermelho piscando) e fica amarela ao vencer
+              r.powerState = 'emergency';
+              r.unpowered = false;
+              r.hasEmergencyLights = true;
+            } else {
+              // Sem energia (apagão total): não tranca em lockdown
+              r.powerState = 'blackout';
+              r.unpowered = true;
+              r.hasEmergencyLights = false;
+            }
+          });
+        }
+
         // Define apenas UMA área secreta com nodo de descida por andar (excluindo salas de chefe e puzzle)
-        const secretCandidates = roomArray.filter(r => !r.isStart && !r.hasGoela && !r.isBossRoom && !r.isPuzzleRoom && !r.isMiniBossRoom);
+        const secretCandidates = roomArray.filter(r => !r.isStart && !r.hasGoela && !r.isBossRoom && !r.isBossKeyRoom && !r.isPuzzleRoom && !r.isMiniBossRoom);
         const secretRoomTarget = secretCandidates.length > 0
           ? secretCandidates[Math.floor(Math.random() * secretCandidates.length)]
-          : (roomArray.find(r => !r.isStart && !r.isBossRoom && !r.isPuzzleRoom && !r.isMiniBossRoom) || roomArray[0]);
+          : (roomArray.find(r => !r.isStart && !r.isBossRoom && !r.isBossKeyRoom && !r.isPuzzleRoom && !r.isMiniBossRoom) || roomArray[0]);
 
         if (secretRoomTarget) {
           const spot = secretRoomTarget.findSecretFloorSpot();
@@ -4519,15 +4685,15 @@
           toSpawn.forEach(frag => {
             let targetRoom = null;
             if (frag.roomTypeTarget === 'goela') targetRoom = roomArray.find(r => r.hasGoela);
-            else if (frag.roomTypeTarget === 'combat') targetRoom = roomArray.find(r => !r.isStart && !r.hasGoela && !r.isPuzzleRoom && !r.isBossRoom && r.enemies && r.enemies.length > 0);
+            else if (frag.roomTypeTarget === 'combat') targetRoom = roomArray.find(r => !r.isStart && !r.hasGoela && !r.isPuzzleRoom && !r.isBossRoom && !r.isBossKeyRoom && r.enemies && r.enemies.length > 0);
             else if (frag.roomTypeTarget === 'secret_floor') targetRoom = roomArray.find(r => r.secretFloorNode !== null);
             
             // Se for random ou não achou o alvo específico, pega uma sala válida
             if (!targetRoom || frag.roomTypeTarget === 'random') {
-               const validRooms = roomArray.filter(r => !r.isStart && !r.isBossRoom && !r.isPuzzleRoom && !r.isMiniBossRoom);
+               const validRooms = roomArray.filter(r => !r.isStart && !r.isBossRoom && !r.isBossKeyRoom && !r.isPuzzleRoom && !r.isMiniBossRoom);
                if (validRooms.length > 0) targetRoom = validRooms[Math.floor(Math.random() * validRooms.length)];
             }
-            if (!targetRoom) targetRoom = roomArray.find(r => !r.isStart);
+            if (!targetRoom) targetRoom = roomArray.find(r => !r.isStart && !r.isBossKeyRoom && !r.isBossRoom);
             if (!targetRoom) targetRoom = roomArray[0];
 
             const spot = targetRoom.findSpawnSpot();
@@ -4585,6 +4751,8 @@
         this.carryingHydraulicPiston = false;
         this.hasHydraulicPiston = false;
         this.hasHealingInjector = false;
+        this.hasLantern = false;
+        this.lanternFuel = 100;
         this.healingFlasks = 0;
         this.maxHealingFlasks = 2;
         this.maxHp = 3;
@@ -4626,33 +4794,71 @@
         const costCC = 2;
         const costParts = 1;
 
-        // A síntese NUNCA retira Cristal Coal do baú (requer CC carregado na mochila)
         const carriedCC = this.chronoCores || 0;
-        const totalParts = window.game ? window.game.getAvailableParts() : (this.parts || 0);
+        const carriedParts = this.parts || 0;
 
-        if (carriedCC < costCC) {
-          showToast(`CC INSUFICIENTE NA MOCHILA! A síntese requer ${costCC} CC na mochila (não usa do Baú). Você tem: ${carriedCC} CC`);
-          return false;
-        }
+        if (fromInventor) {
+          // No Inventor: pode utilizar CC e Peças tanto da mochila quanto do Baú
+          const totalCC = window.game ? window.game.getAvailableCC() : (carriedCC + (this.depositedCores || 0));
+          const totalParts = window.game ? window.game.getAvailableParts() : (carriedParts + (this.depositedParts || 0));
 
-        if (totalParts < costParts) {
-          showToast(`PEÇAS INSUFICIENTES! Síntese requer ${costParts} PEÇA (Você tem: ${totalParts} P)`);
-          return false;
-        }
+          if (totalCC < costCC) {
+            showToast(`CC INSUFICIENTE! A síntese no Inventor requer ${costCC} CC (Mochila + Baú: ${totalCC} CC)`);
+            return false;
+          }
 
-        // Consome 2 CC exclusivamente da mochila
-        this.chronoCores = Math.max(0, this.chronoCores - costCC);
+          if (totalParts < costParts) {
+            showToast(`PEÇAS INSUFICIENTES! A síntese no Inventor requer ${costParts} PEÇA (Mochila + Baú: ${totalParts} P)`);
+            return false;
+          }
 
-        // Consome 1 peça (da mochila primeiro, depois do baú se necessário)
-        if ((this.parts || 0) >= costParts) {
-          this.parts -= costParts;
-        } else if (this.depositedParts && this.depositedParts >= costParts) {
-          this.depositedParts -= costParts;
+          // Consome CC (da mochila primeiro, depois do baú se necessário)
+          let remCC = costCC;
+          if (carriedCC >= remCC) {
+            this.chronoCores -= remCC;
+            remCC = 0;
+          } else {
+            remCC -= carriedCC;
+            this.chronoCores = 0;
+          }
+          if (remCC > 0) {
+            this.depositedCores = Math.max(0, (this.depositedCores || 0) - remCC);
+          }
+
+          // Consome Peça (da mochila primeiro, depois do baú se necessário)
+          let remParts = costParts;
+          if (carriedParts >= remParts) {
+            this.parts -= remParts;
+            remParts = 0;
+          } else {
+            remParts -= carriedParts;
+            this.parts = 0;
+          }
+          if (remParts > 0) {
+            this.depositedParts = Math.max(0, (this.depositedParts || 0) - remParts);
+          }
+        } else {
+          // No campo: NUNCA retira CC nem Peças do baú (requer ambos carregados na mochila)
+          if (carriedCC < costCC) {
+            showToast(`CC INSUFICIENTE NA MOCHILA! No campo, a síntese requer ${costCC} CC na mochila (não usa do Baú). Você tem: ${carriedCC} CC`);
+            return false;
+          }
+
+          if (carriedParts < costParts) {
+            showToast(`PEÇAS INSUFICIENTES NA MOCHILA! No campo, a síntese requer ${costParts} PEÇA na mochila (não usa do Baú). Você tem: ${carriedParts} P`);
+            return false;
+          }
+
+          // Consome 2 CC e 1 Peça exclusivamente da mochila
+          this.chronoCores = Math.max(0, carriedCC - costCC);
+          this.parts = Math.max(0, carriedParts - costParts);
         }
 
         if (window.game) {
-          window.game.spawnFloatingText(`-${costCC} CC (Mochila)`, this.x, this.y - 18, '#ff5252');
-          window.game.spawnFloatingText(`-${costParts} PEÇA`, this.x, this.y - 32, '#888888');
+          const ccLabel = fromInventor ? `-${costCC} CC` : `-${costCC} CC (Mochila)`;
+          const partsLabel = fromInventor ? `-${costParts} PEÇA` : `-${costParts} PEÇA (Mochila)`;
+          window.game.spawnFloatingText(ccLabel, this.x, this.y - 18, '#ff5252');
+          window.game.spawnFloatingText(partsLabel, this.x, this.y - 32, '#888888');
         }
 
         // Taxa de sucesso: No Inventor é 100%, Charlotte no campo tem 30%
@@ -4994,17 +5200,43 @@
             const tile = room.grid[ty][tx];
             if (tile === TILE.BOSS_DOOR && this.hasBossKey) {
                room.grid[ty][tx] = TILE.EMPTY;
+               if (room.bossDoors) {
+                 if (ty === 0) room.bossDoors.north = false;
+                 if (ty === GRID_SIZE - 1) room.bossDoors.south = false;
+                 if (tx === 0) room.bossDoors.west = false;
+                 if (tx === GRID_SIZE - 1) room.bossDoors.east = false;
+               }
+               if (window.game && window.game.map) {
+                 const mid = Math.floor(GRID_SIZE / 2);
+                 window.game.map.rooms.forEach(r => {
+                   if (r.isBossRoom) {
+                     r.bossDoors = { north: false, south: false, east: false, west: false };
+                     if (r.grid[0][mid] === TILE.BOSS_DOOR) r.grid[0][mid] = TILE.EMPTY;
+                     if (r.grid[GRID_SIZE - 1][mid] === TILE.BOSS_DOOR) r.grid[GRID_SIZE - 1][mid] = TILE.EMPTY;
+                     if (r.grid[mid][0] === TILE.BOSS_DOOR) r.grid[mid][0] = TILE.EMPTY;
+                     if (r.grid[mid][GRID_SIZE - 1] === TILE.BOSS_DOOR) r.grid[mid][GRID_SIZE - 1] = TILE.EMPTY;
+                   }
+                 });
+               }
                this.hasBossKey = false;
                if (window.sound) window.sound.playUnlockSound();
-               if (window.game) window.game.spawnFloatingText('PORTA ABERTA', this.x, this.y - 15, '#fff');
+               if (window.game) {
+                 window.game.spawnFloatingText('PORTA DO BOSS ABERTA!', this.x, this.y - 15, '#ffcc00');
+                 window.game.spawnSparks(tx * TILE_SIZE + TILE_SIZE / 2, ty * TILE_SIZE + TILE_SIZE / 2, '#ffcc00', 30);
+                 window.game.updateHUD();
+               }
                return false;
             }
             if (isKnockback) {
               if (tile === TILE.WALL || tile === TILE.BREAKABLE || tile === TILE.LOCK_GATE || tile === TILE.BOSS_DOOR || tile === TILE.ARMORY || tile === TILE.INVENTOR_NPC || tile === TILE.SWITCH_TARGET) return true;
             } else {
               if (tile === TILE.WALL || tile === TILE.BREAKABLE || tile === TILE.LOCK_GATE || tile === TILE.BOSS_DOOR || tile === TILE.ARMORY || tile === TILE.INVENTOR_NPC || tile === TILE.SWITCH_TARGET) {
-                if (tile === TILE.BOSS_DOOR && Math.random() < 0.02) {
-                   if (window.showToast) window.showToast('VOCÊ PRECISA DA CHAVE DO BOSS!');
+                if (tile === TILE.BOSS_DOOR) {
+                   const nowMs = performance.now();
+                   if (!this._lastBossDoorToast || nowMs - this._lastBossDoorToast > 2000) {
+                     this._lastBossDoorToast = nowMs;
+                     if (window.showToast) window.showToast('🔒 PORTA DO BOSS TRANCADA! Você precisa do Cartão de Acesso!');
+                   }
                 }
                 return true;
               }
@@ -5200,14 +5432,16 @@
         this.type = type; // 'rusty', 'rusty_charger', 'rusty_bomber', 'scout', 'charger', 'bomber'
 
         const isRusty = (this.type === 'rusty' || this.type === 'rusty_charger' || this.type === 'rusty_bomber');
-        this.canGoCrazy = isRusty && this.depth >= 2;
+        this.canGoCrazy = (isRusty && this.depth >= 2) || this.type === 'bomber';
         this.isCrazy = false;
         this.crazyTimer = 0;
         this.crazyCooldown = Math.random() * 5 + 5;
+        this.crazySpinAngle = Math.random() * Math.PI * 2;
 
         this.setCrazyState = (crazy) => {
           this.isCrazy = crazy;
           if (crazy) {
+            this.crazyTimer = 3.0;
             this.reactionDelay = 0.15;
             this.searchRange = TILE_SIZE * 6;
             this.loseRange = TILE_SIZE * 8;
@@ -5215,16 +5449,34 @@
               this.speed = 130;
               this.patrolSpeed = 45;
               this.chargeCooldown = 1.5 + Math.random() * 1.0;
-            } else if (this.type === 'rusty_bomber') {
-              this.speed = 100;
-              this.patrolSpeed = 40;
-              this.shootCooldown = 1.5 + Math.random() * 0.8;
+            } else if (this.type === 'rusty_bomber' || this.type === 'bomber') {
+              this.speed = this.type === 'bomber' ? 115 : 100;
+              this.patrolSpeed = this.type === 'bomber' ? 50 : 40;
+              this.shootCooldown = 0.12;
+              this.recoilTimer = 0;
+              if (this.activationDelay <= 0) {
+                this.state = 'chase';
+              }
+              if (window.game) {
+                window.game.spawnFloatingText('BOMBAS PRA TODO LADO!', this.x, this.y - (this.radius || 15) - 14, '#ff1744');
+              }
             } else {
               this.speed = 120;
               this.patrolSpeed = 45;
               this.stumbleTimer = 0.4 + Math.random() * 0.4;
             }
           } else {
+            if (this.type === 'bomber') {
+              const speedBonus = Math.min(45, (this.depth - 3) * 12);
+              const searchBonus = Math.min(40, (this.depth - 1) * 10);
+              this.speed = 54 + speedBonus * 0.4;
+              this.patrolSpeed = 28 + speedBonus * 0.2;
+              this.shootCooldown = 2.2 + Math.random() * 1.0;
+              this.searchRange = TILE_SIZE * 4.5 + searchBonus;
+              this.loseRange = TILE_SIZE * 6.0 + searchBonus;
+              this.reactionDelay = Math.max(0.32, 0.58 - (this.depth - 3) * 0.08);
+              return;
+            }
             this.reactionDelay = 1.05;
             this.searchRange = TILE_SIZE * 3.8;
             this.loseRange = TILE_SIZE * 5.2;
@@ -5587,14 +5839,35 @@
         // --- COMPORTAMENTO DO BOMBER (BOMBARDEIRO ARTILHEIRO) ---
         if (this.type === 'bomber' || this.type === 'rusty_bomber') {
           const isRustyBomber = this.type === 'rusty_bomber';
-          if (this.recoilTimer > 0) {
+          if (this.recoilTimer > 0 && !this.isCrazy) {
             this.recoilTimer -= dt;
             return; // Tranco de recuo do morteiro
           }
+          if (this.recoilTimer > 0) this.recoilTimer -= dt;
 
           if (this.shootCooldown > 0) this.shootCooldown -= dt;
 
-          if (this.state === 'chase' && this.shootCooldown <= 0 && dist <= TILE_SIZE * 6.5 && window.game) {
+          if (this.isCrazy) {
+            if (this.state !== 'chase') this.state = 'chase';
+            if (this.shootCooldown <= 0 && window.game) {
+              // Quando acelera (isCrazy): joga bombas para todos os lados SEM aviso (sem TargetMarker)!
+              const numBombs = 4;
+              this.crazySpinAngle = (this.crazySpinAngle || 0) + (Math.PI / 4) + (Math.random() * 0.35);
+              for (let b = 0; b < numBombs; b++) {
+                const angle = this.crazySpinAngle + (b * Math.PI * 2) / numBombs + (Math.random() - 0.5) * 0.35;
+                const throwDist = TILE_SIZE * (1.8 + Math.random() * 1.6);
+                const tx = Math.max(TILE_SIZE * 1.2, Math.min(WORLD_WIDTH - TILE_SIZE * 1.2, this.x + Math.cos(angle) * throwDist));
+                const ty = Math.max(TILE_SIZE * 1.2, Math.min(WORLD_HEIGHT - TILE_SIZE * 1.2, this.y + Math.sin(angle) * throwDist));
+                const fb = new FlyingBomb(this.x, this.y, tx, ty, BOMB_TYPE.IMPACT);
+                fb.sourceEnemy = this;
+                fb.flightDuration = 0.42;
+                window.game.flyingBombs.push(fb);
+              }
+              if (window.sound) window.sound.playThrowWhoosh();
+              window.game.spawnSparks(this.x, this.y - 12, '#ff1744', 10);
+              this.shootCooldown = isRustyBomber ? 0.75 : 0.6;
+            }
+          } else if (this.state === 'chase' && this.shootCooldown <= 0 && dist <= TILE_SIZE * 6.5 && window.game) {
             this.attackPhase = this.attackPhase || 0;
 
             // Inteligencia tatica de emboscada: alterna entre TimerBomb (reacao em cadeia) e ImpactBomb telegrafada
@@ -5605,11 +5878,15 @@
               const leadY = player.y + (player.facing ? player.facing.dy * leadDist : 0);
               const gx = Math.max(1, Math.min(GRID_SIZE - 2, Math.round(leadX / TILE_SIZE)));
               const gy = Math.max(1, Math.min(GRID_SIZE - 2, Math.round(leadY / TILE_SIZE)));
+              const tx = gx * TILE_SIZE + TILE_SIZE / 2;
+              const ty = gy * TILE_SIZE + TILE_SIZE / 2;
 
-              window.game.timedBombs.push(new TimedBomb(gx, gy));
+              if (window.game && window.game.flyingBombs) {
+                window.game.flyingBombs.push(new FlyingBomb(this.x, this.y, tx, ty, BOMB_TYPE.TIMED));
+              }
               if (window.sound) window.sound.playThrowWhoosh();
               if (window.game) {
-                window.game.spawnSparks(gx * TILE_SIZE + TILE_SIZE/2, gy * TILE_SIZE + TILE_SIZE/2, '#00e5ff', 12);
+                window.game.spawnSparks(this.x, this.y, '#00e5ff', 10);
                 window.game.spawnFloatingText('EMBOSCADA TIMER!', this.x, this.y - 18, '#00e5ff');
               }
               this.shootCooldown = isRustyBomber ? 3.5 : 2.5;
@@ -6421,6 +6698,16 @@
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
           ctx.fillText(this.chargeState === 'windup' ? '⚡' : '!', renderX, renderY - this.radius - 12 + bobY);
+        } else if (this.isCrazy) {
+          ctx.fillStyle = '#ff0000';
+          ctx.beginPath();
+          ctx.arc(renderX + eyeOffsetX, renderY + eyeOffsetY, 5.5, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.fillStyle = 'rgba(255, 0, 0, 0.6)';
+          ctx.beginPath();
+          ctx.arc(renderX + eyeOffsetX, renderY + eyeOffsetY, 10, 0, Math.PI * 2);
+          ctx.fill();
         } else if (this.state === 'chase' || isCharging) {
           ctx.fillStyle = '#ff1744';
           ctx.beginPath();
@@ -7231,10 +7518,14 @@
             const leadY = player.y + (player.facing ? player.facing.dy * leadDist : 0);
             const gx = Math.max(1, Math.min(GRID_SIZE - 2, Math.round(leadX / TILE_SIZE)));
             const gy = Math.max(1, Math.min(GRID_SIZE - 2, Math.round(leadY / TILE_SIZE)));
-            window.game.timedBombs.push(new TimedBomb(gx, gy));
+            const tx = gx * TILE_SIZE + TILE_SIZE / 2;
+            const ty = gy * TILE_SIZE + TILE_SIZE / 2;
+            if (window.game && window.game.flyingBombs) {
+              window.game.flyingBombs.push(new FlyingBomb(this.x, this.y, tx, ty, BOMB_TYPE.TIMED));
+            }
             if (window.sound) window.sound.playThrowWhoosh();
             if (window.game) {
-              window.game.spawnSparks(gx * TILE_SIZE + TILE_SIZE/2, gy * TILE_SIZE + TILE_SIZE/2, '#ffd54f', 12);
+              window.game.spawnSparks(this.x, this.y, '#ffd54f', 10);
               window.game.spawnFloatingText('MINA TIMER!', this.x, this.y - 24, '#ffd54f');
             }
           }
@@ -7534,7 +7825,7 @@
     }
 
     class FlyingBomb {
-      constructor(startX, startY, targetX, targetY, type) {
+      constructor(startX, startY, targetX, targetY, type, overrideDirX = null, overrideDirY = null) {
         this.startX = startX;
         this.startY = startY;
         this.targetX = Math.max(TILE_SIZE * 0.8, Math.min(WORLD_WIDTH - TILE_SIZE * 0.8, targetX));
@@ -7544,6 +7835,26 @@
         this.elapsed = 0;
         this.arcHeight = 45;
         this.rotation = 0;
+        this.bounceCount = 0;
+
+        if (overrideDirX !== null && overrideDirY !== null) {
+          this.dirX = overrideDirX;
+          this.dirY = overrideDirY;
+        } else {
+          const dx = this.targetX - this.startX;
+          const dy = this.targetY - this.startY;
+          const dist = Math.hypot(dx, dy);
+          if (dist > 1) {
+            this.dirX = dx / dist;
+            this.dirY = dy / dist;
+          } else if (window.game && window.game.player && window.game.player.facing) {
+            this.dirX = window.game.player.facing.dx || 1;
+            this.dirY = window.game.player.facing.dy || 0;
+          } else {
+            this.dirX = 1;
+            this.dirY = 0;
+          }
+        }
       }
 
       update(dt) {
@@ -7608,6 +7919,58 @@
       }
     }
 
+    class FallingAbyssBomb {
+      constructor(x, y, type) {
+        this.x = x;
+        this.y = y;
+        this.type = type;
+        this.duration = 0.45;
+        this.elapsed = 0;
+        this.rotation = 0;
+      }
+
+      update(dt) {
+        this.elapsed += dt;
+        this.rotation += dt * 16;
+        return this.elapsed >= this.duration;
+      }
+
+      draw(ctx) {
+        const p = Math.min(1.0, this.elapsed / this.duration);
+        const scale = Math.max(0.02, Math.pow(1 - p, 1.5));
+        const sinkY = p * 10;
+
+        ctx.save();
+        ctx.globalAlpha = Math.max(0, 1 - p * 0.75);
+        ctx.translate(this.x, this.y + sinkY);
+        ctx.scale(scale, scale);
+        ctx.rotate(this.rotation);
+
+        if (this.type === BOMB_TYPE.IMPACT) {
+          ctx.fillStyle = '#ff5252';
+          ctx.fillRect(-8, -8, 16, 16);
+          ctx.strokeStyle = '#ffffff';
+          ctx.lineWidth = 1.5;
+          ctx.strokeRect(-8, -8, 16, 16);
+        } else if (this.type === BOMB_TYPE.VORTEX || this.type === 'vortex' || this.type === BOMB_TYPE.PROPULSOR) {
+          ctx.fillStyle = '#7c4dff';
+          ctx.beginPath();
+          ctx.arc(0, 0, 9, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.strokeStyle = '#00e5ff';
+          ctx.lineWidth = 2.0;
+          ctx.stroke();
+        } else {
+          ctx.fillStyle = '#ffca28';
+          ctx.fillRect(-9, -9, 18, 18);
+          ctx.strokeStyle = '#ffffff';
+          ctx.lineWidth = 1.5;
+          ctx.strokeRect(-9, -9, 18, 18);
+        }
+        ctx.restore();
+      }
+    }
+
     class TargetMarker {
       constructor(targetX, targetY, duration, source, bombType = BOMB_TYPE.IMPACT) {
         this.targetX = targetX;
@@ -7623,7 +7986,9 @@
         this.timer -= dt;
         if (this.timer <= 0) {
           if (this.source && engine) {
-            engine.flyingBombs.push(new FlyingBomb(this.source.x, this.source.y, this.targetX, this.targetY, this.bombType));
+            const fb = new FlyingBomb(this.source.x, this.source.y, this.targetX, this.targetY, this.bombType);
+            fb.sourceEnemy = this.source;
+            engine.flyingBombs.push(fb);
             if (window.sound) window.sound.playThrowWhoosh();
           }
           return true;
@@ -8135,6 +8500,56 @@
           }
         }
 
+        // 4.5. PUXA O CARTÃO DE ACESSO DO BOSS ATRAVÉS DO ABISMO!
+        if (room.bossKeyDrop) {
+          const card = room.bossKeyDrop;
+          const kdx = this.x - card.x;
+          const kdy = this.y - card.y;
+          const kDist = Math.hypot(kdx, kdy);
+          const cardPullRadius = Math.max(this.pullRadius * 1.35, TILE_SIZE * 5.2);
+          if (kDist < cardPullRadius || card.pulledByVortex) {
+            card.pulledByVortex = true;
+            card.beingPulledThisFrame = true;
+            if (!card.vortexNoticeShown) {
+              card.vortexNoticeShown = true;
+              engine.spawnFloatingText('🧲 CARTÃO ATRAÍDO PELO VÓRTICE!', card.x, card.y - 24, '#ffd700');
+              engine.spawnSparks(card.x, card.y, '#ffd700', 20);
+            }
+
+            const vgx = Math.floor(this.x / TILE_SIZE);
+            const vgy = Math.floor(this.y / TILE_SIZE);
+            const mid = Math.floor(GRID_SIZE / 2);
+            const vortexOverAbyssOrIsland = (
+              (vgx >= 0 && vgx < GRID_SIZE && vgy >= 0 && vgy < GRID_SIZE && room.grid[vgy][vgx] === TILE.HOLE) ||
+              (vgx === mid && vgy === mid)
+            );
+
+            let targetPullX = this.x;
+            let targetPullY = this.y;
+            if (vortexOverAbyssOrIsland && engine.player) {
+              // Se o vórtice caiu no abismo ou sobre o pedestal, puxa pro vórtice e canaliza na direção da Charlotte
+              const progress = 1 - Math.max(0, this.timer / this.duration);
+              const blend = Math.min(1, progress * 1.35);
+              targetPullX = this.x * (1 - blend) + engine.player.x * blend;
+              targetPullY = this.y * (1 - blend) + engine.player.y * blend;
+            }
+
+            const pdx = targetPullX - card.x;
+            const pdy = targetPullY - card.y;
+            const pDist = Math.hypot(pdx, pdy);
+            if (pDist > 4) {
+              const pullSpeed = 290;
+              card.x += (pdx / pDist) * pullSpeed * dt;
+              card.y += (pdy / pDist) * pullSpeed * dt;
+              card.baseY = card.y;
+            }
+            if (Math.random() < 0.5) {
+              engine.spawnSparks(card.x, card.y, '#ffd700', 1);
+              engine.spawnSparks(card.x, card.y, '#00e5ff', 1);
+            }
+          }
+        }
+
         // Partículas giratórias de vórtice
         if (Math.random() < 0.6) {
           const spawnAngle = Math.random() * Math.PI * 2;
@@ -8343,6 +8758,106 @@
     window.MapObstacle = MapObstacle;
     window.FlyingShard = FlyingShard;
     window.VortexField = VortexField;
+
+    class BossKeyDrop {
+      constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.baseY = y;
+        this.pedestalX = x;
+        this.pedestalY = y;
+        this.radius = 14;
+        this.floatTimer = 0;
+        this.pulledByVortex = false;
+        this.beingPulledThisFrame = false;
+        this.vortexNoticeShown = false;
+        this.pickupDistance = 26;
+      }
+
+      update(dt, player, room) {
+        this.floatTimer += dt * 3.5;
+
+        if (this.pulledByVortex && player) {
+          const mid = Math.floor(GRID_SIZE / 2);
+          const gx = Math.floor(this.x / TILE_SIZE);
+          const gy = Math.floor(this.y / TILE_SIZE);
+          const overAbyssOrIsland = (
+            (room && gx >= 0 && gx < GRID_SIZE && gy >= 0 && gy < GRID_SIZE && room.grid[gy][gx] === TILE.HOLE) ||
+            (gx === mid && gy === mid)
+          );
+
+          const dx = player.x - this.x;
+          const dy = (player.y - 6) - this.y;
+          const dist = Math.hypot(dx, dy);
+
+          // Se já foi libertado pelo Vórtice e ainda está sobre o abismo/ilha ou próximo da Charlotte, desliza até ela
+          if ((!this.beingPulledThisFrame && overAbyssOrIsland) || dist < 95) {
+            if (dist > 1) {
+              const pullSpeed = overAbyssOrIsland ? 270 : 310;
+              this.x += (dx / dist) * pullSpeed * dt;
+              this.y += (dy / dist) * pullSpeed * dt;
+              this.baseY = this.y;
+            }
+          }
+        }
+
+        this.beingPulledThisFrame = false;
+
+        if (!player) return false;
+        const dx = player.x - this.x;
+        const dy = (player.y - 6) - this.y;
+        return Math.hypot(dx, dy) < this.pickupDistance;
+      }
+
+      draw(ctx) {
+        // 1. Desenha o Pedestal Magnético Central no ponto de origem
+        ctx.save();
+        ctx.translate(this.pedestalX, this.pedestalY);
+        ctx.fillStyle = '#263238';
+        ctx.fillRect(-16, -16, 32, 32);
+        ctx.strokeStyle = this.pulledByVortex ? '#546e7a' : '#00e5ff';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(-14, -14, 28, 28);
+        ctx.fillStyle = this.pulledByVortex ? '#37474f' : 'rgba(0, 229, 255, 0.25)';
+        ctx.beginPath();
+        ctx.arc(0, 0, 9, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+
+        // 2. Desenha o Cartão de Acesso Dourado Flutuante
+        ctx.save();
+        const bounce = Math.sin(this.floatTimer) * 4;
+        ctx.translate(this.x, this.y + bounce);
+
+        const glow = (Math.sin(this.floatTimer * 2) + 1) * 0.5;
+        ctx.shadowColor = '#ffd700';
+        ctx.shadowBlur = 12 + glow * 12;
+
+        // Sombra no chão
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
+        ctx.beginPath();
+        ctx.ellipse(0, 12 - bounce, 11, 4, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Corpo do Cartão Magnético
+        ctx.fillStyle = '#ffca28';
+        ctx.fillRect(-12, -8, 24, 16);
+        ctx.strokeStyle = '#fff8e1';
+        ctx.lineWidth = 1.5;
+        ctx.strokeRect(-12, -8, 24, 16);
+
+        // Tarja magnética escura e chip ciano
+        ctx.fillStyle = '#212121';
+        ctx.fillRect(-12, -4, 24, 4);
+        ctx.fillStyle = '#00e5ff';
+        ctx.fillRect(-8, 2, 6, 4);
+        ctx.fillStyle = '#b71c1c';
+        ctx.fillRect(3, 2, 6, 4);
+
+        ctx.restore();
+      }
+    }
+    window.BossKeyDrop = BossKeyDrop;
 
     class LorePamphletDrop {
       constructor(x, y, fragment) {
@@ -8824,19 +9339,39 @@
         this.updatePuzzleRoom(dt);
         this.checkLavaHazard();
         this.checkAbyssHazard();
+        this.updateLantern(dt);
 
         // Atualização e proximidade do Nodo do Chão Secreto (Andar Inferior)
         if (room.secretFloorNode) {
           room.secretFloorNode.update(dt, this);
           if (room.secretFloorNode.state === 'opened') {
-            const distToHole = Math.hypot(this.player.x - room.secretFloorNode.x, this.player.y - room.secretFloorNode.y);
+            const node = room.secretFloorNode;
+            const distToHole = Math.hypot(this.player.x - node.x, this.player.y - node.y);
             if (distToHole < TILE_SIZE * 0.8) {
-              this.descendToSecretFloor(room.secretFloorNode);
+              if ((this.map.currentDepth || 1) === 2 && !this.player.hasLantern) {
+                // Sem o Lampião: pode descer, mas a visão no Nível 3 será de apenas 1 tile
+                showToast('🏮 Sem Lampião de Cristal... lá embaixo você mal enxergará um palmo à frente!');
+              }
+              this.descendToSecretFloor(node);
             }
           }
         }
 
         
+        if (room && room.bossKeyDrop) {
+          const pickedKey = room.bossKeyDrop.update(dt, this.player, room);
+          if (pickedKey) {
+            this.player.hasBossKey = true;
+            room.bossKeyDrop = null;
+            sound.playUpgradeFanfare();
+            this.spawnSparks(this.player.x, this.player.y, '#ffd700', 35);
+            this.spawnSparks(this.player.x, this.player.y, '#00e5ff', 20);
+            this.spawnFloatingText('🔑 CARTÃO DE ACESSO DO BOSS!', this.player.x, this.player.y - 18, '#ffd700');
+            showToast('🔑 CARTÃO DO BOSS ADQUIRIDO! Procure o Portão Trancado da Sala do Chefe!');
+            this.updateHUD();
+          }
+        }
+
         if (room && room.loreDrops) {
           for (let i = room.loreDrops.length - 1; i >= 0; i--) {
             const drop = room.loreDrops[i];
@@ -8881,8 +9416,17 @@
         for (let i = this.flyingBombs.length - 1; i >= 0; i--) {
           const bomb = this.flyingBombs[i];
           if (bomb.update(dt)) {
-            this.landThrownBomb(bomb);
             this.flyingBombs.splice(i, 1);
+            this.landThrownBomb(bomb);
+          }
+        }
+
+        // Bombas caindo no abismo (encolhem até sumir sem causar efeito)
+        if (this.fallingBombs) {
+          for (let i = this.fallingBombs.length - 1; i >= 0; i--) {
+            if (this.fallingBombs[i].update(dt)) {
+              this.fallingBombs.splice(i, 1);
+            }
           }
         }
 
@@ -8927,6 +9471,12 @@
         // 4. Bombas Temporizadas no Chão
         for (let i = this.timedBombs.length - 1; i >= 0; i--) {
           const bomb = this.timedBombs[i];
+          if (room && room.grid[bomb.gridY] && room.grid[bomb.gridY][bomb.gridX] === TILE.HOLE) {
+            if (!this.fallingBombs) this.fallingBombs = [];
+            this.fallingBombs.push(new FallingAbyssBomb(bomb.x, bomb.y, BOMB_TYPE.TIMED));
+            this.timedBombs.splice(i, 1);
+            continue;
+          }
           if (bomb.update(dt)) {
             this.detonateTimedBomb(bomb);
             this.timedBombs.splice(i, 1);
@@ -9434,9 +9984,26 @@
       launchThrownBomb(targetX, targetY, bombType) {
         if (!this.player.bagSlots) return;
 
-        const availableSlot = this.player.bagSlots.find(s => s.type === bombType && s.cooldown <= 0);
+        // Se o jogador já desbloqueou a bomba especial mas ainda não tinha um slot configurado na bolsa, equipa 1 slot automaticamente
+        const isVortex = (bombType === BOMB_TYPE.VORTEX || bombType === 'vortex' || bombType === 'propulsor');
+        const isImpact = (bombType === BOMB_TYPE.IMPACT || bombType === 'impact');
+        if (isVortex && (this.player.unlockedVortex || this.player.unlockedPropulsor)) {
+          if (!this.player.bagSlots.some(s => s.type === 'vortex' || s.type === 'propulsor')) {
+            const timedIdx = this.player.bagSlots.findIndex(s => s.type === 'timed');
+            const targetIdx = timedIdx !== -1 ? timedIdx : this.player.bagSlots.length - 1;
+            if (targetIdx >= 0) this.player.bagSlots[targetIdx] = { type: 'vortex', cooldown: 0 };
+          }
+        } else if (isImpact && this.player.unlockedImpact) {
+          if (!this.player.bagSlots.some(s => s.type === 'impact')) {
+            const timedIdx = this.player.bagSlots.findIndex(s => s.type === 'timed');
+            const targetIdx = timedIdx !== -1 ? timedIdx : this.player.bagSlots.length - 1;
+            if (targetIdx >= 0) this.player.bagSlots[targetIdx] = { type: 'impact', cooldown: 0 };
+          }
+        }
+
+        const availableSlot = this.player.bagSlots.find(s => (s.type === bombType || (isVortex && (s.type === 'vortex' || s.type === 'propulsor'))) && s.cooldown <= 0);
         if (!availableSlot) {
-          const hasType = this.player.bagSlots.some(s => s.type === bombType);
+          const hasType = this.player.bagSlots.some(s => s.type === bombType || (isVortex && (s.type === 'vortex' || s.type === 'propulsor')));
           if (hasType) {
             showToast('RECARREGANDO...', 1000);
           } else {
@@ -9700,6 +10267,240 @@
         }
       }
 
+      // ======================================================================
+      // LAMPIÃO DE CRISTAL — Escuridão da Mina Profunda (Nível 3+)
+      // ======================================================================
+      isDarkFloor() {
+        return (this.map && (this.map.currentDepth || 1) >= 3) && !this.demoEndingActive;
+      }
+
+      getLanternRadius() {
+        const p = this.player;
+        let r;
+        if (!p.hasLantern) {
+          r = TILE_SIZE * 1.0; // Sem lampião: visão extremamente limitada de 1 tile
+        } else {
+          const fuel = Math.max(0, Math.min(100, p.lanternFuel ?? 100));
+          if (fuel >= 50) r = TILE_SIZE * (5 + 5 * (fuel - 50) / 50); // 100% = 10 tiles, 50% = 5 tiles
+          else r = TILE_SIZE * (1 + 4 * fuel / 50);                  // 50% = 5 tiles, 0% = 1 tile
+        }
+        const room = this.map.currentRoom;
+        if (room && room.unpowered) r = Math.max(TILE_SIZE, r * 0.75);
+
+        // Tremulação da chama (mais forte com pouco combustível)
+        const t = performance.now() / 1000;
+        const lowFuel = p.hasLantern && (p.lanternFuel ?? 100) < 25;
+        const flick = lowFuel ? 0.06 : 0.02;
+        r *= 1 + Math.sin(t * 13) * flick * 0.6 + (Math.random() - 0.5) * flick;
+        return r;
+      }
+
+      updateLantern(dt) {
+        const p = this.player;
+        if (!p || !p.hasLantern || !this.isDarkFloor()) return;
+        if (this.fadeState !== 'none' || this.isPaused) return;
+
+        const before = p.lanternFuel ?? 100;
+        if (before <= 0) return;
+        const after = Math.max(0, before - dt / 1.2);
+        p.lanternFuel = after;
+
+        if (before >= 50 && after < 50) showToast('🏮 LAMPIÃO PELA METADE! A visão está diminuindo... [L] para abastecer');
+        else if (before >= 25 && after < 25) showToast('🏮 COMBUSTÍVEL BAIXO! Procure Cristal Coal!');
+        else if (after <= 0) showToast('🏮 LAMPIÃO APAGADO! Abasteça com CC da mochila [L]');
+
+        this.updateLanternBar();
+      }
+
+      refuelLantern() {
+        const p = this.player;
+        if (!p) return;
+        if (!p.hasLantern) { showToast('Você ainda não tem o Lampião de Cristal. Fale com o Inventor!'); return; }
+        const fuel = p.lanternFuel ?? 100;
+        if (fuel >= 99.5) { showToast('🏮 LAMPIÃO JÁ ESTÁ CHEIO!'); return; }
+        if ((p.chronoCores || 0) < 1) { showToast('SEM CC NA MOCHILA! Explore a mina para alimentar o lampião.'); return; }
+
+        p.chronoCores -= 1;
+        p.lanternFuel = Math.min(100, fuel + 20);
+        if (sound.playCCPickup) sound.playCCPickup();
+        this.spawnSparks(p.x, p.y, '#ff9800', 18);
+        this.spawnFloatingText('🏮 +20%', p.x, p.y - 26, '#ffb74d');
+        this.updateHUD();
+      }
+
+      updateLanternBar() {
+        const p = this.player;
+        if (!p) return;
+        const pct = Math.round(Math.max(0, Math.min(100, p.lanternFuel ?? 100)));
+        if (pct === this.lastLanternPct) return;
+        this.lastLanternPct = pct;
+        const bar = document.getElementById('lantern-fuel-bar');
+        const txt = document.getElementById('lantern-fuel-text');
+        const mob = document.getElementById('mobile-lantern-text');
+        const color = pct >= 50 ? '#ff9800' : (pct >= 25 ? '#ffd54f' : '#ff1744');
+        if (bar) {
+          bar.style.width = pct + '%';
+          bar.style.background = color;
+          bar.classList.toggle('lantern-critical', pct < 25);
+        }
+        if (txt) { txt.textContent = pct + '%'; txt.style.color = color; }
+        if (mob) { mob.textContent = pct + '%'; mob.style.color = color; }
+      }
+
+      renderDarkness(ctx) {
+        if (!this.isDarkFloor() || !this.player) return;
+        const room = this.map.currentRoom;
+
+        if (!this.darkCanvas) this.darkCanvas = document.createElement('canvas');
+        const dc = this.darkCanvas;
+        if (dc.width !== WORLD_WIDTH || dc.height !== WORLD_HEIGHT) {
+          dc.width = WORLD_WIDTH;
+          dc.height = WORLD_HEIGHT;
+        }
+        const d = dc.getContext('2d');
+        d.globalCompositeOperation = 'source-over';
+        d.clearRect(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
+
+        const isPowered = room && room.powerState === 'powered';
+        const isEmergency = room && room.hasEmergencyLights;
+        d.fillStyle = isPowered ? 'rgba(6, 10, 16, 0.58)' : 'rgba(2, 3, 6, 0.96)';
+        d.fillRect(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
+
+        d.globalCompositeOperation = 'destination-out';
+        const punch = (x, y, r, a = 1) => {
+          if (!(r > 0) || typeof x !== 'number' || typeof y !== 'number') return;
+          const g = d.createRadialGradient(x, y, 0, x, y, r);
+          g.addColorStop(0, `rgba(0,0,0,${a})`);
+          g.addColorStop(0.55, `rgba(0,0,0,${a * 0.85})`);
+          g.addColorStop(1, 'rgba(0,0,0,0)');
+          d.fillStyle = g;
+          d.beginPath();
+          d.arc(x, y, r, 0, Math.PI * 2);
+          d.fill();
+        };
+
+        const p = this.player;
+        const r = this.getLanternRadius();
+        punch(p.x, p.y, r, 1);
+
+        // Coordenadas das luzes instaladas em cima de cada porta existente na sala
+        const mid = Math.floor(GRID_SIZE / 2);
+        const doorLamps = [];
+        if (room && room.doors) {
+          if (room.doors.north) {
+            doorLamps.push({ lampX: (mid + 0.5) * TILE_SIZE, lampY: 6, lightX: (mid + 0.5) * TILE_SIZE, lightY: TILE_SIZE * 0.5 });
+          }
+          if (room.doors.south) {
+            doorLamps.push({ lampX: (mid + 0.5) * TILE_SIZE, lampY: (GRID_SIZE - 1) * TILE_SIZE + 5, lightX: (mid + 0.5) * TILE_SIZE, lightY: (GRID_SIZE - 0.5) * TILE_SIZE });
+          }
+          if (room.doors.west) {
+            doorLamps.push({ lampX: 14, lampY: mid * TILE_SIZE - 5, lightX: TILE_SIZE * 0.55, lightY: (mid + 0.35) * TILE_SIZE });
+          }
+          if (room.doors.east) {
+            doorLamps.push({ lampX: WORLD_WIDTH - 14, lampY: mid * TILE_SIZE - 5, lightX: WORLD_WIDTH - TILE_SIZE * 0.55, lightY: (mid + 0.35) * TILE_SIZE });
+          }
+        }
+
+        const now = performance.now() / 1000;
+        const rawWave = Math.sin(now * 5.2);
+        const emergencyBlink = rawWave > -0.15 ? Math.pow((rawWave + 0.15) / 1.15, 1.6) : 0.04;
+        const hasDoorPower = isPowered || isEmergency;
+        const inLockdown = !!(room && (room.isLockdown || (!room.cleared && room.enemies && room.enemies.length > 0)));
+
+        if (hasDoorPower) {
+          if (inLockdown) {
+            // Em lockdown: luz de emergência pisca em vermelho abrindo halo pulsante nas portas
+            doorLamps.forEach(dl => {
+              punch(dl.lightX, dl.lightY, TILE_SIZE * (0.85 + 1.25 * emergencyBlink), 0.18 + 0.65 * emergencyBlink);
+            });
+          } else {
+            // Inimigos derrotados: luz amarela estável iluminando as portas
+            doorLamps.forEach(dl => punch(dl.lightX, dl.lightY, TILE_SIZE * 2.0, 0.72));
+          }
+        }
+
+        // Fontes de luz do cenário: explosões, bombas acesas e Goela
+        (this.blasts || []).forEach(b => punch(b.x, b.y, TILE_SIZE * 3, 0.9));
+        (this.timedBombs || []).forEach(b => punch(b.x, b.y, TILE_SIZE * 0.9, 0.6));
+        (this.flyingBombs || []).forEach(b => punch(b.x, b.y, TILE_SIZE * 0.6, 0.5));
+        if (room && room.hasGoela) {
+          punch((mid + 0.5) * TILE_SIZE, (mid + 0.5) * TILE_SIZE, TILE_SIZE * 1.3, 0.55);
+        }
+
+        ctx.save();
+        ctx.drawImage(dc, 0, 0);
+
+        // Brilho quente da chama sobre Charlotte
+        ctx.globalCompositeOperation = 'lighter';
+        const warm = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, r * 0.8);
+        warm.addColorStop(0, 'rgba(255, 152, 0, 0.10)');
+        warm.addColorStop(1, 'rgba(255, 152, 0, 0)');
+        ctx.fillStyle = warm;
+        ctx.fillRect(p.x - r, p.y - r, r * 2, r * 2);
+
+        // Renderiza as luminárias de emergência em cima das portas:
+        // - Em Lockdown: piscando em vermelho
+        // - Inimigos derrotados: acesas em amarelo
+        // - Sem energia (blackout): apagadas
+        ctx.globalCompositeOperation = 'source-over';
+        doorLamps.forEach(dl => {
+          if (hasDoorPower && inLockdown) {
+            // Feixe/halo vermelho piscante durante o Lockdown
+            const glowR = TILE_SIZE * (1.1 + 1.15 * emergencyBlink);
+            const redGlow = ctx.createRadialGradient(dl.lampX, dl.lampY, 2, dl.lightX, dl.lightY, glowR);
+            redGlow.addColorStop(0, `rgba(255, 23, 68, ${0.58 * emergencyBlink})`);
+            redGlow.addColorStop(0.5, `rgba(213, 0, 0, ${0.28 * emergencyBlink})`);
+            redGlow.addColorStop(1, 'rgba(213, 0, 0, 0)');
+            ctx.fillStyle = redGlow;
+            ctx.beginPath();
+            ctx.arc(dl.lightX, dl.lightY, glowR, 0, Math.PI * 2);
+            ctx.fill();
+          } else if (hasDoorPower && !inLockdown) {
+            // Halo amarelo estável quando os inimigos foram derrotados
+            const glowR = TILE_SIZE * 1.75;
+            const yGlow = ctx.createRadialGradient(dl.lampX, dl.lampY, 2, dl.lightX, dl.lightY, glowR);
+            yGlow.addColorStop(0, 'rgba(255, 213, 79, 0.36)');
+            yGlow.addColorStop(0.55, 'rgba(255, 179, 0, 0.16)');
+            yGlow.addColorStop(1, 'rgba(255, 179, 0, 0)');
+            ctx.fillStyle = yGlow;
+            ctx.beginPath();
+            ctx.arc(dl.lightX, dl.lightY, glowR, 0, Math.PI * 2);
+            ctx.fill();
+          }
+
+          // Carcaça metálica da luminária em cima da porta
+          ctx.fillStyle = '#263238';
+          ctx.fillRect(dl.lampX - 9, dl.lampY - 3, 18, 6);
+          ctx.strokeStyle = '#455a64';
+          ctx.lineWidth = 1;
+          ctx.strokeRect(dl.lampX - 9, dl.lampY - 3, 18, 6);
+
+          // Lente da luminária
+          if (hasDoorPower && inLockdown) {
+            ctx.fillStyle = emergencyBlink > 0.25
+              ? `rgba(255, 23, 68, ${0.45 + 0.55 * emergencyBlink})`
+              : '#3e0a12';
+            ctx.fillRect(dl.lampX - 7, dl.lampY - 2, 14, 4);
+            if (emergencyBlink > 0.5) {
+              ctx.fillStyle = `rgba(255, 138, 128, ${emergencyBlink})`;
+              ctx.fillRect(dl.lampX - 4, dl.lampY - 1, 8, 2);
+            }
+          } else if (hasDoorPower && !inLockdown) {
+            // Amarela quando os inimigos estão derrotados
+            ctx.fillStyle = '#ffca28';
+            ctx.fillRect(dl.lampX - 7, dl.lampY - 2, 14, 4);
+            ctx.fillStyle = '#fff59d';
+            ctx.fillRect(dl.lampX - 4, dl.lampY - 1, 8, 2);
+          } else {
+            // Apagada (sala sem energia)
+            ctx.fillStyle = '#1f080b';
+            ctx.fillRect(dl.lampX - 7, dl.lampY - 2, 14, 4);
+          }
+        });
+
+        ctx.restore();
+      }
+
       openInventorShop() {
         if (this.fadeState !== 'none') return;
         this.updateInventorShopUI();
@@ -9753,16 +10554,27 @@
         if (btnHeal) {
           const flasks = this.player.healingFlasks || 0;
           const maxFlasks = this.player.maxHealingFlasks || 2;
-          const carriedCC = this.player.chronoCores || 0;
           if (costHealEl) {
-            costHealEl.textContent = `Estoque: ${flasks}/${maxFlasks} | Custo: 2 CC (Mochila: ${carriedCC}) | 1 PEÇA`;
+            costHealEl.textContent = `Estoque: ${flasks}/${maxFlasks} | Custo: 2 CC | 1 PEÇA (Mochila + Baú)`;
           }
           if (flasks >= maxFlasks) {
             btnHeal.textContent = 'Cheio (2/2) ✓';
             btnHeal.disabled = true;
           } else {
             btnHeal.textContent = 'Sintetizar (100%)';
-            btnHeal.disabled = (carriedCC < 2 || totalParts < 1);
+            btnHeal.disabled = (totalCC < 2 || totalParts < 1);
+          }
+        }
+
+        // Lampião de Cristal
+        const btnLantern = document.getElementById('btn-inv-lantern');
+        if (btnLantern) {
+          if (this.player.hasLantern) {
+            btnLantern.textContent = 'Comprado ✓';
+            btnLantern.disabled = true;
+          } else {
+            btnLantern.textContent = 'Comprar';
+            btnLantern.disabled = (totalCC < 20 || totalParts < 15);
           }
         }
       }
@@ -9770,6 +10582,24 @@
       buyInventorUpgrade(type) {
         if (type === 'heal') {
           return this.player.synthesizeHealingFlask(true);
+        }
+
+        if (type === 'lantern') {
+          if (this.player.hasLantern) { showToast('INVENTOR: "Você já tem o Lampião!"'); return; }
+          if (this.getAvailableCC() >= 20 && this.getAvailableParts() >= 15) {
+            this.consumeCurrency(20, 15);
+            this.player.hasLantern = true;
+            this.player.lanternFuel = 100;
+            showToast('INVENTOR: "Lampião de Cristal pronto! Lá embaixo é breu total... Alimente-o com CC da mochila [L]."');
+            sound.playUpgradeFanfare();
+            this.spawnSparks(this.player.x, this.player.y, '#ff9800', 30);
+            this.updateHUD();
+            this.updateInventorShopUI();
+            if (typeof saveGame === 'function') saveGame();
+          } else {
+            showToast('INVENTOR: "Você precisa de 20 CC e 15 PEÇAS para o Lampião..."');
+          }
+          return;
         }
 
         let costCC = 0, costParts = 0;
@@ -9790,10 +10620,18 @@
 
           if (type === 'impact') {
             this.player.unlockedImpact = true;
+            if (this.player.bagSlots && !this.player.bagSlots.some(s => s.type === 'impact')) {
+              const idx = this.player.bagSlots.findIndex(s => s.type === 'timed');
+              if (idx !== -1) this.player.bagSlots[idx].type = 'impact';
+            }
             showToast('INVENTOR: "Aqui está! Bomba de Impacto instalada na sua bolsa!"');
           } else {
             this.player.unlockedVortex = true;
             this.player.unlockedPropulsor = true;
+            if (this.player.bagSlots && !this.player.bagSlots.some(s => s.type === 'vortex' || s.type === 'propulsor')) {
+              const idx = this.player.bagSlots.findIndex(s => s.type === 'timed');
+              if (idx !== -1) this.player.bagSlots[idx].type = 'vortex';
+            }
             showToast('INVENTOR: "Singularidade calibrada! Bomba de Vórtice pronta!"');
           }
 
@@ -10516,6 +11354,7 @@
         sound.playChuteDeposit();
 
         const nextDepth = (this.map.currentDepth || 1) + 1;
+        if (nextDepth >= 3 && this.player.hasLantern) this.player.lanternFuel = 100;
         showToast(`DESCENDO AO NÍVEL ${nextDepth} DA MINA!`);
 
         this.pendingTransition = () => {
@@ -10605,18 +11444,110 @@
         });
       }
 
+      isBombLandingBlocked(gridX, gridY, room) {
+        if (!room) return false;
+        if (gridX <= 0 || gridX >= GRID_SIZE - 1 || gridY <= 0 || gridY >= GRID_SIZE - 1) return true;
+
+        const tile = room.grid[gridY][gridX];
+        // 2. Não pode ficar em cima de caixa, pilar ou obstáculo sólido
+        if (
+          tile === TILE.BREAKABLE ||
+          tile === TILE.WALL ||
+          tile === TILE.LOCK_GATE ||
+          tile === TILE.BOSS_DOOR ||
+          tile === TILE.ARMORY ||
+          tile === TILE.CHEST ||
+          tile === TILE.VAULT_CHEST ||
+          tile === TILE.VAULT_CHEST_OPEN ||
+          tile === TILE.INVENTOR_NPC ||
+          tile === TILE.SWITCH_TARGET
+        ) {
+          return true;
+        }
+
+        if (room.pushables && room.pushables.some(p => Math.floor(p.x / TILE_SIZE) === gridX && Math.floor(p.y / TILE_SIZE) === gridY)) {
+          return true;
+        }
+
+        if (room.obstacles && room.obstacles.some(obs => obs.type === 'boss_rock' && Math.floor(obs.x / TILE_SIZE) === gridX && Math.floor(obs.y / TILE_SIZE) === gridY)) {
+          return true;
+        }
+
+        // 1. Não pode sobrepor outra bomba no chão
+        if (this.timedBombs && this.timedBombs.some(b => b.gridX === gridX && b.gridY === gridY)) {
+          return true;
+        }
+        if (this.vortexFields && this.vortexFields.some(v => Math.floor(v.x / TILE_SIZE) === gridX && Math.floor(v.y / TILE_SIZE) === gridY)) {
+          return true;
+        }
+        if (this.enemyBombs && this.enemyBombs.some(eb => Math.floor(eb.x / TILE_SIZE) === gridX && Math.floor(eb.y / TILE_SIZE) === gridY)) {
+          return true;
+        }
+
+        return false;
+      }
+
       landThrownBomb(bomb) {
-        const gridX = Math.floor(bomb.targetX / TILE_SIZE);
-        const gridY = Math.floor(bomb.targetY / TILE_SIZE);
+        const room = this.map.currentRoom;
+        const gridX = Math.max(0, Math.min(GRID_SIZE - 1, Math.floor(bomb.targetX / TILE_SIZE)));
+        const gridY = Math.max(0, Math.min(GRID_SIZE - 1, Math.floor(bomb.targetY / TILE_SIZE)));
+
+        // Regras 1 e 2: Se cair em cima de outra bomba, caixa ou pilar, quica para o próximo bloco na mesma direção do lançamento
+        if (this.isBombLandingBlocked(gridX, gridY, room)) {
+          let dirX = bomb.dirX || 1;
+          let dirY = bomb.dirY || 0;
+          let stepX = Math.abs(dirX) >= 0.38 ? Math.sign(dirX) : 0;
+          let stepY = Math.abs(dirY) >= 0.38 ? Math.sign(dirY) : 0;
+          if (stepX === 0 && stepY === 0) stepX = 1;
+
+          let nextGx = gridX + stepX;
+          let nextGy = gridY + stepY;
+
+          // Se bater na parede perimetral externa da sala, reflete para continuar dentro da arena
+          if (nextGx <= 0 || nextGx >= GRID_SIZE - 1) {
+            stepX = -stepX;
+            dirX = -dirX;
+            nextGx = Math.max(1, Math.min(GRID_SIZE - 2, gridX + stepX));
+          }
+          if (nextGy <= 0 || nextGy >= GRID_SIZE - 1) {
+            stepY = -stepY;
+            dirY = -dirY;
+            nextGy = Math.max(1, Math.min(GRID_SIZE - 2, gridY + stepY));
+          }
+
+          if ((bomb.bounceCount || 0) < 10 && (nextGx !== gridX || nextGy !== gridY)) {
+            const nextTargetX = nextGx * TILE_SIZE + TILE_SIZE / 2;
+            const nextTargetY = nextGy * TILE_SIZE + TILE_SIZE / 2;
+            const hopBomb = new FlyingBomb(bomb.targetX, bomb.targetY, nextTargetX, nextTargetY, bomb.type, dirX, dirY);
+            hopBomb.flightDuration = 0.16;
+            hopBomb.arcHeight = 22;
+            hopBomb.bounceCount = (bomb.bounceCount || 0) + 1;
+            hopBomb.sourceEnemy = bomb.sourceEnemy || null;
+            this.flyingBombs.push(hopBomb);
+            this.spawnSparks(bomb.targetX, bomb.targetY, '#ffffff', 6);
+            if (window.sound && window.sound.playShardClank) window.sound.playShardClank();
+            return;
+          }
+        }
+
+        // Regra 3: Se a bomba cair em um abismo (TILE.HOLE), fica minúscula e desaparece sem causar qualquer efeito
+        if (room && room.grid[gridY] && room.grid[gridY][gridX] === TILE.HOLE) {
+          if (!this.fallingBombs) this.fallingBombs = [];
+          this.fallingBombs.push(new FallingAbyssBomb(bomb.targetX, bomb.targetY, bomb.type));
+          return;
+        }
+
+        const finalX = (bomb.bounceCount > 0) ? (gridX * TILE_SIZE + TILE_SIZE / 2) : bomb.targetX;
+        const finalY = (bomb.bounceCount > 0) ? (gridY * TILE_SIZE + TILE_SIZE / 2) : bomb.targetY;
 
         if (bomb.type === BOMB_TYPE.IMPACT) {
           sound.playImpactExplosion();
-          this.detonateImpact(bomb.targetX, bomb.targetY, gridX, gridY);
+          this.detonateImpact(finalX, finalY, gridX, gridY, bomb.sourceEnemy || null);
         } else if (bomb.type === BOMB_TYPE.VORTEX || bomb.type === 'vortex' || bomb.type === 'propulsor') {
           if (!this.vortexFields) this.vortexFields = [];
-          this.vortexFields.push(new VortexField(bomb.targetX, bomb.targetY));
+          this.vortexFields.push(new VortexField(finalX, finalY));
           if (sound.playVortexSuck) sound.playVortexSuck();
-          this.spawnSparks(bomb.targetX, bomb.targetY, '#00e5ff', 25);
+          this.spawnSparks(finalX, finalY, '#00e5ff', 25);
         } else if (bomb.type === BOMB_TYPE.TIMED) {
           sound.playTimedBeep(1.0);
           this.timedBombs.push(new TimedBomb(gridX, gridY));
@@ -10671,14 +11602,14 @@
         showToast('CRISTAL ARMADO NO CHÃO! ([C] / Detone com Impacto ou Vórtice)');
       }
 
-      detonateImpact(cx, cy, gridX, gridY) {
+      detonateImpact(cx, cy, gridX, gridY, sourceEnemy = null) {
         const room = this.map.currentRoom;
         let blastRadius = TILE_SIZE * 1.5;
 
         // Se Charlotte possuir Bomba de Impacto Nível 2: Reação Catalítica de Carvão!
         // Expande o raio em +10% por cada Cristal Coal consumido no raio de combustão.
         let consumedCrystals = 0;
-        if (this.player && (this.player.impactBombLevel || 1) >= 2 && this.ccDrops) {
+        if (!sourceEnemy && this.player && (this.player.impactBombLevel || 1) >= 2 && this.ccDrops) {
           for (let i = this.ccDrops.length - 1; i >= 0; i--) {
             const drop = this.ccDrops[i];
             if (drop.type === 'cc') {
@@ -10702,18 +11633,20 @@
         this.blasts.push(new ExplosionBlast(cx, cy, blastRadius, false));
         this.spawnSparks(cx, cy, '#ff5252', 25);
 
-        // Onda de choque: empurra inimigos para longe
-        const shockwaveRadius = TILE_SIZE * 3.0;
-        room.enemies.forEach(enemy => {
-          const dx = enemy.x - cx;
-          const dy = enemy.y - cy;
-          const dist = Math.hypot(dx, dy);
-          if (dist > 0 && dist < shockwaveRadius) {
-            const nx = dist > 0.001 ? dx / dist : 1;
-            const ny = dist > 0.001 ? dy / dist : 0;
-            enemy.applyRepulsion(nx, ny, 250);
-          }
-        });
+        // Onda de choque: empurra inimigos para longe (apenas se a bomba foi lançada por Charlotte)
+        if (!sourceEnemy) {
+          const shockwaveRadius = TILE_SIZE * 3.0;
+          room.enemies.forEach(enemy => {
+            const dx = enemy.x - cx;
+            const dy = enemy.y - cy;
+            const dist = Math.hypot(dx, dy);
+            if (dist > 0 && dist < shockwaveRadius) {
+              const nx = dist > 0.001 ? dx / dist : 1;
+              const ny = dist > 0.001 ? dy / dist : 0;
+              enemy.applyRepulsion(nx, ny, 250);
+            }
+          });
+        }
         
         // Se Charlotte estiver no raio da explosão de impacto, sofre dano de meio coração (0.5) e recuo
         const pDist = Math.hypot(this.player.x - cx, this.player.y - cy);
@@ -10792,19 +11725,21 @@
           }
         }
 
-        // Causa 1 de dano nos autômatos no raio da explosão de impacto
-        for (let i = room.enemies.length - 1; i >= 0; i--) {
-          const enemy = room.enemies[i];
-          const dist = Math.hypot(enemy.x - cx, enemy.y - cy);
-          if (dist <= blastRadius + enemy.radius) {
-            const isDead = enemy.takeDamage(1, this, 'impact');
-            if (isDead) {
-              this.spawnEnemyDeath(enemy.x, enemy.y, enemy);
-              room.enemies.splice(i, 1);
-            } else {
-              const knockX = dist > 0.001 ? (enemy.x - cx) / dist : 1;
-              const knockY = dist > 0.001 ? (enemy.y - cy) / dist : 0;
-              enemy.applyRepulsion(knockX, knockY, 220);
+        // Causa 1 de dano nos autômatos no raio da explosão de impacto (apenas bombas de Charlotte)
+        if (!sourceEnemy) {
+          for (let i = room.enemies.length - 1; i >= 0; i--) {
+            const enemy = room.enemies[i];
+            const dist = Math.hypot(enemy.x - cx, enemy.y - cy);
+            if (dist <= blastRadius + enemy.radius) {
+              const isDead = enemy.takeDamage(1, this, 'impact');
+              if (isDead) {
+                this.spawnEnemyDeath(enemy.x, enemy.y, enemy);
+                room.enemies.splice(i, 1);
+              } else {
+                const knockX = dist > 0.001 ? (enemy.x - cx) / dist : 1;
+                const knockY = dist > 0.001 ? (enemy.y - cy) / dist : 0;
+                enemy.applyRepulsion(knockX, knockY, 220);
+              }
             }
           }
         }
@@ -11057,6 +11992,20 @@
           }
 
           this.timedBombs = [];
+          this.fallingBombs = [];
+
+          if (nextRoom.isBossKeyRoom && nextRoom.bossKeyDrop) {
+            if (!this.player.unlockedVortex && !this.player.unlockedPropulsor) {
+              this.player.unlockedVortex = true;
+              this.player.unlockedPropulsor = true;
+            }
+            if (this.player.bagSlots && !this.player.bagSlots.some(s => s.type === 'vortex' || s.type === 'propulsor')) {
+              const idx = this.player.bagSlots.findIndex(s => s.type === 'timed');
+              const targetIdx = idx !== -1 ? idx : this.player.bagSlots.length - 1;
+              if (targetIdx >= 0) this.player.bagSlots[targetIdx] = { type: 'vortex', cooldown: 0 };
+            }
+            this.updateHUD();
+          }
         };
       }
 
@@ -12017,7 +12966,10 @@
         // Bombas de Inimigos (Mina / Projétil do Bomber)
         this.enemyBombs.forEach(eb => eb.render(ctx, now));
 
-        // Cristais de Chrono Core (CC) caídos no chão
+        // Cristais de Chrono Core (CC) e Cartão do Boss no chão
+        if (room && room.bossKeyDrop) {
+          room.bossKeyDrop.draw(ctx);
+        }
         if (room && room.loreDrops) {
           room.loreDrops.forEach(drop => drop.draw(ctx));
         }
@@ -12126,6 +13078,11 @@
         // Renderiza Queda de Rochas (Mecânica do Chefe Final)
         if (this.fallingRocks) {
           this.fallingRocks.forEach(rock => rock.draw(ctx));
+        }
+
+        // Renderiza Bombas caindo no abismo (encolhendo)
+        if (this.fallingBombs) {
+          this.fallingBombs.forEach(fb => fb.draw(ctx));
         }
 
         // Renderiza Bombas em Voo (Arremessadas)
@@ -12271,6 +13228,9 @@
           ctx.restore();
         }
 
+        // Escuridão da Mina Profunda + Lampião de Cristal (Nível 3+)
+        this.renderDarkness(ctx);
+
         // Efeito Glitch de Rebobinar o Tempo
         if (this.rewindGlitchTimer > 0) {
           ctx.save();
@@ -12330,6 +13290,10 @@
 
               if (room === current) {
                 mctx.fillStyle = '#29b6f6';
+              } else if (room.isBossRoom && !room.cleared) {
+                mctx.fillStyle = '#8e0000'; // Vermelho rubro para a Sala do Boss
+              } else if (room.isBossKeyRoom && room.bossKeyDrop) {
+                mctx.fillStyle = '#ffa000'; // Âmbar dourado para a Câmara do Cartão do Boss
               } else if (room.isPuzzleRoom && (!room.puzzleState || !room.puzzleState.solved)) {
                 mctx.fillStyle = '#ffb300'; // Dourado radiante para sala de desafio/puzzle
               } else if (room.isMiniBossRoom && !room.cleared) {
@@ -12342,7 +13306,31 @@
 
               mctx.fillRect(mx, my, cell - 2, cell - 2);
 
-              if (room.isPuzzleRoom) {
+              if (room.unpowered) {
+                // Sala sem energia (blackout): escurece e marca falta de energia
+                mctx.fillStyle = 'rgba(0, 0, 0, 0.55)';
+                mctx.fillRect(mx, my, cell - 2, cell - 2);
+              } else if (room.hasEmergencyLights) {
+                // Sala com luz de emergência: pisca vermelho em lockdown, fica amarela quando limpa
+                mctx.fillStyle = 'rgba(0, 0, 0, 0.28)';
+                mctx.fillRect(mx, my, cell - 2, cell - 2);
+                const inLock = room.isLockdown || (!room.cleared && room.enemies && room.enemies.length > 0);
+                if (inLock) {
+                  const blinkOn = Math.sin(performance.now() / 190) > 0;
+                  mctx.fillStyle = blinkOn ? '#ff1744' : '#5f0916';
+                } else {
+                  mctx.fillStyle = '#ffca28';
+                }
+                mctx.fillRect(mx + 1, my + 1, 3, 2);
+              }
+
+              if (room.isBossRoom && !room.cleared) {
+                mctx.fillStyle = '#ff1744';
+                mctx.fillRect(mx + cell / 2 - 2, my + cell / 2 - 2, 4, 4);
+              } else if (room.isBossKeyRoom) {
+                mctx.fillStyle = room.bossKeyDrop ? '#ffd700' : '#81c784';
+                mctx.fillRect(mx + cell / 2 - 2, my + cell / 2 - 2, 4, 4);
+              } else if (room.isPuzzleRoom) {
                 // Ícone de Diamante/Cofre no Minimap
                 mctx.fillStyle = (room.puzzleState && room.puzzleState.solved) ? '#81c784' : '#ffd700';
                 mctx.fillRect(mx + cell / 2 - 2, my + cell / 2 - 2, 4, 4);
@@ -12370,7 +13358,10 @@
         const lockdownBanner = document.getElementById('lockdown-banner');
 
         const depth = this.map.currentDepth || 1;
-        if (room.isPuzzleRoom) {
+        if (room.isBossKeyRoom) {
+          let extra = this.player.hasBossKey ? `   [${window.t('ingame-bosskey')}]` : '';
+          coordsEl.textContent = `${window.t('ingame-level')} ${depth} • CÂMARA DO CARTÃO 🔑 [${room.rx}, ${room.ry}]${extra}`;
+        } else if (room.isPuzzleRoom) {
           coordsEl.textContent = `${window.t('ingame-level')} ${depth} • ${window.t('ingame-puzzle')} 💎 [${room.rx}, ${room.ry}]`;
         } else if (room.isMiniBossRoom) {
           coordsEl.textContent = `${window.t('ingame-level')} ${depth} • ${window.t('ingame-miniboss')} ⚔️ [${room.rx}, ${room.ry}]`;
@@ -12533,6 +13524,15 @@
           if (healBtnMobile) healBtnMobile.style.display = 'none';
         }
 
+        // Lampião de Cristal (visível a partir do Nível 3)
+        const showLantern = !!(this.player && this.player.hasLantern && (this.map.currentDepth || 1) >= 3);
+        const lanternBadge = document.getElementById('lantern-badge');
+        const lanternMobile = document.getElementById('btn-lantern-mobile');
+        if (lanternBadge) lanternBadge.style.display = showLantern ? 'flex' : 'none';
+        if (lanternMobile) lanternMobile.style.display = showLantern ? 'flex' : 'none';
+        this.lastLanternPct = -1;
+        this.updateLanternBar();
+
         // Atualiza visibilidade dos atalhos no Desktop Guide
         const guideBombs = document.getElementById('guide-bombs');
         if (guideBombs) guideBombs.style.display = (this.player.unlockedImpact || this.player.unlockedVortex || this.player.unlockedPropulsor) ? 'inline-block' : 'none';
@@ -12591,6 +13591,7 @@
         hasSteamPropulsionCore: p.hasSteamPropulsionCore,
         hasHealingInjector: !!p.hasHealingInjector,
         healingFlasks: p.healingFlasks ?? 0,
+        hasLantern: !!p.hasLantern,
         inventorRescued: !!(window.gameState && window.gameState.inventorRescued),
         armoryUnlocked: !!p.armoryUnlocked,
         bagSlots: p.bagSlots ? p.bagSlots.map(s => ({ type: s.type })) : null,
@@ -12634,6 +13635,8 @@
         p.hasSteamPropulsionCore = data.hasSteamPropulsionCore ?? false;
         p.hasHealingInjector = data.hasHealingInjector ?? false;
         p.healingFlasks = Math.min(2, Math.max(0, data.healingFlasks ?? 0));
+        p.hasLantern = data.hasLantern ?? false;
+        p.lanternFuel = 100;
 
         // Auto-recuperação: se já tiver armoryUnlocked salvo ou qualquer upgrade do arsenal adquirido
         const hasPurchasedArmoryUpgrade = (p.gauntletLevel > 1) || 
@@ -12831,7 +13834,9 @@
           e.stopPropagation();
           sound.init();
           if (window.game && window.game.player) {
-            window.game.player.synthesizeHealingFlask();
+            const invModal = document.getElementById('inventor-shop-modal');
+            const inInventor = !!(invModal && invModal.classList.contains('visible'));
+            window.game.player.synthesizeHealingFlask(inInventor);
           }
         });
       }

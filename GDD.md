@@ -26,6 +26,8 @@
 - **Desbloqueio (Agradecimento do Inventor):** Ao resgatar o Inventor na Câmara de Desafio (Nível 2) ou interagir com ele na Safe Room, o Inventor instala o **Injetor Vital** na Manopla de Charlotte em sinal de gratidão pelo resgate, presenteando-a imediatamente com 1 Tônico inicial.
 - **Síntese de Cura:**
   - O jogador pode sintetizar Tônicos de Cura consumindo recursos da mina: **2 Cristal Coal (CC) + 1 Peça Mecânica**.
+  - **No Inventor (100% de chance):** Taxa de sucesso garantida e pode consumir CC e Peças tanto da mochila quanto do **Baú** (`depositedCores` e `depositedParts`).
+  - **No Campo (30% de chance):** Síntese improvisada com 30% de chance de acerto que consome **exclusivamente** CC e Peças carregados na **mochila** (nunca retira do Baú).
   - **Atalho de Síntese:** Tecla <kbd>V</kbd> no computador, botão `+` no badge do HUD, na Loja do Inventor ou no botão mobile quando com estoque zerado.
 - **Capacidade de Armazenamento:** Charlotte armazena até **2 Frascos/Tônicos Vitais** no máximo (`0/2`, `1/2`, `2/2`).
 - **Controle de Uso pelo Jogador:**
@@ -34,6 +36,18 @@
   - Proteção contra desperdício: não consome o item caso Charlotte já esteja com a vida cheia (3/3 corações).
   - Feedback audiovisual: síntese mecânica (`playSynthesize`), arpeggio de cura (`playHeal`), faíscas verdes (`#00e676`) e texto flutuante no canvas.
   - Persistência permanente em save (`hasHealingInjector`, `healingFlasks`).
+
+### Lampião de Cristal e Escuridão da Mina Profunda (Nível 3+)
+- **Progressão e Risco:** Charlotte pode descer ao Nível 3 mesmo sem o **Lampião de Cristal** (vendido na Loja do Inventor por 20 CC + 15 Peças), porém sua visão fica extremamente limitada a apenas **1 bloco (`1 tile`)** ao seu redor.
+- **Escuridão:** A partir do Nível 3 a tela é coberta por escuridão; apenas o raio de luz do lampião (e explosões, bombas acesas e Goelas) revela a sala.
+- **Combustível:** Tanque de 100%, consome ~1% a cada 1,2s (~2 min cheio). Reabastece automaticamente ao descer de andar.
+- **Abastecimento pelo Jogador:** Tecla <kbd>L</kbd>, botão `+` na barra do HUD ou botão 🏮 no mobile. **1 CC da mochila = +20%** (nunca usa o Baú).
+- **Raio de Visão:** Visão máxima de **10 blocos** em 100%, reduzindo para **5 blocos** em 50% de combustível, e diminuindo progressivamente de 50% até **1 bloco** quando o lampião desliga (0%).
+- **Barra de Combustível:** Laranja (≥50%), amarela (25–50%), vermelha piscante (<25%), com alertas em toast.
+- **Distribuição de Energia nas Salas (Nível 3+):**
+  - **Poucas Salas com Energia Normal (`powered` — ~18% das salas comuns + salas de Desafio/Chefes):** Mantêm iluminação elétrica parcial e entram em **Lockdown**.
+  - **Salas com Luz de Emergência (`emergency`):** O interior da sala é escuro, mas as portas possuem energia de emergência e **trancam em Lockdown**. As luminárias em cima das portas **ficam piscando em vermelho** enquanto em Lockdown e **mudam para amarelo estável** assim que os inimigos são derrotados.
+  - **Salas sem Energia (`blackout`):** Breu completo e **sem Lockdown** (as portas não trancam e as luminárias das portas estão apagadas).
 
 ### Modo "Enlouquecido" dos Autômatos (Nível 2+)
 - A partir do Nível 2, autômatos sofrem surtos temporários (duração de 3s, com intervalo aleatório entre 5s a 10s).
