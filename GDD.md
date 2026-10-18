@@ -381,37 +381,32 @@ A IA dos autômatos é estruturada em 4 estados orgânicos:
 - Sofre recuo físico proporcional ao impacto da explosão.
 - **Eliminação por Abismos:** Se for empurrado para um tile de `TILE.HOLE`, cai no vácuo e é destruído instantaneamente.
 
-### 7.4 Chefe Humano: Mini-Boss e Chefe Final da Mina (`HumanBoss`)
-Além dos autômatos a vapor, Charlotte encontra engenheiros humanos rivais equipados com seu próprio arsenal de bombas alquímicas e botas propulsoras:
+### 7.4 Chefes da Mina: Engenheiro Rival (`HumanBoss`) e Autômato Titânico (`FinalBossAutomaton`)
+Ambos os chefes possuem mecânicas de controle de ritmo dimensionadas para garantir combates intensos com **duração mínima de 2 minutos ($\ge 120\text{s}$)** mesmo quando Charlotte possui todos os upgrades no nível máximo:
 
-- **Mini-Boss — O Engenheiro Rival (Níveis 3 e 4):**
-  - **Arena Isolada Dedicada (`isMiniBossRoom`):** Não spawna mais aleatoriamente entre autômatos comuns; habita exclusivamente uma arena própria de duelo 1v1 gerada em pontas de caminho (*dead-ends*).
+- **Mini-Boss — O Engenheiro Rival (`HumanBoss` — Níveis 3 e 4):**
+  - **Arena Isolada Dedicada (`isMiniBossRoom`):** Habita exclusivamente uma arena própria de duelo 1v1 gerada em pontas de caminho (*dead-ends*).
   - **Espelhamento Físico e Visual de Charlotte:**
     - Possui as mesmas dimensões de Charlotte (raio físico de 16px).
-    - Renderizado utilizando o spritesheet original de Charlotte (`Img/charllote_spritesheet_64x64.png`) com animações completas de *idle*, *walk*, *throw* e *dash*, aplicado com um filtro alquímico contrastante em tom carmim/rubro renegado (`hue-rotate(160deg) saturate(2.5)`).
-    - Exibe barra de vida dinâmica e identificador visual flutuante (`ENGENHEIRO RIVAL`) acima da cabeça.
-  - **Atributos de Combate:** **3 HP**, velocidade de corrida de 150 px/s e 0.35s de invulnerabilidade ao sofrer dano (com efeito visual de flash estroboscópico).
-  - **IA de Posicionamento e Espaçamento Tático (Kiting & Strafing):**
-    - Mantém distância ideal de 3 a 5 blocos em relação a Charlotte.
-    - Circula lateralmente (*strafe* contínuo com alternância periódica) e recua ativamente caso Charlotte se aproxime a menos de 2.8 blocos.
-    - Avança estrategicamente caso a distância exceda 5.2 blocos.
-  - **Botas Propulsoras com Dash e I-Frames:**
-    - Monitora o campo em tempo real: caso detecte uma bomba temporizada a menos de 3.2 blocos ou seja encurralado (< 1.8 blocos), dispara um **Dash a vapor a 460 px/s** em vetor de fuga oposto ao perigo.
-    - Concede 0.45s de invulnerabilidade total (*i-frames*), emitindo partículas ciano e som de vapor de alta pressão (`playPropulsorSteam`).
-    - Tempo de recarga do dash: 4.5s.
-  - **Arremesso Balístico com Arsenal Triplo:**
-    - Dispara bombas em arremesso parabólico (`FlyingBomb`) com cálculo preditivo de trajetória (*lead target*) baseado na movimentação e direção de Charlotte.
-    - Alterna dinamicamente seu arsenal: **Bomba de Propulsão** a curta distância (para repelir Charlotte), e **Bomba de Impacto (60%)** ou **Bomba Temporizada (40%)** a média/longa distância.
-  - **Colisão Física sem Morte por Contato (Preservação do Duelo):**
-    - Ao encostar fisicamente em Charlotte, **NÃO** causa dano por toque zumbi nem ativa o rebobinamento temporal instantâneo.
-    - Em vez disso, ambos sofrem uma **repulsão elástica recíproca** (impulso de choque), faíscas ciano, som de impacto metálico e aviso "AFASTE-SE!", garantindo que o embate seja resolvido puramente por tática e explosões de bombas.
-  - **Recompensa de Vitória:** Ao ser derrotado, dropa 5 Cristais Coal e concede +5 Peças Mecânicas na bolsa de Charlotte.
+    - Renderizado utilizando o spritesheet de Charlotte (`Img/charllote_spritesheet_64x64.png`) com animações de *idle*, *walk*, *throw* e *dash*, com filtro rubro renegado e manto de esquiva a vapor.
+    - Exibe barra de vida segmentada a cada 10 vidas e contador numérico (`ENGENHEIRO RIVAL (HP/80)`).
+  - **Atributos e Controle de Ritmo ($\ge 2\text{ min}$):**
+    - **80 HP**, velocidade base de 155 px/s (escalando nos marcos de 75%, 50% e 25% de vida).
+    - **Dano Normal das Bombas + Esquiva a Vapor Pós-Acerto:** Não possui blindagem de bloqueio e **recebe o dano integral normal de todas as bombas** (`1 HP` de Impacto/Vórtice, `2 HP` de Bomba-Relógio/Estilhaços). Ao sofrer dano, ativa imediatamente **2.4s de Esquiva a Vapor invulnerável** e realiza um **Dash Evasivo automático** para reposicionamento.
+  - **IA de Posicionamento, Dash e Arremesso Balístico:**
+    - Mantém distância ideal de 3 a 5 blocos (*strafing* contínuo), esquiva de bombas temporizadas com Dash a 460 px/s e alterna entre Bomba de Vórtice, Impacto (com mira telegrafada) e Bomba-Relógio.
+  - **Recompensa de Vitória:** Ao ser derrotado, dropa 8 Cristais Coal, concede +8 Peças Mecânicas e entrega o **Núcleo de Propulsão a Vapor**.
 
-- **Chefe Final da Mina — O Engenheiro Mestre (Nível 5):**
-  - Encontrado exclusivamente na Sala do Boss (`isBossRoom`), acessada após abrir a Porta do Boss com a Chave Mecânica.
-  - Carcaça reforçada de cor escarlate escuro com **5 HP**, velocidade aumentada para 165 px/s e cooldown de dash reduzido para 3.5s.
-  - Barra de vida e identificador no topo: `CHEFE MESTRE`.
-  - Cadência de bombas acelerada (cooldown de 1.8s a 2.6s), combinando bombardeio contínuo e evasão de alta precisão.
+- **Chefe Final da Mina — Autômato Titânico (`FinalBossAutomaton` — Nível 5):**
+  - Encontrado exclusivamente na Sala do Boss (`isBossRoom`), acessada após abrir o Portão do Boss com o Cartão de Acesso.
+  - **Atributos e Mecânica de 2 Fases ($\ge 2\text{ min}$):**
+    - **64 HP** (exibidos na barra superior de 260px segmentada em blocos de 8 vidas, com divisor central destacado em **50% / 32 HP**), raio físico de 26px e alta resistência de massa contra sucção de Vórtice.
+    - **Fase 1 (100% até >50% de vida — `64 a 33 HP`) — Couraça Reforçada (`hasReinforcedCarapace = true`):**
+      - Revestido por uma couraça blindada pesada de bronze/ouro (`🛡️ COURAÇA REFORÇADA (DANO MÁX: 1)`), **recebe apenas 1 HP de dano** de qualquer explosão ou estilhaço, independentemente da força da bomba, acionando **2.4s de Escudo Térmico invulnerável** após cada acerto (exigindo exatamente 32 acertos na Fase 1, $\sim 90\text{s}$).
+    - **Fase 2 ($\le 50\%$ de vida — `32 a 0 HP`) — Couraça Destruída & Modo Agressivo (`hasReinforcedCarapace = false`):**
+      - Ao atingir **32 HP (50%)**, a **Couraça Reforçada se estilhaça permanentemente** em uma explosão de fragmentos metálicos (`COURAÇA DESTRUÍDA! MODO AGRESSIVO!`).
+      - **Dano Normal:** Sem a couraça, passa a **receber o dano normal integral das bombas** (`1 HP` na Bomba de Impacto, `2 HP` na Bomba-Relógio/Estilhaços) com **2.1s de proteção térmica** entre janelas ($\sim 45\text{s}$ adicionais).
+      - **Agressividade Extrema:** Velocidade de perseguição sobe para **140 px/s** (e **155 px/s** abaixo de 25% HP), executa **3 investidas titânicas encadeadas** a **490 px/s** com preparo curto (`0.48s`) e recarga reduzida (`2.0s`), dispara **salvos duplos de bombas** a cada `0.9s–1.4s` e realiza **Estrondos Sísmicos** mais rápidos (`4.2s`) derrubando **9 rochas** do teto por impacto.
 
 ---
 
