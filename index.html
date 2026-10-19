@@ -73,18 +73,410 @@
       image-rendering: crisp-edges;
     }
 
-    /* HUD Superior */
+    /* HUD Superior Centralizado (Recursos e Minimapa) */
     #hud-top {
       position: absolute;
       top: 10px;
-      left: 10px;
-      right: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: auto;
+      max-width: 96vw;
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 12px;
+      gap: 14px;
       pointer-events: none;
       z-index: 20;
+    }
+
+    /* Palco Central do Jogo (Asas Laterais + Canvas Central) */
+    #game-stage {
+      position: relative;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      z-index: 10;
+      width: 100%;
+      max-width: 1200px;
+    }
+
+    /* Asas Laterais do HUD (Esquerda: Interlocutor / Terminal; Direita: Charlotte / Bandoleira) */
+    .hud-side-wing {
+      width: 175px;
+      min-width: 160px;
+      max-width: 190px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      z-index: 25;
+      pointer-events: auto;
+      user-select: none;
+    }
+
+    .wing-panel {
+      background: linear-gradient(135deg, rgba(22, 26, 35, 0.96) 0%, rgba(13, 16, 22, 0.98) 100%);
+      border: 1.5px solid rgba(141, 110, 99, 0.6);
+      border-radius: 10px;
+      padding: 10px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.75), inset 0 0 12px rgba(0, 0, 0, 0.6);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      position: relative;
+    }
+
+    /* 1. Asa Esquerda: Terminal de Missão do Poço & Intel da Mina (Sem Diálogo) */
+    .steampunk-terminal {
+      border-color: #00bcd4;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8), 0 0 14px rgba(0, 188, 212, 0.25), inset 0 0 10px rgba(0, 229, 255, 0.08);
+    }
+
+    .wing-panel-header {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      padding-bottom: 4px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .blue-glow {
+      color: #00e5ff;
+      text-shadow: 0 0 8px rgba(0, 229, 255, 0.6);
+    }
+
+    .red-glow {
+      color: #ff5252;
+      text-shadow: 0 0 8px rgba(255, 82, 82, 0.6);
+    }
+
+    .terminal-body {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      text-align: left;
+    }
+
+    .terminal-section {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .terminal-label {
+      font-size: 9px;
+      font-weight: 700;
+      color: #90a4ae;
+      letter-spacing: 0.5px;
+    }
+
+    .terminal-value {
+      font-size: 11px;
+      font-weight: 800;
+      color: #eceff1;
+    }
+
+    .cyan-val { color: #00e5ff; }
+    .yellow-val { color: #ffd54f; }
+
+    .mission-box {
+      background: rgba(0, 0, 0, 0.45);
+      border-left: 3px solid #00e5ff;
+      padding: 5px 6px;
+      border-radius: 0 4px 4px 0;
+    }
+
+    .mission-text {
+      font-size: 10px;
+      font-weight: 700;
+      color: #e0f7fa;
+      line-height: 1.3;
+    }
+
+    .equip-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5px;
+      margin-top: 2px;
+    }
+
+    .equip-chip {
+      background: rgba(0, 0, 0, 0.55);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 6px;
+      padding: 4px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 2px;
+    }
+
+    .equip-icon { font-size: 14px; }
+    .equip-name { font-size: 8px; font-weight: 800; color: #b0bec5; letter-spacing: 0.5px; }
+    .equip-lvl { font-size: 9px; font-weight: 800; color: #ffd54f; }
+    .equip-status { font-size: 8px; font-weight: 700; color: #81c784; }
+
+    /* Retratos de Diálogo com Ganho/Escala Aumentada (96x96 Pixel Art) */
+    .portrait-frame-large {
+      position: relative;
+      width: 96px;
+      height: 96px;
+      margin: 0 auto;
+      background: #000;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.8), inset 0 0 8px rgba(0, 0, 0, 0.9);
+    }
+
+    .portrait-frame-large canvas {
+      width: 96px;
+      height: 96px;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+      display: block;
+    }
+
+    .portrait-scanlines {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.35) 50%);
+      background-size: 100% 4px;
+      pointer-events: none;
+      opacity: 0.4;
+    }
+
+    .blue-border {
+      border: 2px solid #00e5ff;
+      box-shadow: 0 0 14px rgba(0, 229, 255, 0.45), inset 0 0 8px rgba(0, 229, 255, 0.2);
+    }
+
+    .red-border {
+      border: 2px solid #ff5252;
+      box-shadow: 0 0 14px rgba(255, 82, 82, 0.45), inset 0 0 8px rgba(255, 82, 82, 0.2);
+    }
+
+    .speaker-tag {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 3px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .speaker-title {
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+    }
+
+    .speaker-sub {
+      font-size: 8px;
+      font-weight: 800;
+      padding: 1px 4px;
+      border-radius: 3px;
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
+    }
+
+    /* Balões de Fala nas Asas Laterais */
+    .side-speech-bubble {
+      position: relative;
+      background: rgba(18, 22, 30, 0.96);
+      border-radius: 8px;
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      cursor: pointer;
+      animation: sideBubbleIn 0.22s ease-out;
+      text-align: left;
+    }
+
+    @keyframes sideBubbleIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .left-bubble {
+      border: 1.5px solid #00e5ff;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.7), 0 0 10px rgba(0, 229, 255, 0.3);
+    }
+
+    .right-bubble {
+      border: 1.5px solid #ff5252;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.7), 0 0 10px rgba(255, 82, 82, 0.3);
+    }
+
+    .speech-text {
+      font-size: 11px;
+      line-height: 1.35;
+      color: #f5f5f5;
+      font-weight: 600;
+      word-break: break-word;
+    }
+
+    .speech-tap-hint {
+      font-size: 8px;
+      color: #90a4ae;
+      align-self: flex-end;
+      font-style: italic;
+    }
+
+    /* Bandoleira de Munição Tamanho Grande (Bolsa de Bombas - Asa Direita) */
+    .large-bandolier-panel {
+      border-color: #8d6e63;
+      background: linear-gradient(135deg, rgba(28, 19, 14, 0.96) 0%, rgba(16, 11, 8, 0.98) 100%);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8), 0 0 12px rgba(141, 110, 99, 0.35), inset 0 0 10px rgba(0, 0, 0, 0.7);
+    }
+
+    .large-bandolier-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(141, 110, 99, 0.4);
+      padding-bottom: 4px;
+    }
+
+    .bandolier-title-group {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .bandolier-label {
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: 0.8px;
+      color: #ffecb3;
+    }
+
+    .bandolier-ready-badge {
+      font-size: 9px;
+      font-weight: 800;
+      color: #81c784;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 1px 5px;
+      border-radius: 4px;
+      border: 1px solid rgba(129, 199, 132, 0.3);
+    }
+
+    .bandolier-leather-strap {
+      background: rgba(10, 7, 5, 0.85);
+      border: 1.5px solid rgba(109, 76, 65, 0.6);
+      border-radius: 6px;
+      padding: 6px;
+      box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.8);
+    }
+
+    .bandolier-slots-large-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      justify-items: center;
+    }
+
+    .bandolier-slot-large {
+      position: relative;
+      width: 44px;
+      height: 48px;
+      background: linear-gradient(180deg, #2a1f18 0%, #150f0c 100%);
+      border: 2px solid #6d4c41;
+      border-radius: 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      user-select: none;
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.5), inset 0 1px 2px rgba(255, 255, 255, 0.1);
+    }
+
+    .bandolier-slot-large:hover {
+      border-color: #ffd700;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(255, 215, 0, 0.4);
+    }
+
+    .bandolier-slot-large.active-bomb {
+      border-color: #ffd700;
+      background: linear-gradient(180deg, #3d2b1f 0%, #20140b 100%);
+      box-shadow: 0 0 12px rgba(255, 215, 0, 0.75), inset 0 0 8px rgba(255, 215, 0, 0.3);
+      transform: translateY(-2px);
+    }
+
+    .bandolier-slot-large.cooldown {
+      opacity: 0.45;
+      filter: grayscale(0.8);
+      cursor: not-allowed;
+    }
+
+    .bandolier-slot-large .slot-num {
+      position: absolute;
+      top: 2px;
+      left: 3px;
+      font-size: 8px;
+      font-weight: 800;
+      color: #ffd54f;
+      opacity: 0.8;
+    }
+
+    .bandolier-slot-large .slot-icon {
+      font-size: 20px;
+      filter: drop-shadow(0 2px 3px rgba(0,0,0,0.8));
+    }
+
+    .bandolier-slot-large .slot-cd-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 900;
+      color: #ff5252;
+    }
+
+    /* Responsividade Desktop vs Mobile */
+    @media (max-width: 980px) {
+      .hud-side-wing {
+        display: none !important;
+      }
+      #game-stage {
+        gap: 0 !important;
+        width: 100% !important;
+        max-width: 100vw !important;
+        justify-content: center !important;
+        align-items: center !important;
+        margin: 0 auto !important;
+      }
+      #hud-top {
+        left: 50% !important;
+        right: auto !important;
+        transform: translateX(-50%) !important;
+        width: max-content !important;
+        max-width: calc(100vw - 12px) !important;
+        justify-content: center !important;
+        align-items: center !important;
+      }
+      #dialogue-box {
+        display: flex !important;
+      }
+    }
+
+    @media (min-width: 981px) {
+      #dialogue-box {
+        display: none !important;
+      }
     }
 
     .hud-badge {
@@ -714,30 +1106,35 @@
       font-weight: bold;
     }
 
-    /* Mensagem Central de Alerta / Efeito */
+    /* Mensagem Flutuante de Alerta / Toast */
     #center-toast {
       position: absolute;
-      top: 45%;
+      top: 56px;
       left: 50%;
-      transform: translate(-50%, -50%);
-      background: rgba(0, 0, 0, 0.85);
-      border: 2px solid var(--accent-blue);
-      padding: 14px 28px;
-      border-radius: 12px;
-      font-size: 16px;
-      font-weight: 800;
-      letter-spacing: 1px;
+      transform: translateX(-50%) translateY(-8px);
+      background: rgba(13, 17, 23, 0.94);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1.5px solid var(--accent-cyan);
+      color: #e6edf3;
+      padding: 6px 18px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
       text-align: center;
       pointer-events: none;
       opacity: 0;
-      transition: opacity 0.3s ease, transform 0.3s ease;
-      z-index: 50;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+      transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+      z-index: 100;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.7), 0 0 10px rgba(0, 229, 255, 0.25);
+      max-width: 90vw;
+      white-space: nowrap;
     }
 
     #center-toast.visible {
       opacity: 1;
-      transform: translate(-50%, -50%) scale(1.05);
+      transform: translateX(-50%) translateY(0);
     }
 
     /* Caixa de Diálogo / Texto Narrativo (Inventor & Placas) */
@@ -1151,21 +1548,24 @@
     }
     #mobile-guide {
       position: absolute;
-      bottom: 8px;
+      top: 12px;
       left: 50%;
-      transform: translateX(-50%);
-      background: var(--panel-bg);
-      border: 1px solid var(--border-color);
-      padding: 5px 14px;
-      border-radius: 16px;
+      transform: translateX(-50%) translateY(0);
+      background: rgba(18, 24, 34, 0.94);
+      border: 1.5px solid #ffca28;
+      padding: 6px 16px;
+      border-radius: 20px;
       font-size: 11px;
+      font-weight: 700;
       color: #ffca28;
       display: none;
+      opacity: 0;
       pointer-events: none;
-      z-index: 20;
+      z-index: 60;
       white-space: nowrap;
       text-shadow: 1px 1px 2px #000;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.8), 0 0 10px rgba(255, 202, 40, 0.4);
+      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
     }
     @media (max-width: 650px) {
       .tutorial-card {
@@ -1212,11 +1612,6 @@
       .tutorial-confirm-btn {
         width: 100%;
         text-align: center;
-      }
-      #mobile-guide {
-        bottom: calc(212px + env(safe-area-inset-bottom, 0px));
-        font-size: 10px;
-        padding: 4px 10px;
       }
     }
 
@@ -1597,18 +1992,39 @@
 
     /* MODO VERTICAL / PORTRAIT MOBILE */
     @media (orientation: portrait) and (max-width: 900px) {
+      #game-container {
+        justify-content: flex-start !important;
+        padding-top: calc(48px + env(safe-area-inset-top, 0px)) !important;
+      }
+      #game-stage {
+        margin: 0 auto !important;
+        gap: 0 !important;
+        width: 100% !important;
+        justify-content: center !important;
+        align-items: center !important;
+      }
       #hud-top {
         top: calc(8px + env(safe-area-inset-top, 0px));
-        left: calc(8px + env(safe-area-inset-left, 0px));
-        right: calc(8px + env(safe-area-inset-right, 0px));
-        align-items: center;
-        gap: 6px;
+        left: 50% !important;
+        right: auto !important;
+        transform: translateX(-50%) !important;
+        width: max-content !important;
+        max-width: calc(100vw - 12px) !important;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        gap: 6px !important;
       }
       .hud-badge {
         padding: 5px 8px;
         font-size: 11px;
         gap: 5px;
         border-radius: 6px;
+      }
+      #center-toast {
+        top: calc(50px + env(safe-area-inset-top, 0px));
+        font-size: 11px;
+        padding: 5px 14px;
       }
       .hud-badge-label {
         display: none;
@@ -1663,10 +2079,27 @@
 
     /* MODO HORIZONTAL / LANDSCAPE MOBILE */
     @media (orientation: landscape) and (max-height: 600px) {
+      #game-container {
+        justify-content: center !important;
+      }
+      #game-stage {
+        margin: 0 auto !important;
+        gap: 0 !important;
+        width: 100% !important;
+        justify-content: center !important;
+        align-items: center !important;
+      }
       #hud-top {
         top: calc(6px + env(safe-area-inset-top, 0px));
-        left: calc(10px + env(safe-area-inset-left, 0px));
-        right: calc(10px + env(safe-area-inset-right, 0px));
+        left: 50% !important;
+        right: auto !important;
+        transform: translateX(-50%) !important;
+        width: max-content !important;
+        max-width: calc(100vw - 12px) !important;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        gap: 6px !important;
         pointer-events: none;
       }
       .hud-badge {
@@ -1680,6 +2113,22 @@
       #hud-resources {
         gap: 6px;
       }
+      #hud-left-module {
+        min-width: auto;
+      }
+      .hud-bandolier-panel {
+        padding: 2px 6px;
+      }
+      .bandolier-slot {
+        width: 20px;
+        height: 24px;
+        font-size: 11px;
+      }
+      .portrait-avatar-frame, #portrait-canvas {
+        width: 40px;
+        height: 40px;
+        min-width: 40px;
+      }
       .minimap-badge-label {
         display: none;
       }
@@ -1691,6 +2140,11 @@
         top: 40px;
         font-size: 11px;
         padding: 4px 14px;
+      }
+      #center-toast {
+        top: calc(42px + env(safe-area-inset-top, 0px));
+        font-size: 11px;
+        padding: 4px 12px;
       }
       #mobile-controls {
         padding: 6px calc(12px + env(safe-area-inset-right, 0px)) calc(8px + env(safe-area-inset-bottom, 0px)) calc(12px + env(safe-area-inset-left, 0px));
@@ -2076,7 +2530,7 @@
 </head>
 <body>
   <div id="game-container">
-    <!-- HUD Superior -->
+    <!-- HUD Superior Centralizado (Recursos e Minimapa) -->
     <div id="hud-top">
       <div id="hud-resources">
         <div id="health-badge" class="hud-badge" title="Vidas de Charlotte">
@@ -2126,13 +2580,11 @@
       </div>
       
       <div id="minimap-container">
-        <div class="hud-badge minimap-badge-label" style="padding: 4px 8px; font-size: 11px;">MAPA PROCEDURAL</div>
         <canvas id="minimap-canvas" width="70" height="70"></canvas>
       </div>
     </div>
 
-    <!-- Canvas Central do Jogo -->
-        <!-- Painel de Lore / Panfleto -->
+    <!-- Painel de Lore / Panfleto -->
     <div id="lore-panel">
       <div id="lore-panel-header" class="lore-header">📜 REGISTRO ENCONTRADO (1826)</div>
       <div id="lore-official" class="lore-official"></div>
@@ -2140,26 +2592,131 @@
       <div id="lore-tip" class="lore-tip"></div>
       <button id="btn-close-lore" style="margin-top: 8px; padding: 6px; background: #333; color: #fff; border: 1px solid #555; cursor: pointer; border-radius: 4px;" onclick="document.getElementById('lore-panel').style.display='none'">Fechar</button>
     </div>
-    <div id="canvas-wrapper">
-      <canvas id="game-canvas" width="600" height="600"></canvas>
-      <!-- Alerta de Trancamento / Lockdown -->
-      <div id="lockdown-banner">LOCKDOWN! ELIMINE OS AUTÔMATOS</div>
-      <!-- Status da Sala no rodapé do mapa sobre a parede limite -->
-      <div id="room-status" class="hud-badge">
-        <div id="room-coords">SALA [0, 0]</div>
-        <span style="opacity: 0.4;">•</span>
-        <div id="enemy-counter" class="status-ok">INIMIGOS: 0</div>
-      </div>
-      <!-- Alerta Visual de Vida Crítica (Low HP) -->
-      <div id="low-hp-vignette"></div>
-      <!-- Badge de Item no Canto da Tela (Pistão Hidráulico aguardando Goela) -->
-      <div id="piston-corner-badge" style="display: none; position: absolute; top: 12px; right: 12px; z-index: 80; align-items: center; gap: 8px; background: rgba(22, 14, 6, 0.94); border: 2px solid #ffd700; border-radius: 8px; padding: 6px 12px; box-shadow: 0 0 16px rgba(255, 215, 0, 0.5), inset 0 0 8px rgba(255, 215, 0, 0.25); pointer-events: none; animation: pulsePistonBadge 2s infinite ease-in-out;">
-        <span style="font-size: 24px; filter: drop-shadow(0 0 6px #ffd700);">🦾</span>
-        <div style="display: flex; flex-direction: column; text-align: left;">
-          <span id="piston-badge-title" style="font-size: 11px; font-weight: bold; color: #ffd700; letter-spacing: 0.5px;">PISTÃO HIDRÁULICO</span>
-          <span id="piston-badge-sub" style="font-size: 10px; color: #00e5ff; font-weight: bold;">LEVE ATÉ A GOELA ➔</span>
+
+    <!-- Palco do Jogo: Asa Esquerda (NPC / Terminal) + Canvas Central + Asa Direita (Charlotte + Bandoleira Grande) -->
+    <div id="game-stage">
+      <!-- ASA ESQUERDA (AZUL): Outro Personagem (Inventor / Placa / Autômato) ou Terminal do Poço quando não houver diálogo -->
+      <aside id="hud-left-wing" class="hud-side-wing left-wing">
+        <!-- 1. Estado SEM Diálogo: Terminal de Missão do Poço & Status de Equipamentos -->
+        <div id="left-wing-idle" class="wing-panel steampunk-terminal" title="Terminal de Monitoramento da Mina">
+          <div class="wing-panel-header blue-glow">
+            <span>📡</span>
+            <span>TERMINAL DO POÇO</span>
+          </div>
+
+          <div class="terminal-body">
+            <div class="terminal-section">
+              <span class="terminal-label">SETOR ATUAL:</span>
+              <span id="wing-current-sector" class="terminal-value cyan-val">MINA DE CARVÃO [0, 0]</span>
+            </div>
+            
+            <div class="terminal-section mission-box">
+              <span class="terminal-label">DIRETRIZ DA MISSÃO:</span>
+              <div id="wing-current-mission" class="mission-text">ENCONTRE A ESCOTILHA DO POÇO</div>
+            </div>
+
+            <div class="terminal-section">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span class="terminal-label">📜 RELATÓRIOS:</span>
+                <span id="wing-lore-count" class="terminal-value yellow-val">0 / 5</span>
+              </div>
+            </div>
+
+            <div class="terminal-section">
+              <span class="terminal-label">EQUIPAMENTOS DE CAMPO:</span>
+              <div class="equip-grid">
+                <div class="equip-chip" id="equip-chip-gauntlet" title="Manopla de Projeção">
+                  <span class="equip-icon">🦾</span>
+                  <span class="equip-name">MANOPLA</span>
+                  <span id="wing-gauntlet-level" class="equip-lvl">NV.1</span>
+                </div>
+                <div class="equip-chip" id="equip-chip-boots" title="Botas de Vapor (Dash - Tecla SHIFT)">
+                  <span class="equip-icon">🥾</span>
+                  <span class="equip-name">BOTAS</span>
+                  <span class="equip-status">PRONTO</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Estado COM Diálogo: Retrato do Interlocutor (Inventor / Placa / Autômato) -->
+        <div id="left-wing-dialogue" class="wing-panel dialogue-panel left-dialogue" style="display: none;" onclick="if (window.hideDialogueBox) window.hideDialogueBox();">
+          <div class="speaker-tag blue-glow">
+            <span id="npc-speaker-name" class="speaker-title">INVENTOR</span>
+            <span id="npc-speaker-tag" class="speaker-sub">OFICINA</span>
+          </div>
+          <div class="portrait-frame-large blue-border">
+            <canvas id="portrait-canvas-npc" width="96" height="96"></canvas>
+            <div class="portrait-scanlines"></div>
+          </div>
+          <div id="npc-speech-bubble" class="side-speech-bubble left-bubble">
+            <div id="npc-speech-text" class="speech-text">"Precisa de peças para suas bombas?"</div>
+            <span class="speech-tap-hint">Clique p/ fechar</span>
+          </div>
+        </div>
+      </aside>
+
+      <!-- CANVAS CENTRAL DO JOGO -->
+      <div id="canvas-wrapper">
+        <canvas id="game-canvas" width="600" height="600"></canvas>
+        <!-- Guia Mobile Touch (Aparece no início e some após 5s) -->
+        <div id="mobile-guide" style="display: none;">
+          <span id="mobile-guide-text">👆 <b>Direcione e Solte</b> para Lançar Bomba</span>
+        </div>
+        <!-- Alerta de Trancamento / Lockdown -->
+        <div id="lockdown-banner">LOCKDOWN! ELIMINE OS AUTÔMATOS</div>
+        <!-- Status da Sala no rodapé do mapa sobre a parede limite -->
+        <div id="room-status" class="hud-badge">
+          <div id="room-coords">SALA [0, 0]</div>
+          <span style="opacity: 0.4;">•</span>
+          <div id="enemy-counter" class="status-ok">INIMIGOS: 0</div>
+        </div>
+        <!-- Alerta Visual de Vida Crítica (Low HP) -->
+        <div id="low-hp-vignette"></div>
+        <!-- Badge de Item no Canto da Tela (Pistão Hidráulico aguardando Goela) -->
+        <div id="piston-corner-badge" style="display: none; position: absolute; top: 12px; right: 12px; z-index: 80; align-items: center; gap: 8px; background: rgba(22, 14, 6, 0.94); border: 2px solid #ffd700; border-radius: 8px; padding: 6px 12px; box-shadow: 0 0 16px rgba(255, 215, 0, 0.5), inset 0 0 8px rgba(255, 215, 0, 0.25); pointer-events: none; animation: pulsePistonBadge 2s infinite ease-in-out;">
+          <span style="font-size: 24px; filter: drop-shadow(0 0 6px #ffd700);">🦾</span>
+          <div style="display: flex; flex-direction: column; text-align: left;">
+            <span id="piston-badge-title" style="font-size: 11px; font-weight: bold; color: #ffd700; letter-spacing: 0.5px;">PISTÃO HIDRÁULICO</span>
+            <span id="piston-badge-sub" style="font-size: 10px; color: #00e5ff; font-weight: bold;">LEVE ATÉ A GOELA ➔</span>
+          </div>
         </div>
       </div>
+
+      <!-- ASA DIREITA (VERMELHA): Charlotte (Retrato Grande) + Bandoleira Grande -->
+      <aside id="hud-right-wing" class="hud-side-wing right-wing">
+        <!-- Retrato Grande de Charlotte com Expressões Dinâmicas -->
+        <div id="right-wing-charlotte" class="wing-panel charlotte-panel">
+          <div class="speaker-tag red-glow">
+            <span class="speaker-title">CHARLOTTE</span>
+            <span id="charlotte-emotion-tag" class="speaker-sub">PRONTA</span>
+          </div>
+          <div class="portrait-frame-large red-border">
+            <canvas id="portrait-canvas-charlotte" width="96" height="96"></canvas>
+            <div class="portrait-scanlines"></div>
+          </div>
+          <!-- Balão de Fala de Charlotte (quando ela fala) -->
+          <div id="charlotte-speech-bubble" class="side-speech-bubble right-bubble" style="display: none;" onclick="if (window.hideDialogueBox) window.hideDialogueBox();">
+            <div id="charlotte-speech-text" class="speech-text">"..."</div>
+            <span class="speech-tap-hint">Clique p/ fechar</span>
+          </div>
+        </div>
+
+        <!-- Bandoleira de Munição Tamanho Grande (Bolsa de Bombas) -->
+        <div id="hud-bandolier-large" class="wing-panel large-bandolier-panel" title="Bandoleira de Munição de Charlotte: Selecione com [1], [2], [3] ou clique">
+          <div class="large-bandolier-header">
+            <div class="bandolier-title-group">
+              <span style="font-size: 14px;">🎒</span>
+              <span class="bandolier-label">BANDOLEIRA</span>
+            </div>
+            <span id="bandolier-status-large" class="bandolier-ready-badge">5/5 PRONTAS</span>
+          </div>
+          <div class="bandolier-leather-strap">
+            <div id="bandolier-slots-large" class="bandolier-slots-large-grid"></div>
+          </div>
+        </div>
+      </aside>
     </div>
 
     <!-- Guia Teclado / Mouse Desktop -->
@@ -2170,11 +2727,6 @@
       <span id="guide-dash" style="display: none;"><kbd>SHIFT</kbd> Dash (1 CC)</span>
       <span id="guide-crystal"><kbd>C</kbd> Armar Cristal (1 CC)</span>
       <span id="guide-heal" style="display: none;"><kbd>H</kbd> Curar (1 ❤️) | <kbd>V</kbd> Sintetizar (30%)</span>
-    </div>
-
-    <!-- Guia Mobile Touch -->
-    <div id="mobile-guide" style="display: none;">
-      <span id="mobile-guide-text">👆 <b>Direcione e Solte</b> para Lançar Bomba</span>
     </div>
 
     <!-- Controles Touch Mobile -->
@@ -4073,6 +4625,9 @@
             btn.classList.remove('selected');
           }
         });
+        if (window.bandolierManager) {
+          window.bandolierManager.highlightSelected(type);
+        }
       }
 
       // Movimentação Fluida e Dinâmica (WASD + Joystick Virtual por Arrasto)
@@ -5469,6 +6024,9 @@
               }
             }
           });
+          if (this.bagSlots.some(s => s.cooldown > 0) && window.bandolierManager && window.game) {
+            window.bandolierManager.update(this, window.game.input);
+          }
         }
 
         if (this.dashCooldown > 0) {
@@ -9911,6 +10469,9 @@
         this._endingCreditsTimeout = null;
 
         this.lastTime = performance.now();
+        this.mobileGuideShown = false;
+        this.mobileGuideDismissed = false;
+        this.mobileGuideTimer = null;
         this.resizeCanvas();
         window.addEventListener('resize', () => this.resizeCanvas());
         this.updateHUD();
@@ -9927,38 +10488,76 @@
         const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || window.innerWidth <= 900;
 
         let targetSize;
-        if (isLandscape && (isTouch || availableHeight <= 600)) {
-          // Mobile Landscape: Canvas centralizado na altura máxima, liberando as asas laterais
-          const topMargin = 48;
-          targetSize = Math.min(availableWidth - 280, availableHeight - topMargin - 16);
-          targetSize = Math.max(220, Math.min(targetSize, 600));
-        } else if (!isLandscape && (isTouch || availableWidth <= 768)) {
-          // Mobile Portrait: Canvas centralizado com espaço reservado para HUD no topo e deck de botões no rodapé
-          const topHud = 65;
-          const bottomDeck = 210;
-          targetSize = Math.min(availableWidth - 24, availableHeight - topHud - bottomDeck);
-          targetSize = Math.max(240, Math.min(targetSize, 560));
+        if (isTouch || availableWidth <= 900 || availableHeight <= 600) {
+          if (isLandscape) {
+            // Mobile Landscape: Preenche quase toda a altura da tela (mantendo 1:1 e espaço para HUD topo)
+            const topMargin = 40;
+            const maxByHeight = availableHeight - topMargin - 8;
+            const maxByWidth = availableWidth - 140; 
+            targetSize = Math.min(maxByHeight, maxByWidth);
+            targetSize = Math.max(260, Math.min(targetSize, 600));
+          } else {
+            // Mobile Portrait: O mapa preenche quase toda a largura da tela do celular (97% da largura)
+            const maxByWidth = availableWidth - 10;
+            const maxByHeight = availableHeight - 170;
+            targetSize = Math.min(maxByWidth, maxByHeight > 260 ? maxByHeight : availableHeight - 60);
+            targetSize = Math.max(260, Math.min(targetSize, 600));
+          }
         } else {
-          // Desktop clássico
-          targetSize = Math.min(availableWidth - 40, availableHeight - 90);
-          targetSize = Math.max(300, Math.min(targetSize, 600));
+          // Desktop clássico: Canvas centralizado entre as duas asas laterais
+          targetSize = Math.min(availableWidth - 420, availableHeight - 90, 600);
+          targetSize = Math.max(340, targetSize);
         }
 
         const mobileControls = document.getElementById('mobile-controls');
         const desktopGuide = document.getElementById('desktop-guide');
-        const mobileGuide = document.getElementById('mobile-guide');
         if (isTouch) {
           if (mobileControls) mobileControls.style.display = 'flex';
           if (desktopGuide) desktopGuide.style.display = 'none';
-          if (mobileGuide) mobileGuide.style.display = 'block';
+          if (!this.isPaused && !this.mobileGuideShown) {
+            this.triggerMobileGuide();
+          }
         } else {
           if (mobileControls) mobileControls.style.display = 'none';
           if (desktopGuide) desktopGuide.style.display = 'flex';
-          if (mobileGuide) mobileGuide.style.display = 'none';
+          this.dismissMobileGuide();
         }
 
         this.canvas.style.width = `${Math.floor(targetSize)}px`;
         this.canvas.style.height = `${Math.floor(targetSize)}px`;
+      }
+
+      triggerMobileGuide() {
+        if (this.mobileGuideShown || this.mobileGuideDismissed) return;
+        this.mobileGuideShown = true;
+        const guide = document.getElementById('mobile-guide');
+        if (!guide) return;
+        guide.style.display = 'block';
+        requestAnimationFrame(() => {
+          guide.style.opacity = '1';
+          guide.style.transform = 'translateX(-50%) translateY(0)';
+        });
+        if (this.mobileGuideTimer) clearTimeout(this.mobileGuideTimer);
+        this.mobileGuideTimer = setTimeout(() => {
+          this.dismissMobileGuide();
+        }, 5000);
+      }
+
+      dismissMobileGuide() {
+        if (this.mobileGuideDismissed) return;
+        this.mobileGuideDismissed = true;
+        if (this.mobileGuideTimer) {
+          clearTimeout(this.mobileGuideTimer);
+          this.mobileGuideTimer = null;
+        }
+        const guide = document.getElementById('mobile-guide');
+        if (guide) {
+          guide.style.opacity = '0';
+          guide.style.transform = 'translateX(-50%) translateY(-6px)';
+          setTimeout(() => {
+            guide.style.display = 'none';
+          }, 600);
+        }
       }
 
       loop(now) {
@@ -10004,11 +10603,16 @@
           }
         }
 
+        if (!this.mobileGuideShown && (('ontouchstart' in window) || navigator.maxTouchPoints > 0 || window.innerWidth <= 900)) {
+          this.triggerMobileGuide();
+        }
+
         const room = this.map.currentRoom;
 
         // 1. Arremesso de Bomba por Clique e Arraste (respeitando rigorosamente o alcance da Manopla)
         const throwAction = this.input.consumeThrow();
         if (throwAction) {
+          this.dismissMobileGuide();
           const maxRange = this.player.getThrowRange();
           const dx = throwAction.targetX - this.player.x;
           const dy = throwAction.targetY - this.player.y;
@@ -10024,6 +10628,7 @@
 
         // Lançamento rápido frontal (Barra de Espaço ou Botão de Ação)
         if (this.input.consumeAction()) {
+          this.dismissMobileGuide();
           this.handleQuickThrowAction();
         }
 
@@ -10970,6 +11575,7 @@
         if (!room) return;
         if (this.isPaused) return;
 
+        let hasNearInventor = false;
         const pGridX = Math.floor(this.player.x / TILE_SIZE);
         const pGridY = Math.floor(this.player.y / TILE_SIZE);
         if (pGridX >= 0 && pGridX < GRID_SIZE && pGridY >= 0 && pGridY < GRID_SIZE) {
@@ -10990,8 +11596,9 @@
                      this.inventorAmbientTimer = 0;
                    }
                  } else if (tileHere === TILE.INVENTOR_NPC && room.isStart) {
+                   hasNearInventor = true;
                    // Inventor disponível na base — abre loja
-                   if (!this.player.inventorShopOpened) {
+                   if (!this.player.inventorDismissed && !this.player.inventorShopOpened) {
                      this.player.inventorShopOpened = true;
                      if (!this.player.hasHealingInjector) {
                        this.player.hasHealingInjector = true;
@@ -11008,8 +11615,8 @@
                        this.updateHUD();
                        if (typeof saveGame === 'function') saveGame();
                      }
-                     setTimeout(() => { this.player.inventorShopOpened = false; }, 1500);
-                     if (document.getElementById('inventor-shop-modal') && !document.getElementById('inventor-shop-modal').classList.contains('visible')) {
+                     const invModal = document.getElementById('inventor-shop-modal');
+                     if (invModal && !invModal.classList.contains('visible')) {
                        this.openInventorShop();
                      }
                    }
@@ -11017,6 +11624,10 @@
                }
              }
            }
+        }
+        if (!hasNearInventor && this.player) {
+          this.player.inventorDismissed = false;
+          this.player.inventorShopOpened = false;
         }
       }
 
@@ -11263,8 +11874,12 @@
       }
 
       closeInventorShop() {
-        document.getElementById('inventor-shop-modal').classList.remove('visible');
-        this.player.inventorShopOpened = false;
+        const modal = document.getElementById('inventor-shop-modal');
+        if (modal) modal.classList.remove('visible');
+        if (this.player) {
+          this.player.inventorDismissed = true;
+          this.player.inventorShopOpened = false;
+        }
       }
 
       switchInventorTab(tab) {
@@ -14738,6 +15353,10 @@
           lockdownBanner.style.display = 'none';
         }
 
+        if (window.bandolierManager) {
+          window.bandolierManager.update(this.player, this.input);
+        }
+
         // Bombas
         document.querySelectorAll('.bomb-btn').forEach(btn => {
           const type = btn.getAttribute('data-bomb');
@@ -14944,6 +15563,45 @@
         if (guideDash) guideDash.style.display = (this.player.bootsLevel >= 1) ? 'inline-block' : 'none';
         const guideHeal = document.getElementById('guide-heal');
         if (guideHeal) guideHeal.style.display = (this.player && this.player.hasHealingInjector) ? 'inline-block' : 'none';
+
+        // Atualiza Asa Esquerda (Terminal do Poço & Status de Equipamentos)
+        const wingSector = document.getElementById('wing-current-sector');
+        if (wingSector && room) {
+          const depth = this.map.currentDepth || 1;
+          wingSector.textContent = `SETOR ${depth} [${room.rx}, ${room.ry}]`;
+        }
+        const wingMission = document.getElementById('wing-current-mission');
+        if (wingMission) {
+          if (room.isLockdown) {
+            wingMission.textContent = '⚠️ LOCKDOWN: DESTRUA OS AUTÔMATOS!';
+            wingMission.style.color = '#ff5252';
+          } else if (this.player && this.player.carryingHydraulicPiston) {
+            wingMission.textContent = '🦾 LEVE O PISTÃO ATÉ A GOELA!';
+            wingMission.style.color = '#ffd700';
+          } else if (room.isBossRoom) {
+            wingMission.textContent = '💀 COMBATA O TITÃ MECÂNICO!';
+            wingMission.style.color = '#ff4081';
+          } else if (room.isBossKeyRoom && !this.player.hasBossKey) {
+            wingMission.textContent = '🔑 RECUPERE A CHAVE DO TITÃ!';
+            wingMission.style.color = '#ffd700';
+          } else if (room.secretFloorNode) {
+            wingMission.textContent = '🚪 ESCOTILHA DETECTADA NO PISO!';
+            wingMission.style.color = '#00e5ff';
+          } else {
+            wingMission.textContent = '🎯 ENCONTRE A ESCOTILHA DO POÇO';
+            wingMission.style.color = '#e0f7fa';
+          }
+        }
+        const wingLore = document.getElementById('wing-lore-count');
+        if (wingLore && this.loreManager) {
+          const collected = this.loreManager.getCollectedList().length;
+          const total = (this.loreManager.allFragments && this.loreManager.allFragments.length) || 5;
+          wingLore.textContent = `${collected} / ${total}`;
+        }
+        const wingGauntlet = document.getElementById('wing-gauntlet-level');
+        if (wingGauntlet && this.player) {
+          wingGauntlet.textContent = `NV.${this.player.gauntletLevel || 1}`;
+        }
       }
     }
 
@@ -15016,9 +15674,14 @@
       box.style.borderColor = accent;
       box.classList.add('visible');
 
+      // Notifica o gerenciador de retrato para exibir o rosto animado com expressões na barra superior
+      if (window.portraitManager) {
+        window.portraitManager.show(speaker, cleanText, options);
+      }
+
       clearTimeout(dialogueTimeout);
       dialogueTimeout = setTimeout(() => {
-        box.classList.remove('visible');
+        hideDialogueBox();
       }, duration);
     }
 
@@ -15026,10 +15689,700 @@
       const box = document.getElementById('dialogue-box');
       if (box) box.classList.remove('visible');
       clearTimeout(dialogueTimeout);
+      if (window.portraitManager) {
+        window.portraitManager.hide();
+      }
     }
 
     window.showDialogueBox = showDialogueBox;
     window.hideDialogueBox = hideDialogueBox;
+
+    // --------------------------------------------------------------------------
+    // GERENCIADOR DA BANDOLEIRA DE MUNIÇÃO (BOLSA DE BOMBAS - TAMANHO GRANDE)
+    // --------------------------------------------------------------------------
+    class BandolierManager {
+      constructor() {
+        this.container = null;
+        this.slotsEl = null;
+        this.statusEl = null;
+        this.lastSlotCount = 0;
+      }
+
+      init() {
+        this.container = document.getElementById('hud-bandolier-large') || document.getElementById('hud-bandolier');
+        this.slotsEl = document.getElementById('bandolier-slots-large') || document.getElementById('bandolier-slots');
+        this.statusEl = document.getElementById('bandolier-status-large') || document.getElementById('bandolier-status');
+      }
+
+      update(player, input) {
+        if (!this.slotsEl) this.init();
+        if (!this.slotsEl || !player) return;
+
+        if (!player.bagSlots) {
+          player.bagSlots = [];
+          const caps = [0, 5, 7, 10];
+          const cap = caps[player.bagLevel || 1] || 5;
+          while (player.bagSlots.length < cap) player.bagSlots.push({ type: 'timed', cooldown: 0 });
+        }
+
+        const slots = player.bagSlots;
+        const selected = input ? input.selectedBomb : 'timed';
+        let readyCount = 0;
+
+        const needRebuild = this.lastSlotCount !== slots.length || this.slotsEl.children.length !== slots.length;
+
+        if (needRebuild) {
+          this.slotsEl.innerHTML = '';
+          slots.forEach((slot, idx) => {
+            const slotDiv = document.createElement('div');
+            slotDiv.className = 'bandolier-slot-large';
+            slotDiv.dataset.index = idx;
+            slotDiv.onclick = (e) => {
+              e.stopPropagation();
+              if (window.game && window.game.input) {
+                window.game.input.selectBomb(slot.type);
+                if (window.sound && typeof window.sound.playClick === 'function') {
+                  window.sound.playClick();
+                }
+              }
+            };
+
+            const numSpan = document.createElement('span');
+            numSpan.className = 'slot-num';
+
+            const iconSpan = document.createElement('span');
+            iconSpan.className = 'slot-icon';
+
+            const cdSpan = document.createElement('div');
+            cdSpan.className = 'slot-cd-overlay';
+            cdSpan.style.display = 'none';
+
+            slotDiv.appendChild(numSpan);
+            slotDiv.appendChild(iconSpan);
+            slotDiv.appendChild(cdSpan);
+            this.slotsEl.appendChild(slotDiv);
+          });
+          this.lastSlotCount = slots.length;
+        }
+
+        slots.forEach((slot, idx) => {
+          const slotDiv = this.slotsEl.children[idx];
+          if (!slotDiv) return;
+
+          const isVortex = (slot.type === 'vortex' || slot.type === 'propulsor');
+          const isImpact = (slot.type === 'impact');
+
+          const iconSpan = slotDiv.querySelector('.slot-icon');
+          const cdSpan = slotDiv.querySelector('.slot-cd-overlay');
+          const numSpan = slotDiv.querySelector('.slot-num');
+
+          if (iconSpan) {
+            iconSpan.textContent = isImpact ? '💥' : (isVortex ? '🌀' : '⏱️');
+          }
+          if (numSpan) {
+            const keyNum = isImpact ? '1' : (isVortex ? '2' : '3');
+            numSpan.textContent = `[${keyNum}]`;
+          }
+
+          const isCooldown = (slot.cooldown > 0);
+          if (!isCooldown) readyCount++;
+
+          if (isCooldown) {
+            slotDiv.classList.add('cooldown');
+            if (cdSpan) {
+              cdSpan.style.display = 'flex';
+              cdSpan.textContent = `${Math.ceil(slot.cooldown)}s`;
+            }
+          } else {
+            slotDiv.classList.remove('cooldown');
+            if (cdSpan) cdSpan.style.display = 'none';
+          }
+
+          const isCurrentSelected = (selected === slot.type || (isVortex && (selected === 'vortex' || selected === 'propulsor')));
+          if (isCurrentSelected && !isCooldown) {
+            slotDiv.classList.add('active-bomb');
+          } else {
+            slotDiv.classList.remove('active-bomb');
+          }
+
+          const name = isImpact ? (window.t('bomb-impact') || 'Bomba de Impacto') : (isVortex ? (window.t('bomb-vortex') || 'Bomba de Vórtice') : (window.t('bomb-timed') || 'Bomba Temporizada'));
+          const keyNum = isImpact ? '1' : (isVortex ? '2' : '3');
+          slotDiv.title = `${name} [Tecla ${keyNum}] - ${isCooldown ? 'Recarregando ' + Math.ceil(slot.cooldown) + 's' : 'Pronta para Lançamento'}`;
+        });
+
+        if (this.statusEl) {
+          const total = slots.length;
+          this.statusEl.textContent = `${readyCount}/${total} PRONTAS`;
+          this.statusEl.style.color = (readyCount === 0) ? '#ff5252' : ((readyCount < total) ? '#ffd54f' : '#81c784');
+        }
+      }
+
+      highlightSelected(type) {
+        if (!this.slotsEl) return;
+        Array.from(this.slotsEl.children).forEach(slotDiv => {
+          const idx = parseInt(slotDiv.dataset.index, 10);
+          if (window.game && window.game.player && window.game.player.bagSlots) {
+            const slot = window.game.player.bagSlots[idx];
+            if (slot) {
+              const match = (slot.type === type || ((type === 'vortex' || type === 'propulsor') && (slot.type === 'vortex' || slot.type === 'propulsor')));
+              if (match && slot.cooldown <= 0) {
+                slotDiv.classList.add('active-bomb');
+              } else {
+                slotDiv.classList.remove('active-bomb');
+              }
+            }
+          }
+        });
+      }
+    }
+
+    // --------------------------------------------------------------------------
+    // GERENCIADOR DE RETRATOS DE DIÁLOGO COM EXPRESSÕES FACIAIS DINÂMICAS (96x96)
+    // --------------------------------------------------------------------------
+    class PortraitManager {
+      constructor() {
+        this.canvasCharlotte = null;
+        this.ctxCharlotte = null;
+        this.canvasNpc = null;
+        this.ctxNpc = null;
+
+        this.leftWingIdle = null;
+        this.leftWingDialogue = null;
+        this.npcSpeakerName = null;
+        this.npcSpeakerTag = null;
+        this.npcSpeechText = null;
+
+        this.charlotteBubble = null;
+        this.charlotteSpeechText = null;
+        this.charlotteEmotionTag = null;
+
+        this.npcCharacter = 'inventor'; // 'inventor', 'sign', 'automaton'
+        this.charlotteEmotion = 'neutral';
+        this.charlotteTalking = false;
+        this.npcTalking = false;
+
+        this.talkingUntil = 0;
+        this.blinkUntil = 0;
+        this.nextBlinkTime = performance.now() + 2500;
+        this.animId = null;
+        this.loopBound = this.loop.bind(this);
+      }
+
+      init() {
+        this.canvasCharlotte = document.getElementById('portrait-canvas-charlotte');
+        if (this.canvasCharlotte) {
+          this.ctxCharlotte = this.canvasCharlotte.getContext('2d');
+          this.ctxCharlotte.imageSmoothingEnabled = false;
+        }
+
+        this.canvasNpc = document.getElementById('portrait-canvas-npc');
+        if (this.canvasNpc) {
+          this.ctxNpc = this.canvasNpc.getContext('2d');
+          this.ctxNpc.imageSmoothingEnabled = false;
+        }
+
+        this.leftWingIdle = document.getElementById('left-wing-idle');
+        this.leftWingDialogue = document.getElementById('left-wing-dialogue');
+        this.npcSpeakerName = document.getElementById('npc-speaker-name');
+        this.npcSpeakerTag = document.getElementById('npc-speaker-tag');
+        this.npcSpeechText = document.getElementById('npc-speech-text');
+
+        this.charlotteBubble = document.getElementById('charlotte-speech-bubble');
+        this.charlotteSpeechText = document.getElementById('charlotte-speech-text');
+        this.charlotteEmotionTag = document.getElementById('charlotte-emotion-tag');
+
+        if (!this.animId) {
+          this.animId = requestAnimationFrame(this.loopBound);
+        }
+      }
+
+      show(speaker, text, options = {}) {
+        if (!this.canvasCharlotte && !this.canvasNpc) this.init();
+
+        const speakerUpper = String(speaker || 'CHARLOTTE').toUpperCase();
+        const cleanTxt = String(text || '');
+        const now = performance.now();
+        const duration = options.duration || 6500;
+
+        this.talkingUntil = now + Math.min(3500, duration);
+
+        let emo = options.emotion;
+        if (!emo) {
+          const txt = cleanTxt.toUpperCase();
+          if (txt.includes('!') || txt.includes('CUIDADO') || txt.includes('PERIGO') || txt.includes('LOCKDOWN') || txt.includes('SOCORRO')) {
+            emo = 'surprised';
+          } else if (txt.includes('?') || txt.includes('COMO') || txt.includes('ONDE') || txt.includes('QUEM')) {
+            emo = 'determined';
+          } else if (txt.includes('OBRIGADO') || txt.includes('LIVRE') || txt.includes('GRAÇAS') || txt.includes('FINALMENTE')) {
+            emo = 'happy';
+          } else {
+            emo = 'talking';
+          }
+        }
+
+        const isCharlotte = speakerUpper.includes('CHARLOTTE');
+
+        if (isCharlotte) {
+          this.charlotteTalking = true;
+          this.npcTalking = false;
+          this.charlotteEmotion = emo;
+          if (this.charlotteEmotionTag) {
+            const emoLabels = { talking: 'FALANDO', surprised: 'ALERTA', determined: 'FOCO', happy: 'ALÍVIO', neutral: 'PRONTA' };
+            this.charlotteEmotionTag.textContent = emoLabels[emo] || 'FALANDO';
+          }
+          if (this.charlotteSpeechText) this.charlotteSpeechText.textContent = `"${cleanTxt}"`;
+          if (this.charlotteBubble) this.charlotteBubble.style.display = 'flex';
+        } else {
+          this.npcTalking = true;
+          this.charlotteTalking = false;
+          this.charlotteEmotion = (emo === 'surprised' ? 'surprised' : (emo === 'determined' ? 'determined' : 'neutral'));
+          if (this.charlotteEmotionTag) {
+            this.charlotteEmotionTag.textContent = (this.charlotteEmotion === 'surprised' ? 'ALERTA' : (this.charlotteEmotion === 'determined' ? 'FOCO' : 'OUVINDO'));
+          }
+
+          if (speakerUpper.includes('INVENTOR')) {
+            this.npcCharacter = 'inventor';
+            if (this.npcSpeakerTag) this.npcSpeakerTag.textContent = 'OFICINA';
+          } else if (speakerUpper.includes('PLACA') || speakerUpper.includes('SIGN') || speakerUpper.includes('REGISTRO') || speakerUpper.includes('DISPATCH')) {
+            this.npcCharacter = 'sign';
+            if (this.npcSpeakerTag) this.npcSpeakerTag.textContent = 'TERMINAL';
+          } else {
+            this.npcCharacter = 'automaton';
+            if (this.npcSpeakerTag) this.npcSpeakerTag.textContent = 'AUTÔMATO';
+          }
+
+          if (this.npcSpeakerName) this.npcSpeakerName.textContent = speakerUpper || 'INTERLOCUTOR';
+          if (this.npcSpeechText) this.npcSpeechText.textContent = `"${cleanTxt}"`;
+
+          if (this.leftWingIdle) this.leftWingIdle.style.display = 'none';
+          if (this.leftWingDialogue) this.leftWingDialogue.style.display = 'flex';
+        }
+      }
+
+      hide() {
+        this.charlotteTalking = false;
+        this.npcTalking = false;
+        this.charlotteEmotion = 'neutral';
+        if (this.charlotteEmotionTag) this.charlotteEmotionTag.textContent = 'PRONTA';
+        if (this.charlotteBubble) this.charlotteBubble.style.display = 'none';
+        if (this.leftWingDialogue) this.leftWingDialogue.style.display = 'none';
+        if (this.leftWingIdle) this.leftWingIdle.style.display = 'flex';
+      }
+
+      loop(now) {
+        this.animId = requestAnimationFrame(this.loopBound);
+
+        if (now > this.talkingUntil) {
+          if (this.charlotteTalking) {
+            this.charlotteTalking = false;
+            if (this.charlotteEmotionTag) this.charlotteEmotionTag.textContent = 'OUVINDO';
+          }
+          if (this.npcTalking) {
+            this.npcTalking = false;
+          }
+        }
+
+        if (now > this.nextBlinkTime) {
+          this.blinkUntil = now + 140;
+          this.nextBlinkTime = now + 2400 + Math.random() * 2200;
+        }
+        const isBlinking = (now < this.blinkUntil);
+
+        if (this.ctxCharlotte) {
+          this.drawCharlotte(this.ctxCharlotte, now, isBlinking);
+        }
+        if (this.ctxNpc && this.leftWingDialogue && this.leftWingDialogue.style.display !== 'none') {
+          this.drawNpc(this.ctxNpc, now, isBlinking);
+        }
+      }
+
+      drawCharlotte(ctx, now, isBlinking) {
+        ctx.clearRect(0, 0, 96, 96);
+        ctx.save();
+        ctx.scale(2, 2); // Escala 2x: resolução 96x96 com pixel art nítido
+
+        const grad = ctx.createLinearGradient(0, 0, 48, 48);
+        grad.addColorStop(0, '#1a2332');
+        grad.addColorStop(1, '#0e141d');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, 48, 48);
+
+        // Cabelo de fundo (Ruivo escuro volumoso)
+        ctx.fillStyle = '#78281f';
+        ctx.fillRect(10, 14, 28, 26);
+        ctx.fillRect(8, 20, 32, 18);
+
+        // Pescoço
+        ctx.fillStyle = '#f5cdb2';
+        ctx.fillRect(21, 35, 6, 6);
+
+        // Lenço vermelho de mineira
+        ctx.fillStyle = '#d32f2f';
+        ctx.beginPath();
+        ctx.moveTo(16, 40);
+        ctx.lineTo(24, 46);
+        ctx.lineTo(32, 40);
+        ctx.lineTo(24, 41);
+        ctx.closePath();
+        ctx.fill();
+
+        // Broche de latão no lenço
+        ctx.fillStyle = '#ffd54f';
+        ctx.fillRect(23, 40, 2, 2);
+
+        // Casaco marrom couro
+        ctx.fillStyle = '#4e342e';
+        ctx.fillRect(8, 42, 12, 6);
+        ctx.fillRect(28, 42, 12, 6);
+
+        // Rosto (Pele suave)
+        ctx.fillStyle = '#ffdfc4';
+        ctx.fillRect(15, 18, 18, 17);
+        ctx.fillRect(17, 34, 14, 3);
+        ctx.fillRect(20, 36, 8, 2);
+
+        // Blush bochechas
+        ctx.fillStyle = 'rgba(255, 140, 140, 0.45)';
+        ctx.fillRect(16, 28, 4, 3);
+        ctx.fillRect(28, 28, 4, 3);
+
+        // Cabelo frontal e franja (Ruivo vibrante)
+        ctx.fillStyle = '#c0392b';
+        ctx.fillRect(13, 14, 22, 6);
+        ctx.fillRect(12, 18, 4, 15);
+        ctx.fillRect(32, 18, 4, 15);
+        ctx.fillRect(18, 19, 5, 4);
+        ctx.fillRect(25, 19, 6, 4);
+
+        // Brilho no cabelo
+        ctx.fillStyle = '#e74c3c';
+        ctx.fillRect(15, 15, 7, 2);
+        ctx.fillRect(26, 15, 6, 2);
+
+        // Óculos Steampunk na testa
+        ctx.fillStyle = '#3e2723';
+        ctx.fillRect(12, 11, 24, 3);
+        ctx.fillStyle = '#ffd54f';
+        ctx.fillRect(14, 8, 9, 8);
+        ctx.fillStyle = '#00b4d8';
+        ctx.fillRect(16, 10, 5, 4);
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(17, 10, 2, 2);
+
+        ctx.fillStyle = '#ffd54f';
+        ctx.fillRect(25, 8, 9, 8);
+        ctx.fillStyle = '#00b4d8';
+        ctx.fillRect(27, 10, 5, 4);
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(28, 10, 2, 2);
+
+        ctx.fillStyle = '#f1c40f';
+        ctx.fillRect(23, 11, 2, 2);
+
+        // Sobrancelhas
+        ctx.fillStyle = '#78281f';
+        if (this.charlotteEmotion === 'surprised') {
+          ctx.fillRect(17, 19, 4, 2);
+          ctx.fillRect(27, 19, 4, 2);
+        } else if (this.charlotteEmotion === 'determined') {
+          ctx.fillRect(17, 21, 4, 2);
+          ctx.fillRect(27, 21, 4, 2);
+        } else {
+          ctx.fillRect(17, 20, 4, 1.5);
+          ctx.fillRect(27, 20, 4, 1.5);
+        }
+
+        // Olhos Expressivos
+        if (isBlinking) {
+          ctx.fillStyle = '#2c1810';
+          ctx.fillRect(17, 24, 5, 2);
+          ctx.fillRect(26, 24, 5, 2);
+        } else if (this.charlotteEmotion === 'happy') {
+          ctx.fillStyle = '#2c1810';
+          ctx.fillRect(17, 24, 5, 1.5);
+          ctx.fillRect(16, 25, 2, 1.5);
+          ctx.fillRect(26, 24, 5, 1.5);
+          ctx.fillRect(30, 25, 2, 1.5);
+        } else if (this.charlotteEmotion === 'surprised') {
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(16, 22, 6, 6);
+          ctx.fillRect(26, 22, 6, 6);
+          ctx.fillStyle = '#b76e28';
+          ctx.fillRect(18, 23, 3, 4);
+          ctx.fillRect(27, 23, 3, 4);
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(18, 23, 1.5, 1.5);
+          ctx.fillRect(27, 23, 1.5, 1.5);
+        } else {
+          ctx.fillStyle = '#2c1810';
+          ctx.fillRect(17, 22, 5, 1.5);
+          ctx.fillRect(26, 22, 5, 1.5);
+          ctx.fillStyle = '#b76e28';
+          ctx.fillRect(17, 23.5, 5, 4.5);
+          ctx.fillRect(26, 23.5, 5, 4.5);
+          ctx.fillStyle = '#1c0f0a';
+          ctx.fillRect(18.5, 24.5, 2.5, 3);
+          ctx.fillRect(27.5, 24.5, 2.5, 3);
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(18, 23.5, 1.5, 1.5);
+          ctx.fillRect(27, 23.5, 1.5, 1.5);
+        }
+
+        // Nariz
+        ctx.fillStyle = '#e0a98b';
+        ctx.fillRect(23.5, 28, 1.5, 1.5);
+
+        // Boca animada (Mouth flaps)
+        if (this.charlotteTalking) {
+          const flap = Math.floor(now / 130) % 3;
+          if (flap === 0) {
+            ctx.fillStyle = '#b71c1c';
+            ctx.fillRect(22, 32, 4, 1.5);
+          } else if (flap === 1) {
+            ctx.fillStyle = '#7f0000';
+            ctx.fillRect(21, 31, 6, 3);
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(22, 31, 4, 1);
+          } else {
+            ctx.fillStyle = '#5c0000';
+            ctx.fillRect(21.5, 31, 5, 4);
+            ctx.fillStyle = '#ff8a80';
+            ctx.fillRect(22.5, 33, 3, 1.5);
+          }
+        } else {
+          ctx.fillStyle = '#b71c1c';
+          if (this.charlotteEmotion === 'happy') {
+            ctx.fillRect(21, 31, 6, 2);
+            ctx.fillRect(20, 30.5, 2, 1);
+            ctx.fillRect(26, 30.5, 2, 1);
+          } else if (this.charlotteEmotion === 'surprised') {
+            ctx.fillStyle = '#641e16';
+            ctx.fillRect(22.5, 31, 3, 3);
+          } else if (this.charlotteEmotion === 'determined') {
+            ctx.fillRect(21, 32, 5, 1.5);
+            ctx.fillRect(25, 31, 2, 1.5);
+          } else {
+            ctx.fillRect(22, 32, 4, 1.5);
+          }
+        }
+
+        ctx.restore();
+      }
+
+      drawNpc(ctx, now, isBlinking) {
+        if (this.npcCharacter === 'inventor') {
+          this.drawInventor(ctx, now, isBlinking);
+        } else if (this.npcCharacter === 'sign') {
+          this.drawSign(ctx, now);
+        } else {
+          this.drawAutomaton(ctx, now);
+        }
+      }
+
+      drawInventor(ctx, now, isBlinking) {
+        ctx.clearRect(0, 0, 96, 96);
+        ctx.save();
+        ctx.scale(2, 2); // Escala 2x para 96x96
+
+        const grad = ctx.createLinearGradient(0, 0, 48, 48);
+        grad.addColorStop(0, '#261a10');
+        grad.addColorStop(1, '#150f09');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, 48, 48);
+
+        // Cabelo grisalho lateral
+        ctx.fillStyle = '#cfd8dc';
+        ctx.fillRect(9, 18, 6, 12);
+        ctx.fillRect(33, 18, 6, 12);
+
+        // Rosto
+        ctx.fillStyle = '#f5cba7';
+        ctx.fillRect(14, 16, 20, 18);
+        ctx.fillRect(17, 32, 14, 4);
+
+        // Rugas de expressão na testa
+        ctx.fillStyle = '#d5a77f';
+        ctx.fillRect(18, 17, 12, 1);
+        ctx.fillRect(19, 19, 10, 1);
+
+        // Boina / Quepe de Mecânico
+        ctx.fillStyle = '#37474f';
+        ctx.fillRect(11, 8, 26, 9);
+        ctx.fillRect(13, 6, 22, 3);
+        ctx.fillStyle = '#263238';
+        ctx.fillRect(10, 15, 28, 3);
+        ctx.fillStyle = '#ffd54f';
+        ctx.fillRect(22, 10, 4, 4);
+
+        // Olho Esquerdo
+        if (isBlinking) {
+          ctx.fillStyle = '#263238';
+          ctx.fillRect(16, 23, 5, 2);
+        } else {
+          ctx.fillStyle = '#90a4ae';
+          ctx.fillRect(15, 20, 6, 2);
+          ctx.fillStyle = '#263238';
+          ctx.fillRect(16, 22, 4, 3);
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(17, 22, 1.5, 1.5);
+        }
+
+        // Monóculo de Engrenagem no Olho Direito
+        ctx.fillStyle = '#f39c12';
+        ctx.beginPath();
+        ctx.arc(29, 23, 5.5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#4dd0e1';
+        ctx.beginPath();
+        ctx.arc(29, 23, 4, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(28, 21, 2, 2);
+        ctx.fillStyle = '#f39c12';
+        ctx.fillRect(34, 25, 1.5, 8);
+
+        // Bigode Volumoso
+        const mustacheY = (this.npcTalking && (Math.floor(now / 130) % 2 === 1)) ? 28 : 29;
+
+        if (this.npcTalking) {
+          ctx.fillStyle = '#4a1414';
+          ctx.fillRect(21, 31, 6, 4);
+        }
+
+        ctx.fillStyle = '#eceff1';
+        ctx.beginPath();
+        ctx.moveTo(13, mustacheY + 4);
+        ctx.lineTo(24, mustacheY);
+        ctx.lineTo(35, mustacheY + 4);
+        ctx.lineTo(24, mustacheY + 6);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.fillStyle = '#b0bec5';
+        ctx.fillRect(16, mustacheY + 3, 16, 2);
+
+        // Roupa / Avental
+        ctx.fillStyle = '#455a64';
+        ctx.fillRect(10, 38, 28, 10);
+        ctx.fillStyle = '#8d6e63';
+        ctx.fillRect(14, 38, 4, 10);
+        ctx.fillRect(30, 38, 4, 10);
+        ctx.fillStyle = '#ffd54f';
+        ctx.fillRect(14, 40, 4, 2);
+        ctx.fillRect(30, 40, 4, 2);
+
+        ctx.restore();
+      }
+
+      drawSign(ctx, now) {
+        ctx.clearRect(0, 0, 96, 96);
+        ctx.save();
+        ctx.scale(2, 2);
+
+        ctx.fillStyle = '#5d4037';
+        ctx.fillRect(0, 0, 48, 48);
+        ctx.fillStyle = '#ffd54f';
+        ctx.fillRect(2, 2, 44, 44);
+        ctx.fillStyle = '#0a140d';
+        ctx.fillRect(4, 4, 40, 40);
+
+        ctx.fillStyle = '#3e2723';
+        ctx.fillRect(3, 3, 2, 2);
+        ctx.fillRect(43, 3, 2, 2);
+        ctx.fillRect(3, 43, 2, 2);
+        ctx.fillRect(43, 43, 2, 2);
+
+        ctx.fillStyle = 'rgba(0, 230, 118, 0.15)';
+        for (let y = 8; y < 42; y += 6) {
+          ctx.fillRect(5, y, 38, 1);
+        }
+        for (let x = 8; x < 42; x += 6) {
+          ctx.fillRect(x, 5, 1, 38);
+        }
+
+        ctx.strokeStyle = '#00e676';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        for (let px = 6; px < 42; px++) {
+          const py = 24 + Math.sin((px + now * 0.08) * 0.3) * 6;
+          if (px === 6) ctx.moveTo(px, py);
+          else ctx.lineTo(px, py);
+        }
+        ctx.stroke();
+
+        const pulseX = 6 + (Math.floor(now * 0.04) % 36);
+        const pulseY = 24 + Math.sin((pulseX + now * 0.08) * 0.3) * 6;
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(pulseX, pulseY, 2.5, 0, Math.PI * 2);
+        ctx.fill();
+
+        const rot = now * 0.002;
+        ctx.save();
+        ctx.translate(38, 10);
+        ctx.rotate(rot);
+        ctx.fillStyle = '#ffd54f';
+        ctx.fillRect(-3, -3, 6, 6);
+        ctx.fillRect(-4, -1, 8, 2);
+        ctx.fillRect(-1, -4, 2, 8);
+        ctx.restore();
+
+        ctx.restore();
+      }
+
+      drawAutomaton(ctx, now) {
+        ctx.clearRect(0, 0, 96, 96);
+        ctx.save();
+        ctx.scale(2, 2);
+
+        // Fundo escuro metálico
+        ctx.fillStyle = '#10141a';
+        ctx.fillRect(0, 0, 48, 48);
+
+        // Cabeça de Latão/Bronze
+        ctx.fillStyle = '#b8860b';
+        ctx.fillRect(10, 12, 28, 26);
+        ctx.fillStyle = '#cd853f';
+        ctx.fillRect(12, 14, 24, 22);
+
+        // Rebites
+        ctx.fillStyle = '#ffd700';
+        ctx.fillRect(11, 13, 2, 2);
+        ctx.fillRect(35, 13, 2, 2);
+        ctx.fillRect(11, 35, 2, 2);
+        ctx.fillRect(35, 35, 2, 2);
+
+        // Antena Superior
+        ctx.fillStyle = '#8b4513';
+        ctx.fillRect(23, 6, 2, 6);
+        ctx.fillStyle = (Math.floor(now / 200) % 2 === 0) ? '#ff1744' : '#b71c1c';
+        ctx.beginPath();
+        ctx.arc(24, 5, 3, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Olho Central Optico (Sensor Vermelho Pulsante)
+        const pulse = Math.abs(Math.sin(now * 0.004));
+        ctx.fillStyle = '#3e2723';
+        ctx.fillRect(14, 20, 20, 8);
+        ctx.fillStyle = '#ff1744';
+        ctx.fillRect(18 + Math.floor(pulse * 8), 21, 6, 6);
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(20 + Math.floor(pulse * 8), 22, 2, 2);
+
+        // Boca de Grade Metálica
+        ctx.fillStyle = '#263238';
+        ctx.fillRect(16, 31, 16, 4);
+        ctx.fillStyle = this.npcTalking ? '#ffd54f' : '#78909c';
+        for (let gx = 18; gx < 32; gx += 3) {
+          ctx.fillRect(gx, 31, 1.5, 4);
+        }
+
+        ctx.restore();
+      }
+    }
+
+    window.bandolierManager = new BandolierManager();
+    window.portraitManager = new PortraitManager();
 
     const SAVE_KEY = "ROGUEBOMB_SAVE_DATA_V1";
 
@@ -15261,6 +16614,12 @@
       if (window.game) return;
       window.game = new GameEngine();
       loadGame();
+
+      if (window.bandolierManager) window.bandolierManager.init();
+      if (window.portraitManager) window.portraitManager.init();
+      if (window.bandolierManager && window.game) {
+        window.bandolierManager.update(window.game.player, window.game.input);
+      }
 
       // Botão HUD da Manopla para clique/toque direto de upgrade
       const gauntletBadge = document.getElementById('gauntlet-badge');
